@@ -16,7 +16,9 @@ create table t_device_notify(
 
 drop table if not EXISTS  t_device_operlog;
 create table t_device_operlog(
-
+  id int PRIMARY  key comment '主键id',
+  deviceId int comment '设备id',
+  operDirective int comment ''
 );
 drop table if not EXISTS  t_device_exception;
 create table t_device_exception(
