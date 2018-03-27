@@ -1,10 +1,13 @@
 package com.huanke.iot.base.po.device;
 
+import lombok.Data;
+
 /**
  * @author haoshijing
  * @version 2018年03月27日 09:22
  **/
 
+@Data
 public class DevicePo {
     /**
      * 设备id
