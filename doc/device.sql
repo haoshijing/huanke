@@ -3,8 +3,14 @@ cretae table t_device
 (
 id int primary key  comment '设备主键id',
 mac varchar(200) comment 'mac地址'DEFAULT  ''
-addTime bigint comment '添加时间'
+deviceTypeId int comment '设备类型',
+addTime bigint comment '添加时间',
 );
+drop table if not EXISTS  t_device_attribute;
+create table t_device_attribute(
+deviceId int comment '设备Id',
+attributeVal varchar(2048) comment '以json的方式记录'
+)
 
 drop table if not EXISTS  t_device_notify;
 create table t_device_notify(
