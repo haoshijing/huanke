@@ -14,6 +14,7 @@
         <module>manage</module>
         <module>job</module>
         <module>responsewechart</module>
+        <module>api</module>
     </modules>
 
     <properties>
