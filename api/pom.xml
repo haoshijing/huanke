@@ -11,5 +11,15 @@
 
     <artifactId>api</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <artifactId>base</artifactId>
+            <groupId>com.huanke</groupId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
 </project>
