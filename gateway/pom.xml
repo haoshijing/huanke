@@ -17,6 +17,11 @@
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
             <version>1.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-redis-client</artifactId>
+            <version>3.5.1</version>
+        </dependency>
     </dependencies>
 
 </project>

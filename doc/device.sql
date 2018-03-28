@@ -2,9 +2,13 @@ drop table if not EXISTS  t_device;
 cretae table t_device
 (
 id int primary key  comment '设备主键id',
-mac varchar(200) comment 'mac地址'DEFAULT  ''
+mac varchar(200) comment 'mac地址'DEFAULT  '',
+name varchar(200) comment '项目名称' DEFAULT  '',
+productId int comment '产品id',
+projectId int comment '项目id',
 deviceTypeId int comment '设备类型',
 addTime bigint comment '添加时间',
+
 );
 drop table if not EXISTS  t_device_attribute;
 create table t_device_attribute(
