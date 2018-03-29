@@ -1,28 +1,36 @@
 package com.huanke.iot.api.wechart.js.wechat;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.jetty.client.HttpClient;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URI;
 
 /**
  * @author haoshijing
  * @version 2018年03月29日 16:39
  **/
 @Repository
+@Slf4j
 public class WechartUtil {
     @Value("${appId}")
     private String appId;
     @Value("${appSecret}")
     private String appSecret;
 
-    @Autowired
-    private HttpClient httpClient;
-
     private static final String ACCESS_TOKEN = "access_token";
+
+    private static final String TICKET = "ticket";
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -39,12 +47,23 @@ public class WechartUtil {
         if (needFromServer) {
             String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + appSecret;
             try {
-                String returnData = httpClient.newRequest(url).send().getContentAsString();
-                JSONObject json = JSONObject.parseObject(returnData);
+                HttpGet httpGet = new HttpGet();
+                httpGet.setURI(new URI(url));
+                CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+                BufferedReader rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+
+                StringBuffer result = new StringBuffer();
+                String line = "";
+                while ((line = rd.readLine()) != null) {
+                    result.append(line);
+                }
+                log.info("result = {}", result);
+                JSONObject json = JSONObject.parseObject(result.toString());
                 if (json.containsKey("access_token")) {
                     String queryAccessToken = json.getString("access_token");
                     if (StringUtils.isNotEmpty(queryAccessToken)) {
-                        stringRedisTemplate.opsForValue().set(ACCESS_TOKEN,queryAccessToken,5400);
+                        stringRedisTemplate.opsForValue().set(ACCESS_TOKEN, queryAccessToken, 5400);
                         return queryAccessToken;
                     }
                 }
@@ -54,4 +73,40 @@ public class WechartUtil {
         }
         return "";
     }
+
+
+    public String getTicket() {
+        String ticket = stringRedisTemplate.opsForValue().get(TICKET);
+        if (StringUtils.isNotEmpty(ticket)) {
+            return  ticket;
+        }
+
+        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+getAccessToken(false)+"&type=wx_card";
+        try {
+            HttpGet httpGet = new HttpGet();
+            httpGet.setURI(new URI(url));
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+            StringBuffer result = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            log.info("ticket result = {}", result);
+            JSONObject json = JSONObject.parseObject(result.toString());
+            if (json.containsKey("ticket")) {
+                String queryTicket = json.getString("ticket");
+                if (StringUtils.isNotEmpty(queryTicket)) {
+                    stringRedisTemplate.opsForValue().set(TICKET, queryTicket, 5200);
+                    return queryTicket;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return"";
+}
+
 }
