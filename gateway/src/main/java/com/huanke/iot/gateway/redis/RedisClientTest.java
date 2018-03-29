@@ -27,5 +27,6 @@ public class RedisClientTest {
         redis.get("test",handler->{
             System.out.println(Thread.currentThread().getName()+handler.result());
         });
+
     }
 }
