@@ -77,11 +77,32 @@ public class WechartUtil {
 
     public String getTicket() {
         String ticket = stringRedisTemplate.opsForValue().get(TICKET);
-        if (StringUtils.isNotEmpty(ticket)) {
-            return  ticket;
+        if (false && StringUtils.isNotEmpty(ticket)) {
+            return ticket;
+        }
+        String ticketResult = obtainRemoteTicket();
+
+        log.info("ticket result = {}", ticketResult);
+        JSONObject json = JSONObject.parseObject(ticketResult);
+        int errorCode = json.getInteger("errcode");
+        if (errorCode == 42001) {
+            getAccessToken(true);
+            ticketResult = obtainRemoteTicket();
+            json = JSONObject.parseObject(ticketResult);
+        }
+        if (json.containsKey("ticket")) {
+            String queryTicket = json.getString("ticket");
+            if (StringUtils.isNotEmpty(queryTicket)) {
+                stringRedisTemplate.opsForValue().set(TICKET, queryTicket, 5200);
+                return queryTicket;
+            }
         }
 
-        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+getAccessToken(false)+"&type=wx_card";
+        return "";
+    }
+
+    private String obtainRemoteTicket() {
+        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + getAccessToken(false) + "&type=wx_card";
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
@@ -94,19 +115,10 @@ public class WechartUtil {
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
-            log.info("ticket result = {}", result);
-            JSONObject json = JSONObject.parseObject(result.toString());
-            if (json.containsKey("ticket")) {
-                String queryTicket = json.getString("ticket");
-                if (StringUtils.isNotEmpty(queryTicket)) {
-                    stringRedisTemplate.opsForValue().set(TICKET, queryTicket, 5200);
-                    return queryTicket;
-                }
-            }
+            return result.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            return "";
         }
-        return"";
-}
+    }
 
 }
