@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author haoshijing
@@ -53,7 +54,7 @@ public class WechartUtil {
                 BufferedReader rd = new BufferedReader(
                         new InputStreamReader(response.getEntity().getContent()));
 
-                StringBuffer result = new StringBuffer();
+                StringBuilder result = new StringBuilder();
                 String line = "";
                 while ((line = rd.readLine()) != null) {
                     result.append(line);
@@ -63,7 +64,7 @@ public class WechartUtil {
                 if (json.containsKey("access_token")) {
                     String queryAccessToken = json.getString("access_token");
                     if (StringUtils.isNotEmpty(queryAccessToken)) {
-                        stringRedisTemplate.opsForValue().set(ACCESS_TOKEN, queryAccessToken, 5400);
+                        stringRedisTemplate.opsForValue().set(ACCESS_TOKEN, queryAccessToken);
                         return queryAccessToken;
                     }
                 }
@@ -77,7 +78,7 @@ public class WechartUtil {
 
     public String getTicket() {
         String ticket = stringRedisTemplate.opsForValue().get(TICKET);
-        if (false && StringUtils.isNotEmpty(ticket)) {
+        if(StringUtils.isNotEmpty(ticket)){
             return ticket;
         }
         String ticketResult = obtainRemoteTicket();
@@ -93,7 +94,9 @@ public class WechartUtil {
         if (json.containsKey("ticket")) {
             String queryTicket = json.getString("ticket");
             if (StringUtils.isNotEmpty(queryTicket)) {
-                stringRedisTemplate.opsForValue().set(TICKET, queryTicket, 5200);
+                stringRedisTemplate.opsForValue().set(TICKET, queryTicket);
+                stringRedisTemplate.expire(TICKET, 7000,TimeUnit.SECONDS);
+
                 return queryTicket;
             }
         }
@@ -110,7 +113,7 @@ public class WechartUtil {
             BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
 
-            StringBuffer result = new StringBuffer();
+            StringBuilder result = new StringBuilder();
             String line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
