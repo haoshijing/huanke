@@ -39,7 +39,6 @@ create table t_device_exception(
   receiveTime bigint comment '上报时间'
 );
 
-
 drop table if not EXISTS  t_device_operlog;
 create table t_device_operlog(
   id int PRIMARY  key comment '主键id',
