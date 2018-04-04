@@ -1,6 +1,7 @@
 package com.huanke.iot.api.wechart.js.controller;
 
 import com.huanke.iot.api.wechart.js.JsApiConfig;
+import com.huanke.iot.api.wechart.js.util.Md5Util;
 import com.huanke.iot.api.wechart.js.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -19,24 +20,32 @@ import java.util.UUID;
 @Slf4j
 public class WechatConrtoller {
 
-    @Autowired
-    WechartUtil wechartUtil;
-
     @Value("${appId}")
     private String appId;
     @Value("${appSecret}")
     private String appSecret;
 
+    @Autowired
+    private WechartUtil wechartUtil;
+
     @RequestMapping("/obtainJsConfig")
-    public ApiResponse<String> obtainJsConfig(String link){
+    public ApiResponse<JsApiConfig> obtainJsConfig(String link){
         JsApiConfig jsApiConfig  = new JsApiConfig();
         jsApiConfig.setAppId(appId);
         jsApiConfig.setNonce(UUID.randomUUID().toString().replace("-",""));
         jsApiConfig.setTimestamp(String.valueOf(System.currentTimeMillis()));
         jsApiConfig.setLink(link);
-        String token = wechartUtil.getAccessToken(false);
-        log.info("token="+token);
-        return new ApiResponse<>(token);
+        String ticket = wechartUtil.getTicket();
+        String src = "jsapi_ticket=" + ticket + "&noncestr="
+                + jsApiConfig.getNonce() + "&timestamp=" + jsApiConfig.getTimestamp() + "&url="
+                + jsApiConfig.getLink();
+        try {
+            String sign = Md5Util.sha1(src);
+            jsApiConfig.setSignature(sign);
+        }catch (Exception e){
+
+        }
+        return new ApiResponse<>(jsApiConfig);
     }
 
     @RequestMapping("/obtainTicket")
