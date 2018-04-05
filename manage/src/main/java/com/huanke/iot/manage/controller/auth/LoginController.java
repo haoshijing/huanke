@@ -35,7 +35,7 @@ public class LoginController  extends AbstractController{
 
         if(StringUtils.isEmpty(loginDataRequest.getName()) ||
                 StringUtils.isEmpty(loginDataRequest.getPassword())){
-            return new ApiResponse<>(RetCode.PARAM_EROR,"参数错误",loginResponse);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误",loginResponse);
         }
         AdminAuthInfo adminAuthInfo = new AdminAuthInfo();
 

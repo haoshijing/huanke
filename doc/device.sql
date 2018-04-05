@@ -1,3 +1,15 @@
+drop TABLE IF EXISTS t_admin;
+create table t_admin
+(
+id int primary key auto_increment comment '主键id',
+userName varchar(200) comment '用户名',
+password varchar(200) comment '密码',
+saltPassword varchar(200) comment '加密盐值',
+insertTime bigint comment '写入时间',
+lastUpdateTime bigint comment '最后修改时间',
+status int comment '账号状态'
+) comment '管理员表';
+
 drop table if  EXISTS  t_device;
 create table t_device
 (
@@ -11,6 +23,25 @@ deviceTypeId int comment '设备类型',
 insertTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
+
+drop table if  EXISTS  t_product;
+create table t_product
+(
+id int primary key  comment '产品id',
+name varchar(200) comment '产品名称' DEFAULT  '',
+insertTime bigint comment '添加时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
+
+drop table if  EXISTS  t_project;
+create table t_project
+(
+id int primary key  comment '项目id',
+name varchar(200) comment '项目名称' DEFAULT  '',
+insertTime bigint comment '添加时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
+
 drop table if not EXISTS  t_device_attribute;
 create table t_device_attribute(
 deviceId int comment '设备Id',
@@ -24,6 +55,7 @@ create table t_device_notify(
   notifyData varchar(4000) comment '上报数据内容'
   notifyTime bigint comment '上报时间'
 );
+
 
 drop table if not EXISTS  t_device_operlog;
 create table t_device_operlog(
