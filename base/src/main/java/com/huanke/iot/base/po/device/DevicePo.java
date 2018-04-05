@@ -17,6 +17,10 @@ public class DevicePo {
      * 设备mac地址
      */
     private String mac;
+    /**
+     * 设备序列号
+     */
+    private String deviceSn;
     private Integer deviceTypeId;
     private Integer productId;
     private Integer projectId;

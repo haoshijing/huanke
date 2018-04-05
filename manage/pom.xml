@@ -39,6 +39,12 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>admin</finalName>
@@ -50,7 +56,7 @@
                     <jvmArguments>
                         -Xdebug -Xnoagent -Djava.compiler=NONE -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8011
                     </jvmArguments>
-                    <mainClass>com.huanke.iot.api.wechart.js.ApiApplicationStarter</mainClass>
+                    <mainClass>com.huanke.iot.manage.AdminStarter</mainClass>
                 </configuration>
                 <executions>
                     <execution>

@@ -8,7 +8,6 @@ import lombok.Data;
  **/
 @Data
 public class DeviceType {
-
     private Integer id;
     private String deviceTypeName;
     private String funcList;

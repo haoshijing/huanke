@@ -1,14 +1,15 @@
-drop table if not EXISTS  t_device;
-cretae table t_device
+drop table if  EXISTS  t_device;
+create table t_device
 (
 id int primary key  comment '设备主键id',
 mac varchar(200) comment 'mac地址'DEFAULT  '',
 name varchar(200) comment '项目名称' DEFAULT  '',
+deviceSn varchar(200) comment '设备序列号' DEFAULT  '',
 productId int comment '产品id',
 projectId int comment '项目id',
 deviceTypeId int comment '设备类型',
-addTime bigint comment '添加时间',
-
+insertTime bigint comment '添加时间',
+lastUpdateTime bigint comment '最后修改时间'
 );
 drop table if not EXISTS  t_device_attribute;
 create table t_device_attribute(
@@ -70,6 +71,24 @@ deviceTypeName varchar(200) comment '设备类型名称',
 functionList varchar(200) comment '功能列表'
 insertTime bigint comment '写入时间'
 )
+
+drop table if  EXISTS  t_user;
+create table t_user(
+id int primary key auto_increment comment '主键id',
+userName varchar(100) comment '用户名',
+password varchar(100) comment '密码',
+realName varchar(100) comment '真实姓名',
+createTime bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
+
+drop table if  EXISTS  t_role;
+create table t_role(
+id int primary key auto_increment comment '主键id',
+roleName varchar(100) comment '角色名称',
+createTime bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
 
 
 mac deviceTypeId productKey projectKey ps

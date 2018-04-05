@@ -1,5 +1,6 @@
 package com.huanke.iot.base.api;
 
+import com.huanke.iot.base.constant.RetCode;
 import lombok.Data;
 
 /**
@@ -13,13 +14,32 @@ public class ApiResponse<T> {
     private T data;
 
 
-    public ApiResponse(){
-
+    public ApiResponse() {
+        this.code = RetCode.OK;
+        this.msg = "";
+        this.data = null;
     }
 
-    public ApiResponse(T data){
-        this.code = 200;
-        this.msg = "succ";
+    public ApiResponse(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+        this.data = null;
+    }
+
+    public ApiResponse(T data) {
+        this.code = RetCode.OK;
+        this.msg = "";
         this.data = data;
     }
+
+    public ApiResponse(int code, String message, T data) {
+        this.code = code;
+        this.msg = message;
+        this.data = data;
+    }
+
+    public static ApiResponse responseError(Exception e) {
+        return new ApiResponse(RetCode.ERROR, e.getMessage(), null);
+    }
+
 }
