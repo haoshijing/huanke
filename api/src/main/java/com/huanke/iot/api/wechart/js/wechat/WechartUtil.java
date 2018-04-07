@@ -75,7 +75,6 @@ public class WechartUtil {
         return "";
     }
 
-
     public String getTicket() {
         String ticket = stringRedisTemplate.opsForValue().get(TICKET);
         if(StringUtils.isNotEmpty(ticket)){

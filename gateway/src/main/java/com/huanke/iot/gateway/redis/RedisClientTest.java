@@ -12,7 +12,7 @@ public class RedisClientTest {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         RedisOptions config = new RedisOptions()
-                .setHost("115.159.29.17")
+                .setHost("39.104.52.84")
                 .setPort(8379);
 
         RedisClient redis = RedisClient.create(vertx, config);
@@ -27,6 +27,5 @@ public class RedisClientTest {
         redis.get("test",handler->{
             System.out.println(Thread.currentThread().getName()+handler.result());
         });
-
     }
 }
