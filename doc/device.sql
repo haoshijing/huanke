@@ -24,6 +24,7 @@ insertTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
 
+
 drop table if  EXISTS  t_product;
 create table t_product
 (
@@ -122,6 +123,14 @@ createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
 
+drop table if EXISTS t_device_group;
+create table t_device_group(
+id int primary key auto_increment comment '主键id',
+groupName varchar(100) comment '设备组名称',
+deviceIds varchar(1024) comment '设备idList',
+createTime bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
 
 mac deviceTypeId productKey projectKey ps
 
