@@ -21,7 +21,7 @@ public class DeviceController {
 
     @Autowired
     private DeviceGroupService deviceGroupService;
-    @RequestBody("/addNewDeviceGroup")
+    @RequestMapping("/addNewDeviceGroup")
     public ApiResponse<Integer> addNewDeviceGroup(@RequestBody DeviceNewGroupRequest deviceNewGroupRequest){
         if(StringUtils.isEmpty(deviceNewGroupRequest.getGroupName()) || CollectionUtils.isEmpty(deviceNewGroupRequest.getDeviceIds())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"");
@@ -29,5 +29,5 @@ public class DeviceController {
         Integer groupId = deviceGroupService.addNewDeviceGroup(deviceNewGroupRequest);
         return new ApiResponse<>(groupId);
     }
-    
+
 }
