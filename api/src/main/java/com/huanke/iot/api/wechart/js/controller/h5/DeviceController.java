@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2018年04月08日 10:33
  **/
 @RequestMapping("/h5/api")
-@RestController
+//@RestController
 public class DeviceController {
 
     @Autowired

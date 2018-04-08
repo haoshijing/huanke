@@ -14,7 +14,6 @@ public class ObtainProductInfoService {
 
     public WechatDeviceVo obtainDeviceInfo(String productId){
 
-        wechartUtil.getAccessToken(false);
-
+            return null;
     }
 }

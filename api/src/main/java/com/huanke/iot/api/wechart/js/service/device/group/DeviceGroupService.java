@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @author haoshijing
  * @version 2018年04月08日 13:22
  **/
-@Repository
+//@Repository
 public class DeviceGroupService {
 
     @Autowired

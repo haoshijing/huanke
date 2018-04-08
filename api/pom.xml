@@ -46,6 +46,16 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.5</version>
         </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.10</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>api</finalName>
