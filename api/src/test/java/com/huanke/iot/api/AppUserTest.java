@@ -31,11 +31,10 @@ public class AppUserTest {
     }
 
     @Test
-    public void testQuery(){
-        AppUserPo appUserPo = new AppUserPo();
-        appUserPo.setOpenId("jshdjshdjshd");
-
-        Assert.assertTrue(appUserMapper.selectByOpenId("jshdjshdjshd") != null);
+    public void testQueryAndUpdate(){
+        AppUserPo appUserPo = appUserMapper.selectByOpenId("jshdjshdjshd");
+        appUserPo.setLastVisitTime(System.currentTimeMillis());
+        Assert.assertTrue( appUserMapper.updateById(appUserPo) > 0);
     }
 
 }

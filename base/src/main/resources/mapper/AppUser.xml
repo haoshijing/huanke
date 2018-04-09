@@ -40,6 +40,10 @@
             <if test = "headimgurl != null and headimgurl != ''">
                 headimgurl = #{headimgurl},
             </if>
+            <if test = "lastVisitTime != null">
+                lastVisitTime = #{lastVisitTime},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
         </set>
         where id = #{id}
     </update>
