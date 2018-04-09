@@ -24,4 +24,8 @@ public class DeviceGroupItemPo {
     private Integer userId;
 
     private Long createTime;
+
+    private Long lastUpdateTime;
+
+    private Integer status;
 }

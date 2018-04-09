@@ -27,6 +27,19 @@ lastUpdateTime bigint comment '最后修改时间',
 bindTime bigint comment '绑定和解绑时间'
 );
 
+drop table if  EXISTS  t_device_group_item;
+create table t_device_group_item
+(
+id int primary key auto_increment comment '设备主键id',
+userId varchar(200) comment '用户id' DEFAULT  '',
+deviceId varchar(200) comment '设备id'DEFAULT  '',
+groupId int comment '组id',
+status int comment '绑定状态',
+createTime bigint comment '添加时间',
+lastUpdateTime bigint comment '最后修改时间',
+bindTime bigint comment '绑定和解绑时间'
+);
+
 
 drop table if  EXISTS  t_product;
 create table t_product

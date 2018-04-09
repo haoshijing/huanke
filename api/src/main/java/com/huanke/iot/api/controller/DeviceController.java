@@ -1,4 +1,4 @@
-package com.huanke.iot.api;
+package com.huanke.iot.api.controller;
 
 import com.huanke.iot.api.service.device.basic.DeviceBindService;
 import com.huanke.iot.api.util.MessageUtil;

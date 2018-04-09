@@ -16,10 +16,7 @@ public class DeviceGroupPo {
      * 编组名称
      */
     private String groupName;
-    /**
-     * 用户的openId
-     */
-    private String openId;
+
     /**
      * 创建时间
      */

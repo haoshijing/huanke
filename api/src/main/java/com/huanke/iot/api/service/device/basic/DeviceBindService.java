@@ -7,6 +7,8 @@ import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.user.AppUserPo;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +19,7 @@ import java.util.Map;
  * @version 2018年04月09日 13:57
  **/
 @Repository
+@Slf4j
 public class DeviceBindService {
 
     @Autowired
@@ -33,27 +36,41 @@ public class DeviceBindService {
     public void handlerDeviceEvent(Map<String, String> requestMap, String event) {
         String openId = requestMap.get("OpenId");
         String deviceId = requestMap.get("DeviceID");
-        AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
-        if(appUserPo == null){
-            AppUserPo newUserPo = new AppUserPo();
-            newUserPo.setCreateTime(System.currentTimeMillis());
-            newUserPo.setOpenId(openId);
-            int insertRet = appUserMapper.insert(appUserPo);
-        }
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
-        if(devicePo != null){
-            devicePo.setBindTime(System.currentTimeMillis());
+        if (devicePo == null) {
+            log.warn("deviceId = {} not in db", deviceId);
+            return;
         }
+        AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
+        if (StringUtils.equals("bind", event))
+            if (appUserPo == null) {
+                AppUserPo newUserPo = new AppUserPo();
+                newUserPo.setCreateTime(System.currentTimeMillis());
+                newUserPo.setOpenId(openId);
+                appUserMapper.insert(appUserPo);
+            }
+        DevicePo uppdatePo = new DevicePo();
+        uppdatePo.setBindTime(System.currentTimeMillis());
+        uppdatePo.setId(devicePo.getId());
+        deviceMapper.updateById(uppdatePo);
 
         DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
         queryItemPo.setDeviceId(devicePo.getId());
         queryItemPo.setUserId(appUserPo.getId());
         Integer count = deviceGroupMapper.queryItemCount(queryItemPo);
-        if(count == 0){
+        if (count == 0) {
             DeviceGroupItemPo insertDeviceGroupItemPo = queryItemPo;
             insertDeviceGroupItemPo.setGroupId(0);
+            insertDeviceGroupItemPo.setStatus(1);
             insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
-            int insertGroupItemRet = deviceGroupMapper.insertGroupItem(Lists.newArrayList(insertDeviceGroupItemPo));
+            deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
+        } else if (StringUtils.equals("unbind", event)) {
+            if(appUserPo == null){
+                return;
+            }
+            Integer userId = appUserPo.getId();
+            Integer dId = devicePo.getId();
+            deviceGroupMapper.updateGroupItemStatus(dId,userId);
         }
     }
 }
