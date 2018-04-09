@@ -54,10 +54,4 @@ public class WechatConrtoller {
         log.info("ticket="+ticket);
         return new ApiResponse<>(ticket);
     }
-
-    @RequestMapping("/queryByMac")
-    public String queryDeviceByMac(String mac){
-        log.info("mac = {}",mac);
-        return "001";
-    }
 }

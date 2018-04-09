@@ -24,6 +24,9 @@ public class DevicePo {
     private Integer deviceTypeId;
     private Integer productId;
     private Integer projectId;
-    private Long insertTime;
+    private String deviceId;
+    private Long createTime;
     private Long lastUpdateTime;
+    private Integer bindStatus;
+    private Long bindTime;
 }

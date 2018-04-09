@@ -16,14 +16,15 @@ create table t_device
 id int primary key auto_increment comment '设备主键id',
 mac varchar(200) comment 'mac地址'DEFAULT  '',
 name varchar(200) comment '项目名称' DEFAULT  '',
+deviceId varchar(200) comment '微信生成的设备id'DEFAULT  '',
 deviceSn varchar(200) comment '设备序列号' DEFAULT  '',
 productId int comment '产品id',
 projectId int comment '项目id',
 deviceTypeId int comment '设备类型',
 isBind int comment '绑定状态1-初始化2-已绑定3-已解绑',
-insertTime bigint comment '添加时间',
+createTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间',
-bindTime bigint commnt '绑定和解绑时间'
+bindTime bigint comment '绑定和解绑时间'
 );
 
 

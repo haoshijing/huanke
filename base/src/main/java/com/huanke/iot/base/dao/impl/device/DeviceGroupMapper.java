@@ -20,4 +20,6 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
     int insertGroupItem(List<DeviceGroupItemPo> groupItemPoList);
 
     void bactchInsertGroupItem(List<DeviceGroupItemPo> deviceGroupItemPoList);
+
+    Integer queryItemCount(DeviceGroupItemPo queryItemPo);
 }

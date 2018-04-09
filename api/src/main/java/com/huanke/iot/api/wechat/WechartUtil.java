@@ -81,7 +81,6 @@ public class WechartUtil {
             return ticket;
         }
         String ticketResult = obtainRemoteTicket();
-
         log.info("ticket result = {}", ticketResult);
         JSONObject json = JSONObject.parseObject(ticketResult);
         int errorCode = json.getInteger("errcode");
@@ -122,5 +121,4 @@ public class WechartUtil {
             return "";
         }
     }
-
 }

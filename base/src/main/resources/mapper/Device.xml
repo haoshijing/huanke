@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.impl.device.DeviceMapper">
+
+    <sql id="tableName">
+        t_device
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" parameterType="com.huanke.iot.base.po.device.DevicePo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        mac,
+        deviceId,
+        createTime
+        )
+        VALUES (
+        #{mac},
+        #{deviceId},
+        #{createTime}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+</mapper>

@@ -21,5 +21,7 @@ public class DeviceGroupItemPo {
      */
     private Integer deviceId;
 
+    private Integer userId;
+
     private Long createTime;
 }
