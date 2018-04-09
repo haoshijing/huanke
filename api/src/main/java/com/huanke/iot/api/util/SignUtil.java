@@ -1,4 +1,4 @@
-package com.huanke.iot.api.wechart.js.util;
+package com.huanke.iot.api.util;
 
 /*
  * 微信公众平台(JAVA) SDK

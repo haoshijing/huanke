@@ -1,4 +1,4 @@
-package com.huanke.iot.api.wechart.js.wechat;
+package com.huanke.iot.api.wechat;
 
 import com.alibaba.fastjson.JSONObject;
 

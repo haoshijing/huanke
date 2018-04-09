@@ -1,8 +1,8 @@
-package com.huanke.iot.api.wechart.js.controller;
+package com.huanke.iot.api.controller;
 
-import com.huanke.iot.api.wechart.js.util.MessageUtil;
-import com.huanke.iot.api.wechart.js.util.SignUtil;
-import com.huanke.iot.api.wechart.js.wechat.req.TextMessage;
+import com.huanke.iot.api.util.MessageUtil;
+import com.huanke.iot.api.util.SignUtil;
+import com.huanke.iot.api.wechat.req.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;

@@ -1,7 +1,7 @@
-package com.huanke.iot.api.wechart.js.util;
+package com.huanke.iot.api.util;
 
-import com.huanke.iot.api.wechart.js.vo.WechatDeviceVo;
-import com.huanke.iot.api.wechart.js.wechat.WechartUtil;
+import com.huanke.iot.api.vo.WechatDeviceVo;
+import com.huanke.iot.api.wechat.WechartUtil;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

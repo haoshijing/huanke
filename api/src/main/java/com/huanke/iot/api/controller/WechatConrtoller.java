@@ -1,8 +1,8 @@
-package com.huanke.iot.api.wechart.js.controller;
+package com.huanke.iot.api.controller;
 
-import com.huanke.iot.api.wechart.js.JsApiConfig;
-import com.huanke.iot.api.wechart.js.util.Md5Util;
-import com.huanke.iot.api.wechart.js.wechat.WechartUtil;
+import com.huanke.iot.api.util.Md5Util;
+import com.huanke.iot.api.JsApiConfig;
+import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

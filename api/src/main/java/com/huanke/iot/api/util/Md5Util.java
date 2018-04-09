@@ -1,4 +1,4 @@
-package com.huanke.iot.api.wechart.js.util;
+package com.huanke.iot.api.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

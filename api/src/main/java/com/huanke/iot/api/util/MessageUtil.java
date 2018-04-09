@@ -1,7 +1,7 @@
-package com.huanke.iot.api.wechart.js.util;
+package com.huanke.iot.api.util;
 
 import com.google.common.collect.Maps;
-import com.huanke.iot.api.wechart.js.wechat.req.TextMessage;
+import com.huanke.iot.api.wechat.req.TextMessage;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.util.QuickWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;

@@ -7,6 +7,8 @@ public interface BaseMapper<T> {
 
     T selectById(Integer id);
 
+    int updateById(T bean);
+
     List<T> selectList(T queryBean, int limit , int offset);
 
     Integer selectCount(T queryBean);

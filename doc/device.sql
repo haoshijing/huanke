@@ -13,15 +13,17 @@ status int comment '账号状态'
 drop table if  EXISTS  t_device;
 create table t_device
 (
-id int primary key  comment '设备主键id',
+id int primary key auto_increment comment '设备主键id',
 mac varchar(200) comment 'mac地址'DEFAULT  '',
 name varchar(200) comment '项目名称' DEFAULT  '',
 deviceSn varchar(200) comment '设备序列号' DEFAULT  '',
 productId int comment '产品id',
 projectId int comment '项目id',
 deviceTypeId int comment '设备类型',
+isBind int comment '绑定状态1-初始化2-已绑定3-已解绑',
 insertTime bigint comment '添加时间',
-lastUpdateTime bigint comment '最后修改时间'
+lastUpdateTime bigint comment '最后修改时间',
+bindTime bigint commnt '绑定和解绑时间'
 );
 
 
@@ -43,7 +45,23 @@ insertTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
 
-drop table if not EXISTS  t_device_attribute;
+
+drop table  if EXISTS t_app_user;
+create table t_app_user(
+  id int primary key auto_increment comment '主键id',
+  openId varchar(100) comment 'openId',
+  sex int comment '性别',
+  province varchar(100) comment '省',
+  city	varchar(100) comment '城市',
+  nickname varchar(100) comment '昵称',
+  unionid varchar(100) comment 'unionId',
+  headimgurl varchar(200) comment '头像',
+  createTime bigint comment '创建时间',
+  lastUpdateTime bigint comment '最后修改时间',
+  lastVisitTime bigint comment '最后访问时间'
+);
+
+drop table  if  EXISTS  t_device_attribute;
 create table t_device_attribute(
 deviceId int comment '设备Id',
 attributeVal varchar(2048) comment '以json的方式记录'
@@ -57,12 +75,15 @@ create table t_device_notify(
   notifyTime bigint comment '上报时间'
 );
 
-
 drop table if not EXISTS  t_device_operlog;
 create table t_device_operlog(
   id int PRIMARY  key comment '主键id',
   deviceId int comment '设备id',
-  operDirective int comment ''
+  operDirective int comment '',
+  operValue int comment '操作值'
+  operFrom int comment '操作源1-用户,2-管理员',
+  operValue int comment '操作人的实体值',
+  createTime bigint comment '操作时间'
 );
 drop table if not EXISTS  t_device_exception;
 create table t_device_exception(

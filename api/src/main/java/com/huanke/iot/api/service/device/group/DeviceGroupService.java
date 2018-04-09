@@ -1,13 +1,12 @@
-package com.huanke.iot.api.wechart.js.service.device.group;
+package com.huanke.iot.api.service.device.group;
 
-import com.huanke.iot.api.wechart.js.controller.h5.group.DeviceNewGroupRequest;
+import com.huanke.iot.api.controller.h5.group.DeviceNewGroupRequest;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;

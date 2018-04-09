@@ -56,6 +56,19 @@
             <artifactId>xstream</artifactId>
             <version>1.4.10</version>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session</artifactId>
+            <version>1.3.2.RELEASE</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>1.5.3.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>api</finalName>
@@ -67,7 +80,7 @@
                     <jvmArguments>
                         -Xdebug -Xnoagent -Djava.compiler=NONE -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8011
                     </jvmArguments>
-                    <mainClass>com.huanke.iot.api.wechart.js.ApiApplicationStarter</mainClass>
+                    <mainClass>com.huanke.iot.api.ApiApplicationStarter</mainClass>
                 </configuration>
                 <executions>
                     <execution>

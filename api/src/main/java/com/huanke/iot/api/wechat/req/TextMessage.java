@@ -1,4 +1,4 @@
-package com.huanke.iot.api.wechart.js.wechat.req;
+package com.huanke.iot.api.wechat.req;
 
 import lombok.Getter;
 import lombok.Setter;

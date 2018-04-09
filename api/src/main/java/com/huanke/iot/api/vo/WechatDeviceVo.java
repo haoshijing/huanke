@@ -1,4 +1,4 @@
-package com.huanke.iot.api.wechart.js.vo;
+package com.huanke.iot.api.vo;
 
 import lombok.Data;
 
