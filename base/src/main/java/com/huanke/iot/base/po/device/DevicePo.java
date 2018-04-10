@@ -20,11 +20,19 @@ public class DevicePo {
     /**
      * 设备序列号
      */
-    private String deviceSn;
+    private String devicelicence;
     private Integer deviceTypeId;
     private Integer productId;
     private Integer projectId;
     private String deviceId;
+    /**
+     * 在线状态
+     */
+    private Integer onlineStatus;
+    /**
+     * 机器所在ip
+     */
+    private String ip;
     private Long createTime;
     private Long lastUpdateTime;
     private Integer bindStatus;

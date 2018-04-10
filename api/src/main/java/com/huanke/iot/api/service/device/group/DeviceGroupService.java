@@ -36,7 +36,7 @@ public class DeviceGroupService {
 
         List<DeviceGroupItemPo> deviceGroupItemPoList = deviceNewGroupRequest.getDeviceIds().stream().map(deviceKey->{
             DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
-            DevicePo devicePo = deviceMapper.selectByDeviceKey(deviceKey);
+            DevicePo devicePo = deviceMapper.selectByDeviceId(deviceKey);
             deviceGroupItemPo.setDeviceId(devicePo.getId());
             deviceGroupItemPo.setGroupId(deviceGroupId);
             deviceGroupItemPo.setCreateTime(System.currentTimeMillis());

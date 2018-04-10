@@ -28,7 +28,7 @@ public class DeviceBindService {
     @Autowired
     private DeviceMapper deviceMapper;
 
-    @Autowired
+    @Autowired(required = false)
     private DeviceGroupMapper deviceGroupMapper;
 
     // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6, Con

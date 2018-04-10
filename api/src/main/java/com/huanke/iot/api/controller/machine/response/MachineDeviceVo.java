@@ -10,5 +10,5 @@ import lombok.Data;
 public class MachineDeviceVo {
     private String mac;
     private String deviceId;
-    private String qrticket;
+    private String devicelicence;
 }

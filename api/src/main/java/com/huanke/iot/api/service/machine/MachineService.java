@@ -37,33 +37,37 @@ public class MachineService {
 
     public MachineDeviceVo obtainNewMachine(){
         DevicePo devicePo = new DevicePo();
-        String deviceId = obtainDeviceId();
+        JSONObject jsonObject = obtainDeviceJson();
         MachineDeviceVo machineDeviceVo = new MachineDeviceVo();
-        if(StringUtils.isNotEmpty(deviceId)){
+        if(jsonObject != null){
+            String deviceId = jsonObject.getString("deviceid");
+            String devicelicence = jsonObject.getString("devicelicence");
             String mac = UUID.randomUUID().toString().replace("-","");
             devicePo.setMac(mac);
             devicePo.setDeviceId(deviceId);
+            devicePo.setDevicelicence(devicelicence);
             devicePo.setCreateTime(System.currentTimeMillis());
             int insertRet = deviceMapper.insert(devicePo);
             if(insertRet > 0){
                 machineDeviceVo.setMac(mac);
                 machineDeviceVo.setDeviceId(deviceId);
+                machineDeviceVo.setDevicelicence(devicelicence);
                 return  machineDeviceVo;
             }
         }
         return null;
     }
 
-    private String obtainDeviceId() {
+    private JSONObject obtainDeviceJson() {
         JSONObject deviceInfo = obtainDeviceInfo();
         if(deviceInfo == null){
             wechartUtil.getAccessToken(true);
             deviceInfo = obtainDeviceInfo();
         }
         if(deviceInfo != null){
-            return deviceInfo.getString("deviceid");
+            return deviceInfo;
         }
-        return  "";
+        return   null;
     }
 
     private JSONObject obtainDeviceInfo() {

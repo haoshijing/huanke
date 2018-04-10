@@ -1,13 +1,9 @@
 package com.huanke.iot.api.controller.h5;
 
-import com.huanke.iot.api.service.device.group.DeviceGroupService;
-import com.huanke.iot.api.controller.h5.group.DeviceNewGroupRequest;
+import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
+import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.base.constant.RetCode;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -18,15 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 //@RestController
 public class DeviceController {
 
-    @Autowired
-    private DeviceGroupService deviceGroupService;
-    @RequestMapping("/addNewDeviceGroup")
-    public ApiResponse<Integer> addNewDeviceGroup(@RequestBody DeviceNewGroupRequest deviceNewGroupRequest){
-        if(StringUtils.isEmpty(deviceNewGroupRequest.getGroupName()) || CollectionUtils.isEmpty(deviceNewGroupRequest.getDeviceIds())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"");
-        }
-        Integer groupId = deviceGroupService.addNewDeviceGroup(deviceNewGroupRequest);
-        return new ApiResponse<>(groupId);
+    @RequestMapping("/obatinMyDevice")
+    public ApiResponse<DeviceListVo> obatinMyDevice(){
+        return new ApiResponse<>(new DeviceListVo());
+    }
+
+    @RequestMapping("/queryDetailByDeviceId/{deviceId}")
+    public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(@PathVariable String deviceId){
+        return new ApiResponse<>(new DeviceDetailVo());
+    }
+
+    @RequestMapping("/editDevice")
+    public ApiResponse<Boolean> editDevice(String deviceId,String deviceName){
+        return new ApiResponse<>(true);
     }
 
 }

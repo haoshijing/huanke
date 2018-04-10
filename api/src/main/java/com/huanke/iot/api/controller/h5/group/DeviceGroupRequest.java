@@ -9,8 +9,17 @@ import java.util.List;
  * @version 2018年04月08日 13:18
  **/
 @Data
-public class DeviceNewGroupRequest {
-   private String groupName;
+public class DeviceGroupRequest {
+   /**
+    * 组号
+    */
+   private Integer groupId;
+   /**
+    * 设备列表
+    */
    private List<String> deviceIds;
-   private String openId;
+   /**
+    * 1-加组，2-删组
+    */
+   private Integer operType;
 }
