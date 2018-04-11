@@ -6,6 +6,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -37,6 +38,8 @@ public class MqttService {
     public void start(ApplicationReadyEvent  event){
         if(mqttClient != null){
             try {
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
                 mqttClient.connect();
                 MqttMessageListener listener = new MqttMessageListener();
                 mqttClient.subscribe("/up/alarm/+",listener);

@@ -4,6 +4,8 @@ import io.netty.channel.DefaultEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -34,7 +36,9 @@ public class MqttSendService {
     public void start(ApplicationReadyEvent event){
         if(mqttClient != null){
             try {
-                mqttClient.connect();
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
+                mqttClient.connect(connOpts);
             }catch (Exception e){
                 log.error("",e);
             }
@@ -44,6 +48,7 @@ public class MqttSendService {
     public void sendMessage(String topic,String message){
         if(mqttClient != null){
             try {
+                MqttDeliveryToken mqttDeliveryToken = new MqttDeliveryToken();
                 mqttClient.publish(topic, new MqttMessage(message.getBytes()));
             }catch (Exception e){
                 log.error("",e);
