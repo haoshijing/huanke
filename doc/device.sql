@@ -58,13 +58,65 @@ name varchar(200) comment '项目名称' DEFAULT  '',
 insertTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
-drop table  if EXISTS t_device_alarm;
-create table t_device_alarm(
+drop table  if EXISTS t_device_data_alarm;
+create table t_device_data_alarm(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
   indexVal int comment '设备下标',
   type	int comment '报警类型',
   value int comment '报警值',
+  createTime bigint comment '创建时间'
+);
+drop table  if EXISTS t_device_data_sensor;
+create table t_device_data_sensor(
+  id int primary key auto_increment comment '主键id',
+  deviceId int comment '设备id',
+  indexVal int comment '设备下标',
+  pm2_5	int comment 'pm值',
+  co2 int comment '二氧化碳值',
+  humidity int comment '湿度',
+  temperature int comment '温度',
+  tyoc int comment ' 甲醛值',
+  hcho int comment 'tyoc',
+  createTime bigint comment '创建时间'
+);
+
+drop table  if EXISTS t_device_data_location;
+create table t_device_data_location(
+  id int primary key auto_increment comment '主键id',
+  deviceId int comment '设备id',
+  wifi int comment 'wifi',
+  grps	int comment 'grps',
+  gps int comment 'gps',
+  blutooth int comment 'blutooth',
+  extFields int comment '',
+  createTime bigint comment '创建时间'
+);
+
+drop table  if EXISTS t_device_data_timer;
+create table t_device_data_timer(
+  id int primary key auto_increment comment '主键id',
+  deviceId int comment '设备id',
+  timingOn int comment '开机',
+  timingOff	int comment '关机',
+  hepa varchar(2048) comment '滤网',
+  acticarbon varchar(2048) comment '活性炭',
+  createTime bigint comment '创建时间'
+);
+
+
+drop table  if EXISTS t_device_data_control;
+create table t_device_data_control(
+  id int primary key auto_increment comment '主键id',
+  deviceId int comment '设备id',
+  mode int comment '模式',
+  devicelock	int comment '设备锁',
+  childlock int comment '童锁',
+  anion int comment '负离子',
+  uvl int comment '灭菌灯',
+  heater int comment '加热器',
+  fan varchar(2047) comment '风机',
+  valve varchar(2047) comment '循环阀',
   createTime bigint comment '创建时间'
 );
 
@@ -83,19 +135,7 @@ create table t_app_user(
   lastVisitTime bigint comment '最后访问时间'
 );
 
-drop table  if  EXISTS  t_device_attribute;
-create table t_device_attribute(
-deviceId int comment '设备Id',
-attributeVal varchar(2048) comment '以json的方式记录'
-)
 
-drop table if not EXISTS  t_device_notify;
-create table t_device_notify(
-  id int primary key comment '主键id',
-  deviceId int comment '设备id',
-  notifyData varchar(4000) comment '上报数据内容'
-  notifyTime bigint comment '上报时间'
-);
 
 drop table if not EXISTS  t_device_operlog;
 create table t_device_operlog(

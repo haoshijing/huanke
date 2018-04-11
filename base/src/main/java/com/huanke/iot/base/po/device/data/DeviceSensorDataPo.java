@@ -30,4 +30,5 @@ public class DeviceSensorDataPo {
      * 甲醛化学因子数
      */
     private Integer hcho;
+    private Long createTime;
 }

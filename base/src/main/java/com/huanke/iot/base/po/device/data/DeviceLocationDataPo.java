@@ -11,4 +11,5 @@ public class DeviceLocationDataPo {
     private String gps;
     private String blutooth;
     private String extFields;
+    private Long createTime;
 }
