@@ -12,7 +12,7 @@ public class DeviceAlarmPo{
     private Integer index;
     private Integer type;
     private Integer value;
-    private Integer dealStatus;
+    private Integer dealStatus = 1;
     private Long dealTime;
     private Long createTime;
 }

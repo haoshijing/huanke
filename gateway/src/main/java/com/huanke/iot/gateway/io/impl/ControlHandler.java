@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 public class ControlHandler extends AbstractHandler {
 
-    private DeviceCo
     @Data
     private static class SwitchDataItem{
         private Integer mode;

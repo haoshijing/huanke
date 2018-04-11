@@ -65,6 +65,8 @@ create table t_device_data_alarm(
   indexVal int comment '设备下标',
   type	int comment '报警类型',
   value int comment '报警值',
+  dealStatus int comment '处理状态',
+  dealTime int comment '处理时间',
   createTime bigint comment '创建时间'
 );
 drop table  if EXISTS t_device_data_sensor;
