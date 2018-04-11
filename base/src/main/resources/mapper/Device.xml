@@ -29,4 +29,12 @@
         FROM <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
+
+    <update id="updateByDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
+
+      update <include refid="tableName"/>
+        set deviceName = #{deviceName} where
+        deviceId = #{deviceId}
+    </update>
+
 </mapper>

@@ -25,6 +25,7 @@ public class DevicePo {
     private Integer productId;
     private Integer projectId;
     private String deviceId;
+    private String deviceName;
     /**
      * 在线状态
      */

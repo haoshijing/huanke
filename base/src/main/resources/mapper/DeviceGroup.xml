@@ -7,14 +7,18 @@
         t_device_group
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
         INSERT INTO <include refid="tableName"/>
         (
         groupName,
+        userId,
+        status,
         createTime
         )
         VALUES (
         #{groupName},
+        #{userId},
+        #{status},
         #{createTime}
         )
     </insert>
@@ -30,13 +34,14 @@
         )
         values
         (
-            #{userId},
-            #{deviceId},
-            #{groupId},
-            #{status},
-            #{createTime}
+          #{userId},
+          #{deviceId},
+          #{groupId},
+          #{status},
+          #{createTime}
       )
     </insert>
+
 
     <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo" resultType="java.lang.Integer">
         select count(1) from t_device_group_item
@@ -55,4 +60,30 @@
         FROM <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
+    <select id="queryGroupCount" resultType="java.lang.Integer">
+        select count(1) FROM <include refid="tableName"/>
+        where userId = #{userId}
+        and groupName = #{groupName}
+    </select>
+
+    <update id="updateGroupStatus">
+        update <include refid="tableName"/>
+        set status =2 where  userId = #{userId}
+        and groupId = #{groupId}
+    </update>
+
+    <update id="updateDeviceGroupItem">
+        update t_device_group_item
+        set groupId = #{newGroupId}
+
+        where userId = #{userId} and groupId =
+        #{currentGroupId}
+    </update>
+    <update id="updateDeviceGroupId">
+        update t_device_group_item
+        set groupId = #{newGroupId}
+
+        where userId = #{userId} and deviceId =
+        #{deviceId}
+    </update>
 </mapper>

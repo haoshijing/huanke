@@ -16,6 +16,7 @@ public class DeviceGroupPo {
      * 编组名称
      */
     private String groupName;
+    private Integer userId;
 
     /**
      * 创建时间
@@ -25,4 +26,9 @@ public class DeviceGroupPo {
      * 最后修改时间
      */
     private Long lastUpdateTime;
+
+    /*
+    组的状态1-正常2-已删除
+     */
+    private Integer status;
 }

@@ -18,8 +18,4 @@ public class DeviceGroupRequest {
     * 设备列表
     */
    private List<String> deviceIds;
-   /**
-    * 1-加组，2-删组
-    */
-   private Integer operType;
 }

@@ -162,9 +162,22 @@ drop table if EXISTS t_device_group;
 create table t_device_group(
 id int primary key auto_increment comment '主键id',
 groupName varchar(100) comment '设备组名称',
-deviceIds varchar(1024) comment '设备idList',
+userId int comment '用户id',
 createTime bigint comment '创建时间',
-lastUpdateTime bigint comment '最后修改时间'
+lastUpdateTime bigint comment '最后修改时间',
+status int comment '状态1-正常,2-已删除'
+);
+
+
+drop table if EXISTS t_device_group_item;
+create table t_device_group_item(
+id int primary key auto_increment comment '主键id',
+deviceId int comment '设备id',
+userId int comment '用户id',
+groupId int comment '设备组id',
+createTime bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间',
+status int comment '状态1-绑定,2-已解绑'
 );
 
 mac deviceTypeId productKey projectKey ps

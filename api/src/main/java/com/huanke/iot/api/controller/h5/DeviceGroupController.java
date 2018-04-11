@@ -1,10 +1,13 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
+import com.huanke.iot.api.service.device.group.DeviceGroupService;
 import com.huanke.iot.base.api.ApiResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author haoshijing
@@ -12,19 +15,26 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequestMapping("/h5/api")
-public class DeviceGroupController {
+public class DeviceGroupController extends BaseController{
 
+    DeviceGroupService deviceGroupService;
     @RequestMapping("/createGroup")
-    public ApiResponse<Integer> createDeviceGroup(String groupName){
-        return new ApiResponse<>(1);
+    public ApiResponse<Integer> createDeviceGroup(HttpServletRequest request,String groupName){
+        Integer userId = getCurrentUserId(request);
+        Integer groupId = deviceGroupService.createDeviceGroup(userId,groupName);
+        return new ApiResponse<>(groupId);
     }
 
     @RequestMapping("/deleteGroup")
-    public ApiResponse<Boolean> delDeviceGroup(Integer groupId){
-        return new ApiResponse<>(true);
+    public ApiResponse<Boolean> delDeviceGroup(HttpServletRequest request,Integer groupId){
+        Integer userId = getCurrentUserId(request);
+        Boolean ret  = deviceGroupService.deleteGroup(userId,groupId);
+        return new ApiResponse<>(ret);
     }
-    @RequestMapping("/updateGroupDevice")
-    public ApiResponse<Boolean> updateGroupDevice(@RequestBody DeviceGroupRequest deviceGroupRequest){
-        return new ApiResponse<>(true);
+    @RequestMapping("/updateDeviceGroup")
+    public ApiResponse<Boolean> updateDeviceGroup(HttpServletRequest request,@RequestBody DeviceGroupRequest deviceGroupRequest){
+        Integer userId = getCurrentUserId(request);
+        Boolean ret = deviceGroupService.updateDeviceGroup(userId,deviceGroupRequest);
+        return new ApiResponse<>(ret);
     }
 }
