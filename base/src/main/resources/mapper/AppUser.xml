@@ -11,10 +11,22 @@
         INSERT INTO <include refid="tableName"/>
         (
         openId,
+        sex,
+        province,
+        city,
+        nickname,
+        headimgurl,
+        unionid,
         createTime
         )
         VALUES (
         #{openId},
+        #{sex},
+        #{province},
+        #{city},
+        #{nickname},
+        #{headimgurl},
+        #{unionid},
         #{createTime}
         )
     </insert>

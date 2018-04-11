@@ -17,7 +17,10 @@ public class DeviceListVo {
     public static class DeviceGroupData{
         private Integer groupId;
         private String groupName;
-        private List<DeviceItemPo> deviceItemPos;
+        private List<DeviceItemPo> deviceItemPos = Lists.newArrayList();
+        public void addItemPo(DeviceItemPo deviceItemPo){
+            deviceItemPos.add(deviceItemPo);
+        }
     }
 
     @Data

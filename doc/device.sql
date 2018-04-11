@@ -58,7 +58,15 @@ name varchar(200) comment '项目名称' DEFAULT  '',
 insertTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
-
+drop table  if EXISTS t_device_alarm;
+create table t_device_alarm(
+  id int primary key auto_increment comment '主键id',
+  deviceId int comment '设备id',
+  indexVal int comment '设备下标',
+  type	int comment '报警类型',
+  value int comment '报警值',
+  createTime bigint comment '创建时间'
+);
 
 drop table  if EXISTS t_app_user;
 create table t_app_user(
