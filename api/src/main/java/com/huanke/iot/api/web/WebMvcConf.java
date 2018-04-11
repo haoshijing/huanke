@@ -20,7 +20,7 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册监控拦截器
         registry.addInterceptor(userInterceptor)
-                .addPathPatterns("/**")
+                .addPathPatterns("/h5/**")
                 .excludePathPatterns("/h5/api/user/auth");
     }
 
