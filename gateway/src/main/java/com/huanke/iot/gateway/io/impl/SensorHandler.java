@@ -7,6 +7,7 @@ import com.huanke.iot.base.po.device.data.DeviceAlarmPo;
 import com.huanke.iot.base.po.device.data.DeviceSensorDataPo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
+@Slf4j
 public class SensorHandler  extends AbstractHandler {
 
     @Autowired
@@ -35,7 +37,7 @@ public class SensorHandler  extends AbstractHandler {
         /**
          * 甲醛值
          */
-        private Integer tyoc;
+        private Integer tvoc;
         /**
          * 甲醛化学因子数
          */
@@ -44,6 +46,8 @@ public class SensorHandler  extends AbstractHandler {
 
     @Data
     public static class SensorListMessage{
+        private Integer msg_id;
+        private String msg_type;
         private List<SensorHandler.SensorMessage> sensor;
     }
 
@@ -59,13 +63,14 @@ public class SensorHandler  extends AbstractHandler {
             List<SensorHandler.SensorMessage> sensorMessages = sensorListMessage.getSensor();
             List<DeviceSensorDataPo> sensorDataPos =  sensorMessages.stream().map(sensorMessage -> {
                 DeviceSensorDataPo deviceSensorDataPo = new DeviceSensorDataPo();
-                BeanUtils.copyProperties(deviceSensorDataPo,sensorMessage);
+                BeanUtils.copyProperties(sensorMessage,deviceSensorDataPo);
                 deviceSensorDataPo.setDeviceId(getDeviceIdFromTopic(topic));
                 return deviceSensorDataPo;
             }).collect(Collectors.toList());
             sensorDataPos.forEach(senorPo-> {
                 senorPo.setCreateTime(System.currentTimeMillis());
-                deviceSensorMapper.insert(senorPo);
+                int ret = deviceSensorMapper.insert(senorPo);
+                log.info("ret = {}",ret);
             });
         }
     }

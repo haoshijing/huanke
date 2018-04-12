@@ -78,7 +78,7 @@ create table t_device_data_sensor(
   co2 int comment '二氧化碳值',
   humidity int comment '湿度',
   temperature int comment '温度',
-  tyoc int comment ' 甲醛值',
+  tvoc int comment ' 甲醛值',
   hcho int comment 'tyoc',
   createTime bigint comment '创建时间'
 );

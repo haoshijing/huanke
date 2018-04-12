@@ -6,8 +6,6 @@ import lombok.Data;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -23,6 +21,12 @@ public class MockSendMessageController {
         private Integer value;
     }
 
+
+    @Data
+    public class SwitchData{
+        SwitchDataItem key;
+    }
+
     @Data
     public static class AlarmListMessage{
         private List<AlarmMessage> alarm;
@@ -30,6 +34,7 @@ public class MockSendMessageController {
 
     @Data
     private static class SwitchDataItem{
+        private String requestId;
         private Integer mode;
         private Integer devicelock;
         private Integer childlock;
@@ -51,9 +56,24 @@ public class MockSendMessageController {
 
     @RequestMapping("/sendControl")
     @ResponseBody
-    public String sendControl(@RequestBody SwitchDataItem switchDataItem){
+    public String sendControl(){
+        SwitchData switchDataItem = new SwitchData();
+        SwitchDataItem item = new SwitchDataItem();
+        item.setMode(1);
+        item.setAnion(1);
+
+        Item item1 = new Item();
+        item1.setIndex(0);
+        item1.setValue(2);
+        Item item12 = new Item();
+        item12.setIndex(1);
+        item12.setValue(3);
+
+        item.setFan(Lists.newArrayList(item1,item12));
+        item.setHeater(1);
+        switchDataItem.setKey(item);
         String topic = "/down/control/1";
-        mqttSendService.sendMessage("/up/alarm/1",JSON.toJSONString(switchDataItem));
+        mqttSendService.sendMessage(topic,JSON.toJSONString(switchDataItem));
         return "ok";
     }
 

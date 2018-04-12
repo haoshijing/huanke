@@ -16,7 +16,7 @@
         co2,
         humidity,
         temperature,
-        tyoc,
+        tvoc,
         hcho,
         createTime
         )
@@ -27,7 +27,7 @@
         #{co2},
         #{humidity},
         #{temperature},
-        #{tyoc},
+        #{tvoc},
         #{hcho},
         #{createTime}
         )

@@ -25,7 +25,7 @@ public class DeviceSensorDataPo {
     /**
      * 甲醛值
      */
-    private Integer tyoc;
+    private Integer tvoc;
     /**
      * 甲醛化学因子数
      */
