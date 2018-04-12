@@ -58,6 +58,8 @@ public class DeviceListVo {
         deviceItemPo.setIcon("http:xxxxxx");
         deviceItemPo.setDeviceName("测试设备1");
         deviceItemPo.setDeviceId("xxxxxx");
+        deviceItemPo.setOnlineStatus(1);
+        deviceItemPo.setPm("20");
         deviceGroupData.setDeviceItemPos(Lists.newArrayList(deviceItemPo));
         deviceListVo.setGroupDataList(Lists.newArrayList(deviceGroupData));
         System.out.println(JSON.toJSONString(deviceListVo));
