@@ -3,10 +3,12 @@ package com.huanke.iot.api.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
+@EnableWebMvc
 public  class WebMvcConf extends WebMvcConfigurerAdapter {
 
     @Autowired
@@ -28,7 +30,7 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedHeaders("*/*")
+                .allowedHeaders("*")
                 .allowedMethods("*")
                 .maxAge(120);
     }

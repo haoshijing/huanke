@@ -3,14 +3,12 @@ package com.huanke.iot.api.controller;
 import com.huanke.iot.api.service.device.basic.DeviceBindService;
 import com.huanke.iot.api.util.MessageUtil;
 import com.huanke.iot.api.util.SignUtil;
-import com.huanke.iot.api.wechat.req.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -22,7 +20,7 @@ import java.util.Map;
 @Controller
 @Slf4j
 @RequestMapping("/device/callback")
-public class DeviceController {
+public class DeviceCallbackController {
     @Autowired
     DeviceBindService deviceBindService;
     @ResponseBody

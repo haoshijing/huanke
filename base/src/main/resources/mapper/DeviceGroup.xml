@@ -42,6 +42,13 @@
       )
     </insert>
 
+    <select id="queryGroupItems" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo" resultType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
+        select * from t_device_group_item
+        where status = 1
+        and userId = #{userId}
+
+    </select>
+
 
     <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo" resultType="java.lang.Integer">
         select count(1) from t_device_group_item
