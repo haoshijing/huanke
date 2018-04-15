@@ -1,3 +1,4 @@
+CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 drop TABLE IF EXISTS t_admin;
 create table t_admin
 (
@@ -74,7 +75,7 @@ create table t_device_data_sensor(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
   indexVal int comment '设备下标',
-  pm2_5	int comment 'pm值',
+  pm2_5 int comment 'pm值',
   co2 int comment '二氧化碳值',
   humidity int comment '湿度',
   temperature int comment '温度',
@@ -88,7 +89,7 @@ create table t_device_data_location(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
   wifi int comment 'wifi',
-  grps	int comment 'grps',
+  grps int comment 'grps',
   gps int comment 'gps',
   blutooth int comment 'blutooth',
   extFields int comment '',
@@ -100,7 +101,7 @@ create table t_device_data_timer(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
   timingOn int comment '开机',
-  timingOff	int comment '关机',
+  timingOff int comment '关机',
   hepa varchar(2048) comment '滤网',
   acticarbon varchar(2048) comment '活性炭',
   createTime bigint comment '创建时间'
@@ -112,7 +113,7 @@ create table t_device_data_control(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
   mode int comment '模式',
-  devicelock	int comment '设备锁',
+  devicelock int comment '设备锁',
   childlock int comment '童锁',
   anion int comment '负离子',
   uvl int comment '灭菌灯',
@@ -128,7 +129,7 @@ create table t_app_user(
   openId varchar(100) comment 'openId',
   sex int comment '性别',
   province varchar(100) comment '省',
-  city	varchar(100) comment '城市',
+  city varchar(100) comment '城市',
   nickname varchar(100) comment '昵称',
   unionid varchar(100) comment 'unionId',
   headimgurl varchar(200) comment '头像',
@@ -149,14 +150,7 @@ create table t_device_operlog(
   operValue int comment '操作人的实体值',
   createTime bigint comment '操作时间'
 );
-drop table if not EXISTS  t_device_exception;
-create table t_device_exception(
-  id int primary key comment '主键id',
-  deviceId int comment '设备id',
-  exceptionType int comment '异常类型',
-  exceptionData varchar(4000) comment '上报数据内容'
-  receiveTime bigint comment '上报时间'
-);
+
 
 drop table if not EXISTS  t_device_operlog;
 create table t_device_operlog(

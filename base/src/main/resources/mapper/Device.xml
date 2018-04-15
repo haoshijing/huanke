@@ -30,6 +30,20 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE mac = #{mac} limit 1
+    </select>
+
+    <select id="selectByDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE deviceId = #{deviceId} limit 1
+    </select>
+
     <update id="updateByDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
 
       update <include refid="tableName"/>
@@ -37,4 +51,9 @@
         deviceId = #{deviceId}
     </update>
 
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
+        update <include refid="tableName"/>
+        set isBind = #{isBind} where
+        id = #{id}
+    </update>
 </mapper>

@@ -7,6 +7,12 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     DevicePo selectByDeviceId(String deviceId);
 
+    /**
+     * 通过mac查找相应的
+     * @param mac
+     * @return
+     */
 
+    DevicePo selectByMac(String mac);
     int updateByDeviceId(DevicePo devicePo);
 }

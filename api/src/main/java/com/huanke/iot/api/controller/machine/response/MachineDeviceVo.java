@@ -8,7 +8,7 @@ import lombok.Data;
  **/
 @Data
 public class MachineDeviceVo {
-    private String mac;
-    private String deviceId;
+    private Integer deviceId;
+    private String wechatDeviceId;
     private String devicelicence;
 }

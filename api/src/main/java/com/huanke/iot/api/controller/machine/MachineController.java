@@ -19,11 +19,17 @@ public class MachineController {
     @Autowired
     private  MachineService machineService;
 
+    @RequestMapping("/createNew")
+    public ApiResponse<Integer> createNew(String mac){
+        return new ApiResponse<>(machineService.createNew(mac));
+    }
+
     @RequestMapping("/obtain")
-    public ApiResponse<MachineDeviceVo> obtainMachine(){
-        MachineDeviceVo machineDeviceVo = machineService.obtainNewMachine();
+    public ApiResponse<MachineDeviceVo> obtainMachine(String mac){
+        MachineDeviceVo machineDeviceVo = machineService.queryByMac(mac);
+        ApiResponse apiResponse = new ApiResponse(machineDeviceVo);
         if(machineDeviceVo == null){
-            return  new ApiResponse<>(RetCode.ERROR,"创建设备错误");
+            apiResponse.setMsg("没有查询对应的设备");
         }
         return new ApiResponse<>(machineDeviceVo);
     }

@@ -34,7 +34,7 @@ public class DeviceBindService {
     // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6, Con
     // tent=, CreateTime=1523200569, Event=unbind, ToUserName=gh_7f3ba47c70a3, FromUserName=okOTjwpDwxJR666hVWnj_L_jp87w, MsgType=device_event, SessionID=0, OpenID=okOTjwpDwxJR666hVWnj_L_jp87w}
     public void handlerDeviceEvent(Map<String, String> requestMap, String event) {
-        String openId = requestMap.get("OpenId");
+        String openId = requestMap.get("OpenID");
         String deviceId = requestMap.get("DeviceID");
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
         if (devicePo == null) {
@@ -52,6 +52,7 @@ public class DeviceBindService {
         DevicePo uppdatePo = new DevicePo();
         uppdatePo.setBindTime(System.currentTimeMillis());
         uppdatePo.setId(devicePo.getId());
+        uppdatePo.setBindStatus(2);
         deviceMapper.updateById(uppdatePo);
 
         DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
@@ -65,6 +66,10 @@ public class DeviceBindService {
             insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
             deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
         } else if (StringUtils.equals("unbind", event)) {
+            DevicePo updatePo = new DevicePo();
+            updatePo.setBindStatus(3);
+            updatePo.setId(devicePo.getId());
+            deviceMapper.updateById(updatePo);
             if(appUserPo == null){
                 return;
             }

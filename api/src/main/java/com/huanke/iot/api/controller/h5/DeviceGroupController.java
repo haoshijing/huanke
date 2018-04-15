@@ -35,6 +35,6 @@ public class DeviceGroupController extends BaseController{
     public ApiResponse<Boolean> updateDeviceGroup(HttpServletRequest request,@RequestBody DeviceGroupRequest deviceGroupRequest){
         Integer userId = getCurrentUserId(request);
         Boolean ret = deviceGroupService.updateDeviceGroup(userId,deviceGroupRequest);
-        return new ApiResponse<>(ret);
+        return new ApiResponse<>(true);
     }
 }

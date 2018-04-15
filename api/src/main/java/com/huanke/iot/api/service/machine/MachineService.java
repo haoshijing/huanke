@@ -35,27 +35,39 @@ public class MachineService {
     @Autowired
     private WechartUtil wechartUtil;
 
-    public MachineDeviceVo obtainNewMachine(){
+    public MachineDeviceVo queryByMac(String mac) {
+        DevicePo devicePo = deviceMapper.selectByMac(mac);
+        if(devicePo != null){
+            MachineDeviceVo machineDeviceVo = new MachineDeviceVo();
+            machineDeviceVo.setDeviceId(devicePo.getId());
+            machineDeviceVo.setDevicelicence(devicePo.getDevicelicence());
+            machineDeviceVo.setWechatDeviceId(devicePo.getDeviceId());
+            return machineDeviceVo;
+        }
+        return null;
+    }
+
+    public Integer createNew(String mac){
         DevicePo devicePo = new DevicePo();
         JSONObject jsonObject = obtainDeviceJson();
-        MachineDeviceVo machineDeviceVo = new MachineDeviceVo();
         if(jsonObject != null){
             String deviceId = jsonObject.getString("deviceid");
             String devicelicence = jsonObject.getString("devicelicence");
-            String mac = UUID.randomUUID().toString().replace("-","");
             devicePo.setMac(mac);
             devicePo.setDeviceId(deviceId);
             devicePo.setDevicelicence(devicelicence);
             devicePo.setCreateTime(System.currentTimeMillis());
+
+            DevicePo queryDevicePo = deviceMapper.selectByMac(mac);
+            if(queryDevicePo != null){
+                return 1;
+            }
             int insertRet = deviceMapper.insert(devicePo);
             if(insertRet > 0){
-                machineDeviceVo.setMac(mac);
-                machineDeviceVo.setDeviceId(deviceId);
-                machineDeviceVo.setDevicelicence(devicelicence);
-                return  machineDeviceVo;
+                return 0;
             }
         }
-        return null;
+        return 2;
     }
 
     private JSONObject obtainDeviceJson() {
@@ -102,4 +114,6 @@ public class MachineService {
         }
         return null;
     }
+
+
 }
