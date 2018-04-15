@@ -14,6 +14,9 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
     @Autowired
     private UserInterceptor userInterceptor;
 
+    @Autowired
+    private ProcessInterceptor processInterceptor;
+
     /**
      * 请求拦截器
      * @param registry
@@ -21,9 +24,12 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册监控拦截器
+        registry.addInterceptor(processInterceptor)
+                .addPathPatterns("/**");
         registry.addInterceptor(userInterceptor)
                 .addPathPatterns("/h5/**")
                 .excludePathPatterns("/h5/api/user/auth");
+
     }
 
     @Override
