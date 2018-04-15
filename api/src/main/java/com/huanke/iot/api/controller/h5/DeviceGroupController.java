@@ -1,5 +1,6 @@
 package com.huanke.iot.api.controller.h5;
 
+import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
 import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
 import com.huanke.iot.api.service.device.group.DeviceGroupService;
 import com.huanke.iot.base.api.ApiResponse;
@@ -21,9 +22,9 @@ public class DeviceGroupController extends BaseController{
     @Autowired
     DeviceGroupService deviceGroupService;
     @RequestMapping("/createGroup")
-    public ApiResponse<Integer> createDeviceGroup(HttpServletRequest request,String groupName){
+    public ApiResponse<Integer> createDeviceGroup(HttpServletRequest request, @RequestBody DeviceGroupNewRequest deviceGroupNewRequest){
         Integer userId = getCurrentUserId(request);
-        Integer groupId = deviceGroupService.createDeviceGroup(userId,groupName);
+        Integer groupId = deviceGroupService.createDeviceGroup(userId,deviceGroupNewRequest);
         return new ApiResponse<>(groupId);
     }
 

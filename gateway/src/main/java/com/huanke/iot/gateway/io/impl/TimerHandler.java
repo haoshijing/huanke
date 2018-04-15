@@ -44,7 +44,6 @@ public class TimerHandler extends AbstractHandler {
         deviceTimerPo.setTimingOn(timerItem.getTiming_on());
         deviceTimerPo.setTimingOff(timerItem.getTiming_off());
         deviceTimerPo.setHepa(JSON.toJSONString(timerItem.getHepa()));
-
         deviceTimerMapper.insert(deviceTimerPo);
     }
 }

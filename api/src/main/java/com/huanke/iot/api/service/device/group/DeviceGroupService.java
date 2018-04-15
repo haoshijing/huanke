@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.group;
 
+import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
 import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
@@ -45,7 +46,8 @@ public class DeviceGroupService {
         return deviceGroupId;
     }
 
-    public Integer createDeviceGroup(Integer userId, String groupName) {
+    public Integer createDeviceGroup(Integer userId, DeviceGroupNewRequest newRequest) {
+        String groupName = newRequest.getGroupName();
         Integer groupCount = deviceGroupMapper.queryGroupCount(userId, groupName);
         if (groupCount == null || groupCount == 0) {
             DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
@@ -54,7 +56,12 @@ public class DeviceGroupService {
             deviceGroupPo.setGroupName(groupName);
             deviceGroupPo.setStatus(1);
             deviceGroupMapper.insert(deviceGroupPo);
-            return deviceGroupPo.getId();
+            Integer groupId =  deviceGroupPo.getId();
+            DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
+            deviceGroupRequest.setDeviceIds(newRequest.getDeviceIds());
+            deviceGroupRequest.setGroupId(groupId);
+            updateDeviceGroup(userId,deviceGroupRequest);
+            return 1;
         }
         return 0;
     }

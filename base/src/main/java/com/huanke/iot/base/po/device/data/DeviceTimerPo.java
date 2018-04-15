@@ -10,4 +10,5 @@ public class DeviceTimerPo {
     private Integer timingOff;
     private String hepa;
     private String acticarbon;
+    private Long creaetTime;
 }

@@ -50,9 +50,12 @@
     </select>
 
 
-    <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo" resultType="java.lang.Integer">
+    <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo" resultType="java.lang.Integer">
         select count(1) from t_device_group_item
         where userId = #{userId} and deviceId = #{deviceId}
+        <if test = "status != null">
+             and status = #{status}
+        </if>
     </select>
 
     <update id="updateGroupItemStatus">

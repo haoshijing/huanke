@@ -8,4 +8,17 @@ import lombok.Data;
  **/
 @Data
 public class DeviceDetailVo {
+    private Integer childlock;
+    private Integer pm;
+    private Integer temperature;
+    private Integer humidity;
+    private Integer co2;
+    /**
+     * 甲醛值
+     */
+    private Integer tvoc;
+    /**
+     * 甲醛化学因子数
+     */
+    private Integer hcho;
 }

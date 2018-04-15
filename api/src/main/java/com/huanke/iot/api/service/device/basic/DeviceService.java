@@ -66,7 +66,7 @@ public class DeviceService {
             deviceItemPo.setDeviceId(devicePo.getDeviceId());
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());
             deviceItemPo.setOnlineStatus(1);
-            deviceItemPo.setDeviceName(devicePo.getDeviceName() == null ? "默认名称" : devicePo.getDeviceName());
+            deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
             if (deviceTypePo != null) {
                 deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                 deviceItemPo.setIcon(deviceTypePo.getIcon());
@@ -81,10 +81,22 @@ public class DeviceService {
         return deviceListVo;
     }
 
-    public boolean editDevice(String deviceId, String deviceName) {
-        DevicePo devicePo = new DevicePo();
-        devicePo.setDeviceId(deviceId);
-        devicePo.setDeviceName(deviceName);
-        return deviceMapper.updateByDeviceId(devicePo) > 0;
+    public boolean editDevice(Integer userId,String deviceId, String deviceName) {
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        if(devicePo == null){
+            return false;
+        }
+        DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
+        deviceGroupItemPo.setUserId(userId);
+        deviceGroupItemPo.setStatus(1);
+        deviceGroupItemPo.setDeviceId(devicePo.getId());
+        Integer count = deviceGroupMapper.queryItemCount(deviceGroupItemPo);
+        if(count == null || count == 0){
+            return  false;
+        }
+        DevicePo updatePo = new DevicePo();
+        updatePo.setDeviceId(deviceId);
+        updatePo.setName(deviceName);
+        return deviceMapper.updateByDeviceId(updatePo) > 0;
     }
 }

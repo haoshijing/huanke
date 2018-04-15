@@ -42,11 +42,7 @@ public class MqttService {
                 connOpts.setCleanSession(true);
                 mqttClient.connect();
                 MqttMessageListener listener = new MqttMessageListener();
-                mqttClient.subscribe("/up/alarm/+",listener);
-                mqttClient.subscribe("/up/location/+",listener);
-                mqttClient.subscribe("/up/sensor/+",listener);
-                mqttClient.subscribe("/up/control/+",listener);
-                mqttClient.subscribe("/up/timer/+",listener);
+                mqttClient.subscribe("/up/#",listener);
             }catch (Exception e){
                 log.error("",e);
             }
