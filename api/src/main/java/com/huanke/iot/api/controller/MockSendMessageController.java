@@ -25,7 +25,7 @@ public class MockSendMessageController {
 
 
     @Data
-    public class SwitchData{
+    public static class SwitchData{
         SwitchDataItem key;
     }
 
@@ -105,23 +105,4 @@ public class MockSendMessageController {
         return "111";
     }
 
-    public static void main(String[] args) {
-        SwitchData switchDataItem = new MockSendMessageController(). new SwitchData();
-        SwitchDataItem item = new SwitchDataItem();
-        item.setMode(1);
-        item.setAnion(1);
-
-        Item item1 = new Item();
-        item1.setIndex(0);
-        item1.setValue(2);
-        Item item12 = new Item();
-        item12.setIndex(1);
-        item12.setValue(3);
-
-        item.setFan(Lists.newArrayList(item1,item12));
-        item.setHeater(1);
-        switchDataItem.setKey(item);
-
-        System.out.println(JSON.toJSONString(switchDataItem));
-    }
 }

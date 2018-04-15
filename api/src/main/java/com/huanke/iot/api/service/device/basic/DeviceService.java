@@ -4,9 +4,12 @@ import com.google.common.collect.Maps;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.impl.device.data.DeviceSensorMapper;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.DeviceType;
+import com.huanke.iot.base.po.device.data.DeviceSensorDataPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +24,10 @@ public class DeviceService {
 
     @Autowired
     DeviceMapper deviceMapper;
+
+    @Autowired
+    DeviceSensorMapper deviceSensorMapper;
+
 
     public DeviceListVo obtainMyDevice(Integer userId) {
         DeviceListVo deviceListVo = new DeviceListVo();
@@ -38,8 +45,19 @@ public class DeviceService {
                         deviceGroupData.setGroupId(groupId);
                         deviceGroupData.setGroupName(deviceGroupPo.getGroupName());
                     }
-                    DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
+
                 }
+            DeviceSensorDataPo deviceSensorDataPo = deviceSensorMapper.querySensor(deviceGroupItemPo.getDeviceId())
+            DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
+            if(deviceSensorDataPo != null) {
+                deviceItemPo.setPm(String.valueOf(deviceSensorDataPo.getPm2_5()));
+            }
+            DevicePo devicePo = deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
+
+            DeviceType
+            deviceItemPo.setOnlineStatus(1);
+            deviceItemPo.setDeviceName(devicePo.getDeviceName() == null ? "默认名称":devicePo.getDeviceName());
+            deviceItemPo.setDeviceTypeName();
 
         });
         return  deviceListVo;

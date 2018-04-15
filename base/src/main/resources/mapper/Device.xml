@@ -7,7 +7,7 @@
         t_device
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" parameterType="com.huanke.iot.base.po.device.DevicePo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DevicePo">
         INSERT INTO <include refid="tableName"/>
         (
         mac,
@@ -53,7 +53,7 @@
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
         update <include refid="tableName"/>
-        set isBind = #{isBind} where
+        set bindStatus = #{bindStatus} where
         id = #{id}
     </update>
 </mapper>

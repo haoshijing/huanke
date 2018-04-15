@@ -33,4 +33,9 @@
         )
     </insert>
 
+    <select id="querySensor" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.data.DeviceSensorDataPo">
+        select * from <include refid="tableName"/>
+        where deviceId = #{deviceId} order by createTime limit 1
+    </select>
+
 </mapper>

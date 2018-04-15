@@ -22,11 +22,23 @@ devicelicence varchar(200) comment '设备序列号' DEFAULT  '',
 productId int comment '产品id',
 projectId int comment '项目id',
 deviceTypeId int comment '设备类型',
-isBind int comment '绑定状态1-初始化2-已绑定3-已解绑',
+bindStatus int comment '绑定状态1-初始化2-已绑定3-已解绑',
 createTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间',
 bindTime bigint comment '绑定和解绑时间'
 );
+
+drop table if  EXISTS  t_device_type;
+create table t_device_type
+(
+id int primary key auto_increment comment '类型主键',
+name varchar(200) comment '类型名称' DEFAULT  '',
+icon varchar(200) comment '类型图标'DEFAULT  '',
+funcList varchar(200) comment '功能列表',
+createTime bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
+
 
 drop table if  EXISTS  t_device_group_item;
 create table t_device_group_item

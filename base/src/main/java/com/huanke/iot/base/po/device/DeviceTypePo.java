@@ -7,8 +7,10 @@ import lombok.Data;
  * @version 2018年03月27日 09:23
  **/
 @Data
-public class DeviceType {
+public class DeviceTypePo {
     private Integer id;
-    private String deviceTypeName;
+    private Long createTime;
+    private Long lastUpdateTime;
+    private String name;
     private String funcList;
 }

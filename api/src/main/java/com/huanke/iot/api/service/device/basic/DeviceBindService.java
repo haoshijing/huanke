@@ -41,41 +41,47 @@ public class DeviceBindService {
             log.warn("deviceId = {} not in db", deviceId);
             return;
         }
+        Integer userId = null;
         AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
         if (StringUtils.equals("bind", event))
             if (appUserPo == null) {
                 AppUserPo newUserPo = new AppUserPo();
                 newUserPo.setCreateTime(System.currentTimeMillis());
                 newUserPo.setOpenId(openId);
-                appUserMapper.insert(appUserPo);
+                appUserMapper.insert(newUserPo);
+                userId = newUserPo.getId();
             }
         DevicePo uppdatePo = new DevicePo();
         uppdatePo.setBindTime(System.currentTimeMillis());
         uppdatePo.setId(devicePo.getId());
         uppdatePo.setBindStatus(2);
         deviceMapper.updateById(uppdatePo);
-
-        DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
-        queryItemPo.setDeviceId(devicePo.getId());
-        queryItemPo.setUserId(appUserPo.getId());
-        Integer count = deviceGroupMapper.queryItemCount(queryItemPo);
-        if (count == 0) {
-            DeviceGroupItemPo insertDeviceGroupItemPo = queryItemPo;
-            insertDeviceGroupItemPo.setGroupId(0);
-            insertDeviceGroupItemPo.setStatus(1);
-            insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
-            deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
-        } else if (StringUtils.equals("unbind", event)) {
-            DevicePo updatePo = new DevicePo();
-            updatePo.setBindStatus(3);
-            updatePo.setId(devicePo.getId());
-            deviceMapper.updateById(updatePo);
-            if(appUserPo == null){
-                return;
+        try {
+            DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
+            queryItemPo.setDeviceId(devicePo.getId());
+            queryItemPo.setUserId(userId);
+            Integer count = deviceGroupMapper.queryItemCount(queryItemPo);
+            if (count == 0) {
+                DeviceGroupItemPo insertDeviceGroupItemPo = queryItemPo;
+                insertDeviceGroupItemPo.setGroupId(0);
+                insertDeviceGroupItemPo.setStatus(1);
+                insertDeviceGroupItemPo.setUserId(userId);
+                insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
+                deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
+            } else if (StringUtils.equals("unbind", event)) {
+                DevicePo updatePo = new DevicePo();
+                updatePo.setBindStatus(3);
+                updatePo.setId(devicePo.getId());
+                deviceMapper.updateById(updatePo);
+                if (appUserPo == null) {
+                    return;
+                }
+                userId = appUserPo.getId();
+                Integer dId = devicePo.getId();
+                deviceGroupMapper.updateGroupItemStatus(dId, userId);
             }
-            Integer userId = appUserPo.getId();
-            Integer dId = devicePo.getId();
-            deviceGroupMapper.updateGroupItemStatus(dId,userId);
+        } catch (Exception e) {
+            log.error("", e);
         }
     }
 }
