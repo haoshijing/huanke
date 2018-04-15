@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,6 +22,9 @@ public class SensorHandler  extends AbstractHandler {
 
     @Autowired
     private DeviceSensorMapper deviceSensorMapper;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     @Data
     public static class SensorMessage{
         private Integer index;

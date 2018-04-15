@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class DeviceSensorDataPo {
     private Integer id;
+    private String sensorKey;
+    private String sensorValue;
     private Integer deviceId;
     private Integer index;
     private Integer pm2_5;
