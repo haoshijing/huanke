@@ -13,4 +13,5 @@ public class DeviceTypePo {
     private Long lastUpdateTime;
     private String name;
     private String funcList;
+    private String icon;
 }

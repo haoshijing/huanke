@@ -189,12 +189,7 @@ create table t_project(
   lastUpdateTime bigint comment '最后修改时间'
 );
 
-create table if not EXISTS t_device_type(
-id int primary key comment '主键id',
-deviceTypeName varchar(200) comment '设备类型名称',
-functionList varchar(200) comment '功能列表'
-insertTime bigint comment '写入时间'
-)
+
 
 drop table if  EXISTS  t_user;
 create table t_user(
