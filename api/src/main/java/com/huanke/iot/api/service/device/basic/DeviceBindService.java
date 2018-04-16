@@ -1,10 +1,10 @@
 package com.huanke.iot.api.service.device.basic;
 
-import com.google.common.collect.Lists;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
+import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class DeviceBindService {
         }
         Integer userId = null;
         AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
-        if (StringUtils.equals("bind", event))
+        if (StringUtils.equals("bind", event)) {
             if (appUserPo == null) {
                 AppUserPo newUserPo = new AppUserPo();
                 newUserPo.setCreateTime(System.currentTimeMillis());
@@ -51,37 +51,47 @@ public class DeviceBindService {
                 appUserMapper.insert(newUserPo);
                 userId = newUserPo.getId();
             }
-        DevicePo uppdatePo = new DevicePo();
-        uppdatePo.setBindTime(System.currentTimeMillis());
-        uppdatePo.setId(devicePo.getId());
-        uppdatePo.setBindStatus(2);
-        deviceMapper.updateById(uppdatePo);
-        try {
+            DevicePo updateDevicePo = new DevicePo();
+            updateDevicePo.setBindTime(System.currentTimeMillis());
+            updateDevicePo.setId(devicePo.getId());
+            updateDevicePo.setBindStatus(2);
+            deviceMapper.updateById(updateDevicePo);
+            DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
+            deviceGroupPo.setGroupName("默认组");
+            deviceGroupPo.setUserId(userId);
+            Integer defaultGroupId = 0;
+            Integer defaultGroupCount = deviceGroupMapper.queryGroupCount(userId, "默认组");
+            if (defaultGroupCount == 0) {
+                DeviceGroupPo defaultGroup = new DeviceGroupPo();
+                defaultGroup.setGroupName("默认组");
+                defaultGroup.setUserId(userId);
+                defaultGroup.setCreateTime(System.currentTimeMillis());
+                deviceGroupMapper.insert(defaultGroup);
+                defaultGroupId = defaultGroup.getId();
+            }
             DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
             queryItemPo.setDeviceId(devicePo.getId());
             queryItemPo.setUserId(userId);
             Integer count = deviceGroupMapper.queryItemCount(queryItemPo);
             if (count == 0) {
                 DeviceGroupItemPo insertDeviceGroupItemPo = queryItemPo;
-                insertDeviceGroupItemPo.setGroupId(0);
+                insertDeviceGroupItemPo.setGroupId(defaultGroupId);
                 insertDeviceGroupItemPo.setStatus(1);
                 insertDeviceGroupItemPo.setUserId(userId);
                 insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
                 deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
-            } else if (StringUtils.equals("unbind", event)) {
-                DevicePo updatePo = new DevicePo();
-                updatePo.setBindStatus(3);
-                updatePo.setId(devicePo.getId());
-                deviceMapper.updateById(updatePo);
-                if (appUserPo == null) {
-                    return;
-                }
-                userId = appUserPo.getId();
-                Integer dId = devicePo.getId();
-                deviceGroupMapper.updateGroupItemStatus(dId, userId);
             }
-        } catch (Exception e) {
-            log.error("", e);
+        } else if (StringUtils.equals("unbind", event)) {
+            if (appUserPo == null) {
+                return;
+            }
+            DevicePo updatePo = new DevicePo();
+            updatePo.setBindStatus(3);
+            updatePo.setId(devicePo.getId());
+            deviceMapper.updateById(updatePo);
+            userId = appUserPo.getId();
+            Integer dId = devicePo.getId();
+            deviceGroupMapper.updateGroupItemStatus(dId, userId);
         }
     }
 }

@@ -9,6 +9,7 @@ import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,25 +27,6 @@ public class DeviceGroupService {
     @Autowired
     DeviceMapper deviceMapper;
 
-    public Integer addNewDeviceGroup(DeviceGroupRequest deviceNewGroupRequest) {
-        DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
-        deviceGroupPo.setCreateTime(System.currentTimeMillis());
-        deviceGroupPo.setLastUpdateTime(System.currentTimeMillis());
-        deviceGroupMapper.insert(deviceGroupPo);
-
-        final Integer deviceGroupId = deviceGroupPo.getId();
-
-        List<DeviceGroupItemPo> deviceGroupItemPoList = deviceNewGroupRequest.getDeviceIds().stream().map(deviceKey -> {
-            DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
-            DevicePo devicePo = deviceMapper.selectByDeviceId(deviceKey);
-            deviceGroupItemPo.setDeviceId(devicePo.getId());
-            deviceGroupItemPo.setGroupId(deviceGroupId);
-            deviceGroupItemPo.setCreateTime(System.currentTimeMillis());
-            return deviceGroupItemPo;
-        }).collect(Collectors.toList());
-
-        return deviceGroupId;
-    }
 
     public Integer createDeviceGroup(Integer userId, DeviceGroupNewRequest newRequest) {
         String groupName = newRequest.getGroupName();
@@ -57,10 +39,12 @@ public class DeviceGroupService {
             deviceGroupPo.setStatus(1);
             deviceGroupMapper.insert(deviceGroupPo);
             Integer groupId =  deviceGroupPo.getId();
-            DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
-            deviceGroupRequest.setDeviceIds(newRequest.getDeviceIds());
-            deviceGroupRequest.setGroupId(groupId);
-            updateDeviceGroup(userId,deviceGroupRequest);
+            if(CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
+                DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
+                deviceGroupRequest.setDeviceIds(newRequest.getDeviceIds());
+                deviceGroupRequest.setGroupId(groupId);
+                updateDeviceGroup(userId, deviceGroupRequest);
+            }
             return 1;
         }
         return 0;

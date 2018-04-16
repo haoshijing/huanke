@@ -23,6 +23,22 @@
         )
     </insert>
 
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
+        select * from <include refid="tableName"/>
+        <where>
+            <if test = "param.userId != null and param.userId != 0">
+                AND userId = #{param.userId},
+            </if>
+            <if test = "param.status != null">
+                AND status = #{param.status} ,
+            </if>
+            <if test = "param.groupName != null">
+                and groupName = #{param.groupName},
+            </if>
+
+        </where>
+        limit #{limit} ,#{offset}
+    </select>
     <insert id="insertGroupItem" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
         INSERT INTO t_device_group_item
         (

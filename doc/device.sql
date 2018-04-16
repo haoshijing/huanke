@@ -190,7 +190,6 @@ create table t_project(
 );
 
 
-
 drop table if  EXISTS  t_user;
 create table t_user(
 id int primary key auto_increment comment '主键id',
@@ -219,7 +218,6 @@ lastUpdateTime bigint comment '最后修改时间',
 status int comment '状态1-正常,2-已删除'
 );
 
-
 drop table if EXISTS t_device_group_item;
 create table t_device_group_item(
 id int primary key auto_increment comment '主键id',
@@ -231,5 +229,14 @@ lastUpdateTime bigint comment '最后修改时间',
 status int comment '状态1-绑定,2-已解绑'
 );
 
-mac deviceTypeId productKey projectKey ps
+drop table if EXISTS t_device_func;
+create table t_device_func(
+id int primary key auto_increment comment '主键id',
+name varchar(512) comment '功能类型',
+valueRange varchar(512) comment '值的范围',
+valueType varchar(20) comment '值的类型',
+createTime bigint comment '创建时间',
+) comment '设备功能表';
+
+
 

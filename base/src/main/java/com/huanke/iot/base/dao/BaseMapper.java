@@ -1,5 +1,7 @@
 package com.huanke.iot.base.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 public interface BaseMapper<T> {
@@ -9,7 +11,7 @@ public interface BaseMapper<T> {
 
     int updateById(T bean);
 
-    List<T> selectList(T queryBean, int limit , int offset);
+    List<T> selectList(@Param("param") T queryBean,@Param("limit") int limit ,@Param("offset") int offset);
 
-    Integer selectCount(T queryBean);
+    Integer selectCount(@Param("param") T queryBean);
 }
