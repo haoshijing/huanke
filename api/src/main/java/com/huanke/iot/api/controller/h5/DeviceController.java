@@ -42,4 +42,10 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(ret);
     }
 
+
+    @RequestMapping("/sendFunc/")
+    public ApiResponse<Boolean> sendFunc(String deviceId,String value){
+        return new ApiResponse<>(true);
+    }
+
 }
