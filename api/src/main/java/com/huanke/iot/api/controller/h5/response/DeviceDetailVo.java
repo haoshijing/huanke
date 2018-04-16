@@ -43,5 +43,7 @@ public class DeviceDetailVo {
          * 当前值
          */
         private String currentValue;
+
+        private Integer type;
     }
 }
