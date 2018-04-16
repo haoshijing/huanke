@@ -86,13 +86,8 @@ drop table  if EXISTS t_device_data_sensor;
 create table t_device_data_sensor(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
-  indexVal int comment '设备下标',
-  pm2_5 int comment 'pm值',
-  co2 int comment '二氧化碳值',
-  humidity int comment '湿度',
-  temperature int comment '温度',
-  tvoc int comment ' 甲醛值',
-  hcho int comment 'tyoc',
+  sensorType int comment '传感器数据类型',
+  sensorValue varchar comment '传感器数值',
   createTime bigint comment '创建时间'
 );
 

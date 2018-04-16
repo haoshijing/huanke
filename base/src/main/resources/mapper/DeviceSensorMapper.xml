@@ -10,16 +10,18 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.data.DeviceSensorPo">
         INSERT INTO <include refid="tableName"/>
         (
-        sensorKey,
+        sensorType,
         sensorValue,
         deviceId,
         createTime
         )
         VALUES (
-        #{sensorKey},
+        #{sensorType},
         #{sensorValue},
         #{deviceId},
         #{createTime}
         )
     </insert>
+
+    <select
 </mapper>

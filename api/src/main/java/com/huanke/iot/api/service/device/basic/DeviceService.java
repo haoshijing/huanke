@@ -1,22 +1,18 @@
 package com.huanke.iot.api.service.device.basic;
 
-import com.google.common.collect.Maps;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
-import com.huanke.iot.base.dao.impl.device.data.DeviceSensorMapper;
+import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTypePo;
-import com.huanke.iot.base.po.device.data.DeviceSensorDataPo;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -29,7 +25,7 @@ public class DeviceService {
     DeviceMapper deviceMapper;
 
     @Autowired
-    DeviceSensorMapper deviceSensorMapper;
+    DeviceSensorDataMapper deviceSensorDataMapper;
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
@@ -51,13 +47,12 @@ public class DeviceService {
                     DeviceGroupItemPo queryDeviceGroupItem = new DeviceGroupItemPo();
                     queryDeviceGroupItem.setUserId(userId);
                     queryDeviceGroupItem.setStatus(1);
+                    queryDeviceGroupItem.setGroupId(deviceGroupData.getGroupId());
                     List<DeviceGroupItemPo> itemPos = deviceGroupMapper.queryGroupItems(queryDeviceGroupItem);
                     List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().map(deviceGroupItemPo -> {
-                        DeviceSensorDataPo deviceSensorDataPo = deviceSensorMapper.querySensor(deviceGroupItemPo.getDeviceId());
+
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
-                        if (deviceSensorDataPo != null) {
-                            deviceItemPo.setPm(String.valueOf(deviceSensorDataPo.getPm2_5()));
-                        }
+
                         DevicePo devicePo = deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getDeviceId());
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());

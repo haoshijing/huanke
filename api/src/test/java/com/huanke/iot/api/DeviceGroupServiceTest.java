@@ -14,9 +14,6 @@ public class DeviceGroupServiceTest extends BaseTest {
 
     @Test
     public void testInsertGroup(){
-        Integer groupId = deviceGroupService.createDeviceGroup(1011,"测试设备组");
-        Assert.assertTrue(groupId > 0);
-        groupId = deviceGroupService.createDeviceGroup(1011,"测试设备组");
-        Assert.assertTrue(groupId == 0);
+
     }
 }

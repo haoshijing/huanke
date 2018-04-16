@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class DeviceSensorPo {
     private Integer id;
-    private String sensorKey;
+    private Integer sensorType;
     private String sensorValue;
     private Integer deviceId;
     private Long createTime;

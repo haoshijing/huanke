@@ -39,7 +39,7 @@ public class DeviceGroupService {
             deviceGroupPo.setStatus(1);
             deviceGroupMapper.insert(deviceGroupPo);
             Integer groupId =  deviceGroupPo.getId();
-            if(CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
+            if(!CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
                 DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
                 deviceGroupRequest.setDeviceIds(newRequest.getDeviceIds());
                 deviceGroupRequest.setGroupId(groupId);
