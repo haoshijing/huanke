@@ -13,5 +13,5 @@ import java.util.List;
 public interface DeviceOperLogMapper extends BaseMapper<DeviceOperLogPo> {
     List<DeviceOperLogPo> queryLogList(@Param("deviceId") Integer deviceId, @Param("limit") Integer limit, @Param("offset") Integer offset);
 
-    int updateByRequestId(DeviceOperLogPo deviceOperLogPo);
+    Integer updateByRequestId(DeviceOperLogPo deviceOperLogPo);
 }
