@@ -19,4 +19,8 @@ public class AppUserPo {
     private Long createTime;
     private Long lastUpdateTime;
     private Long lastVisitTime;
+    /**
+     * 绑定的安卓客户端地址
+     */
+    private String androidMac;
 }

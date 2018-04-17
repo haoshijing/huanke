@@ -8,6 +8,7 @@ import com.huanke.iot.base.constant.RetCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,12 +26,15 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Value("${appId}")
+    private String appId;
+
 
     @RequestMapping("/user/auth")
     public ApiResponse<String> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String code = request.getParameter("code");
         if(StringUtils.isEmpty(code)){
-            response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxabd86641604d7b49&redirect_uri=http%3A%2F%2Fhuanke.bcard.vip%2Fapi%2Fh5%2Fapi%2Fuser%2Fauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+            response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri=http%3A%2F%2Fhuanke.bcard.vip%2Fapi%2Fh5%2Fapi%2Fuser%2Fauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
             return null ;
         }
         JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);

@@ -145,6 +145,7 @@ create table t_app_user(
   lastVisitTime bigint comment '最后访问时间'
 );
 
+alter table t_app_user add column androidMac varchar (255) comment '安卓mac地址';
 
 
 drop table if not EXISTS  t_device_operlog;

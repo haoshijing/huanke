@@ -9,4 +9,8 @@ import com.huanke.iot.base.po.user.AppUserPo;
  **/
 public interface AppUserMapper extends BaseMapper<AppUserPo>{
      AppUserPo selectByOpenId(String openId);
+
+     int updateAndroidMac(AppUserPo appUserPo);
+
+     AppUserPo selectByMac(String androidMac);
 }

@@ -69,6 +69,20 @@
         limit 1
     </select>
 
+    <update id = "updateAndroidMac" parameterType="com.huanke.iot.base.po.user.AppUserPo">
+        update <include refid="tableName"/> set
+        androidMac = #{androidMac}
+        where openId = #{openId}
+    </update>
+
+    <select id="selectByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.user.AppUserPo">
+        SELECT
+        *
+        FROM <include refid="tableName"/>
+        WHERE androidMac = #{androidMac}
+        limit 1
+    </select>
+
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.security.user.UserPo">
         select
         *
