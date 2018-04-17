@@ -159,12 +159,16 @@ create table t_device_operlog(
   createTime bigint comment '操作时间'
 );
 
-
-drop table if not EXISTS  t_device_operlog;
+drop table if  EXISTS  t_device_operlog;
 create table t_device_operlog(
-  id int PRIMARY  key comment '主键id',
+  id int PRIMARY  key auto_increment comment '主键id',
   deviceId int comment '设备id',
-  operDirective int comment ''
+  funcId int comment '',
+  funcValue varchar(255) comment '',
+  requestId varchar(33) comment '请求id',
+  dealRet int comment '处理结果',
+  responseTime bigint comment '响应时间',
+   createTime bigint comment '操作时间'
 );
 
 drop table if not EXISTS  t_product;

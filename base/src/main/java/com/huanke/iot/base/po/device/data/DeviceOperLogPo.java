@@ -11,10 +11,10 @@ import lombok.Data;
 public class DeviceOperLogPo {
     private Integer id;
     private Integer deviceId;
-    private Integer operType;
+    private Integer funcId;
     private String requestId;
-    private Integer operValue;
+    private String funcValue;
     private Long createTime;
-    private Long responeTime;
+    private Long responseTime;
     private Integer dealRet;
 }

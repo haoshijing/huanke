@@ -4,23 +4,22 @@
 <mapper namespace="com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper">
 
     <sql id="tableName">
-        t_device_oper_log
+        t_device_operlog
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" parameterType="com.huanke.iot.base.po.device.data.DeviceOperLogPo">
         INSERT INTO <include refid="tableName"/>
         (
         deviceId,
-        operType,
-        operValue,
+        funcId,
+        funcValue,
         requestId,
         createTime
         )
         VALUE (
         #{deviceId},
-        #{operType},
-        #{operType},
-        #{operValue},
+        #{funcId},
+        #{funcValue},
         #{requestId},
         #{createTime}
         )
@@ -33,7 +32,7 @@
     </select>
 
     <!-- 根据信息筛选返回数据 -->
-    <select id="updateByRequestId" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo">
+    <select id="updateByRequestId"  parameterType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" resultType="java.lang.Integer" >
         update
          <include refid="tableName"/>
          set dealRet = #{dealRet} , responseTime = #{responseTime}
