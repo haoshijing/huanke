@@ -27,7 +27,7 @@ public class DeviceDetailVo {
     /**
      * 功能列表集合
      */
-    private List<DeviceFuncVo> deviceFuncVoList;
+    private List<List<DeviceListVo>> deviceFuncVoList;
 
     @Data
     public static class DeviceFuncVo{
@@ -44,6 +44,15 @@ public class DeviceDetailVo {
          */
         private String currentValue;
 
-        private Integer type;
+        /**
+         * 功能类型2-开关 3-定时
+         */
+        private Integer funcType;
+        /**
+         * 范围 0,1
+         */
+        private String range;
+
+        private String funcTypeName;
     }
 }

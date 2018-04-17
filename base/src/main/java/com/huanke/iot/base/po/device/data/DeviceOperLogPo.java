@@ -16,5 +16,6 @@ public class DeviceOperLogPo {
     private String funcValue;
     private Long createTime;
     private Long responseTime;
+    private String retMsg;
     private Integer dealRet;
 }

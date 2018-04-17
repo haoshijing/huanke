@@ -1,58 +1,55 @@
 package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.base.dao.impl.device.data.DeviceControlMapper;
 import com.huanke.iot.base.po.device.data.DeviceControlData;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public class ControlHandler extends AbstractHandler {
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private DeviceControlMapper deviceControlMapper;
     @Data
-    private static class SwitchDataItem{
-        private Integer mode;
-        private Integer devicelock;
-        private Integer childlock;
-        private Integer anion;
-        private Integer uvl;
-        private Integer heater;
-        private List<Item> fan;
-        private List<Item>  valve;
-    }
-    @Data
-    private static class Item{
-        private Integer index;
-        private Integer value;
+    public static class FuncItemMessage{
+        private Integer type;
+        private String value;
     }
 
-    @Override
+    @Data
+    public static class FuncListMessage{
+        private Integer msg_id;
+        private String msg_type;
+        private List<ControlHandler.FuncItemMessage> datas;
+    }
+
     protected String getTopicType() {
         return "control";
     }
 
     @Override
     public void doHandler(String topic, byte[] payloads) {
+
         String message = new String(payloads);
-        SwitchDataItem switchDataItem = JSON.parseObject(message,SwitchDataItem.class);
-        DeviceControlData deviceControlData = new DeviceControlData();
-        deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
-        deviceControlData.setChildlock(switchDataItem.getChildlock());
-        deviceControlData.setAnion(switchDataItem.getAnion());
-        if(switchDataItem.getFan() != null) {
-            deviceControlData.setFan(JSON.toJSONString(switchDataItem.getFan()));
-        }
-        if(switchDataItem.getValve() != null) {
-            deviceControlData.setValve(JSON.toJSONString(switchDataItem.getValve()));
-        }
-        deviceControlData.setMode(switchDataItem.getMode());
-        deviceControlData.setHeater(switchDataItem.getHeater());
-        deviceControlData.setDevicelock(switchDataItem.getDevicelock());
-        deviceControlData.setUvl(switchDataItem.getUvl());
-        deviceControlData.setCreateTime(System.currentTimeMillis());
+        ControlHandler.FuncListMessage funcListMessage = JSON.parseObject(new String(payloads),ControlHandler.FuncListMessage.class);
+        Integer deviceId = getDeviceIdFromTopic(topic);
+        funcListMessage.getDatas().forEach(funcItemMessage -> {
+            DeviceControlData deviceControlData = new DeviceControlData();
+            deviceControlData.setFuncId(funcItemMessage.getType());
+            deviceControlData.setFuncValue(funcItemMessage.getValue());
+            deviceControlData.setCreateTime(System.currentTimeMillis());
+            deviceControlMapper.insert(deviceControlData);
+            stringRedisTemplate.opsForHash().put("control."+deviceId,funcItemMessage.getType(),funcItemMessage.getValue());
+        });
+
 
     }
 }

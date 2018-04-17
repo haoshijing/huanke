@@ -3,6 +3,7 @@ package com.huanke.iot.api.controller.h5;
 import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
+import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.base.api.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private DeviceService deviceService;
+
+    @Autowired
+    private DeviceDataService deviceDataService;
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice(HttpServletRequest httpServletRequest){
         Integer userId = getCurrentUserId(httpServletRequest);
@@ -32,7 +36,8 @@ public class DeviceController extends BaseController {
 
     @RequestMapping("/queryDetailByDeviceId/{deviceId}")
     public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(@PathVariable String deviceId){
-        return new ApiResponse<>(new DeviceDetailVo());
+        DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
+        return new ApiResponse<>(deviceDetailVo);
     }
 
     @RequestMapping("/editDevice")
@@ -43,9 +48,10 @@ public class DeviceController extends BaseController {
     }
 
 
-    @RequestMapping("/sendFunc/")
-    public ApiResponse<Boolean> sendFunc(String deviceId,String value){
-        return new ApiResponse<>(true);
+    @RequestMapping("/sendFunc")
+    public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo){
+        String requestId = deviceDataService.sendFunc(deviceFuncVo);
+        return new ApiResponse<>(requestId);
     }
 
 }

@@ -9,13 +9,7 @@ import lombok.Data;
 public class DeviceControlData {
     private Integer id;
     private Integer deviceId;
-    private Integer mode;
-    private Integer devicelock;
-    private Integer childlock;
-    private Integer anion;
-    private Integer uvl;
-    private Integer heater;
-    private String fan;
-    private String valve;
+    private Integer funcId;
+    private String funcValue;
     private Long createTime;
 }

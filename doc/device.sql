@@ -103,30 +103,12 @@ create table t_device_data_location(
   createTime bigint comment '创建时间'
 );
 
-drop table  if EXISTS t_device_data_timer;
-create table t_device_data_timer(
-  id int primary key auto_increment comment '主键id',
-  deviceId int comment '设备id',
-  timingOn int comment '开机',
-  timingOff int comment '关机',
-  hepa varchar(2048) comment '滤网',
-  acticarbon varchar(2048) comment '活性炭',
-  createTime bigint comment '创建时间'
-);
-
-
 drop table  if EXISTS t_device_data_control;
 create table t_device_data_control(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
-  mode int comment '模式',
-  devicelock int comment '设备锁',
-  childlock int comment '童锁',
-  anion int comment '负离子',
-  uvl int comment '灭菌灯',
-  heater int comment '加热器',
-  fan varchar(2047) comment '风机',
-  valve varchar(2047) comment '循环阀',
+  funcId int comment '功能id',
+  funcValue varchar comment '功能当前值',
   createTime bigint comment '创建时间'
 );
 
@@ -148,17 +130,6 @@ create table t_app_user(
 alter table t_app_user add column androidMac varchar (255) comment '安卓mac地址';
 
 
-drop table if not EXISTS  t_device_operlog;
-create table t_device_operlog(
-  id int PRIMARY  key comment '主键id',
-  deviceId int comment '设备id',
-  operDirective int comment '',
-  operValue int comment '操作值'
-  operFrom int comment '操作源1-用户,2-管理员',
-  operValue int comment '操作人的实体值',
-  createTime bigint comment '操作时间'
-);
-
 drop table if  EXISTS  t_device_operlog;
 create table t_device_operlog(
   id int PRIMARY  key auto_increment comment '主键id',
@@ -168,6 +139,7 @@ create table t_device_operlog(
   requestId varchar(33) comment '请求id',
   dealRet int comment '处理结果',
   responseTime bigint comment '响应时间',
+  retMsg varchar(255) comment '处理结果',
    createTime bigint comment '操作时间'
 );
 

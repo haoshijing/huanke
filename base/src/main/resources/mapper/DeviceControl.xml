@@ -11,26 +11,14 @@
         INSERT INTO <include refid="tableName"/>
         (
         deviceId,
-        mode,
-        devicelock,
-        childlock,
-        anion,
-        uvl,
-        heater,
-        fan,
-        valve,
+        funcId,
+        funcValue,
         createTime
         )
         VALUES (
         #{deviceId},
-        #{mode},
-        #{devicelock},
-        #{childlock},
-        #{anion},
-        #{uvl},
-        #{ heater},
-        #{fan},
-        #{valve},
+        #{funcId},
+        #{funcValue},
         #{createTime}
         )
     </insert>

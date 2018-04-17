@@ -36,6 +36,7 @@
         update
          <include refid="tableName"/>
          set dealRet = #{dealRet} , responseTime = #{responseTime}
+          ,retMsg = #{retMsg}
         WHERE requestId = #{requestId}
     </select>
 </mapper>
