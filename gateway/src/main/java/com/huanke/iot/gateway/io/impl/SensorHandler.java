@@ -26,15 +26,15 @@ public class SensorHandler  extends AbstractHandler {
     private StringRedisTemplate stringRedisTemplate;
     @Data
     public static class SensorMessage{
-        private Integer type;
-        private String value;
+        private String type;
+        private Integer value;
     }
 
     @Data
     public static class SensorListMessage{
         private Integer msg_id;
         private String msg_type;
-        private List<SensorHandler.SensorMessage> sensor;
+        private List<SensorHandler.SensorMessage> datas;
     }
 
     @Override
@@ -46,14 +46,19 @@ public class SensorHandler  extends AbstractHandler {
     public void doHandler(String topic, byte[] payloads) {
         SensorHandler.SensorListMessage sensorListMessage = JSON.parseObject(new String(payloads),SensorHandler.SensorListMessage.class);
 
-        sensorListMessage.getSensor().forEach(sensorMessage -> {
+        sensorListMessage.getDatas().forEach(sensorMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
             DeviceSensorPo deviceSensorPo = new DeviceSensorPo();
             deviceSensorPo.setSensorType(sensorMessage.getType());
             deviceSensorPo.setSensorValue(sensorMessage.getValue());
             deviceSensorPo.setCreateTime(System.currentTimeMillis());
-            deviceSensorDataMapper.insert(deviceSensorPo);
-            stringRedisTemplate.opsForHash().put("sensor."+deviceId,sensorMessage.getType(),sensorMessage.getValue());
+            deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
+            try {
+                deviceSensorDataMapper.insert(deviceSensorPo);
+                stringRedisTemplate.opsForHash().put("sensor." + deviceId, sensorMessage.getType(), String.valueOf(sensorMessage.getValue()));
+            }catch (Exception e){
+                log.error("",e);
+            }
         });
     }
 

@@ -1,5 +1,6 @@
 package com.huanke.iot.api.controller.h5.response;
 
+import com.alibaba.fastjson.JSONArray;
 import lombok.Data;
 
 import java.util.List;
@@ -10,24 +11,20 @@ import java.util.List;
  **/
 @Data
 public class DeviceDetailVo {
-    private Integer childlock;
-    private Integer pm;
-    private Integer temperature;
-    private Integer humidity;
-    private Integer co2;
-    /**
-     * 甲醛值
-     */
-    private Integer tvoc;
-    /**
-     * 甲醛化学因子数
-     */
-    private Integer hcho;
+
+    private List<List<DeviceSensorVo>> deviceSenorData;
 
     /**
      * 功能列表集合
      */
-    private List<List<DeviceListVo>> deviceFuncVoList;
+    private List<List<DeviceFuncVo>> deviceFuncData;
+
+    @Data
+    public static class DeviceSensorVo{
+        private Integer sensorType;
+        private String sensorValue;
+        private String senorName;
+    }
 
     @Data
     public static class DeviceFuncVo{

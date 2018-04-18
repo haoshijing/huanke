@@ -9,7 +9,7 @@ import lombok.Data;
 public class DeviceControlData {
     private Integer id;
     private Integer deviceId;
-    private Integer funcId;
-    private String funcValue;
+    private String funcId;
+    private Integer funcValue;
     private Long createTime;
 }

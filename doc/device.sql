@@ -34,7 +34,8 @@ create table t_device_type
 id int primary key auto_increment comment '类型主键',
 name varchar(200) comment '类型名称' DEFAULT  '',
 icon varchar(200) comment '类型图标'DEFAULT  '',
-funcList varchar(200) comment '功能列表',
+funcList varchar(2048) comment '功能列表',
+sensorList varchar(2048) comment '传感器列表',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
@@ -86,8 +87,8 @@ drop table  if EXISTS t_device_data_sensor;
 create table t_device_data_sensor(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
-  sensorType int comment '传感器数据类型',
-  sensorValue varchar comment '传感器数值',
+  sensorType varchar(20) comment '传感器数据类型',
+  sensorValue int comment '传感器数值',
   createTime bigint comment '创建时间'
 );
 
@@ -107,8 +108,8 @@ drop table  if EXISTS t_device_data_control;
 create table t_device_data_control(
   id int primary key auto_increment comment '主键id',
   deviceId int comment '设备id',
-  funcId int comment '功能id',
-  funcValue varchar comment '功能当前值',
+  funcId varchar(20) comment '功能id',
+  funcValue int comment '功能当前值',
   createTime bigint comment '创建时间'
 );
 

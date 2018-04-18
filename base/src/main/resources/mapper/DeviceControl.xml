@@ -4,7 +4,7 @@
 <mapper namespace="com.huanke.iot.base.dao.impl.device.data.DeviceControlMapper">
 
     <sql id="tableName">
-        t_device_data_alarm
+        t_device_data_control
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.data.DeviceControlData">

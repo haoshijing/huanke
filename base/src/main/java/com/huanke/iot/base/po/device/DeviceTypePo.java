@@ -12,6 +12,13 @@ public class DeviceTypePo {
     private Long createTime;
     private Long lastUpdateTime;
     private String name;
+    /**
+     * 功能指令列表
+     */
     private String funcList;
+    /**
+     * 传感器列表
+     */
+    private String sensorList;
     private String icon;
 }

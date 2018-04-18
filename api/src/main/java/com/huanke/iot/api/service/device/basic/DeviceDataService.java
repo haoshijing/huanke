@@ -8,6 +8,7 @@ import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -23,7 +24,16 @@ public class DeviceDataService {
 
     @Autowired
     private MqttSendService mqttSendService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     public DeviceDetailVo queryDetailByDeviceId(String deviceId) {
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        //指令类别
+        if(devicePo!=null){
+         Integer deviceTypeId =   devicePo.getDeviceTypeId();
+        }
         return  null;
     }
 
