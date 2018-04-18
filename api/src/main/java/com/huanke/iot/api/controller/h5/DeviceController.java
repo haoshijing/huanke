@@ -1,18 +1,24 @@
 package com.huanke.iot.api.controller.h5;
 
-import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
+import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.RegEx;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author haoshijing
@@ -26,6 +32,9 @@ public class DeviceController extends BaseController {
     private DeviceService deviceService;
 
     @Autowired
+    private DeviceOperLogMapper deviceOperLogMapper;
+
+    @Autowired
     private DeviceDataService deviceDataService;
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice(HttpServletRequest httpServletRequest){
@@ -35,7 +44,7 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/queryDetailByDeviceId/{deviceId}")
-    public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(@PathVariable String deviceId){
+    public ApiResponse<DeviceDetailVo> queryDetailByDeviceId( String deviceId){
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
         return new ApiResponse<>(deviceDetailVo);
     }
@@ -54,4 +63,22 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(requestId);
     }
 
+    @RequestMapping("/queryResponse")
+    public ApiResponse<JSONObject> queryResonse(String requestId){
+        DeviceOperLogPo deviceOperLogPo = deviceOperLogMapper.queryByRequestId(requestId);
+        if(deviceOperLogPo != null){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("ret",deviceOperLogPo.getDealRet());
+            jsonObject.put("msg",deviceOperLogPo.getRetMsg());
+            return new ApiResponse<>(jsonObject);
+        }
+        return new ApiResponse<>(new JSONObject());
+    }
+
+
+    @RequestMapping("/selectDataList")
+    public ApiResponse<List<Integer>> selectDataList(String type, Long start , Long end){
+
+        return new ApiResponse<>(Lists.newArrayList());
+    }
 }

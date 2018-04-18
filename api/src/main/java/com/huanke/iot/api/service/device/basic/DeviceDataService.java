@@ -1,6 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
-import com.huanke.iot.api.controller.h5.DeviceFuncVo;
+import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;

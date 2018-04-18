@@ -14,4 +14,6 @@ public interface DeviceOperLogMapper extends BaseMapper<DeviceOperLogPo> {
     List<DeviceOperLogPo> queryLogList(@Param("deviceId") Integer deviceId, @Param("limit") Integer limit, @Param("offset") Integer offset);
 
     Integer updateByRequestId(DeviceOperLogPo deviceOperLogPo);
+
+    DeviceOperLogPo queryByRequestId(String requestId);
 }
