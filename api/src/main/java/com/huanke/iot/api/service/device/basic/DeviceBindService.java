@@ -43,6 +43,9 @@ public class DeviceBindService {
         }
         Integer userId = null;
         AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
+        if(appUserPo != null){
+            userId = appUserPo.getId();
+        }
         if (StringUtils.equals("bind", event)) {
             if (appUserPo == null) {
                 AppUserPo newUserPo = new AppUserPo();
