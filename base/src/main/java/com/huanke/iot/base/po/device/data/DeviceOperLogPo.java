@@ -11,7 +11,7 @@ import lombok.Data;
 public class DeviceOperLogPo {
     private Integer id;
     private Integer deviceId;
-    private Integer funcId;
+    private String funcId;
     private String requestId;
     private String funcValue;
     private Long createTime;
