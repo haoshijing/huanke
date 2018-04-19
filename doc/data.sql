@@ -4,16 +4,34 @@ select
 
 insert into  t_device_type
 (
-
+id,
 name,
 icon,
 funcList,
-sensorList,
-createTime
+sensorList
 )
 values (
+3,
 '净化器',
 'http://huanke.bcard.vip/deviceimg/a.png',
-'',
-''
+'210,220,230,240,250,270,280,290,310,320,330,340,350',
+'110,120,130,140,150,160'
+);
+
+
+
+insert into  t_device_type
+(
+id,
+name,
+icon,
+funcList,
+sensorList
 )
+values (
+4,
+'清风机',
+'http://huanke.bcard.vip/deviceimg/b.png',
+'210,220,230,240,250,270,280,290,310,320,330,340,350',
+'110,120,130,140,150,160'
+);
