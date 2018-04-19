@@ -47,7 +47,7 @@ public class MachineService {
         return null;
     }
 
-    public Integer createNew(String mac){
+    public Integer createNew(String mac,Integer typeId){
         DevicePo devicePo = new DevicePo();
         JSONObject jsonObject = obtainDeviceJson();
         if(jsonObject != null){
@@ -55,6 +55,7 @@ public class MachineService {
             String devicelicence = jsonObject.getString("devicelicence");
             devicePo.setMac(mac);
             devicePo.setDeviceId(deviceId);
+            devicePo.setDeviceTypeId(typeId);
             devicePo.setDevicelicence(devicelicence);
             devicePo.setCreateTime(System.currentTimeMillis());
 

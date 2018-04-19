@@ -20,8 +20,8 @@ public class MachineController {
     private  MachineService machineService;
 
     @RequestMapping("/createNew")
-    public ApiResponse<Integer> createNew(String mac){
-        return new ApiResponse<>(machineService.createNew(mac));
+    public ApiResponse<Integer> createNew(String mac,Integer typeId){
+        return new ApiResponse<>(machineService.createNew(mac,typeId));
     }
 
     @RequestMapping("/obtain")
