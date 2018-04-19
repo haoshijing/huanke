@@ -24,8 +24,9 @@ public class DeviceDetailVo {
     @Data
     public static class DeviceSensorVo{
         private String sensorType;
-        private Integer sensorValue;
+        private String sensorValue;
         private String senorName;
+        private String unit;
     }
 
     @Data
@@ -54,51 +55,4 @@ public class DeviceDetailVo {
 
     }
 
-    public static void main(String[] args) {
-        DeviceDetailVo detailVo = new DeviceDetailVo();
-        DeviceSensorVo deviceSensorVo = new DeviceSensorVo();
-        deviceSensorVo.setSenorName("室外PM2.5");
-        deviceSensorVo.setSensorType("110");
-        deviceSensorVo.setSensorValue(3);
-
-        DeviceSensorVo deviceSensorVo1 = new DeviceSensorVo();
-        deviceSensorVo.setSenorName("室外PM2.5");
-        deviceSensorVo.setSensorType("111");
-        deviceSensorVo.setSensorValue(4);
-
-        DeviceSensorVo  deviceCols = new DeviceSensorVo();
-        deviceSensorVo.setSenorName("室内二氧化碳");
-        deviceSensorVo.setSensorType("120");
-        deviceSensorVo.setSensorValue(30);
-
-        List<JSONArray> list = Lists.newArrayList();
-        JSONArray jsonArray = new JSONArray();
-
-        jsonArray.add(deviceSensorVo);
-        jsonArray.add(deviceSensorVo1);
-
-        JSONArray jsonArray1 = new JSONArray();
-        jsonArray1.add(deviceCols);
-
-        list.add(jsonArray1);
-        list.add(jsonArray);
-        detailVo.setDeviceSenorData(list);
-
-        DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
-        deviceFuncVo.setFuncType(2);
-        deviceFuncVo.setFuncId("200");
-        deviceFuncVo.setCurrentValue("2");
-        deviceFuncVo.setRange("0,1");
-
-        JSONArray jsonArray2 = new JSONArray();
-        jsonArray2.add(deviceFuncVo);
-
-        List<JSONArray> jsonArrays = Lists.newArrayList();
-        jsonArrays.add(jsonArray2);
-
-        detailVo.setDeviceFuncData(jsonArrays);
-
-        System.out.println( JSON.toJSONString(detailVo) );
-
-    }
 }

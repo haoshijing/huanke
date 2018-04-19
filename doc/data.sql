@@ -13,7 +13,7 @@ createTime
 )
 values (
 '净化器',
-'',
+'http://huanke.bcard.vip/deviceimg/a.png',
 '',
 ''
 )
