@@ -58,6 +58,7 @@ public class DeviceDataService {
     public DeviceDetailVo queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        Map<String,JSONArray> map = Maps.newHashMap();
         //指令类别
         if (devicePo != null) {
             Integer deviceTypeId = devicePo.getDeviceTypeId();
@@ -69,7 +70,6 @@ public class DeviceDataService {
                 List<JSONArray> sensorDatas = Lists.newArrayList();
                 deviceDetailVo.setDeviceFuncData(funcDatas);
                 deviceDetailVo.setDeviceSenorData(sensorDatas);
-                Map<String,JSONArray> map = Maps.newHashMap();
                 for (String funcType : funcTypes) {
                     JSONArray jsonArray;
                     String smallType = funcType.substring(0,2);
@@ -77,7 +77,7 @@ public class DeviceDataService {
                         jsonArray = new JSONArray();
                         map.put(smallType,jsonArray);
                         funcDatas.add(jsonArray);
-                    }else{
+                    }else {
                         jsonArray = map.get(smallType);
                     }
                     String data = (String) stringRedisTemplate.opsForHash().get("control." + devicePo.getId(), funcType);
@@ -102,7 +102,7 @@ public class DeviceDataService {
                     if(!map.containsKey(smallType)){
                         jsonArray = new JSONArray();
                         map.put(smallType,jsonArray);
-                    }else{
+                    }else {
                         jsonArray = map.get(smallType);
                     }
                     String data = (String)stringRedisTemplate.opsForHash().get("sensor." + devicePo.getId(), sensorType);
