@@ -50,7 +50,7 @@ public class DeviceDataService {
 
     @Data
     public static class FuncListMessage{
-        private Integer msg_id;
+        private String msg_id;
         private String msg_type;
         private List<DeviceDataService.FuncItemMessage> datas;
     }
@@ -136,7 +136,7 @@ public class DeviceDataService {
             deviceOperLogMapper.insert(deviceOperLogPo);
             FuncListMessage funcListMessage = new FuncListMessage();
             funcListMessage.setMsg_type("control");
-            funcListMessage.setMsg_id(1011);
+            funcListMessage.setMsg_id(requestId);
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(deviceFuncVo.getValue());
