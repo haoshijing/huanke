@@ -1,6 +1,7 @@
 package com.huanke.iot.api.service.device.basic;
 
 import com.alibaba.fastjson.JSONArray;
+import com.google.common.collect.Maps;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.gateway.MqttSendService;
@@ -18,6 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -52,8 +54,17 @@ public class DeviceDataService {
                 List<JSONArray> sensorDatas = Lists.newArrayList();
                 deviceDetailVo.setDeviceFuncData(funcDatas);
                 deviceDetailVo.setDeviceSenorData(sensorDatas);
+                Map<String,JSONArray> map = Maps.newHashMap();
                 for (String funcType : funcTypes) {
-                    JSONArray jsonArray = new JSONArray();
+                    JSONArray jsonArray;
+                    String smallType = funcType.substring(0,2);
+                    if(!map.containsKey(smallType)){
+                        jsonArray = new JSONArray();
+                        map.put(smallType,jsonArray);
+                        funcDatas.add(jsonArray);
+                    }else{
+                        jsonArray = map.get(smallType);
+                    }
                     String data = (String) stringRedisTemplate.opsForHash().get("control." + devicePo.getId(), funcType);
                     DeviceDetailVo.DeviceFuncVo deviceFuncVo = new DeviceDetailVo.DeviceFuncVo();
                     deviceFuncVo.setCurrentValue(data);
@@ -66,13 +77,19 @@ public class DeviceDataService {
                         deviceFuncVo.setRange(funcTypeEnums.getRange());
                         jsonArray.add(deviceFuncVo);
                     }
-                    funcDatas.add(jsonArray);
                 }
 
                 String sensorListStr = deviceTypePo.getSensorList();
                 String[] sensorTypes = sensorListStr.split(",");
                 for(String sensorType:sensorTypes){
-                    JSONArray jsonArray = new JSONArray();
+                    JSONArray jsonArray;
+                    String smallType = sensorType.substring(0,2);
+                    if(!map.containsKey(smallType)){
+                        jsonArray = new JSONArray();
+                        map.put(smallType,jsonArray);
+                    }else{
+                        jsonArray = map.get(smallType);
+                    }
                     String data = (String)stringRedisTemplate.opsForHash().get("sensor." + devicePo.getId(), sensorType);
                     SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
                     DeviceDetailVo.DeviceSensorVo deviceSensorVo = new DeviceDetailVo.DeviceSensorVo();
@@ -81,6 +98,7 @@ public class DeviceDataService {
                     deviceSensorVo.setSensorType(sensorType);
                     deviceSensorVo.setSensorValue(data);
                     jsonArray.add(deviceSensorVo);
+                    sensorDatas.add(jsonArray);
                 }
             }
 
@@ -96,6 +114,7 @@ public class DeviceDataService {
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
+            deviceOperLogPo.setDeviceId(deviceId);
             deviceOperLogPo.setFuncValue(deviceFuncVo.getValue());
             deviceOperLogPo.setRequestId(requestId);
             deviceOperLogPo.setCreateTime(System.currentTimeMillis());

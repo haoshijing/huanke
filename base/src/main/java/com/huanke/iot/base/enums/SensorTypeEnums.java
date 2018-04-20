@@ -22,6 +22,7 @@ public enum SensorTypeEnums {
     SensorTypeEnums(String code, String mark, String unit) {
         this.code = code;
         this.mark = mark;
+        this.unit = unit;
     }
 
     @Getter

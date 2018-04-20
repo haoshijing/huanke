@@ -43,7 +43,7 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(deviceListVo);
     }
 
-    @RequestMapping("/queryDetailByDeviceId/{deviceId}")
+    @RequestMapping("/queryDetailByDeviceId")
     public ApiResponse<DeviceDetailVo> queryDetailByDeviceId( String deviceId){
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
         return new ApiResponse<>(deviceDetailVo);
