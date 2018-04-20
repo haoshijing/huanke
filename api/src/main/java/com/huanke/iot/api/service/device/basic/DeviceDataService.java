@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Maps;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
@@ -13,6 +14,7 @@ import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTypePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import lombok.Data;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -39,6 +41,19 @@ public class DeviceDataService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Data
+    public static class FuncItemMessage{
+        private String type;
+        private String value;
+    }
+
+    @Data
+    public static class FuncListMessage{
+        private Integer msg_id;
+        private String msg_type;
+        private List<DeviceDataService.FuncItemMessage> datas;
+    }
 
     public DeviceDetailVo queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
@@ -119,8 +134,14 @@ public class DeviceDataService {
             deviceOperLogPo.setRequestId(requestId);
             deviceOperLogPo.setCreateTime(System.currentTimeMillis());
             deviceOperLogMapper.insert(deviceOperLogPo);
-
-            mqttSendService.sendMessage(topic, "");
+            FuncListMessage funcListMessage = new FuncListMessage();
+            funcListMessage.setMsg_type("control");
+            funcListMessage.setMsg_id(1011);
+            FuncItemMessage funcItemMessage = new FuncItemMessage();
+            funcItemMessage.setType(deviceFuncVo.getFuncId());
+            funcItemMessage.setValue(deviceFuncVo.getValue());
+            funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
+            mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
             return requestId;
         }
         return "";
