@@ -16,18 +16,27 @@ public class DeviceDetailVo {
 
     private List<JSONArray> deviceSenorData;
 
+    private SysDataItem pm;
+    private SysDataItem co2;
+    private SysDataItem tem;
+    private SysDataItem hum;
+    private SysDataItem tvoc;
+    private SysDataItem hcho;
+    private SysDataItem remain;
+    private SysDataItem screen;
+
+
     /**
      * 功能列表集合
      */
     private List<JSONArray> deviceFuncData;
 
     @Data
-    public static class DeviceSensorVo{
-        private String sensorType;
-        private String sensorValue;
-        private String senorName;
+    public static class SysDataItem{
+        private String data;
         private String unit;
     }
+
 
     @Data
     public static class DeviceFuncVo{

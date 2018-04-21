@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version 2018年04月18日 09:43
  **/
 public enum  FuncTypeEnums {
-    MODE("210","模式","0,1", 2,3),
+    MODE("210","模式","关机,自动模式,睡眠模式,超强模式", 2,3),
     ANION("220","负离子","0,1",2,3),
     UV("230","UV灯","0,1", 2,3),
     BANANA("240","香蕉","0,1",2,3),

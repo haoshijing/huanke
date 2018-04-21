@@ -43,13 +43,13 @@ public class DeviceDataService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Data
-    public static class FuncItemMessage{
+    public static class FuncItemMessage {
         private String type;
         private String value;
     }
 
     @Data
-    public static class FuncListMessage{
+    public static class FuncListMessage {
         private String msg_id;
         private String msg_type;
         private List<DeviceDataService.FuncItemMessage> datas;
@@ -58,66 +58,10 @@ public class DeviceDataService {
     public DeviceDetailVo queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
-        Map<String,JSONArray> map = Maps.newHashMap();
-        //指令类别
-        if (devicePo != null) {
-            Integer deviceTypeId = devicePo.getDeviceTypeId();
-            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(deviceTypeId);
-            if (deviceTypePo != null) {
-                String funcTypeListStr = deviceTypePo.getFuncList();
-                String[] funcTypes = funcTypeListStr.split(",");
-                List<JSONArray> funcDatas = Lists.newArrayList();
-                List<JSONArray> sensorDatas = Lists.newArrayList();
-                deviceDetailVo.setDeviceFuncData(funcDatas);
-                deviceDetailVo.setDeviceSenorData(sensorDatas);
-                for (String funcType : funcTypes) {
-                    JSONArray jsonArray;
-                    String smallType = funcType.substring(0,2);
-                    if(!map.containsKey(smallType)){
-                        jsonArray = new JSONArray();
-                        map.put(smallType,jsonArray);
-                        funcDatas.add(jsonArray);
-                    }else {
-                        jsonArray = map.get(smallType);
-                    }
-                    String data = (String) stringRedisTemplate.opsForHash().get("control." + devicePo.getId(), funcType);
-                    DeviceDetailVo.DeviceFuncVo deviceFuncVo = new DeviceDetailVo.DeviceFuncVo();
-                    deviceFuncVo.setCurrentValue(data);
-
-                    FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(funcType);
-                    if(funcTypeEnums != null) {
-                        deviceFuncVo.setFuncName(funcTypeEnums.getMark());
-                        deviceFuncVo.setFuncId(funcTypeEnums.getCode());
-                        deviceFuncVo.setFuncType(funcTypeEnums.getFuncType());
-                        deviceFuncVo.setRange(funcTypeEnums.getRange());
-                        jsonArray.add(deviceFuncVo);
-                    }
-                }
-
-                String sensorListStr = deviceTypePo.getSensorList();
-                String[] sensorTypes = sensorListStr.split(",");
-                for(String sensorType:sensorTypes){
-                    JSONArray jsonArray;
-                    String smallType = sensorType.substring(0,2);
-                    if(!map.containsKey(smallType)){
-                        jsonArray = new JSONArray();
-                        map.put(smallType,jsonArray);
-                    }else {
-                        jsonArray = map.get(smallType);
-                    }
-                    String data = (String)stringRedisTemplate.opsForHash().get("sensor." + devicePo.getId(), sensorType);
-                    SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
-                    DeviceDetailVo.DeviceSensorVo deviceSensorVo = new DeviceDetailVo.DeviceSensorVo();
-                    deviceSensorVo.setSenorName(sensorTypeEnums.getMark());
-                    deviceSensorVo.setUnit(sensorTypeEnums.getUnit());
-                    deviceSensorVo.setSensorType(sensorType);
-                    deviceSensorVo.setSensorValue(data);
-                    jsonArray.add(deviceSensorVo);
-                    sensorDatas.add(jsonArray);
-                }
-            }
-
+        if(devicePo != null){
+            getIndexData(deviceDetailVo,devicePo.getId());
         }
+
         return deviceDetailVo;
     }
 
@@ -143,6 +87,69 @@ public class DeviceDataService {
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
             return requestId;
+        }
+        return "";
+    }
+
+    private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId) {
+
+        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
+
+        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
+
+        DeviceDetailVo.SysDataItem pm = new DeviceDetailVo.SysDataItem();
+        pm.setData(getData(datas,SensorTypeEnums.PM25_IN.getCode()));
+        pm.setUnit(SensorTypeEnums.PM25_IN.getUnit());
+        deviceDetailVo.setPm(pm);
+
+        DeviceDetailVo.SysDataItem co2 = new DeviceDetailVo.SysDataItem();
+        pm.setData(getData(datas,SensorTypeEnums.CO2_IN.getCode()));
+        pm.setUnit(SensorTypeEnums.CO2_IN.getUnit());
+        deviceDetailVo.setCo2(co2);
+
+
+
+        DeviceDetailVo.SysDataItem tvoc = new DeviceDetailVo.SysDataItem();
+        tvoc.setData(getData(datas,SensorTypeEnums.TVOC_IN.getCode()));
+        tvoc.setUnit(SensorTypeEnums.TVOC_IN.getUnit());
+        deviceDetailVo.setTvoc(tvoc);
+
+
+        DeviceDetailVo.SysDataItem hcho = new DeviceDetailVo.SysDataItem();
+        hcho.setData(getData(datas,SensorTypeEnums.HCHO_IN.getCode()));
+        hcho.setUnit(SensorTypeEnums.HCHO_IN.getUnit());
+        deviceDetailVo.setHcho(hcho);
+
+
+
+        DeviceDetailVo.SysDataItem tem = new DeviceDetailVo.SysDataItem();
+        tem.setData(getData(datas,SensorTypeEnums.TEMPERATURE_IN.getCode()));
+        tem.setUnit(SensorTypeEnums.TEMPERATURE_IN.getUnit());
+        deviceDetailVo.setTem(tem);
+
+
+
+        DeviceDetailVo.SysDataItem hum = new DeviceDetailVo.SysDataItem();
+        hum.setData(getData(datas,SensorTypeEnums.HUMIDITY_IN.getCode()));
+        hum.setUnit(SensorTypeEnums.HUMIDITY_IN.getUnit());
+        deviceDetailVo.setHum(hum);
+
+        DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
+        screen.setData(getData(controlDatas,FuncTypeEnums.TIMER_SCREEN.getCode()));
+        screen.setUnit("秒");
+        deviceDetailVo.setScreen(screen);
+
+
+        DeviceDetailVo.SysDataItem remain = new DeviceDetailVo.SysDataItem();
+        remain.setData(getData(controlDatas,FuncTypeEnums.TIMER_REMAIN.getCode()));
+        remain.setUnit("秒");
+        deviceDetailVo.setHum(hum);
+
+    }
+
+    private String getData(Map<Object,Object> map,String key){
+        if(map.containsKey(key)){
+            return (String) map.get(key);
         }
         return "";
     }
