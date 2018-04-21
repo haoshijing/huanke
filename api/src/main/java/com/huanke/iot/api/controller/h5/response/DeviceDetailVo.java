@@ -14,9 +14,7 @@ import java.util.List;
 @Data
 public class DeviceDetailVo {
 
-    private List<JSONArray> deviceSenorData;
-
-    private SysDataItem pm;
+    private PmDataItem pm;
     private SysDataItem co2;
     private SysDataItem tem;
     private SysDataItem hum;
@@ -24,44 +22,32 @@ public class DeviceDetailVo {
     private SysDataItem hcho;
     private SysDataItem remain;
     private SysDataItem screen;
+    private DataItem modeItem;
+    private List<OtherItem> windItems;
+    private List<JSONArray> funcs;
+    private List<OtherItem> timers;
 
+    private DataItem childItem;
 
-    /**
-     * 功能列表集合
-     */
-    private List<JSONArray> deviceFuncData;
+    @Data
+    public static class DataItem{
+        private String value;
+        private String type;
+        private String choice;
+    }
 
+    @Data
+    public static class OtherItem extends  DataItem{
+        private String name;
+    }
+
+    @Data
+    public static class PmDataItem extends  SysDataItem{
+        private String  mass;
+    }
     @Data
     public static class SysDataItem{
         private String data;
         private String unit;
     }
-
-
-    @Data
-    public static class DeviceFuncVo{
-        /**
-         * 功能id
-         */
-        private String funcId;
-        /**
-         * 功能名称
-         */
-        private String funcName;
-        /**
-         * 当前值
-         */
-        private String currentValue;
-
-        /**
-         * 功能类型2-开关 3-定时
-         */
-        private Integer funcType;
-        /**
-         * 范围 0,1
-         */
-        private String range;
-
-    }
-
 }

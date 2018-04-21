@@ -7,11 +7,9 @@ import java.nio.ByteOrder;
 
 public class FloatDataUtil {
     public static String getFloat(int a){
-        ByteBuf byteBuf = Unpooled.buffer(4);
-        byteBuf.writeInt(a);
-        System.out.println("a = [" + a + "]");
-
-        return ""+0+"."+1;
+       int left = a/65536;
+       int right = a % 65536;
+       return left+"."+ right;
     }
     public static void main(String[] args) {
         int a = 800;
