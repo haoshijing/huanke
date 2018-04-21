@@ -40,6 +40,11 @@ public class MachineService {
         if(devicePo != null){
             MachineDeviceVo machineDeviceVo = new MachineDeviceVo();
             machineDeviceVo.setDeviceId(devicePo.getId());
+            String deviceId = devicePo.getDeviceId();
+            String datas[] = deviceId.split("_");
+            if(datas.length == 3){
+                machineDeviceVo.setDeviceType(datas[0]+"_"+datas[1]);
+            }
             machineDeviceVo.setDevicelicence(devicePo.getDevicelicence());
             machineDeviceVo.setWechatDeviceId(devicePo.getDeviceId());
             return machineDeviceVo;

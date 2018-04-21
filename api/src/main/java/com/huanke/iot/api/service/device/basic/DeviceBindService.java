@@ -71,6 +71,8 @@ public class DeviceBindService {
                 defaultGroup.setCreateTime(System.currentTimeMillis());
                 deviceGroupMapper.insert(defaultGroup);
                 defaultGroupId = defaultGroup.getId();
+            }else{
+                defaultGroupId = deviceGroupMapper.selectList(deviceGroupPo,0,1).get(0).getId();
             }
             DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
             queryItemPo.setDeviceId(devicePo.getId());

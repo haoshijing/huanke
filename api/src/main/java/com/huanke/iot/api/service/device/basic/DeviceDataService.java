@@ -104,15 +104,19 @@ public class DeviceDataService {
         pm.setData(getData(datas, SensorTypeEnums.PM25_IN.getCode()));
         pm.setUnit(SensorTypeEnums.PM25_IN.getUnit());
         String data = pm.getData();
-        Integer diData = Integer.valueOf(data);
-        if(diData >= 0 && diData <= 35){
-            pm.setMass("优");
-        }else if(diData > 35 && diData <= 75){
-            pm.setMass("良");
-        }else if(diData > 75 && diData <= 150){
-            pm.setMass("中");
+        if(StringUtils.isNotEmpty(data)) {
+            Integer diData = Integer.valueOf(data);
+            if (diData >= 0 && diData <= 35) {
+                pm.setMass("优");
+            } else if (diData > 35 && diData <= 75) {
+                pm.setMass("良");
+            } else if (diData > 75 && diData <= 150) {
+                pm.setMass("中");
+            } else {
+                pm.setMass("差");
+            }
         }else{
-            pm.setMass("差");
+            pm.setMass("");
         }
         deviceDetailVo.setPm(pm);
 

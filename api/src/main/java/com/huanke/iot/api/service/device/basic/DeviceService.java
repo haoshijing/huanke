@@ -5,11 +5,13 @@ import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
+import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTypePo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,6 +32,9 @@ public class DeviceService {
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
 
     public DeviceListVo obtainMyDevice(Integer userId) {
         DeviceListVo deviceListVo = new DeviceListVo();
@@ -37,7 +42,7 @@ public class DeviceService {
         DeviceGroupPo queryDevicePo = new DeviceGroupPo();
         queryDevicePo.setUserId(userId);
 
-        List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryDevicePo,0,100000);
+        List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryDevicePo, 0, 100000);
 
         List<DeviceListVo.DeviceGroupData> groupDatas = deviceGroupPos.stream().map(
                 deviceGroupPo -> {
@@ -62,6 +67,8 @@ public class DeviceService {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                             deviceItemPo.setIcon(deviceTypePo.getIcon());
                         }
+                        String pm = (String) stringRedisTemplate.opsForHash().get("sensor." + devicePo.getId(), SensorTypeEnums.PM25_IN.getCode());
+                        deviceItemPo.setPm(pm);
                         return deviceItemPo;
                     }).collect(Collectors.toList());
                     deviceGroupData.setDeviceItemPos(deviceItemPos);
@@ -73,9 +80,9 @@ public class DeviceService {
         return deviceListVo;
     }
 
-    public boolean editDevice(Integer userId,String deviceId, String deviceName) {
+    public boolean editDevice(Integer userId, String deviceId, String deviceName) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
-        if(devicePo == null){
+        if (devicePo == null) {
             return false;
         }
         DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
@@ -83,8 +90,8 @@ public class DeviceService {
         deviceGroupItemPo.setStatus(1);
         deviceGroupItemPo.setDeviceId(devicePo.getId());
         Integer count = deviceGroupMapper.queryItemCount(deviceGroupItemPo);
-        if(count == null || count == 0){
-            return  false;
+        if (count == null || count == 0) {
+            return false;
         }
         DevicePo updatePo = new DevicePo();
         updatePo.setDeviceId(deviceId);
