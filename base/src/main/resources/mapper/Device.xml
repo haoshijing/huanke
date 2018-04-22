@@ -39,6 +39,26 @@
         WHERE mac = #{mac} limit 1
     </select>
 
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * from <include refid="tableName"/>
+        <where>
+            <if test = "param.mac != null and param.mac != ''">
+                AND mac = #{param.mac}
+            </if>
+            limit #{offset},#{limit}
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1) from <include refid="tableName"/>
+        <where>
+            <if test = "param.mac != null and param.mac != ''">
+                AND mac = #{param.mac}
+            </if>
+
+        </where>
+    </select>
+
     <select id="selectByDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *

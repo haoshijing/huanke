@@ -28,8 +28,19 @@ public class DeviceService {
 
         List<DeviceVo> deviceVos = devicePos.stream().map(devicePo -> {
             DeviceVo deviceVo = new DeviceVo();
+            deviceVo.setDeviceId(devicePo.getDeviceId());
+            deviceVo.setName(devicePo.getName());
+            devicePo.setMac(devicePo.getMac());
+            devicePo.setBindStatus(devicePo.getBindStatus());
             return deviceVo;
         }).collect(Collectors.toList());
         return deviceVos;
+    }
+
+    public Integer selectCount(DeviceQueryRequest deviceQueryRequest){
+
+        DevicePo queryDevicePo = new DevicePo();
+        queryDevicePo.setMac(deviceQueryRequest.getMac());
+        return deviceMapper.selectCount(queryDevicePo);
     }
 }

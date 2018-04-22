@@ -29,7 +29,7 @@ public class DeviceController {
 
     @RequestMapping("/queryCount")
     public ApiResponse<Integer> queryCount(@RequestBody  DeviceQueryRequest deviceQueryRequest){
-        return new ApiResponse<>(0);
+        return new ApiResponse<>(deviceService.selectCount(deviceQueryRequest));
     }
 
 }

@@ -10,4 +10,6 @@ import lombok.Data;
 public class DeviceVo {
     private String deviceId;
     private String name;
+    private String mac;
+    private Integer bindStatus;
 }
