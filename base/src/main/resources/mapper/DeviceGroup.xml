@@ -79,7 +79,7 @@
 
     <update id="updateGroupItemStatus">
         update t_device_group_item
-        set status = 2 where userId = #{userId}
+        set status = #{status} where userId = #{userId}
         and deviceId = #{deviceId}
     </update>
 
