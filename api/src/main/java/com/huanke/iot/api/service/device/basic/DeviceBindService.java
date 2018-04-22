@@ -45,15 +45,14 @@ public class DeviceBindService {
         AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
         if(appUserPo != null){
             userId = appUserPo.getId();
+        }else{
+            AppUserPo newUserPo = new AppUserPo();
+            newUserPo.setCreateTime(System.currentTimeMillis());
+            newUserPo.setOpenId(openId);
+            appUserMapper.insert(newUserPo);
+            userId = newUserPo.getId();
         }
         if (StringUtils.equals("bind", event)) {
-            if (appUserPo == null) {
-                AppUserPo newUserPo = new AppUserPo();
-                newUserPo.setCreateTime(System.currentTimeMillis());
-                newUserPo.setOpenId(openId);
-                appUserMapper.insert(newUserPo);
-                userId = newUserPo.getId();
-            }
             DevicePo updateDevicePo = new DevicePo();
             updateDevicePo.setBindTime(System.currentTimeMillis());
             updateDevicePo.setId(devicePo.getId());
