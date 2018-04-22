@@ -22,7 +22,7 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
 
     Integer queryItemCount(DeviceGroupItemPo queryItemPo);
 
-    void updateGroupItemStatus(@Param("deviceId") Integer dId, @Param("userId") Integer userId);
+    void updateGroupItemStatus(@Param("deviceId") Integer dId, @Param("userId") Integer userId,@Param("status") Integer status);
 
     List<DeviceGroupItemPo> queryGroupItems(DeviceGroupItemPo queryDeviceGroupItem);
 

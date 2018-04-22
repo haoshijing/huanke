@@ -97,7 +97,7 @@
 
     <update id="updateGroupStatus">
         update <include refid="tableName"/>
-        set status =2 where  userId = #{userId}
+        set status = #{status} where  userId = #{userId}
         and groupId = #{groupId}
     </update>
 

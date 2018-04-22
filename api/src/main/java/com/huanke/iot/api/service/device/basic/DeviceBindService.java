@@ -84,6 +84,9 @@ public class DeviceBindService {
                 insertDeviceGroupItemPo.setUserId(userId);
                 insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
                 deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
+            }else{
+                Integer dId = devicePo.getId();
+                deviceGroupMapper.updateGroupItemStatus(dId, userId,1);
             }
         } else if (StringUtils.equals("unbind", event)) {
             if (appUserPo == null) {
@@ -95,7 +98,7 @@ public class DeviceBindService {
             deviceMapper.updateById(updatePo);
             userId = appUserPo.getId();
             Integer dId = devicePo.getId();
-            deviceGroupMapper.updateGroupItemStatus(dId, userId);
+            deviceGroupMapper.updateGroupItemStatus(dId, userId,2);
         }
     }
 }
