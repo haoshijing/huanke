@@ -13,12 +13,14 @@
         mac,
         deviceId,
         devicelicence,
+        deviceTypeId,
         createTime
         )
         VALUES (
         #{mac},
         #{deviceId},
         #{devicelicence},
+        #{deviceTypeId},
         #{createTime}
         )
     </insert>
