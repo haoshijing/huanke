@@ -8,4 +8,6 @@ import lombok.Data;
  **/
 @Data
 public class DeviceVo {
+    private String deviceId;
+    private String name;
 }

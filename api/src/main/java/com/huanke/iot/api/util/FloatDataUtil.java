@@ -7,8 +7,8 @@ import java.nio.ByteOrder;
 
 public class FloatDataUtil {
     public static String getFloat(int a){
-       int left = a/65536;
-       int right = a % 65536;
+       double left = a/100.00;
+       int right = a % 100;
        return left+"."+ right;
     }
     public static void main(String[] args) {

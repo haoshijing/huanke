@@ -32,8 +32,4 @@ public class DeviceController {
         return new ApiResponse<>(0);
     }
 
-    @RequestMapping("/insertDeviceType")
-    ApiResponse<Boolean> insertDeviceType(){
-        return null;
-    }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class DeviceService {
@@ -21,6 +22,14 @@ public class DeviceService {
         queryDevicePo.setMac(deviceQueryRequest.getMac());
         Integer page = deviceQueryRequest.getPage();
         Integer limit = deviceQueryRequest.getLimit();
-        return null;
+        Integer offset  = (page - 1)*limit;
+
+        List<DevicePo> devicePos = deviceMapper.selectList(queryDevicePo,limit,offset);
+
+        List<DeviceVo> deviceVos = devicePos.stream().map(devicePo -> {
+            DeviceVo deviceVo = new DeviceVo();
+            return deviceVo;
+        }).collect(Collectors.toList());
+        return deviceVos;
     }
 }
