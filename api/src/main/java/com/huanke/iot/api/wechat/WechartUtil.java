@@ -34,6 +34,8 @@ public class WechartUtil {
 
     private static final String TICKET = "ticket";
 
+    private static final String JSAPI = "jsapi";
+
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -101,6 +103,52 @@ public class WechartUtil {
 
         }
         return null;
+    }
+
+    public  String getJsApi(){
+        String jsapi  = stringRedisTemplate.opsForValue().get(JSAPI);
+        if(StringUtils.isNotEmpty(jsapi)){
+            return jsapi;
+        }
+        String apiResult = obtainRemoteJsapi();
+        log.info("apiResult result = {}", apiResult);
+        JSONObject json = JSONObject.parseObject(apiResult);
+        int errorCode = json.getInteger("errcode");
+        if (errorCode == 42001) {
+            getAccessToken(true);
+            apiResult = obtainRemoteTicket();
+            json = JSONObject.parseObject(apiResult);
+        }
+        if (json.containsKey("ticket")) {
+            String queryTicket = json.getString("ticket");
+            if (StringUtils.isNotEmpty(queryTicket)) {
+                stringRedisTemplate.opsForValue().set(TICKET, queryTicket);
+                stringRedisTemplate.expire(TICKET, 7000,TimeUnit.SECONDS);
+
+                return queryTicket;
+            }
+        }
+        return "";
+    }
+
+    private String obtainRemoteJsapi() {
+        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + getAccessToken(false) + "&type=jsapi";
+        try {
+            HttpGet httpGet = new HttpGet();
+            httpGet.setURI(new URI(url));
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+            StringBuilder result = new StringBuilder();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            return result.toString();
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public String getTicket() {
