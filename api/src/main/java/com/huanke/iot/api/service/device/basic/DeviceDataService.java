@@ -97,7 +97,6 @@ public class DeviceDataService {
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
-
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
 
         DeviceDetailVo.PmDataItem pm = new DeviceDetailVo.PmDataItem();
@@ -148,7 +147,6 @@ public class DeviceDataService {
         }
         deviceDetailVo.setHcho(hcho);
 
-
         DeviceDetailVo.SysDataItem tem = new DeviceDetailVo.SysDataItem();
         tem.setData(getData(datas, SensorTypeEnums.TEMPERATURE_IN.getCode()));
         tem.setUnit(SensorTypeEnums.TEMPERATURE_IN.getUnit());
@@ -164,7 +162,6 @@ public class DeviceDataService {
         screen.setData(getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode()));
         screen.setUnit("秒");
         deviceDetailVo.setScreen(screen);
-
 
         DeviceDetailVo.SysDataItem remain = new DeviceDetailVo.SysDataItem();
         remain.setData(getData(controlDatas, FuncTypeEnums.TIMER_REMAIN.getCode()));
@@ -350,8 +347,6 @@ public class DeviceDataService {
         childItem.setChoice("0:未开,1:已开");
         childItem.setValue(getData(controlDatas,FuncTypeEnums.CHILD_LOCK.getCode()));
         deviceDetailVo.setChildItem(childItem);
-
-
     }
 
     private List<String> getType(String smallType, String source) {

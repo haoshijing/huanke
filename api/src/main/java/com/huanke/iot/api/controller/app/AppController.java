@@ -28,6 +28,9 @@ public class AppController {
 
     @Autowired
     private AppUserMapper appUserMapper;
+
+    @Value("${gameServerHost}")
+    private String gameServerHost;
     @Value("${appId}")
     private String appId;
 
@@ -42,7 +45,7 @@ public class AppController {
         if(appUserPo == null){
             String code = request.getParameter("code");
             if(StringUtils.isEmpty(code)){
-                String redirectUrl = "http://huanke.bcard.vip/api/app/api/bind?mac="+mac;
+                String redirectUrl = gameServerHost+"/app/api/bind?mac="+mac;
                 try{
                     redirectUrl = URLEncoder.encode(redirectUrl,"UTF-8");
                 }catch (Exception e){
