@@ -28,4 +28,9 @@ public class DeviceGroupItemPo {
     private Long lastUpdateTime;
 
     private Integer status;
+
+    /**
+     * 是否是主拥有人
+     */
+    private Integer isMaster;
 }

@@ -82,6 +82,7 @@ public class DeviceBindService {
                 insertDeviceGroupItemPo.setGroupId(defaultGroupId);
                 insertDeviceGroupItemPo.setStatus(1);
                 insertDeviceGroupItemPo.setUserId(userId);
+                insertDeviceGroupItemPo.setIsMaster(1);
                 insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
                 deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
             }else{

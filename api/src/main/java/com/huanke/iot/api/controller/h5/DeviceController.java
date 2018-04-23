@@ -11,12 +11,10 @@ import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.RegEx;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -36,40 +34,47 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private DeviceDataService deviceDataService;
+
     @RequestMapping("/obtainMyDevice")
-    public ApiResponse<DeviceListVo> obtainMyDevice(HttpServletRequest httpServletRequest){
+    public ApiResponse<DeviceListVo> obtainMyDevice(HttpServletRequest httpServletRequest) {
         Integer userId = getCurrentUserId(httpServletRequest);
         DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
         return new ApiResponse<>(deviceListVo);
     }
 
     @RequestMapping("/queryDetailByDeviceId")
-    public ApiResponse<DeviceDetailVo> queryDetailByDeviceId( String deviceId){
+    public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
         return new ApiResponse<>(deviceDetailVo);
     }
 
     @RequestMapping("/editDevice")
-    public ApiResponse<Boolean> editDevice(HttpServletRequest request,String deviceId,String deviceName){
+    public ApiResponse<Boolean> editDevice(HttpServletRequest request, String deviceId, String deviceName) {
         Integer userId = getCurrentUserId(request);
-        boolean ret =  deviceService.editDevice(userId,deviceId,deviceName);
+        boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);
     }
 
+    @RequestMapping("/share")
+    public ApiResponse<Boolean> shareDevice(HttpServletRequest request,Integer masterId, Integer deviceId) {
+       Integer userId = getCurrentUserId(request);
+        Boolean shareOk = deviceDataService.shareDevice(masterId,userId,deviceId);
+        return new ApiResponse<>(shareOk);
+    }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo){
+    public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
         String requestId = deviceDataService.sendFunc(deviceFuncVo);
         return new ApiResponse<>(requestId);
     }
 
     @RequestMapping("/queryResponse")
-    public ApiResponse<JSONObject> queryResonse(String requestId){
+    public ApiResponse<JSONObject> queryResonse(String requestId) {
         DeviceOperLogPo deviceOperLogPo = deviceOperLogMapper.queryByRequestId(requestId);
-        if(deviceOperLogPo != null){
+        if (deviceOperLogPo != null) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("ret",deviceOperLogPo.getDealRet());
-            jsonObject.put("msg",deviceOperLogPo.getRetMsg());
+            jsonObject.put("ret", deviceOperLogPo.getDealRet());
+            jsonObject.put("msg", deviceOperLogPo.getRetMsg());
             return new ApiResponse<>(jsonObject);
         }
         return new ApiResponse<>(new JSONObject());
@@ -77,7 +82,7 @@ public class DeviceController extends BaseController {
 
 
     @RequestMapping("/selectDataList")
-    public ApiResponse<List<Integer>> selectDataList(String type, Long start , Long end){
+    public ApiResponse<List<Integer>> selectDataList(String type, Long start, Long end) {
 
         return new ApiResponse<>(Lists.newArrayList());
     }

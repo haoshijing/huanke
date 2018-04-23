@@ -3,13 +3,11 @@ package com.huanke.iot.api.service.device.basic;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
-import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.device.DeviceTypePo;
+import com.huanke.iot.base.po.device.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -33,6 +31,9 @@ public class DeviceService {
     private DeviceTypeMapper deviceTypeMapper;
 
     @Autowired
+    private DeviceRelationMapper deviceRelationMapper;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
 
@@ -54,10 +55,21 @@ public class DeviceService {
                     queryDeviceGroupItem.setStatus(1);
                     queryDeviceGroupItem.setGroupId(deviceGroupData.getGroupId());
                     List<DeviceGroupItemPo> itemPos = deviceGroupMapper.queryGroupItems(queryDeviceGroupItem);
-                    List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().map(deviceGroupItemPo -> {
-
+                    List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().filter(deviceGroupItemPo -> {
+                        if(deviceGroupItemPo.getIsMaster() == 2){
+                            //分享绑定的
+                            DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
+                            deviceRelationPo.setDeviceId(deviceGroupItemPo.getDeviceId());
+                            deviceRelationPo.setStatus(1);
+                            deviceRelationPo.setJoinUserId(deviceGroupItemPo.getUserId());
+                            Integer count = deviceRelationMapper.selectCount(deviceRelationPo);
+                            if(count == 0) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }).map(deviceGroupItemPo -> {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
-
                         DevicePo devicePo = deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getDeviceId());
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());

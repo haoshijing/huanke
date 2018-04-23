@@ -127,9 +127,17 @@ create table t_app_user(
   lastUpdateTime bigint comment '最后修改时间',
   lastVisitTime bigint comment '最后访问时间'
 );
+drop table  if EXISTS t_device_relation(
+ id int PRIMARY  key auto_increment comment '主键id',
+ deviceId int comment '设备id',
+  masterUserId int comment '分享人userId',
+  joinUserId int comment '加入人userId',
+  createTime bigint comment '时间'，
+  status int comment '关系状态',
+  lastUpdateTime bigint comment '最后修改时间'
+)
 
 alter table t_app_user add column androidMac varchar (255) comment '安卓mac地址';
-
 
 drop table if  EXISTS  t_device_operlog;
 create table t_device_operlog(
@@ -199,8 +207,10 @@ userId int comment '用户id',
 groupId int comment '设备组id',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间',
-status int comment '状态1-绑定,2-已解绑'
+status int comment '状态1-绑定,2-已解绑',
 );
+
+alter table t_device_group_item add column isMaster int comment '是否是主拥有人';
 
 drop table if EXISTS t_device_func;
 create table t_device_func(

@@ -7,13 +7,14 @@ import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
+import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
-import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.device.DeviceTypePo;
+import com.huanke.iot.base.po.device.*;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -42,8 +43,59 @@ public class DeviceDataService {
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
 
+
+    @Autowired
+    private DeviceRelationMapper deviceRelationMapper;
+
+    @Autowired
+    private DeviceGroupMapper deviceGroupMapper;
+
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    public Boolean shareDevice(Integer masterId, Integer toId,Integer deviceId) {
+        if(masterId.equals(toId)){
+            return false;
+        }
+
+        DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
+        deviceGroupPo.setGroupName("默认组");
+        deviceGroupPo.setUserId(toId);
+        Integer defaultGroupId = 0;
+        Integer defaultGroupCount = deviceGroupMapper.queryGroupCount(toId, "默认组");
+        if (defaultGroupCount == 0) {
+            DeviceGroupPo defaultGroup = new DeviceGroupPo();
+            defaultGroup.setGroupName("默认组");
+            defaultGroup.setUserId(toId);
+            defaultGroup.setCreateTime(System.currentTimeMillis());
+            deviceGroupMapper.insert(defaultGroup);
+            defaultGroupId = defaultGroup.getId();
+        }else{
+            defaultGroupId = deviceGroupMapper.selectList(deviceGroupPo,0,1).get(0).getId();
+        }
+        DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
+        queryItemPo.setDeviceId(deviceId);
+        queryItemPo.setUserId(toId);
+        Integer count = deviceGroupMapper.queryItemCount(queryItemPo);
+        if (count == 0) {
+            DeviceGroupItemPo insertDeviceGroupItemPo = queryItemPo;
+            insertDeviceGroupItemPo.setGroupId(defaultGroupId);
+            insertDeviceGroupItemPo.setStatus(1);
+            insertDeviceGroupItemPo.setUserId(toId);
+            insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
+            insertDeviceGroupItemPo.setIsMaster(2);
+            deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
+        }
+
+        DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
+        deviceRelationPo.setDeviceId(deviceId);
+        deviceRelationPo.setJoinUserId(toId);
+        deviceRelationPo.setMasterUserId(masterId);
+        deviceRelationPo.setStatus(1);
+        deviceRelationPo.setCreateTime(System.currentTimeMillis());
+        deviceRelationMapper.insert(deviceRelationPo);
+        return true;
+    }
 
     @Data
     public static class FuncItemMessage {

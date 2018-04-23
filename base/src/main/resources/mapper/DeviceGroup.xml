@@ -46,7 +46,8 @@
           deviceId,
           groupId,
           status,
-          createTime
+          createTime,
+          isMaster
         )
         values
         (
@@ -54,7 +55,8 @@
           #{deviceId},
           #{groupId},
           #{status},
-          #{createTime}
+          #{createTime},
+          #{isMaster}
       )
     </insert>
 
