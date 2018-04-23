@@ -17,6 +17,9 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
     @Autowired
     private ProcessInterceptor processInterceptor;
 
+    @Autowired
+    private AppAuthInterceptor appAuthInterceptor;
+
     /**
      * 请求拦截器
      * @param registry
@@ -29,6 +32,10 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
         registry.addInterceptor(userInterceptor)
                 .addPathPatterns("/h5/**")
                 .excludePathPatterns(new String[]{"/h5/api/user/auth","/h5/api/getSign"});
+
+        registry.addInterceptor(appAuthInterceptor).
+                addPathPatterns("/app/**")
+                .excludePathPatterns("/app/api/bind");
 
     }
 

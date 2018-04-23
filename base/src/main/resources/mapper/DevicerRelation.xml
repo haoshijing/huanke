@@ -28,12 +28,12 @@
     <select id = "selectCount" resultType="java.lang.Integer">
         select count(1) from  <include refid="tableName"/>
         WHERE
-        deviceId = #{deviceId}
-        <if test = "joinUserId != null">
-            and joinUserId = #{joinUserId}
+        deviceId = #{param.deviceId}
+        <if test = "param.joinUserId != null">
+            and joinUserId = #{param.joinUserId}
         </if>
-        <if test = "status != null">
-           and status = #{status}
+        <if test = "param.status != null">
+           and status = #{param.status}
         </if>
 
     </select>
@@ -43,6 +43,6 @@
         update
          <include refid="tableName"/>
          set status = #{status} , lastUpdateTime = #{lastUpdateTime}
-        WHERE joinUserId = #{joinUserId}
+        WHERE joinUserId = #{joinUserId} and deviceId = #{deviceId}
     </select>
 </mapper>

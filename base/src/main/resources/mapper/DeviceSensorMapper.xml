@@ -23,4 +23,18 @@
         )
     </insert>
 
+    <select id="selectData" resultType="com.huanke.iot.base.po.device.data.DeviceSensorPo">
+
+        select sensorValue, sensorType from <include refid="tableName"/>
+        where createTime > #{startTime}
+        <![CDATA[
+         and createTime <= #{endTime}
+           ]]>
+        and deviceId = #{deviceId}
+        and sensorType = #{sensorType}
+        limit 1
+
+
+    </select>
+
 </mapper>

@@ -63,4 +63,17 @@ public class UserService {
         }
         return appUserPo.getId();
     }
+
+    public Integer getUserIdByIMei(String imei) {
+        String userIdStr = stringRedisTemplate.opsForValue().get(imei);
+        if(StringUtils.isNotEmpty(userIdStr)){
+            return Integer.valueOf(userIdStr);
+        }
+        AppUserPo appUserPo = appUserMapper.selectByMac(imei);
+        if(appUserPo == null){
+            log.error(" openId = {} , user is null" ,imei);
+            return 0;
+        }
+        return appUserPo.getId();
+    }
 }

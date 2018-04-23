@@ -127,15 +127,16 @@ create table t_app_user(
   lastUpdateTime bigint comment '最后修改时间',
   lastVisitTime bigint comment '最后访问时间'
 );
-drop table  if EXISTS t_device_relation(
+drop table  if EXISTS t_device_relation;
+CREATE TABLE t_device_relation(
  id int PRIMARY  key auto_increment comment '主键id',
  deviceId int comment '设备id',
   masterUserId int comment '分享人userId',
   joinUserId int comment '加入人userId',
-  createTime bigint comment '时间'，
+  createTime bigint comment '时间',
   status int comment '关系状态',
   lastUpdateTime bigint comment '最后修改时间'
-)
+);
 
 alter table t_app_user add column androidMac varchar (255) comment '安卓mac地址';
 

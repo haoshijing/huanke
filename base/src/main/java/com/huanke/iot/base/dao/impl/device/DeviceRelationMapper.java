@@ -8,5 +8,5 @@ import com.huanke.iot.base.po.device.DeviceRelationPo;
  * @version 2018年04月23日 15:04
  **/
 public interface DeviceRelationMapper extends BaseMapper<DeviceRelationPo> {
-    int updateStatus(DeviceRelationPo deviceRelationPo);
+    Integer updateStatus(DeviceRelationPo deviceRelationPo);
 }

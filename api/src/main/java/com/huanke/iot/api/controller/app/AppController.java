@@ -37,21 +37,23 @@ public class AppController {
 
     @RequestMapping("/bind")
     public ApiResponse<Boolean> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String mac = request.getParameter("mac");
-        if(StringUtils.isEmpty(mac)){
+        String imei = request.getParameter("IMEI");
+        if(StringUtils.isEmpty(imei)){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"mac地址不能为空");
         }
-        AppUserPo appUserPo = appUserMapper.selectByMac(mac);
+        AppUserPo appUserPo = appUserMapper.selectByMac(imei);
         if(appUserPo == null){
             String code = request.getParameter("code");
             if(StringUtils.isEmpty(code)){
-                String redirectUrl = gameServerHost+"/app/api/bind?mac="+mac;
+                String redirectUrl = gameServerHost+"/api/app/api/bind?IMEI="+imei;
                 try{
                     redirectUrl = URLEncoder.encode(redirectUrl,"UTF-8");
                 }catch (Exception e){
 
                 }
-                response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+redirectUrl+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+                String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+redirectUrl+
+                        "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+                response.sendRedirect(url);
                 return null ;
             }
             JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
@@ -64,7 +66,7 @@ public class AppController {
             }
             AppUserPo updateAppUserPo = new AppUserPo();
             updateAppUserPo.setOpenId(openId);
-            updateAppUserPo.setAndroidMac(mac);
+            updateAppUserPo.setAndroidMac(imei);
             int ret = appUserMapper.updateAndroidMac(updateAppUserPo);
             if(ret == 0){
                 return new ApiResponse<>(false);

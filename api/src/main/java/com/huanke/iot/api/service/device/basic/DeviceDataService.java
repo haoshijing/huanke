@@ -5,20 +5,27 @@ import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Maps;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
+import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
+import com.huanke.iot.base.dao.impl.UserMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
+import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import com.huanke.iot.base.po.device.data.DeviceSensorPo;
+import com.huanke.iot.base.po.user.AppUserPo;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -51,13 +58,36 @@ public class DeviceDataService {
     private DeviceGroupMapper deviceGroupMapper;
 
     @Autowired
+    private AppUserMapper appUserMapper;
+
+    @Autowired
+    private DeviceSensorDataMapper deviceSensorDataMapper;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    public Boolean shareDevice(Integer masterId, Integer toId,Integer deviceId) {
-        if(masterId.equals(toId)){
+    public Boolean shareDevice(String master, Integer toId, String deviceIdStr) {
+
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        if (devicePo == null) {
             return false;
         }
-
+        Integer deviceId = devicePo.getId();
+        AppUserPo appUserPo = appUserMapper.selectByOpenId(master);
+        if (appUserPo == null) {
+            return false;
+        }
+        if (appUserPo.getId().equals(toId)) {
+            return false;
+        }
+        //TODO检查deviceId和用户是不是可以对应上的
+        DeviceGroupItemPo queryGroupItemPo = new DeviceGroupItemPo();
+        queryGroupItemPo.setDeviceId(deviceId);
+        queryGroupItemPo.setUserId(appUserPo.getId());
+        Integer itemCount = deviceGroupMapper.queryItemCount(queryGroupItemPo);
+        if (itemCount == 0) {
+            return false;
+        }
         DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
         deviceGroupPo.setGroupName("默认组");
         deviceGroupPo.setUserId(toId);
@@ -70,8 +100,8 @@ public class DeviceDataService {
             defaultGroup.setCreateTime(System.currentTimeMillis());
             deviceGroupMapper.insert(defaultGroup);
             defaultGroupId = defaultGroup.getId();
-        }else{
-            defaultGroupId = deviceGroupMapper.selectList(deviceGroupPo,0,1).get(0).getId();
+        } else {
+            defaultGroupId = deviceGroupMapper.selectList(deviceGroupPo, 0, 1).get(0).getId();
         }
         DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
         queryItemPo.setDeviceId(deviceId);
@@ -87,14 +117,109 @@ public class DeviceDataService {
             deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
         }
 
-        DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
-        deviceRelationPo.setDeviceId(deviceId);
-        deviceRelationPo.setJoinUserId(toId);
-        deviceRelationPo.setMasterUserId(masterId);
-        deviceRelationPo.setStatus(1);
-        deviceRelationPo.setCreateTime(System.currentTimeMillis());
-        deviceRelationMapper.insert(deviceRelationPo);
+        DeviceRelationPo queryPo = new DeviceRelationPo();
+        queryPo.setDeviceId(deviceId);
+        queryPo.setJoinUserId(toId);
+        Integer relationCount = deviceRelationMapper.selectCount(queryPo);
+        if (relationCount == 0) {
+
+            DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
+            deviceRelationPo.setDeviceId(deviceId);
+            deviceRelationPo.setJoinUserId(toId);
+            deviceRelationPo.setMasterUserId(appUserPo.getId());
+            deviceRelationPo.setStatus(1);
+            deviceRelationPo.setCreateTime(System.currentTimeMillis());
+            deviceRelationMapper.insert(deviceRelationPo);
+        } else {
+            DeviceRelationPo updatePo = new DeviceRelationPo();
+            updatePo.setJoinUserId(toId);
+            updatePo.setStatus(1);
+            updatePo.setLastUpdateTime(System.currentTimeMillis());
+            updatePo.setDeviceId(deviceId);
+            deviceRelationMapper.updateStatus(updatePo);
+        }
         return true;
+    }
+
+    public Boolean clearRelation(String joinOpenId, Integer userId, String deviceIdStr) {
+        Boolean clear = true;
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        if (devicePo == null) {
+            return false;
+        }
+        Integer deviceId = devicePo.getId();
+        AppUserPo appUserPo = appUserMapper.selectByOpenId(joinOpenId);
+        if (appUserPo == null) {
+            return false;
+        }
+        if (appUserPo.getId().equals(userId)) {
+            return false;
+        }
+
+        DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
+        queryItemPo.setUserId(userId);
+        queryItemPo.setDeviceId(deviceId);
+
+        List<DeviceGroupItemPo> groupItemPos = deviceGroupMapper.queryGroupItems(queryItemPo);
+        if (groupItemPos.size() == 0) {
+            return false;
+        }
+        DeviceGroupItemPo deviceGroupItemPo = groupItemPos.get(0);
+        if (deviceGroupItemPo.getIsMaster() != 1) {
+            return false;
+        }
+        DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
+        deviceRelationPo.setLastUpdateTime(System.currentTimeMillis());
+        deviceRelationPo.setDeviceId(deviceId);
+        deviceRelationPo.setStatus(2);
+
+        deviceRelationPo.setJoinUserId(appUserPo.getId());
+
+        Integer updateCount = deviceRelationMapper.updateStatus(deviceRelationPo);
+        return updateCount > 0;
+    }
+
+    public List<SensorDataVo> getHistoryData(String deviceId, Integer type) {
+        Long startTimestamp = new DateTime().plusDays(-1).getMillis();
+        Long endTimeStamp = System.currentTimeMillis();
+
+        List<SensorDataVo> sensorDataVos = Lists.newArrayList();
+
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        if(devicePo == null){
+            return null;
+        }
+        Integer deviceTypeId = devicePo.getDeviceTypeId();
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(deviceTypeId);
+        if(devicePo == null){
+            return null;
+        }
+        String sensorList = deviceTypePo.getSensorList();
+        String sensorTypes [] = sensorList.split(",");
+
+        for(String sensorType:sensorTypes){
+            SensorDataVo sensorDataVo = new SensorDataVo();
+            SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
+            sensorDataVo.setName(sensorTypeEnums.getMark());
+            sensorDataVo.setUnit(sensorTypeEnums.getUnit());
+            sensorDataVo.setType(sensorType);
+            List<String> xdata = Lists.newArrayList();
+            List<String> ydata = Lists.newArrayList();
+            for(Long t = startTimestamp; t < endTimeStamp;t+=1000*60*60){
+                DeviceSensorPo deviceSensorPo =  deviceSensorDataMapper.selectData(devicePo.getId(),t,t+1000*60*60,sensorType);
+                xdata.add(String.valueOf(t));
+                if(deviceSensorPo != null){
+                    ydata.add(deviceSensorPo.getSensorValue().toString());
+                }else{
+                    ydata.add("");
+                }
+            }
+            sensorDataVo.setXdata(xdata);
+            sensorDataVo.setYdata(ydata);
+            sensorDataVos.add(sensorDataVo);
+        }
+
+        return sensorDataVos;
     }
 
     @Data
@@ -114,7 +239,7 @@ public class DeviceDataService {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
         if (devicePo != null) {
-            getIndexData(deviceDetailVo, devicePo.getId(),devicePo.getDeviceTypeId());
+            getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
         }
 
         return deviceDetailVo;
@@ -155,7 +280,7 @@ public class DeviceDataService {
         pm.setData(getData(datas, SensorTypeEnums.PM25_IN.getCode()));
         pm.setUnit(SensorTypeEnums.PM25_IN.getUnit());
         String data = pm.getData();
-        if(StringUtils.isNotEmpty(data)) {
+        if (StringUtils.isNotEmpty(data)) {
             Integer diData = Integer.valueOf(data);
             if (diData >= 0 && diData <= 35) {
                 pm.setMass("优");
@@ -166,7 +291,7 @@ public class DeviceDataService {
             } else {
                 pm.setMass("差");
             }
-        }else{
+        } else {
             pm.setMass("");
         }
         deviceDetailVo.setPm(pm);
@@ -397,7 +522,7 @@ public class DeviceDataService {
         DeviceDetailVo.DataItem childItem = new DeviceDetailVo.DataItem();
         childItem.setType(FuncTypeEnums.CHILD_LOCK.getCode());
         childItem.setChoice("0:未开,1:已开");
-        childItem.setValue(getData(controlDatas,FuncTypeEnums.CHILD_LOCK.getCode()));
+        childItem.setValue(getData(controlDatas, FuncTypeEnums.CHILD_LOCK.getCode()));
         deviceDetailVo.setChildItem(childItem);
     }
 

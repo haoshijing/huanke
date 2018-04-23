@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
+import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.base.api.ApiResponse;
@@ -56,10 +57,17 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/share")
-    public ApiResponse<Boolean> shareDevice(HttpServletRequest request,Integer masterId, Integer deviceId) {
-       Integer userId = getCurrentUserId(request);
-        Boolean shareOk = deviceDataService.shareDevice(masterId,userId,deviceId);
+    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId) {
+        Integer userId = getCurrentUserId(request);
+        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, userId, deviceId);
         return new ApiResponse<>(shareOk);
+    }
+
+    @RequestMapping("/clearRelation")
+    public ApiResponse<Boolean> clearRelation(HttpServletRequest request,String deviceId,String joinOpenId){
+        Integer userId = getCurrentUserId(request);
+        Boolean clearOk = deviceDataService.clearRelation(joinOpenId, userId, deviceId);
+        return new ApiResponse<>(clearOk);
     }
 
     @RequestMapping("/sendFunc")
@@ -81,9 +89,9 @@ public class DeviceController extends BaseController {
     }
 
 
-    @RequestMapping("/selectDataList")
-    public ApiResponse<List<Integer>> selectDataList(String type, Long start, Long end) {
+    @RequestMapping("/getHistoryData")
+    public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
 
-        return new ApiResponse<>(Lists.newArrayList());
+        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId,type));
     }
 }
