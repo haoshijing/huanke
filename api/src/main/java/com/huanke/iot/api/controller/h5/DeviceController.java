@@ -10,14 +10,18 @@ import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author haoshijing
@@ -35,6 +39,9 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private DeviceDataService deviceDataService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice(HttpServletRequest httpServletRequest) {
@@ -56,10 +63,22 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/share")
-    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId) {
+    @RequestMapping("/token")
+    public ApiResponse<String> obtainShareToken(HttpServletRequest request){
         Integer userId = getCurrentUserId(request);
-        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, userId, deviceId);
+        String lastToken = stringRedisTemplate.opsForValue().get("token."+userId);
+        if(StringUtils.isNotEmpty(lastToken)){
+            return new ApiResponse<>(lastToken);
+        }
+        String token = UUID.randomUUID().toString().replace("-","").substring(0,8);
+        stringRedisTemplate.opsForValue().set("token."+userId,token);
+        stringRedisTemplate.expire("token."+userId,10, TimeUnit.MINUTES);
+        return new ApiResponse<>(token);
+    }
+    @RequestMapping("/share")
+    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
+        Integer userId = getCurrentUserId(request);
+        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, userId, deviceId, token);
         return new ApiResponse<>(shareOk);
     }
 

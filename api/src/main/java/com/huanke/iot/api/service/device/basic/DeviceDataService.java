@@ -66,7 +66,8 @@ public class DeviceDataService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    public Boolean shareDevice(String master, Integer toId, String deviceIdStr) {
+    public Boolean shareDevice(String master, Integer toId, String deviceIdStr, String token) {
+
 
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
@@ -75,6 +76,10 @@ public class DeviceDataService {
         Integer deviceId = devicePo.getId();
         AppUserPo appUserPo = appUserMapper.selectByOpenId(master);
         if (appUserPo == null) {
+            return false;
+        }
+        String storeToken = stringRedisTemplate.opsForValue().get("user."+appUserPo.getId());
+        if(StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken,token)){
             return false;
         }
         if (appUserPo.getId().equals(toId)) {
