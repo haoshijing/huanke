@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
+import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
@@ -226,6 +227,46 @@ public class DeviceDataService {
         }
 
         return sensorDataVos;
+    }
+
+    public List<DeviceShareVo> shareList(Integer userId, String deviceIdStr) {
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        if(devicePo != null){
+            Integer deviceId = devicePo.getId();
+            DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
+            deviceGroupItemPo.setUserId(userId);
+            deviceGroupItemPo.setDeviceId(deviceId);
+
+            List<DeviceGroupItemPo> groupItemPos = deviceGroupMapper.queryGroupItems(deviceGroupItemPo);
+            if(groupItemPos.size() > 0 ){
+                DeviceGroupItemPo itemPo = groupItemPos.get(0);
+                if(itemPo.getIsMaster() == 1){
+                    DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
+                    deviceRelationPo.setDeviceId(deviceId);
+                    deviceRelationPo.setStatus(1);
+                    List<DeviceRelationPo> deviceRelationPos = deviceRelationMapper.selectList(deviceRelationPo,100,0);
+                    List<DeviceShareVo> shareVos = deviceRelationPos.stream()
+                            .map(deviceRelationPo1 ->{
+                                DeviceShareVo deviceShareVo = new DeviceShareVo();
+                                Integer joinUserId = deviceRelationPo1.getJoinUserId();
+                                AppUserPo appUserPo = appUserMapper.selectById(joinUserId);
+
+                                if(appUserPo != null) {
+                                    deviceShareVo.setOpenId(appUserPo.getOpenId());
+                                    deviceShareVo.setAvatar(appUserPo.getHeadimgurl());
+                                    deviceShareVo.setNickname(appUserPo.getNickname());
+                                    deviceShareVo.setJoinTime(deviceRelationPo1.getCreateTime());
+                                    deviceShareVo.setDeviceId(devicePo.getDeviceId());
+                                    deviceShareVo.setDeviceName(devicePo.getName());
+
+                                }
+                                return deviceShareVo;
+                            }).collect(Collectors.toList());
+                    return shareVos;
+                }
+            }
+        }
+        return Lists.newArrayList();
     }
 
     @Data

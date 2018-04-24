@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
+import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
@@ -11,6 +12,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.protocol.HTTP;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -87,6 +89,13 @@ public class DeviceController extends BaseController {
         Integer userId = getCurrentUserId(request);
         Boolean clearOk = deviceDataService.clearRelation(joinOpenId, userId, deviceId);
         return new ApiResponse<>(clearOk);
+    }
+
+    @RequestMapping("/shareList")
+    public ApiResponse<List<DeviceShareVo>> shareList(HttpServletRequest request, String deviceId){
+        Integer userId = getCurrentUserId(request);
+        List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId,deviceId);
+        return new ApiResponse<>(deviceShareVos);
     }
 
     @RequestMapping("/sendFunc")
