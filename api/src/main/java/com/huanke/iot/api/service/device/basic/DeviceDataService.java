@@ -79,7 +79,7 @@ public class DeviceDataService {
         if (appUserPo == null) {
             return false;
         }
-        String storeToken = stringRedisTemplate.opsForValue().get("user."+appUserPo.getId());
+        String storeToken = stringRedisTemplate.opsForValue().get("token."+deviceIdStr);
         if(StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken,token)){
             return false;
         }
@@ -297,25 +297,25 @@ public class DeviceDataService {
                     appDeviceDataVo.setDeviceId(devicePo.getDeviceId());
                     appDeviceDataVo.setDeviceName(devicePo.getName());
                     Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
-                    appDeviceDataVo.setCo2(getData(datas,SensorTypeEnums.CO2_IN.getCode()+SensorTypeEnums.CO2_IN.getUnit()));
-                    appDeviceDataVo.setHum(getData(datas,SensorTypeEnums.HUMIDITY_IN.getCode()+SensorTypeEnums.HUMIDITY_IN.getUnit()));
-                    appDeviceDataVo.setTem(getData(datas,SensorTypeEnums.TEMPERATURE_IN.getCode()+SensorTypeEnums.TEMPERATURE_IN.getUnit()));
-                    appDeviceDataVo.setPm(getData(datas,SensorTypeEnums.PM25_IN.getCode()+SensorTypeEnums.PM25_IN.getUnit()));
-
+                    appDeviceDataVo.setCo2(getData(datas,SensorTypeEnums.CO2_IN.getCode()));
+                    appDeviceDataVo.setHum(getData(datas,SensorTypeEnums.HUMIDITY_IN.getCode()));
+                    appDeviceDataVo.setTem(getData(datas,SensorTypeEnums.TEMPERATURE_IN.getCode()));
+                    appDeviceDataVo.setPm(getData(datas,SensorTypeEnums.PM25_IN.getCode()));
+                    appDeviceDataVo.setId(devicePo.getId());
                     String tvocData = getData(datas, SensorTypeEnums.TVOC_IN.getCode());
                     if (StringUtils.isNotEmpty(tvocData)) {
                         Integer digData = Integer.valueOf(tvocData);
-                        appDeviceDataVo.setTvoc(FloatDataUtil.getFloat(digData)+SensorTypeEnums.TVOC_IN.getUnit());
+                        appDeviceDataVo.setTvoc(FloatDataUtil.getFloat(digData));
                     } else {
-                        appDeviceDataVo.setTvoc("0"+SensorTypeEnums.TVOC_IN.getUnit());
+                        appDeviceDataVo.setTvoc("0");
                     }
 
                     String hchoData = getData(datas, SensorTypeEnums.HCHO_IN.getCode());
                     if (StringUtils.isNotEmpty(hchoData)) {
                         Integer digData = Integer.valueOf(hchoData);
-                        appDeviceDataVo.setHcho(FloatDataUtil.getFloat(digData)+SensorTypeEnums.HCHO_IN.getUnit());
+                        appDeviceDataVo.setHcho(FloatDataUtil.getFloat(digData));
                     } else {
-                        appDeviceDataVo.setHcho("0"+SensorTypeEnums.HCHO_IN.getUnit());
+                        appDeviceDataVo.setHcho("0");
                     }
 
                     return appDeviceDataVo;

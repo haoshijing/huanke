@@ -12,4 +12,8 @@ public class BaseController {
     Integer getCurrentUserId(HttpServletRequest request){
         return  userService.getUserIdByTicket(request.getHeader("Ticket"));
     }
+
+    protected  Integer getCurrentUserIdForApp(HttpServletRequest request){
+        return  userService.getUserIdByIMei(request.getHeader("Ticket"));
+    }
 }

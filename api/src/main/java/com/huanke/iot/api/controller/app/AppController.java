@@ -1,6 +1,8 @@
 package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
+import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +28,7 @@ import java.util.List;
 @RequestMapping("/app/api")
 @Slf4j
 @RestController
-public class AppController {
+public class AppController extends BaseController {
 
     @Autowired
     private WechartUtil wechartUtil;
@@ -42,44 +45,52 @@ public class AppController {
     private DeviceDataService deviceDataService;
 
     @RequestMapping("/bind")
-    public ApiResponse<Boolean> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public ApiResponse<Boolean> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String imei = request.getParameter("IMEI");
-        if(StringUtils.isEmpty(imei)){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"mac地址不能为空");
+        if (StringUtils.isEmpty(imei)) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "mac地址不能为空");
         }
         AppUserPo appUserPo = appUserMapper.selectByMac(imei);
-        if(appUserPo == null){
+        if (appUserPo == null) {
             String code = request.getParameter("code");
-            if(StringUtils.isEmpty(code)){
-                String redirectUrl = gameServerHost+"/api/app/api/bind?IMEI="+imei;
-                try{
-                    redirectUrl = URLEncoder.encode(redirectUrl,"UTF-8");
-                }catch (Exception e){
+            if (StringUtils.isEmpty(code)) {
+                String redirectUrl = gameServerHost + "/api/app/api/bind?IMEI=" + imei;
+                try {
+                    redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
+                } catch (Exception e) {
 
                 }
-                String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+redirectUrl+
+                String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl +
                         "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
                 response.sendRedirect(url);
-                return null ;
+                return null;
             }
             JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
-            if(authTokenJSONObject == null){
-                return new ApiResponse<>(RetCode.CODE_ERROR,"获取用户的accessToken错误");
+            if (authTokenJSONObject == null) {
+                return new ApiResponse<>(RetCode.CODE_ERROR, "获取用户的accessToken错误");
             }
             String openId = authTokenJSONObject.getString("openid");
-            if(StringUtils.isEmpty(openId)){
-                return new ApiResponse<>(RetCode.CODE_ERROR,"获取openId错误");
+            if (StringUtils.isEmpty(openId)) {
+                return new ApiResponse<>(RetCode.CODE_ERROR, "获取openId错误");
             }
             AppUserPo updateAppUserPo = new AppUserPo();
             updateAppUserPo.setOpenId(openId);
             updateAppUserPo.setAndroidMac(imei);
             int ret = appUserMapper.updateAndroidMac(updateAppUserPo);
-            if(ret == 0){
+            if (ret == 0) {
                 return new ApiResponse<>(false);
             }
         }
 
         return new ApiResponse<>(true);
+    }
+
+    @RequestMapping("/queryDeviceList")
+    public ApiResponse<List<AppDeviceDataVo>> queryDeviceList(HttpServletRequest httpServletRequest) {
+
+        Integer userId = getCurrentUserIdForApp(httpServletRequest);
+        List<AppDeviceDataVo> appDeviceDataVos = deviceDataService.getDeviceList(userId);
+        return new ApiResponse<>(appDeviceDataVos);
     }
 
     @RequestMapping("/queryDetailByDeviceId")
@@ -91,7 +102,7 @@ public class AppController {
     @RequestMapping("/getHistoryData")
     public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
 
-        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId,type));
+        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
     }
 
 }
