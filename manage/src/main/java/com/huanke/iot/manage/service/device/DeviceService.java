@@ -30,8 +30,9 @@ public class DeviceService {
             DeviceVo deviceVo = new DeviceVo();
             deviceVo.setDeviceId(devicePo.getDeviceId());
             deviceVo.setName(devicePo.getName());
-            devicePo.setMac(devicePo.getMac());
-            devicePo.setBindStatus(devicePo.getBindStatus());
+            deviceVo.setMac(devicePo.getMac());
+            deviceVo.setId(devicePo.getId());
+            deviceVo.setBindStatus(devicePo.getBindStatus());
             return deviceVo;
         }).collect(Collectors.toList());
         return deviceVos;

@@ -43,10 +43,11 @@
         select * from <include refid="tableName"/>
         <where>
             <if test = "param.mac != null and param.mac != ''">
-                AND mac = #{param.mac}
+                 mac = #{param.mac}
             </if>
-            limit #{offset},#{limit}
+
         </where>
+        limit #{offset},#{limit}
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer">
