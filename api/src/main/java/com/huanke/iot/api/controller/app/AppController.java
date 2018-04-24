@@ -1,6 +1,9 @@
 package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
+import com.huanke.iot.api.controller.h5.response.SensorDataVo;
+import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.util.List;
 
 
 @RequestMapping("/app/api")
@@ -34,6 +38,8 @@ public class AppController {
     @Value("${appId}")
     private String appId;
 
+    @Autowired
+    private DeviceDataService deviceDataService;
 
     @RequestMapping("/bind")
     public ApiResponse<Boolean> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -74,6 +80,18 @@ public class AppController {
         }
 
         return new ApiResponse<>(true);
+    }
+
+    @RequestMapping("/queryDetailByDeviceId")
+    public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(String deviceId) {
+        DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
+        return new ApiResponse<>(deviceDetailVo);
+    }
+
+    @RequestMapping("/getHistoryData")
+    public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
+
+        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId,type));
     }
 
 }
