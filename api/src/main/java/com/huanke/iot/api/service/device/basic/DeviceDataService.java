@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Maps;
+import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
@@ -191,18 +192,18 @@ public class DeviceDataService {
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
 
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
-        if(devicePo == null){
+        if (devicePo == null) {
             return null;
         }
         Integer deviceTypeId = devicePo.getDeviceTypeId();
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(deviceTypeId);
-        if(devicePo == null){
+        if (devicePo == null) {
             return null;
         }
         String sensorList = deviceTypePo.getSensorList();
-        String sensorTypes [] = sensorList.split(",");
+        String sensorTypes[] = sensorList.split(",");
 
-        for(String sensorType:sensorTypes){
+        for (String sensorType : sensorTypes) {
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
             sensorDataVo.setName(sensorTypeEnums.getMark());
@@ -210,12 +211,12 @@ public class DeviceDataService {
             sensorDataVo.setType(sensorType);
             List<String> xdata = Lists.newArrayList();
             List<String> ydata = Lists.newArrayList();
-            for(Long t = startTimestamp; t < endTimeStamp;t+=1000*60*60){
-                DeviceSensorPo deviceSensorPo =  deviceSensorDataMapper.selectData(devicePo.getId(),t,t+1000*60*60,sensorType);
+            for (Long t = startTimestamp; t < endTimeStamp; t += 1000 * 60 * 60) {
+                DeviceSensorPo deviceSensorPo = deviceSensorDataMapper.selectData(devicePo.getId(), t, t + 1000 * 60 * 60, sensorType);
                 xdata.add(String.valueOf(t));
-                if(deviceSensorPo != null){
+                if (deviceSensorPo != null) {
                     ydata.add(deviceSensorPo.getSensorValue().toString());
-                }else{
+                } else {
                     ydata.add("");
                 }
             }
@@ -244,6 +245,12 @@ public class DeviceDataService {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
         if (devicePo != null) {
+            deviceDetailVo.setDeviceName(devicePo.getName());
+            deviceDetailVo.setDeviceId(devicePo.getDeviceId());
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());
+            if (deviceTypePo != null) {
+                deviceDetailVo.setDeviceTypeName(deviceTypePo.getName());
+            }
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
         }
 
@@ -274,6 +281,48 @@ public class DeviceDataService {
             return requestId;
         }
         return "";
+    }
+
+    public List<AppDeviceDataVo> getDeviceList(Integer userId) {
+        DeviceGroupItemPo quryPo = new DeviceGroupItemPo();
+        quryPo.setUserId(userId);
+        quryPo.setStatus(1);
+        List<DeviceGroupItemPo> deviceGroupItemPos = deviceGroupMapper.queryGroupItems(quryPo);
+        List<AppDeviceDataVo> appDeviceDataVos = deviceGroupItemPos.stream().map(
+                deviceGroupItemPo -> {
+                    AppDeviceDataVo appDeviceDataVo = new AppDeviceDataVo();
+
+                    Integer deviceId = deviceGroupItemPo.getDeviceId();
+                    DevicePo devicePo = deviceMapper.selectById(deviceId);
+                    appDeviceDataVo.setDeviceId(devicePo.getDeviceId());
+                    appDeviceDataVo.setDeviceName(devicePo.getName());
+                    Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
+                    appDeviceDataVo.setCo2(getData(datas,SensorTypeEnums.CO2_IN.getCode()+SensorTypeEnums.CO2_IN.getUnit()));
+                    appDeviceDataVo.setHum(getData(datas,SensorTypeEnums.HUMIDITY_IN.getCode()+SensorTypeEnums.HUMIDITY_IN.getUnit()));
+                    appDeviceDataVo.setTem(getData(datas,SensorTypeEnums.TEMPERATURE_IN.getCode()+SensorTypeEnums.TEMPERATURE_IN.getUnit()));
+                    appDeviceDataVo.setPm(getData(datas,SensorTypeEnums.PM25_IN.getCode()+SensorTypeEnums.PM25_IN.getUnit()));
+
+                    String tvocData = getData(datas, SensorTypeEnums.TVOC_IN.getCode());
+                    if (StringUtils.isNotEmpty(tvocData)) {
+                        Integer digData = Integer.valueOf(tvocData);
+                        appDeviceDataVo.setTvoc(FloatDataUtil.getFloat(digData)+SensorTypeEnums.TVOC_IN.getUnit());
+                    } else {
+                        appDeviceDataVo.setTvoc("0"+SensorTypeEnums.TVOC_IN.getUnit());
+                    }
+
+                    String hchoData = getData(datas, SensorTypeEnums.HCHO_IN.getCode());
+                    if (StringUtils.isNotEmpty(hchoData)) {
+                        Integer digData = Integer.valueOf(hchoData);
+                        appDeviceDataVo.setHcho(FloatDataUtil.getFloat(digData)+SensorTypeEnums.HCHO_IN.getUnit());
+                    } else {
+                        appDeviceDataVo.setHcho("0"+SensorTypeEnums.HCHO_IN.getUnit());
+                    }
+
+                    return appDeviceDataVo;
+                }
+        )
+                .collect(Collectors.toList());
+        return appDeviceDataVos;
     }
 
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {

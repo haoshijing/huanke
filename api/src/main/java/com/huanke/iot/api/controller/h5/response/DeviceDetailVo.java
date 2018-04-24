@@ -14,6 +14,9 @@ import java.util.List;
 @Data
 public class DeviceDetailVo {
 
+    private String deviceName;
+    private String deviceTypeName;
+    private String deviceId;
     private PmDataItem pm;
     private SysDataItem co2;
     private SysDataItem tem;
