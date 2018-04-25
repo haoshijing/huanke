@@ -2,10 +2,12 @@ package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
+import com.huanke.iot.api.controller.app.response.VideoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
+import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
@@ -43,6 +45,9 @@ public class AppController extends BaseController {
 
     @Autowired
     private DeviceDataService deviceDataService;
+
+    @Autowired
+    private DeviceService deviceService;
 
     @RequestMapping("/bind")
     public ApiResponse<Boolean> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -105,4 +110,16 @@ public class AppController extends BaseController {
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
     }
 
+    @RequestMapping("/editDevice")
+    public ApiResponse<Boolean> editDevice(HttpServletRequest request, String deviceId, String deviceName) {
+        Integer userId = getCurrentUserIdForApp(request);
+        boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
+        return new ApiResponse<>(ret);
+    }
+
+    @RequestMapping("/getMemo")
+    public ApiResponse<VideoVo> getMemo(){
+        VideoVo videoVo = new VideoVo();
+        return new ApiResponse<>(videoVo);
+    }
 }

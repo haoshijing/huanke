@@ -2,7 +2,8 @@ package com.huanke.iot.manage.service.device;
 
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.manage.request.DeviceQueryRequest;
+import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
+import com.huanke.iot.manage.controller.device.request.DeviceUpdateRequest;
 import com.huanke.iot.manage.response.DeviceVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -43,5 +44,13 @@ public class DeviceService {
         DevicePo queryDevicePo = new DevicePo();
         queryDevicePo.setMac(deviceQueryRequest.getMac());
         return deviceMapper.selectCount(queryDevicePo);
+    }
+
+    public Boolean updateDevice(DeviceUpdateRequest deviceUpdateRequest) {
+
+        DevicePo updatePo = new DevicePo();
+        updatePo.setId(deviceUpdateRequest.getId());
+        updatePo.setName(deviceUpdateRequest.getDeviceName());
+        return deviceMapper.updateById(updatePo) > 0;
     }
 }

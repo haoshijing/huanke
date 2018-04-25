@@ -76,7 +76,15 @@
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
         update <include refid="tableName"/>
-        set bindStatus = #{bindStatus} where
-        id = #{id}
+        <set>
+            <if test = "bindStatus != null">
+                bindStatus = #{bindStatus},
+            </if>
+            <if test = "name != null">
+                name = #{name},
+            </if>
+
+        </set>
+         where id = #{id}
     </update>
 </mapper>

@@ -1,8 +1,7 @@
 package com.huanke.iot.manage.service.device;
 
-import com.huanke.iot.manage.request.DeviceQueryRequest;
+import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
 import com.huanke.iot.manage.response.DeviceTypeVo;
-import com.huanke.iot.manage.response.DeviceVo;
 import org.assertj.core.util.Lists;
 import org.springframework.stereotype.Repository;
 

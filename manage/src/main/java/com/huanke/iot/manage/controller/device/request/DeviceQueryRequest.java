@@ -1,4 +1,4 @@
-package com.huanke.iot.manage.request;
+package com.huanke.iot.manage.controller.device.request;
 
 import lombok.Data;
 

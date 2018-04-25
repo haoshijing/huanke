@@ -1,11 +1,14 @@
-package com.huanke.iot.manage.controller;
+package com.huanke.iot.manage.controller.device;
 
-import com.huanke.iot.manage.request.DeviceQueryRequest;
+import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
+import com.huanke.iot.manage.controller.device.request.DeviceUpdateRequest;
 import com.huanke.iot.manage.response.DeviceTypeVo;
 import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.manage.service.device.DeviceService;
 import com.huanke.iot.manage.service.device.DeviceTypeService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +38,16 @@ public class DeviceController {
     @RequestMapping("/queryCount")
     public ApiResponse<Integer> queryCount(@RequestBody  DeviceQueryRequest deviceQueryRequest){
         return new ApiResponse<>(deviceService.selectCount(deviceQueryRequest));
+    }
+
+    @RequestMapping("/updateDevice")
+    public ApiResponse<Boolean> updateDevice(@RequestBody DeviceUpdateRequest deviceUpdateRequest){
+
+        if(StringUtils.isEmpty(deviceUpdateRequest.getDeviceName())){
+            return new ApiResponse(RetCode.PARAM_ERROR);
+        }
+        Boolean updateRet = deviceService.updateDevice(deviceUpdateRequest);
+        return new ApiResponse<>(updateRet);
     }
 
 
