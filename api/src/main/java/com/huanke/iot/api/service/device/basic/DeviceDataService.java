@@ -69,8 +69,6 @@ public class DeviceDataService {
     private StringRedisTemplate stringRedisTemplate;
 
     public Boolean shareDevice(String master, Integer toId, String deviceIdStr, String token) {
-
-
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
             return false;

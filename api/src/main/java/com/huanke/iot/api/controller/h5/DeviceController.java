@@ -73,8 +73,8 @@ public class DeviceController extends BaseController {
             return new ApiResponse<>(lastToken);
         }
         String token = UUID.randomUUID().toString().replace("-","").substring(0,8);
-        stringRedisTemplate.opsForValue().set("token."+userId,token);
-        stringRedisTemplate.expire("token."+userId,10, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set("token."+deviceId,token);
+        stringRedisTemplate.expire("token."+deviceId,10, TimeUnit.MINUTES);
         return new ApiResponse<>(token);
     }
     @RequestMapping("/share")
