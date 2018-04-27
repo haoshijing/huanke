@@ -34,7 +34,7 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
                 .excludePathPatterns(new String[]{"/h5/api/user/auth","/h5/api/getSign"});
 
         registry.addInterceptor(appAuthInterceptor).
-                addPathPatterns("/app/**")
+                addPathPatterns("/app/**").excludePathPatterns("/app/api/setApkInfo")
                 .excludePathPatterns("/app/api/bind");
 
     }

@@ -1,7 +1,9 @@
 package com.huanke.iot.api.controller.app;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
+import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.app.response.VideoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -45,6 +48,9 @@ public class AppController extends BaseController {
 
     @Autowired
     private DeviceDataService deviceDataService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private DeviceService deviceService;
@@ -115,6 +121,27 @@ public class AppController extends BaseController {
         Integer userId = getCurrentUserIdForApp(request);
         boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);
+    }
+
+    @RequestMapping("/obtainApk")
+    public ApiResponse<AppInfoVo> obtainApk(){
+
+        String apkInfo = stringRedisTemplate.opsForValue().get("apkInfo");
+        if(StringUtils.isNotEmpty(apkInfo)){
+            AppInfoVo appInfoVo = JSON.parseObject(apkInfo,AppInfoVo.class);
+            return new ApiResponse<>(appInfoVo);
+        }
+        return new ApiResponse<>();
+
+    }
+
+    @RequestMapping("/setApkInfo")
+    public ApiResponse<Boolean> setApkInfo(String v,String u){
+        AppInfoVo appInfoVo = new AppInfoVo();
+        appInfoVo.setApkUrl(u);
+        appInfoVo.setCurrentVersion(v);
+        stringRedisTemplate.opsForValue().set("apkInfo",JSON.toJSONString(appInfoVo));
+        return new ApiResponse<>(true);
     }
 
     @RequestMapping("/getMemo")

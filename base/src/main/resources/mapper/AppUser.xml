@@ -7,7 +7,7 @@
         t_app_user
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" parameterType="com.huanke.iot.base.po.user.AppUserPo">
+    <insert id="insert" parameterType="com.huanke.iot.base.po.user.AppUserPo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName"/>
         (
         openId,
