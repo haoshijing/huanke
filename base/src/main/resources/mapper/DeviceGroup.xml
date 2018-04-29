@@ -13,12 +13,20 @@
         groupName,
         userId,
         status,
+        icon,
+        memo,
+        videoCover,
+        videoUrl,
         createTime
         )
         VALUES (
         #{groupName},
         #{userId},
         #{status},
+        #{icon},
+        #{memo},
+        #{videoCover},
+        #{videoUrl},
         #{createTime}
         )
     </insert>
@@ -83,6 +91,34 @@
         update t_device_group_item
         set status = #{status} where userId = #{userId}
         and deviceId = #{deviceId}
+    </update>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
+        update <include refid="tableName"/>
+        <set>
+            <if test = "groupName != null">
+                groupName = #{groupName},
+            </if>
+
+            <if test = "icon != null">
+                icon = #{icon},
+            </if>
+
+            <if test = "memo != null">
+                memo = #{memo},
+            </if>
+
+            <if test = "videoCover != null">
+                videoCover = #{videoCover},
+            </if>
+
+            <if test = "videoUrl != null">
+                videoUrl = #{videoUrl},
+            </if>
+
+            where id = #{id}
+
+        </set>
     </update>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">

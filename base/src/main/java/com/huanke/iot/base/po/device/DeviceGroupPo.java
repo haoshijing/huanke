@@ -31,4 +31,21 @@ public class DeviceGroupPo {
     组的状态1-正常2-已删除
      */
     private Integer status;
+
+    /**
+     * 组图标
+     */
+    private String icon;
+    /**
+     * 文字介绍
+     */
+    private String memo;
+    /**
+     * 视频封面图
+     */
+    private String videoCover;
+    /**
+     * 视频链接
+     */
+    private String videoUrl;
 }

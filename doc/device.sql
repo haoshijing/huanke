@@ -113,6 +113,19 @@ create table t_device_data_control(
   createTime bigint comment '创建时间'
 );
 
+drop table  if EXISTS t_device_data_info;
+create table t_device_data_info(
+  id int primary key auto_increment comment '主键id',
+  deviceId int comment '设备id',
+  wxInfo varchar(200) comment 'wx信息',
+  mac varchar(200)  comment 'mac',
+  imei varchar(200)  comment 'imei',
+  imsi varchar(200) comment 'imsi',
+  version varchar(300) comment '版本信息',
+  createTime bigint comment '写入时间',
+  lastUpdateTime bigint comment '最后修改时间'
+);
+
 drop table  if EXISTS t_app_user;
 create table t_app_user(
   id int primary key auto_increment comment '主键id',
@@ -200,6 +213,13 @@ lastUpdateTime bigint comment '最后修改时间',
 status int comment '状态1-正常,2-已删除'
 );
 
+alter table t_device_group add (
+`icon` varchar(200) comment '分组图标',
+`memo` varchar(2048) comment '分组说明',
+`videoCover` varchar(1024) comment '分组封面',
+`videoUrl` varchar(1024) comment '分组视频链接'
+)
+
 drop table if EXISTS t_device_group_item;
 create table t_device_group_item(
 id int primary key auto_increment comment '主键id',
@@ -223,4 +243,13 @@ createTime bigint comment '创建时间',
 ) comment '设备功能表';
 
 
-
+drop table if EXISTS t_device_upgrade;
+create t_device_upgrade(
+id int  primary key auto_increment comment '主键id',
+deviceId int not null comment '设备Id',
+fileName varchar(1024) comment '文件名',
+fileSize int comment '文件大小',
+md5 int comment '文件md5',
+createTime bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间'
+);

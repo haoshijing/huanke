@@ -13,4 +13,6 @@ public class DeviceVo {
     private String mac;
     private Integer bindStatus;
     private Integer id;
+    private String software;
+    private String hardware;
 }

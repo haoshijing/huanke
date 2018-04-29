@@ -290,6 +290,11 @@ public class DeviceDataService {
             if (deviceTypePo != null) {
                 deviceDetailVo.setDeviceTypeName(deviceTypePo.getName());
             }
+            deviceDetailVo.setMac(devicePo.getMac());
+            deviceDetailVo.setWeather("XX");
+            deviceDetailVo.setArea("浙江杭州");
+            deviceDetailVo.setAqi("28");
+            deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
         }
 

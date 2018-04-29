@@ -1,7 +1,11 @@
 package com.huanke.iot.manage.service.device;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.impl.device.data.DeviceInfoMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.data.DeviceInfoPo;
 import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
 import com.huanke.iot.manage.controller.device.request.DeviceUpdateRequest;
 import com.huanke.iot.manage.response.DeviceVo;
@@ -16,6 +20,9 @@ public class DeviceService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private DeviceInfoMapper deviceInfoMapper;
 
     public List<DeviceVo> selectList(DeviceQueryRequest deviceQueryRequest){
 
@@ -34,6 +41,15 @@ public class DeviceService {
             deviceVo.setMac(devicePo.getMac());
             deviceVo.setId(devicePo.getId());
             deviceVo.setBindStatus(devicePo.getBindStatus());
+            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByDevId(devicePo.getDeviceId());
+            if(deviceInfoPo != null){
+                String version = deviceInfoPo.getVersion();
+                JSONObject jsonObject = JSON.parseObject(version);
+                if(jsonObject != null) {
+                    deviceVo.setHardware(jsonObject.getString("hardware"));
+                    deviceVo.setSoftware(jsonObject.getString("software"));
+                }
+            }
             return deviceVo;
         }).collect(Collectors.toList());
         return deviceVos;

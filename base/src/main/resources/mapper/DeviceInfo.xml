@@ -29,4 +29,15 @@
         )
     </insert>
 
+    <select id="selectByDevId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.data.DeviceInfoPo">
+        select * from <include refid="tableName"/>
+        where deviceId = #{deviceId}
+    </select>
+
+    <update id = "updateById" parameterType="com.huanke.iot.base.po.device.data.DeviceInfoPo">
+        update <include refid="tableName"/>
+        set version = #{version},
+        lastUpdateTime = #{lastUpdateTime}
+        where id = #{id}
+    </update>
 </mapper>

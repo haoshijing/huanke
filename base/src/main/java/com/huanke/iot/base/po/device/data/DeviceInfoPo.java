@@ -12,4 +12,6 @@ public class DeviceInfoPo {
     private String imsi;
     private String version;
     private Long createTime;
+    private String devId;
+    private Long lastUpdateTime;
 }

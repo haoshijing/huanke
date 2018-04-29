@@ -7,6 +7,7 @@ import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.app.response.VideoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
+import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
@@ -97,11 +98,10 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/queryDeviceList")
-    public ApiResponse<List<AppDeviceDataVo>> queryDeviceList(HttpServletRequest httpServletRequest) {
-
-        Integer userId = getCurrentUserIdForApp(httpServletRequest);
-        List<AppDeviceDataVo> appDeviceDataVos = deviceDataService.getDeviceList(userId);
-        return new ApiResponse<>(appDeviceDataVos);
+    public ApiResponse<DeviceListVo> queryDeviceList(HttpServletRequest request) {
+        Integer userId = getCurrentUserIdForApp(request);
+        DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
+        return new ApiResponse<>(deviceListVo);
     }
 
     @RequestMapping("/queryDetailByDeviceId")
