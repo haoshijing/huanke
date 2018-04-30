@@ -124,11 +124,11 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/obtainApk")
-    public ApiResponse<AppInfoVo> obtainApk(){
+    public ApiResponse<AppInfoVo> obtainApk() {
 
         String apkInfo = stringRedisTemplate.opsForValue().get("apkInfo");
-        if(StringUtils.isNotEmpty(apkInfo)){
-            AppInfoVo appInfoVo = JSON.parseObject(apkInfo,AppInfoVo.class);
+        if (StringUtils.isNotEmpty(apkInfo)) {
+            AppInfoVo appInfoVo = JSON.parseObject(apkInfo, AppInfoVo.class);
             return new ApiResponse<>(appInfoVo);
         }
         return new ApiResponse<>();
@@ -136,17 +136,11 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/setApkInfo")
-    public ApiResponse<Boolean> setApkInfo(String v,String u){
+    public ApiResponse<Boolean> setApkInfo(String v, String u) {
         AppInfoVo appInfoVo = new AppInfoVo();
         appInfoVo.setApkUrl(u);
         appInfoVo.setCurrentVersion(v);
-        stringRedisTemplate.opsForValue().set("apkInfo",JSON.toJSONString(appInfoVo));
+        stringRedisTemplate.opsForValue().set("apkInfo", JSON.toJSONString(appInfoVo));
         return new ApiResponse<>(true);
-    }
-
-    @RequestMapping("/getMemo")
-    public ApiResponse<VideoVo> getMemo(){
-        VideoVo videoVo = new VideoVo();
-        return new ApiResponse<>(videoVo);
     }
 }

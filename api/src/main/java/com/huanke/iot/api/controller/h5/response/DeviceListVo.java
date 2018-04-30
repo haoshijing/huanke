@@ -17,6 +17,10 @@ public class DeviceListVo {
     public static class DeviceGroupData{
         private Integer groupId;
         private String groupName;
+        private String icon;
+        private String videoUrl;
+        private String videoCover;
+        private String memo;
         private List<DeviceItemPo> deviceItemPos = Lists.newArrayList();
         public void addItemPo(DeviceItemPo deviceItemPo){
             deviceItemPos.add(deviceItemPo);

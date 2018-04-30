@@ -290,6 +290,7 @@ public class DeviceDataService {
             if (deviceTypePo != null) {
                 deviceDetailVo.setDeviceTypeName(deviceTypePo.getName());
             }
+            deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
             deviceDetailVo.setWeather("XX");
             deviceDetailVo.setArea("浙江杭州");
@@ -639,6 +640,6 @@ public class DeviceDataService {
         if (map.containsKey(key)) {
             return (String) map.get(key);
         }
-        return "";
+        return "0";
     }
 }

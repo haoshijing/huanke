@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
@@ -8,6 +9,7 @@ import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -50,6 +52,32 @@ public class DeviceService {
                     DeviceListVo.DeviceGroupData deviceGroupData = new DeviceListVo.DeviceGroupData();
                     deviceGroupData.setGroupName(deviceGroupPo.getGroupName());
                     deviceGroupData.setGroupId(deviceGroupPo.getId());
+
+                    String icon = Constants.DEFAULT_ICON;
+                    if(StringUtils.isNotEmpty(icon)){
+                        icon = deviceGroupPo.getIcon();
+                    }
+
+                    String videoUrl =Constants.DEFAULT_VIDEO_URl;
+                    if(StringUtils.isNotEmpty(videoUrl)){
+                        videoUrl = deviceGroupPo.getVideoUrl();
+                    }
+
+                    String videoCover = Constants.DEFAULT_COVER;
+                    if(StringUtils.isNotEmpty(videoCover)){
+                        videoCover = deviceGroupPo.getVideoCover();
+                    }
+
+                    String memo = Constants.MEMO;
+                    if(StringUtils.isNotEmpty(memo)){
+                        memo = deviceGroupPo.getMemo();
+                    }
+
+                    deviceGroupData.setMemo(memo);
+                    deviceGroupData.setVideoUrl(videoUrl);
+                    deviceGroupData.setVideoCover(videoCover);
+                    deviceGroupData.setIcon(icon);
+
                     DeviceGroupItemPo queryDeviceGroupItem = new DeviceGroupItemPo();
                     queryDeviceGroupItem.setUserId(userId);
                     queryDeviceGroupItem.setStatus(1);
