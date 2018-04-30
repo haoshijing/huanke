@@ -53,24 +53,24 @@ public class DeviceService {
                     deviceGroupData.setGroupName(deviceGroupPo.getGroupName());
                     deviceGroupData.setGroupId(deviceGroupPo.getId());
 
-                    String icon = Constants.DEFAULT_ICON;
-                    if(StringUtils.isNotEmpty(icon)){
-                        icon = deviceGroupPo.getIcon();
+                    String icon = deviceGroupPo.getIcon();
+                    if (StringUtils.isEmpty(icon)) {
+                        icon = Constants.DEFAULT_ICON;
                     }
 
-                    String videoUrl =Constants.DEFAULT_VIDEO_URl;
-                    if(StringUtils.isNotEmpty(videoUrl)){
-                        videoUrl = deviceGroupPo.getVideoUrl();
+                    String videoUrl = deviceGroupPo.getVideoUrl();
+                    if (StringUtils.isEmpty(videoUrl)) {
+                        videoUrl = Constants.DEFAULT_VIDEO_URl;
                     }
 
-                    String videoCover = Constants.DEFAULT_COVER;
-                    if(StringUtils.isNotEmpty(videoCover)){
-                        videoCover = deviceGroupPo.getVideoCover();
+                    String videoCover = deviceGroupData.getVideoCover();
+                    if (StringUtils.isEmpty(videoCover)) {
+                        videoCover = Constants.DEFAULT_COVER;
                     }
 
-                    String memo = Constants.MEMO;
-                    if(StringUtils.isNotEmpty(memo)){
-                        memo = deviceGroupPo.getMemo();
+                    String memo = deviceGroupPo.getMemo();
+                    if (StringUtils.isEmpty(memo)) {
+                        memo =  Constants.MEMO;
                     }
 
                     deviceGroupData.setMemo(memo);
@@ -84,14 +84,14 @@ public class DeviceService {
                     queryDeviceGroupItem.setGroupId(deviceGroupData.getGroupId());
                     List<DeviceGroupItemPo> itemPos = deviceGroupMapper.queryGroupItems(queryDeviceGroupItem);
                     List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().filter(deviceGroupItemPo -> {
-                        if(deviceGroupItemPo.getIsMaster() == 2){
+                        if (deviceGroupItemPo.getIsMaster() == 2) {
                             //分享绑定的
                             DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
                             deviceRelationPo.setDeviceId(deviceGroupItemPo.getDeviceId());
                             deviceRelationPo.setStatus(1);
                             deviceRelationPo.setJoinUserId(deviceGroupItemPo.getUserId());
                             Integer count = deviceRelationMapper.selectCount(deviceRelationPo);
-                            if(count == 0) {
+                            if (count == 0) {
                                 return false;
                             }
                         }
