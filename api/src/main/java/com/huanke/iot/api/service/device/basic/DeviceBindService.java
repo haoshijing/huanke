@@ -61,7 +61,6 @@ public class DeviceBindService {
             updateDevicePo.setBindTime(System.currentTimeMillis());
             updateDevicePo.setId(devicePo.getId());
             updateDevicePo.setBindStatus(2);
-            updateDevicePo.setIp(ip);
             deviceMapper.updateById(updateDevicePo);
             DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
             deviceGroupPo.setGroupName("默认组");

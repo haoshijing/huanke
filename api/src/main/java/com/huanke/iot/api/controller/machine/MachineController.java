@@ -2,6 +2,7 @@ package com.huanke.iot.api.controller.machine;
 
 import com.huanke.iot.api.controller.machine.response.MachineDeviceVo;
 import com.huanke.iot.api.service.machine.MachineService;
+import com.huanke.iot.api.util.IpUtils;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/machine")
@@ -25,8 +28,9 @@ public class MachineController {
     }
 
     @RequestMapping("/obtain")
-    public ApiResponse<MachineDeviceVo> obtainMachine(String mac){
-        MachineDeviceVo machineDeviceVo = machineService.queryByMac(mac);
+    public ApiResponse<MachineDeviceVo> obtainMachine(HttpServletRequest request,String mac){
+        String ip = IpUtils.getIpAddr(request);
+        MachineDeviceVo machineDeviceVo = machineService.queryByMac(ip,mac);
         ApiResponse apiResponse = new ApiResponse(machineDeviceVo);
         if(machineDeviceVo == null){
             apiResponse.setMsg("没有查询对应的设备");

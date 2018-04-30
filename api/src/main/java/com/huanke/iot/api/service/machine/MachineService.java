@@ -40,7 +40,7 @@ public class MachineService {
     @Autowired
     private WechartUtil wechartUtil;
 
-    public MachineDeviceVo queryByMac(String mac) {
+    public MachineDeviceVo queryByMac(String ip,String mac) {
         DevicePo devicePo = deviceMapper.selectByMac(mac);
         if(devicePo != null){
             MachineDeviceVo machineDeviceVo = new MachineDeviceVo();
@@ -52,6 +52,11 @@ public class MachineService {
             }
             machineDeviceVo.setDevicelicence(devicePo.getDevicelicence());
             machineDeviceVo.setWechatDeviceId(devicePo.getDeviceId());
+
+            DevicePo updatePo = new DevicePo();
+            updatePo.setId(devicePo.getId());
+            updatePo.setIp(ip);
+            deviceMapper.updateById(updatePo);
             return machineDeviceVo;
         }
         return null;
