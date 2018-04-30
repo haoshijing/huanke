@@ -109,7 +109,6 @@ public class DeviceService {
                             deviceItemPo.setIcon(deviceTypePo.getIcon());
                         }
                         Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
-
                         deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
                         deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
                         deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));

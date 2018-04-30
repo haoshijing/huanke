@@ -6,6 +6,7 @@ import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.app.response.VideoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
+import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -121,6 +123,13 @@ public class AppController extends BaseController {
         Integer userId = getCurrentUserIdForApp(request);
         boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);
+    }
+
+
+    @RequestMapping("/sendFunc")
+    public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
+        String requestId = deviceDataService.sendFunc(deviceFuncVo);
+        return new ApiResponse<>(requestId);
     }
 
     @RequestMapping("/obtainApk")
