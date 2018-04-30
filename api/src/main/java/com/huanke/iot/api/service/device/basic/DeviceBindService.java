@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.huanke.iot.api.util.IpUtils;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -33,7 +35,7 @@ public class DeviceBindService {
 
     // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6, Con
     // tent=, CreateTime=1523200569, Event=unbind, ToUserName=gh_7f3ba47c70a3, FromUserName=okOTjwpDwxJR666hVWnj_L_jp87w, MsgType=device_event, SessionID=0, OpenID=okOTjwpDwxJR666hVWnj_L_jp87w}
-    public void handlerDeviceEvent(Map<String, String> requestMap, String event) {
+    public void handlerDeviceEvent(HttpServletRequest request,Map<String, String> requestMap, String event) {
         String openId = requestMap.get("OpenID");
         String deviceId = requestMap.get("DeviceID");
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
@@ -52,11 +54,14 @@ public class DeviceBindService {
             appUserMapper.insert(newUserPo);
             userId = newUserPo.getId();
         }
+
+        String ip = IpUtils.getIpAddr(request);
         if (StringUtils.equals("bind", event)) {
             DevicePo updateDevicePo = new DevicePo();
             updateDevicePo.setBindTime(System.currentTimeMillis());
             updateDevicePo.setId(devicePo.getId());
             updateDevicePo.setBindStatus(2);
+            updateDevicePo.setIp(ip);
             deviceMapper.updateById(updateDevicePo);
             DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
             deviceGroupPo.setGroupName("默认组");

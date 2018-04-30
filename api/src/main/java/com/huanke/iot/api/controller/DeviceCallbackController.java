@@ -60,7 +60,7 @@ public class DeviceCallbackController {
 
         if(StringUtils.equals(msgType,"device_event")){
             String event = requestMap.get("Event");
-            deviceBindService.handlerDeviceEvent(requestMap,event);
+            deviceBindService.handlerDeviceEvent(request,requestMap,event);
         }
         } catch (Exception e) {
 

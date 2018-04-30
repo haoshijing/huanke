@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.machine.response.MachineDeviceVo;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.DeviceTypePo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -32,6 +34,9 @@ public class MachineService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private DeviceTypeMapper deviceTypeMapper;
     @Autowired
     private WechartUtil wechartUtil;
 
@@ -54,6 +59,10 @@ public class MachineService {
 
     public Integer createNew(String mac,Integer typeId){
         DevicePo devicePo = new DevicePo();
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+        if(deviceTypePo == null){
+            return 3;
+        }
         JSONObject jsonObject = obtainDeviceJson();
         if(jsonObject != null){
             String deviceId = jsonObject.getString("deviceid");
@@ -63,7 +72,7 @@ public class MachineService {
             devicePo.setDeviceTypeId(typeId);
             devicePo.setDevicelicence(devicelicence);
             devicePo.setCreateTime(System.currentTimeMillis());
-
+            devicePo.setName(deviceTypePo.getName());
             DevicePo queryDevicePo = deviceMapper.selectByMac(mac);
             if(queryDevicePo != null){
                 return 1;
