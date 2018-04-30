@@ -45,6 +45,11 @@ public class DeviceListVo {
          * 设备pm值
          */
         private String pm;
+        private String co2;
+        private String tem;
+        private String hum;
+        private String tvoc;
+        private String hcho;
         private String deviceTypeName;
         /**
          * 1-在线，2-离线

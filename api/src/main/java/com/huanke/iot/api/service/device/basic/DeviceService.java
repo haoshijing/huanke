@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -70,7 +71,7 @@ public class DeviceService {
 
                     String memo = deviceGroupPo.getMemo();
                     if (StringUtils.isEmpty(memo)) {
-                        memo =  Constants.MEMO;
+                        memo = Constants.MEMO;
                     }
 
                     deviceGroupData.setMemo(memo);
@@ -107,8 +108,15 @@ public class DeviceService {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                             deviceItemPo.setIcon(deviceTypePo.getIcon());
                         }
-                        String pm = (String) stringRedisTemplate.opsForHash().get("sensor." + devicePo.getId(), SensorTypeEnums.PM25_IN.getCode());
-                        deviceItemPo.setPm(pm);
+                        Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
+
+                        deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
+                        deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
+                        deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
+                        deviceItemPo.setTem(getData(data, SensorTypeEnums.TEMPERATURE_IN.getCode()));
+                        deviceItemPo.setHcho(getData(data, SensorTypeEnums.HCHO_IN.getCode()));
+                        deviceItemPo.setTvoc(getData(data, SensorTypeEnums.TVOC_IN.getCode()));
+
                         return deviceItemPo;
                     }).collect(Collectors.toList());
                     deviceGroupData.setDeviceItemPos(deviceItemPos);
@@ -119,6 +127,18 @@ public class DeviceService {
         deviceListVo.setGroupDataList(groupDatas);
         return deviceListVo;
     }
+
+    private String getData(Map<Object, Object> data, String key) {
+        if (data == null) {
+            return "0";
+        }
+        Object storeVal = data.get(key);
+        if (storeVal == null) {
+            return "0";
+        }
+        return (String) storeVal;
+    }
+
 
     public boolean editDevice(Integer userId, String deviceId, String deviceName) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
@@ -138,4 +158,5 @@ public class DeviceService {
         updatePo.setName(deviceName);
         return deviceMapper.updateByDeviceId(updatePo) > 0;
     }
+
 }
