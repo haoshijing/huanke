@@ -4,6 +4,8 @@ import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
 import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
 import com.huanke.iot.api.service.device.group.DeviceGroupService;
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.RetCode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,5 +41,19 @@ public class DeviceGroupController extends BaseController{
         Integer userId = getCurrentUserId(request);
         Boolean ret = deviceGroupService.updateDeviceGroup(userId,deviceGroupRequest);
         return new ApiResponse<>(ret);
+    }
+
+    @RequestMapping("/updateGroupName")
+    public ApiResponse<Boolean> updateGroupName(Integer groupId,String groupName){
+        if(groupId == null  || StringUtils.isEmpty(groupName)){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
+        }
+        ApiResponse apiResponse = new ApiResponse(true);
+        Boolean ret = deviceGroupService.updateGroupName(groupId,groupName);
+        apiResponse.setData(ret);
+        if(!ret){
+            apiResponse.setMsg("该组名已存在");
+        }
+        return apiResponse;
     }
 }

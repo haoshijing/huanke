@@ -70,4 +70,17 @@ public class DeviceGroupService {
         );
         return true;
     }
+
+    public Boolean updateGroupName(Integer groupId, String groupName) {
+        DeviceGroupPo deviceGroupPo = deviceGroupMapper.queryByName(groupName);
+        if(deviceGroupPo != null){
+            return false;
+        }
+
+        DeviceGroupPo updatePo = new DeviceGroupPo();
+        updatePo.setId(groupId);
+        updatePo.setGroupName(groupName);
+        int ret = deviceGroupMapper.updateById(updatePo);
+        return ret >0;
+    }
 }
