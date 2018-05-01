@@ -94,6 +94,7 @@ public class DeviceGroupService {
         DeviceGroupPo updatePo = new DeviceGroupPo();
         updatePo.setId(groupId);
         updatePo.setGroupName(groupName);
+        updatePo.setLastUpdateTime(System.currentTimeMillis());
         int ret = deviceGroupMapper.updateById(updatePo);
         return ret >0;
     }

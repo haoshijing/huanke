@@ -116,7 +116,7 @@
             <if test = "videoUrl != null">
                 videoUrl = #{videoUrl},
             </if>
-
+            lastUpdateTime = #{lastUpdateTime}
             where id = #{id}
 
         </set>
