@@ -69,7 +69,6 @@
     </insert>
 
 
-    </update>
     <select id="queryGroupItems" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo" resultType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
         select * from t_device_group_item
         where status = 1
