@@ -30,7 +30,7 @@ public class DeviceGroupPo {
     /*
     组的状态1-正常2-已删除
      */
-    private Integer status;
+    private Integer status = 1;
 
     /**
      * 组图标

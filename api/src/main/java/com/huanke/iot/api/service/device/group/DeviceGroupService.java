@@ -1,10 +1,10 @@
 package com.huanke.iot.api.service.device.group;
 
+import com.alibaba.druid.util.StringUtils;
 import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
 import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +51,23 @@ public class DeviceGroupService {
     }
 
     public Boolean deleteGroup(Integer userId, Integer groupId) {
-        Boolean updateRet = deviceGroupMapper.updateGroupStatus(userId, groupId) > 0;
+        DeviceGroupPo groupPo = deviceGroupMapper.selectById(groupId);
+        if(groupPo != null && StringUtils.equals(groupPo.getGroupName(),"默认组")){
+            return false;
+        }
+        Boolean updateRet = deviceGroupMapper.updateGroupStatus(userId, groupId,2) > 0;
         if (updateRet) {
-            deviceGroupMapper.updateDeviceGroupItem(userId, groupId, 0);
+            DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
+            deviceGroupPo.setGroupName("默认组");
+            deviceGroupPo.setUserId(userId);
+            deviceGroupPo.setStatus(1);
+            List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(deviceGroupPo,1,0);
+            Integer defaultGroupId = 0;
+
+            if(deviceGroupPos.size() > 0 ){
+                defaultGroupId = deviceGroupPos.get(0).getId();
+            }
+            deviceGroupMapper.updateDeviceGroupItem(userId, groupId, defaultGroupId);
         }
         return updateRet;
     }

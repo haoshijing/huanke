@@ -28,7 +28,7 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
 
     Integer queryGroupCount(@Param("userId") Integer userId, @Param("groupName") String groupName);
 
-    Integer updateGroupStatus(@Param("userId") Integer userId,@Param("groupId") Integer groupId);
+    Integer updateGroupStatus(@Param("userId") Integer userId,@Param("groupId") Integer groupId, @Param("status") Integer status);
 
     int updateDeviceGroupItem(@Param("userId") Integer userId,
                                @Param("currentGroupId") Integer currentGroupId,
