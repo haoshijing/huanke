@@ -137,7 +137,7 @@
     <update id="updateGroupStatus">
         update <include refid="tableName"/>
         set status = #{status} where  userId = #{userId}
-        and groupId = #{groupId}
+        and id = #{groupId}
     </update>
 
     <update id="updateDeviceGroupItem">
