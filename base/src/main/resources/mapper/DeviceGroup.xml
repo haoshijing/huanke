@@ -45,7 +45,7 @@
             </if>
 
         </where>
-        limit #{limit} ,#{offset}
+        limit #{limit} offset #{offset}
     </select>
     <insert id="insertGroupItem" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
         INSERT INTO t_device_group_item
@@ -157,6 +157,6 @@
 
     <select id="queryByName" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
         select * from  <include refid="tableName"/>
-        where groupName = #{groupName}
+        where groupName = #{groupName} and userId = #{userId}
     </select>
 </mapper>

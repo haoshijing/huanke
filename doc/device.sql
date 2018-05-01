@@ -85,6 +85,21 @@ create table t_device_data_alarm(
   dealTime int comment '处理时间',
   createTime bigint comment '创建时间'
 );
+
+drop table  if EXISTS t_device_timer;
+create table t_device_timer(
+id int primary key auto_increment,
+deviceId  int  comment '设备id',
+userId int comment '用户id',
+name varchar(255) comment '定时器设备',
+timerType int comment '类型',
+executeTime bigint comment '执行时间',
+status int comment '1-正常,2-已取消,3-已失效',
+executeRet int comment '执行结果',
+createTime  bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
+
 drop table  if EXISTS t_device_data_sensor;
 create table t_device_data_sensor(
   id int primary key auto_increment comment '主键id',
