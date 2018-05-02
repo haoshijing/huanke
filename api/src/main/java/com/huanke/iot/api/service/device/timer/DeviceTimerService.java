@@ -80,12 +80,22 @@ public class DeviceTimerService {
         return  deviceTimerVos;
     }
 
-    public Boolean cancelTimer(Integer userId,Integer timerId){
-        DeviceTimerPo updatePo = new DeviceTimerPo();
-        updatePo.setId(timerId);
-        updatePo.setUserId(userId);
-        updatePo.setStatus(2);
+    public Boolean updateTimerStatus(Integer userId,Integer timerId,Integer status){
 
-        return deviceTimerMapper.cancelTimer(updatePo) > 0;
+        DeviceTimerPo timerPo = deviceTimerMapper.selectById(timerId);
+        if(timerPo != null){
+            if(!timerPo.getUserId().equals(userId)){
+                return false;
+            }
+        }
+        if(status == timerPo.getStatus()){
+            return false;
+        }
+        DeviceTimerPo updatePo = new DeviceTimerPo();
+        updatePo.setUserId(userId);
+        updatePo.setId(timerId);
+        updatePo.setStatus(status);
+        updatePo.setLastUpdateTime(System.currentTimeMillis());
+        return deviceTimerMapper.updateById(updatePo) > 0;
     }
 }

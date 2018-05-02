@@ -39,9 +39,17 @@ public class DeviceTimerController extends BaseController{
     }
 
     @RequestMapping("/cancelTimer")
-    public ApiResponse<Boolean> cancelTimer(HttpServletRequest httpServletRequest,Integer timerId){
+    public ApiResponse<Boolean> cancelTimer(HttpServletRequest httpServletRequest,Integer timerId,Integer status){
         Integer userId = getCurrentUserId(httpServletRequest);
-        Boolean ret =  deviceTimerService.cancelTimer(userId,timerId);
+        Boolean ret =  deviceTimerService.updateTimerStatus(userId,timerId,status);
         return new ApiResponse<>(ret);
     }
+
+    @RequestMapping("/deleteTimer")
+    public ApiResponse<Boolean> deleteTimer(HttpServletRequest httpServletRequest,Integer timerId){
+        Integer userId = getCurrentUserId(httpServletRequest);
+        Boolean ret =  deviceTimerService.updateTimerStatus(userId,timerId,3);
+        return new ApiResponse<>(ret);
+    }
+
 }

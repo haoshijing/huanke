@@ -56,6 +56,11 @@
         </where>
     </select>
 
+    <select id="selectById" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
+        select * from <include refid="tableName"/>
+        where id = #{id}
+    </select>
+
     <update id="updateById">
         update <include refid="tableName"/>
         <set>
@@ -68,6 +73,6 @@
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>
-        where id = #{id}
+        where id = #{id} and userId = #{userId}
     </update>
 </mapper>
