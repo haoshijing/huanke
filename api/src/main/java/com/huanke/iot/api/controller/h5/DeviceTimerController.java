@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
+@RequestMapping("/h5/api")
 public class DeviceTimerController extends BaseController{
 
     @Autowired
