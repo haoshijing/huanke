@@ -73,7 +73,7 @@ public class DeviceTimerService {
                     deviceTimerVo.setId(deviceTimerPo.getId());
                     deviceTimerVo.setRemainTime(t);
                     deviceTimerVo.setTimerType(deviceTimerPo.getTimerType());
-                    deviceTimerPo.setStatus(deviceTimerPo.getStatus());
+                    deviceTimerVo.setStatus(deviceTimerPo.getStatus());
                     return deviceTimerVo;
                 }
         ).collect(Collectors.toList());
