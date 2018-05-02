@@ -12,6 +12,7 @@
         (
         deviceId,
         name,
+        userId,
         timerType,
         executeTime,
         status,
@@ -22,6 +23,7 @@
         VALUES (
         #{deviceId},
         #{name},
+        #{userId},
         #{timerType},
         #{executeTime},
         #{status},

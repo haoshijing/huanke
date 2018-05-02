@@ -5,6 +5,7 @@ import com.huanke.iot.api.controller.h5.response.DeviceTimerVo;
 import com.huanke.iot.api.service.device.timer.DeviceTimerService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +31,6 @@ public class DeviceTimerController extends BaseController{
 
     @RequestMapping("/queryTimerList")
     public ApiResponse<List<DeviceTimerVo>> queryTimerList(HttpServletRequest request,String deviceIdStr,Integer timerType){
-        if(timerType == null || (timerType != 1 || timerType != 2)){
-            return new ApiResponse(RetCode.PARAM_ERROR);
-        }
 
         Integer userId = getCurrentUserId(request);
 
