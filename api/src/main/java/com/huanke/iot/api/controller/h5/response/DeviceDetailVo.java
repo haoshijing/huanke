@@ -30,12 +30,19 @@ public class DeviceDetailVo {
     private List<JSONArray> funcs;
     private List<OtherItem> timers;
 
+    private String outerPm;
+    private String airQuality;
+    private String outerHum;
+    private String outerTem;
+    private String province;
+    private String city;
     private String mac;
     private String weather;
     private String area;
     private String date;
     private String aqi;
     private String ip;
+
 
     private DataItem childItem;
 

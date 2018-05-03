@@ -8,12 +8,11 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
+import com.huanke.iot.api.util.LocationUtils;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.protocol.HTTP;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +43,7 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
 
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice(HttpServletRequest httpServletRequest) {

@@ -4,8 +4,6 @@ import com.huanke.iot.api.controller.h5.req.DeviceTimerRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceTimerVo;
 import com.huanke.iot.api.service.device.timer.DeviceTimerService;
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.base.constant.RetCode;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
