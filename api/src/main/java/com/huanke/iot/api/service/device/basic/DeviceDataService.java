@@ -297,8 +297,6 @@ public class DeviceDataService {
             }
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
-            deviceDetailVo.setWeather("XX");
-            deviceDetailVo.setArea("浙江杭州");
             deviceDetailVo.setAqi("28");
             deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
@@ -310,7 +308,7 @@ public class DeviceDataService {
                 JSONObject result = weatherJson.getJSONObject("result");
                 if(result != null){
                     deviceDetailVo.setOuterHum(result.getString("humidity"));
-                    deviceDetailVo.setOuterPm(result.getString("api"));
+                    deviceDetailVo.setOuterPm(result.getString("aqi"));
                     deviceDetailVo.setOuterTem(result.getString("temperature_curr"));
                     deviceDetailVo.setWeather(result.getString("weather_curr"));
                 }

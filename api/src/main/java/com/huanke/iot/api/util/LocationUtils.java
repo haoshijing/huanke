@@ -18,7 +18,7 @@ import java.net.URI;
 public class LocationUtils {
 
     public JSONObject getLocation(String ip) {
-        if (StringUtils.isNotEmpty(ip)) {
+        if (StringUtils.isEmpty(ip)) {
             return null;
         }
         String url = String.format("http://api.map.baidu.com/location/ip?ak=omi69HPHpl5luMtrjFzXn9df&ip=%s&coor=bd09ll", ip);
@@ -44,7 +44,7 @@ public class LocationUtils {
     }
 
     public JSONObject getWeather(String ip) {
-        if (StringUtils.isNotEmpty(ip)) {
+        if (StringUtils.isEmpty(ip)) {
             return null;
         }
         String url = String.format("http://api.k780.com:88/?app=weather.today&weaid=%s&appkey=33302&sign=96b4d475536090dac84ff04daa37d785&format=json",
