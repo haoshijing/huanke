@@ -35,6 +35,7 @@ public class DevicePo {
      * 机器所在ip
      */
     private String ip;
+    private String speedConfig;
     private Long createTime;
     private Long lastUpdateTime;
     private Integer bindStatus;

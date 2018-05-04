@@ -104,6 +104,12 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(requestId);
     }
 
+    @RequestMapping("/setSpeedConfig")
+    public ApiResponse<Boolean> setSpeedConfig(String deviceIdStr,String data){
+        Boolean ret = deviceService.setSpeedConfig(deviceIdStr,data);
+        return new ApiResponse<>(ret);
+    }
+
     @RequestMapping("/queryResponse")
     public ApiResponse<JSONObject> queryResonse(String requestId) {
         DeviceOperLogPo deviceOperLogPo = deviceOperLogMapper.queryByRequestId(requestId);

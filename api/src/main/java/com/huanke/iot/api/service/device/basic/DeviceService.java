@@ -1,7 +1,11 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
+import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
@@ -9,6 +13,8 @@ import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +44,9 @@ public class DeviceService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private MqttSendService mqttSendService;
 
 
     public DeviceListVo obtainMyDevice(Integer userId) {
@@ -158,4 +167,34 @@ public class DeviceService {
         return deviceMapper.updateByDeviceId(updatePo) > 0;
     }
 
+    public Boolean setSpeedConfig(String deviceIdStr, String data) {
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        if (devicePo == null) {
+            return false;
+        }
+        Integer deviceId = devicePo.getId();
+        DevicePo updatePo = new DevicePo();
+        updatePo.setId(deviceId);
+        updatePo.setSpeedConfig(data);
+        deviceMapper.updateById(updatePo);
+        JSONObject jsonObject = JSON.parseObject(data);
+        if (jsonObject != null) {
+            JSONArray inArray = jsonObject.getJSONArray("in");
+            JSONArray outArray = jsonObject.getJSONArray("out");
+            int length = inArray.size() * 2 + outArray.size()*2;
+            ByteBuf byteBuf = Unpooled.buffer(2+length);
+            byteBuf.writeShort(length);
+            for(Object inObj : inArray){
+                Integer speed = (Integer)inObj;
+                byteBuf.writeShort(speed);
+            }
+            for(Object outObj : outArray){
+                Integer speed = (Integer)outObj;
+                byteBuf.writeShort(speed);
+            }
+            String topic = "/down/cfg/"+deviceId;
+            mqttSendService.sendMessage(topic,byteBuf.array());
+        }
+        return true;
+    }
 }
