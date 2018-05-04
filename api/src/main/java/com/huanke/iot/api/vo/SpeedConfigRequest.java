@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class SpeedConfigRequest {
-    private String deviceStr;
+    private String deviceId;
     private List<Integer> inSpeed;
     private List<Integer> outSpeed;
 }

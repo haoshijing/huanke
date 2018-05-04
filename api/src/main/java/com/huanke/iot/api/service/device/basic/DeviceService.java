@@ -171,7 +171,7 @@ public class DeviceService {
     }
 
     public Boolean setSpeedConfig(SpeedConfigRequest request) {
-        String deviceIdStr = request.getDeviceStr();
+        String deviceIdStr = request.getDeviceId();
         if (StringUtils.isEmpty(deviceIdStr)) {
             return false;
         }
