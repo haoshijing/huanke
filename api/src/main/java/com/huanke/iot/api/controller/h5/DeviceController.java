@@ -2,10 +2,7 @@ package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
-import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
-import com.huanke.iot.api.controller.h5.response.DeviceListVo;
-import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
-import com.huanke.iot.api.controller.h5.response.SensorDataVo;
+import com.huanke.iot.api.controller.h5.response.*;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
@@ -122,6 +119,12 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(new JSONObject());
     }
 
+
+    @RequestMapping("/getSpeedConfig")
+    public ApiResponse<DeviceSpeedConfigVo> getDeviceSpeedConfig(String deviceId){
+        DeviceSpeedConfigVo data = deviceService.getSpeed(deviceId);
+        return new ApiResponse<>(data);
+    }
 
     @RequestMapping("/getHistoryData")
     public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {

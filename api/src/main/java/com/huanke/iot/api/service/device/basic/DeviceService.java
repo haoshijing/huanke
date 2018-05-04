@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
+import com.huanke.iot.api.controller.h5.response.DeviceSpeedConfigVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
@@ -17,6 +18,7 @@ import com.huanke.iot.base.po.device.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -198,5 +200,54 @@ public class DeviceService {
         String topic = "/down/cfg/" + deviceId;
         mqttSendService.sendMessage(topic, byteBuf.array());
         return true;
+    }
+
+    public DeviceSpeedConfigVo getSpeed(String deviceId) {
+        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        if (devicePo == null) {
+            return null;
+        }
+        DeviceSpeedConfigVo deviceSpeedConfigVo = new DeviceSpeedConfigVo();
+        String config = devicePo.getSpeedConfig();
+        if (StringUtils.isEmpty(config)) {
+            List<DeviceSpeedConfigVo.SpeedConfigItem> inItems =
+                    Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
+                            , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
+            List<DeviceSpeedConfigVo.SpeedConfigItem> outItems =
+                    Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
+                            , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
+                            new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
+            deviceSpeedConfigVo.setInItems(inItems);
+            deviceSpeedConfigVo.setOutItems(outItems);
+        }else{
+            JSONObject jsonObject = JSON.parseObject(devicePo.getSpeedConfig());
+            JSONArray inArray = jsonObject.getJSONArray("in");
+            List<DeviceSpeedConfigVo.SpeedConfigItem> inItems= Lists.newArrayList();
+            List<DeviceSpeedConfigVo.SpeedConfigItem> outItems= Lists.newArrayList();
+            if(inArray != null) {
+                for (int i = 0; i < inArray.size(); i++) {
+                    DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem(i + 1, (Integer) inArray.get(i));
+                    inItems.add(item);
+                }
+            }
+
+            JSONArray outArray = jsonObject.getJSONArray("out");
+            if(outArray != null) {
+                for (int i = 0; i < outArray.size(); i++) {
+                    DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem(i + 1, (Integer) outArray.get(i));
+                    outItems.add(item);
+                }
+            }
+            deviceSpeedConfigVo.setOutItems(outItems);
+            deviceSpeedConfigVo.setInItems(inItems);
+        }
+        return deviceSpeedConfigVo;
     }
 }
