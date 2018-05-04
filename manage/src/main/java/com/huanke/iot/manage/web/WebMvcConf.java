@@ -35,7 +35,9 @@ public class WebMvcConf extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**")
                 .addPathPatterns("/api/device/*");
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/**").excludePathPatterns("/api/device/otaDevice");
+                .addPathPatterns("/**").
+                excludePathPatterns("/api/device/otaDevice")
+                .excludePathPatterns("/api/device/resetPid");
     }
 
 
