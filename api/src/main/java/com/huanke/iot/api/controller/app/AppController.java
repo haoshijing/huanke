@@ -2,6 +2,7 @@ package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.app.request.AppFuncVo;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.app.response.VideoVo;
@@ -142,6 +143,11 @@ public class AppController extends BaseController {
         }
         return new ApiResponse<>();
 
+    }
+
+    @RequestMapping("/sendFunc")
+    public ApiResponse<Boolean> sendFuc(@RequestBody AppFuncVo appFuncVo){
+        return new ApiResponse<>(true);
     }
 
     @RequestMapping("/setApkInfo")

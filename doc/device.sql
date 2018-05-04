@@ -261,9 +261,9 @@ createTime bigint comment '创建时间',
 
 
 drop table if EXISTS t_device_upgrade;
-create t_device_upgrade(
-id int  primary key auto_increment comment '主键id',
-deviceId int not null comment '设备Id',
+create table t_device_upgrade(
+id  int  primary key auto_increment comment '主键id',
+deviceId int comment '设备Id',
 fileName varchar(1024) comment '文件名',
 fileSize int comment '文件大小',
 md5 int comment '文件md5',

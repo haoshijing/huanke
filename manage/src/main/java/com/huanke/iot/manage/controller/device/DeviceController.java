@@ -56,6 +56,9 @@ public class DeviceController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private DeviceOperLogMapper deviceOperLogMapper;
+
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -68,10 +71,6 @@ public class DeviceController {
 
     @Value("${bucketName}")
     private String bucketName;
-
-    @Autowired
-    private DeviceOperLogMapper deviceOperLogMapper;
-
 
     @RequestMapping("/resetPid")
     public ApiResponse<Boolean> resetPid(String productId){
