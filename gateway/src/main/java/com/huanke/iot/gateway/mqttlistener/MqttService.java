@@ -40,7 +40,8 @@ public class MqttService {
             try {
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
-                mqttClient.connect();
+                connOpts.setAutomaticReconnect(true);
+                mqttClient.connect(connOpts);
                 MqttMessageListener listener = new MqttMessageListener();
                 mqttClient.subscribe("/up/#",listener);
             }catch (Exception e){

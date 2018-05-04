@@ -37,6 +37,7 @@ public class MqttSendService {
         if(mqttClient != null){
             try {
                 MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setAutomaticReconnect(true);
                 connOpts.setCleanSession(true);
                 mqttClient.connect(connOpts);
             }catch (Exception e){
@@ -48,7 +49,6 @@ public class MqttSendService {
     public void sendMessage(String topic,String message){
         if(mqttClient != null){
             try {
-                MqttDeliveryToken mqttDeliveryToken = new MqttDeliveryToken();
                 mqttClient.publish(topic, new MqttMessage(message.getBytes()));
             }catch (Exception e){
                 log.error("",e);

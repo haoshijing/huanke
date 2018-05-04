@@ -35,6 +35,7 @@ public class MqttSendService {
         if(mqttClient != null){
             try {
                 MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setAutomaticReconnect(true);
                 connOpts.setCleanSession(true);
                 mqttClient.connect(connOpts);
             }catch (Exception e){
