@@ -8,7 +8,7 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
-import com.huanke.iot.api.util.LocationUtils;
+import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
@@ -105,8 +105,8 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/setSpeedConfig")
-    public ApiResponse<Boolean> setSpeedConfig(String deviceIdStr,String data){
-        Boolean ret = deviceService.setSpeedConfig(deviceIdStr,data);
+    public ApiResponse<Boolean> setSpeedConfig(@RequestBody SpeedConfigRequest request){
+        Boolean ret = deviceService.setSpeedConfig(request);
         return new ApiResponse<>(ret);
     }
 

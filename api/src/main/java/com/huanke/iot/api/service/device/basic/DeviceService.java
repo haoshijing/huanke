@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.gateway.MqttSendService;
+import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
@@ -167,34 +168,35 @@ public class DeviceService {
         return deviceMapper.updateByDeviceId(updatePo) > 0;
     }
 
-    public Boolean setSpeedConfig(String deviceIdStr, String data) {
+    public Boolean setSpeedConfig(SpeedConfigRequest request) {
+        String deviceIdStr = request.getDeviceStr();
+        if (StringUtils.isEmpty(deviceIdStr)) {
+            return false;
+        }
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
             return false;
         }
         Integer deviceId = devicePo.getId();
+        JSONObject config = new JSONObject();
+        config.put("in", request.getInSpeed());
+        config.put("out", request.getOutSpeed());
         DevicePo updatePo = new DevicePo();
         updatePo.setId(deviceId);
-        updatePo.setSpeedConfig(data);
+        updatePo.setSpeedConfig(config.toJSONString());
         deviceMapper.updateById(updatePo);
-        JSONObject jsonObject = JSON.parseObject(data);
-        if (jsonObject != null) {
-            JSONArray inArray = jsonObject.getJSONArray("in");
-            JSONArray outArray = jsonObject.getJSONArray("out");
-            int length = inArray.size() * 2 + outArray.size()*2;
-            ByteBuf byteBuf = Unpooled.buffer(2+length);
-            byteBuf.writeShort(length);
-            for(Object inObj : inArray){
-                Integer speed = (Integer)inObj;
-                byteBuf.writeShort(speed);
-            }
-            for(Object outObj : outArray){
-                Integer speed = (Integer)outObj;
-                byteBuf.writeShort(speed);
-            }
-            String topic = "/down/cfg/"+deviceId;
-            mqttSendService.sendMessage(topic,byteBuf.array());
-        }
+
+        int length = request.getInSpeed().size() * 2 + request.getOutSpeed().size() * 2;
+        ByteBuf byteBuf = Unpooled.buffer(2 + length);
+        byteBuf.writeShort(length);
+        request.getInSpeed().forEach(speed -> {
+            byteBuf.writeShort(speed);
+        });
+        request.getOutSpeed().forEach(speed -> {
+            byteBuf.writeShort(speed);
+        });
+        String topic = "/down/cfg/" + deviceId;
+        mqttSendService.sendMessage(topic, byteBuf.array());
         return true;
     }
 }
