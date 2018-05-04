@@ -95,6 +95,47 @@ public class DeviceController {
     public ApiResponse<Boolean> otaDevice(@RequestBody OtaDeviceRequest request){
         Integer deviceId = request.getId();
         String topic = "/down/fota/"+deviceId;
+//        DeviceUpgradePo deviceUpgradePo = deviceUpgradeMapper.selectByFileName(request.getFileName());
+//        if(deviceUpgradePo == null){
+//            return new ApiResponse<>(false);
+//        }
+        OtaDeviceVo otaDeviceVo = new OtaDeviceVo();
+        OtaDeviceVo.OtaDeviceItem item = new OtaDeviceVo.OtaDeviceItem();
+        item.setType(request.getType());
+        String fileName = request.getFileName();
+        int idx = fileName.lastIndexOf(".");
+        String fileOriginName = fileName.substring(0,idx);
+        String[] strArr = fileOriginName.split("_");
+        if(strArr.length != 3){
+            return  new ApiResponse<>(false);
+        }
+        OtaDeviceVo.VersionPo versionPo = new OtaDeviceVo.VersionPo();
+        versionPo.setHardware(strArr[1]);
+        versionPo.setSoftware(strArr[0]);
+        item.setVersion(versionPo);
+        otaDeviceVo.setFota(item);
+        String url = String.format("http://%s.%s/%s",bucketName,bucketUrl,request.getFileName());
+        item.setUrl(url);
+        item.setSize(FileUtil.getFileLength(url));
+        String data = JSON.toJSONString(otaDeviceVo);
+        log.info("data={}",data);
+        mqttSendService.sendMessage(topic, data);
+
+        DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
+        deviceOperLogPo.setFuncId("800");
+        deviceOperLogPo.setDeviceId(deviceId);
+        deviceOperLogPo.setFuncValue(JSON.toJSONString(otaDeviceVo));
+        deviceOperLogPo.setRequestId(otaDeviceVo.getRequestId());
+        deviceOperLogPo.setCreateTime(System.currentTimeMillis());
+        deviceOperLogMapper.insert(deviceOperLogPo);
+
+        return new ApiResponse<>(true);
+    }
+
+    @RequestMapping("/otaDevice1")
+    public ApiResponse<Boolean> otaDevice1(@RequestBody OtaDeviceRequest request){
+        Integer deviceId = request.getId();
+        String topic = "/down/fota/"+deviceId;
         DeviceUpgradePo deviceUpgradePo = deviceUpgradeMapper.selectByFileName(request.getFileName());
         if(deviceUpgradePo == null){
             return new ApiResponse<>(false);
