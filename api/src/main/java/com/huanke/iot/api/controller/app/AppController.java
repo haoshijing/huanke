@@ -147,6 +147,30 @@ public class AppController extends BaseController {
 
     @RequestMapping("/sendFunc")
     public ApiResponse<Boolean> sendFuc(@RequestBody AppFuncVo appFuncVo){
+        DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
+        String funcId = appFuncVo.getFuncId();
+        if(StringUtils.equals("1", funcId)){
+            deviceFuncVo.setDeviceId(appFuncVo.getDeviceId());
+            deviceFuncVo.setFuncId("210");
+            deviceFuncVo.setValue("0");
+        }else if(StringUtils.equals("2",funcId)){
+            deviceFuncVo.setDeviceId(appFuncVo.getDeviceId());
+            deviceFuncVo.setFuncId("280");
+            deviceFuncVo.setValue("1");
+        }else if(StringUtils.equals("3",funcId)){
+            deviceFuncVo.setDeviceId(appFuncVo.getDeviceId());
+            deviceFuncVo.setFuncId("280");
+            deviceFuncVo.setValue("2");
+        }else if(StringUtils.equals("4",funcId)){
+            deviceFuncVo.setDeviceId(appFuncVo.getDeviceId());
+            deviceFuncVo.setFuncId("280");
+            deviceFuncVo.setValue("3");
+        }else if(StringUtils.equals("5",funcId)){
+            deviceFuncVo.setDeviceId(appFuncVo.getDeviceId());
+            deviceFuncVo.setFuncId("210");
+            deviceFuncVo.setValue("1");
+        }
+
         return new ApiResponse<>(true);
     }
 
