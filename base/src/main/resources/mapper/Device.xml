@@ -90,8 +90,8 @@
             <if test = "ip != null and ip != ''">
                 ip = #{ip},
             </if>
-            <if test = "speedConifg != null">
-                speedConifg = #{speedConifg},
+            <if test = "speedConfig != null">
+                speedConfig = #{speedConfig},
             </if>
         </set>
          where id = #{id}
