@@ -221,7 +221,7 @@ public class DeviceDataService {
                 if (deviceSensorPo != null) {
                     ydata.add(deviceSensorPo.getSensorValue().toString());
                 } else {
-                    ydata.add("");
+                    ydata.add("0");
                 }
             }
             sensorDataVo.setXdata(xdata);
