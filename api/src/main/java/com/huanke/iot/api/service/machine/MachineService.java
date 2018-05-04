@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
@@ -29,8 +30,6 @@ import java.util.UUID;
 @Repository
 @Slf4j
 public class MachineService {
-    @Value("${productId}")
-    private String productId;
 
     @Autowired
     private DeviceMapper deviceMapper;
@@ -39,6 +38,9 @@ public class MachineService {
     private DeviceTypeMapper deviceTypeMapper;
     @Autowired
     private WechartUtil wechartUtil;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     public MachineDeviceVo queryByMac(String ip,String mac) {
         DevicePo devicePo = deviceMapper.selectByMac(mac);
@@ -68,6 +70,10 @@ public class MachineService {
         if(deviceTypePo == null){
             return 3;
         }
+        DevicePo queryDevicePo = deviceMapper.selectByMac(mac);
+        if(queryDevicePo != null){
+            return 1;
+        }
         JSONObject jsonObject = obtainDeviceJson();
         if(jsonObject != null){
             String deviceId = jsonObject.getString("deviceid");
@@ -78,10 +84,6 @@ public class MachineService {
             devicePo.setDevicelicence(devicelicence);
             devicePo.setCreateTime(System.currentTimeMillis());
             devicePo.setName(deviceTypePo.getName());
-            DevicePo queryDevicePo = deviceMapper.selectByMac(mac);
-            if(queryDevicePo != null){
-                return 1;
-            }
             int insertRet = deviceMapper.insert(devicePo);
             if(insertRet > 0){
                 return 0;
@@ -103,6 +105,7 @@ public class MachineService {
     }
 
     private JSONObject obtainDeviceInfo() {
+        Integer productId = getCanUseProductId();
         String accessToken = wechartUtil.getAccessToken(false);
         String url = new StringBuilder("https://api.weixin.qq.com/device/getqrcode?access_token=").append(accessToken)
                 .append("&product_id=").append(productId).toString();
@@ -135,5 +138,12 @@ public class MachineService {
         return null;
     }
 
+    private Integer getCanUseProductId(){
+       String productIdStr =  stringRedisTemplate.opsForValue().get("productId");
+       if(StringUtils.isNotEmpty(productIdStr)){
+           return  Integer.valueOf(productIdStr);
+       }
+       return 0;
+    }
 
 }

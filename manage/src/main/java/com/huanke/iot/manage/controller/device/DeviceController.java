@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +53,9 @@ public class DeviceController {
     @Autowired
     private DeviceUpgradeMapper deviceUpgradeMapper;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -69,6 +73,11 @@ public class DeviceController {
     private DeviceOperLogMapper deviceOperLogMapper;
 
 
+    @RequestMapping("/resetPid")
+    public ApiResponse<Boolean> resetPid(String productId){
+        stringRedisTemplate.opsForValue().set("productId", productId);
+        return new ApiResponse<>(true);
+    }
 
     @Autowired
     private DeviceTypeService deviceTypeService;
