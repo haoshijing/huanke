@@ -205,7 +205,10 @@ public class DeviceDataService {
             return null;
         }
         String sensorList = deviceTypePo.getSensorList();
-        String sensorTypes[] = sensorList.split(",");
+        String[] sensorTypes = sensorList.split(",");
+
+        List<DeviceSensorPo> deviceSensorPos = deviceSensorDataMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
+
 
         for (String sensorType : sensorTypes) {
             SensorDataVo sensorDataVo = new SensorDataVo();
@@ -215,13 +218,16 @@ public class DeviceDataService {
             sensorDataVo.setType(sensorType);
             List<String> xdata = Lists.newArrayList();
             List<String> ydata = Lists.newArrayList();
-            for (Long t = startTimestamp; t < endTimeStamp; t += 1000 * 60 * 60) {
-                DeviceSensorPo deviceSensorPo = deviceSensorDataMapper.selectData(devicePo.getId(), t, t + 1000 * 60 * 60, sensorType);
-                xdata.add(String.valueOf(t));
-                if (deviceSensorPo != null) {
-                    ydata.add(deviceSensorPo.getSensorValue().toString());
-                } else {
-                    ydata.add("0");
+            for (DeviceSensorPo deviceSensorPo : deviceSensorPos) {
+                String dbSensorType = deviceSensorPo.getSensorType();
+                if(StringUtils.equals(dbSensorType,sensorType)){
+                    xdata.add(String.valueOf(deviceSensorPo.getCreateTime()));
+                    if(StringUtils.equals(SensorTypeEnums.HCHO_IN.getCode(),sensorType)
+                            || StringUtils.equals(SensorTypeEnums.TVOC_IN.getCode(),sensorType)) {
+                        ydata.add(String.valueOf(FloatDataUtil.getFloat(deviceSensorPo.getSensorValue())));
+                    }else{
+                        ydata.add(String.valueOf(deviceSensorPo.getSensorValue()));
+                    }
                 }
             }
             sensorDataVo.setXdata(xdata);
