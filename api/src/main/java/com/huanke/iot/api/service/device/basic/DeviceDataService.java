@@ -3,7 +3,6 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
@@ -11,8 +10,6 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
-import com.huanke.iot.api.util.LocationUtils;
-import com.huanke.iot.base.dao.impl.UserMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
@@ -26,6 +23,7 @@ import com.huanke.iot.base.po.device.*;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.data.DeviceSensorPo;
 import com.huanke.iot.base.po.user.AppUserPo;
+import com.huanke.iot.base.util.LocationUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
@@ -308,7 +306,7 @@ public class DeviceDataService {
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
         }
 
-        JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp());
+        JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(),false);
         if(weatherJson != null){
             if(weatherJson.containsKey("result")){
                 JSONObject result = weatherJson.getJSONObject("result");
@@ -320,7 +318,7 @@ public class DeviceDataService {
                 }
             }
         }
-        JSONObject locationJson = locationUtils.getLocation(devicePo.getIp());
+        JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(),false);
         if(locationJson != null){
             if(locationJson.containsKey("content")){
                 JSONObject content = locationJson.getJSONObject("content");
