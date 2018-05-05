@@ -98,4 +98,32 @@ public class DeviceTimerService {
         updatePo.setLastUpdateTime(System.currentTimeMillis());
         return deviceTimerMapper.updateById(updatePo) > 0;
     }
+
+    public DeviceTimerVo getById(Integer id){
+        DeviceTimerPo deviceTimerPo = deviceTimerMapper.selectById(id);
+        if(deviceTimerPo != null){
+            DeviceTimerVo deviceTimerVo = new DeviceTimerVo();
+            deviceTimerVo.setName(deviceTimerPo.getName());
+            Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
+            if(t <0 ){
+                t = 0L;
+            }
+            deviceTimerVo.setId(deviceTimerPo.getId());
+            deviceTimerVo.setTimerType(deviceTimerPo.getTimerType());
+            deviceTimerVo.setStatus(deviceTimerPo.getStatus());
+            return deviceTimerVo;
+        }
+        return null;
+    }
+
+    public Boolean editTimer(Integer userId,DeviceTimerRequest deviceTimerRequest) {
+        DeviceTimerPo updatePo = new DeviceTimerPo();
+        updatePo.setId(deviceTimerRequest.getId());
+        updatePo.setName(deviceTimerRequest.getName());
+        updatePo.setStatus(deviceTimerRequest.getStatus());
+        updatePo.setExecuteTime(deviceTimerRequest.getAfterTime()+System.currentTimeMillis());
+        updatePo.setLastUpdateTime(System.currentTimeMillis());
+        deviceTimerRequest.setUserId(userId);
+        return deviceTimerMapper.updateById(updatePo) > 0;
+    }
 }

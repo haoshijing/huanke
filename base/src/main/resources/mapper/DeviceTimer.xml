@@ -68,6 +68,13 @@
                  status = #{status} ,
             </if>
 
+            <if test = "name != null and name != ''">
+                 name = #{name},
+            </if>
+
+            <if test ="executeTime != null">
+                executeTime = #{executeTime},
+            </if>
             <if test = "executeRet != null">
                 executeRet = #{executeRet} ,
             </if>
