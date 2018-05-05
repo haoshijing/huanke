@@ -98,6 +98,6 @@
     </update>
 
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select * from <include refid="" />
+        select * from <include refid="tableName" />
     </select>
 </mapper>
