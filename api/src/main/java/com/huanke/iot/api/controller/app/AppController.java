@@ -72,7 +72,7 @@ public class AppController extends BaseController {
                 try {
                     redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
                 } catch (Exception e) {
-
+                    log.error("",e);
                 }
                 String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl +
                         "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
@@ -95,7 +95,6 @@ public class AppController extends BaseController {
                 return new ApiResponse<>(false);
             }
         }
-
         return new ApiResponse<>(true);
     }
 
@@ -114,7 +113,6 @@ public class AppController extends BaseController {
 
     @RequestMapping("/getHistoryData")
     public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
-
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
     }
 
@@ -125,8 +123,6 @@ public class AppController extends BaseController {
         return new ApiResponse<>(ret);
     }
 
-
-
     @RequestMapping("/obtainApk")
     public ApiResponse<AppInfoVo> obtainApk() {
 
@@ -136,7 +132,6 @@ public class AppController extends BaseController {
             return new ApiResponse<>(appInfoVo);
         }
         return new ApiResponse<>();
-
     }
 
     @RequestMapping("/sendFunc")
@@ -164,7 +159,6 @@ public class AppController extends BaseController {
             deviceFuncVo.setFuncId("210");
             deviceFuncVo.setValue("1");
         }
-
         return new ApiResponse<>(true);
     }
 
