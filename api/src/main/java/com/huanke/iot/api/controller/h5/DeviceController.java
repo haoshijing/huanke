@@ -64,7 +64,6 @@ public class DeviceController extends BaseController {
 
     @RequestMapping("/token")
     public ApiResponse<String> obtainShareToken(HttpServletRequest request,String deviceId){
-        Integer userId = getCurrentUserId(request);
         String lastToken = stringRedisTemplate.opsForValue().get("token."+deviceId);
         if(StringUtils.isNotEmpty(lastToken)){
             return new ApiResponse<>(lastToken);
@@ -119,7 +118,6 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(new JSONObject());
     }
 
-
     @RequestMapping("/getSpeedConfig")
     public ApiResponse<DeviceSpeedConfigVo> getDeviceSpeedConfig(String deviceId){
         DeviceSpeedConfigVo data = deviceService.getSpeed(deviceId);
@@ -128,7 +126,6 @@ public class DeviceController extends BaseController {
 
     @RequestMapping("/getHistoryData")
     public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
-
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId,type));
     }
 }

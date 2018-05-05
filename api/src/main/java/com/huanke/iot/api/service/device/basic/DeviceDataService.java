@@ -130,7 +130,6 @@ public class DeviceDataService {
         queryPo.setJoinUserId(toId);
         Integer relationCount = deviceRelationMapper.selectCount(queryPo);
         if (relationCount == 0) {
-
             DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
             deviceRelationPo.setDeviceId(deviceId);
             deviceRelationPo.setJoinUserId(toId);
@@ -470,11 +469,6 @@ public class DeviceDataService {
         hum.setUnit(SensorTypeEnums.HUMIDITY_IN.getUnit());
         deviceDetailVo.setHum(hum);
 
-        DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
-        screen.setData(getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode()));
-        screen.setUnit("秒");
-        deviceDetailVo.setScreen(screen);
-
         DeviceDetailVo.SysDataItem remain = new DeviceDetailVo.SysDataItem();
         remain.setData(getData(controlDatas, FuncTypeEnums.TIMER_REMAIN.getCode()));
         remain.setUnit("秒");
@@ -518,6 +512,17 @@ public class DeviceDataService {
                 JSONArray uv = new JSONArray();
                 uv.addAll(uvItems);
                 jsonArrays.add(uv);
+            }
+
+            List<String> screens = getType(FuncTypeEnums.TIMER_SCREEN.getCode().substring(0,2),funcTypeList);
+            if(screens.size() > 0){
+                List<DeviceDetailVo.SysDataItem> screentItems = screens.stream().map(screenStr->{
+                    DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
+                    screen.setData(getData(controlDatas, screenStr));
+                    screen.setUnit("秒");
+                    return  screen;
+                }).collect(Collectors.toList());
+                deviceDetailVo.setScreens(screentItems);
             }
 
             List<String> anoins = getType(FuncTypeEnums.ANION.getCode().substring(0, 2), funcTypeList);
