@@ -96,4 +96,8 @@
         </set>
          where id = #{id}
     </update>
+
+    <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * from <include refid="" />
+    </select>
 </mapper>
