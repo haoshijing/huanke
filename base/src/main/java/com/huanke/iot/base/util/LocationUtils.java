@@ -35,7 +35,9 @@ public class LocationUtils {
             if(needReset) {
                 JSONObject jsonObject = doGetLocation(ip);
                 if (jsonObject != null) {
+                    stringRedisTemplate.opsForValue().set(ip+".location",jsonObject.toJSONString());
                     stringRedisTemplate.expire(ip+".location",2, TimeUnit.MINUTES);
+
                 }
             }
             return null;
