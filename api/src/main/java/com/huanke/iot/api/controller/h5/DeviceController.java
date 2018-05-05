@@ -63,16 +63,17 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/token")
-    public ApiResponse<String> obtainShareToken(HttpServletRequest request,String deviceId){
-        String lastToken = stringRedisTemplate.opsForValue().get("token."+deviceId);
-        if(StringUtils.isNotEmpty(lastToken)){
+    public ApiResponse<String> obtainShareToken(HttpServletRequest request, String deviceId) {
+        String lastToken = stringRedisTemplate.opsForValue().get("token." + deviceId);
+        if (StringUtils.isNotEmpty(lastToken)) {
             return new ApiResponse<>(lastToken);
         }
-        String token = UUID.randomUUID().toString().replace("-","").substring(0,8);
-        stringRedisTemplate.opsForValue().set("token."+deviceId,token);
-        stringRedisTemplate.expire("token."+deviceId,10, TimeUnit.MINUTES);
+        String token = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        stringRedisTemplate.opsForValue().set("token." + deviceId, token);
+        stringRedisTemplate.expire("token." + deviceId, 10, TimeUnit.MINUTES);
         return new ApiResponse<>(token);
     }
+
     @RequestMapping("/share")
     public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
         Integer userId = getCurrentUserId(request);
@@ -81,27 +82,31 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/clearRelation")
-    public ApiResponse<Boolean> clearRelation(HttpServletRequest request,String deviceId,String joinOpenId){
+    public ApiResponse<Boolean> clearRelation(HttpServletRequest request, String deviceId, String joinOpenId) {
         Integer userId = getCurrentUserId(request);
         Boolean clearOk = deviceDataService.clearRelation(joinOpenId, userId, deviceId);
         return new ApiResponse<>(clearOk);
     }
 
     @RequestMapping("/shareList")
-    public ApiResponse<List<DeviceShareVo>> shareList(HttpServletRequest request, String deviceId){
+    public ApiResponse<List<DeviceShareVo>> shareList(HttpServletRequest request, String deviceId) {
         Integer userId = getCurrentUserId(request);
-        List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId,deviceId);
+        List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId, deviceId);
         return new ApiResponse<>(deviceShareVos);
     }
 
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
+        String funcId = deviceFuncVo.getFuncId();
+        if (StringUtils.isNotEmpty(funcId) && funcId.contains("33")) {
+            deviceFuncVo.setValue(String.valueOf(3600*3000));
+        }
         String requestId = deviceDataService.sendFunc(deviceFuncVo);
         return new ApiResponse<>(requestId);
     }
 
     @RequestMapping("/setSpeedConfig")
-    public ApiResponse<Boolean> setSpeedConfig(@RequestBody SpeedConfigRequest request){
+    public ApiResponse<Boolean> setSpeedConfig(@RequestBody SpeedConfigRequest request) {
         Boolean ret = deviceService.setSpeedConfig(request);
         return new ApiResponse<>(ret);
     }
@@ -119,13 +124,13 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/getSpeedConfig")
-    public ApiResponse<DeviceSpeedConfigVo> getDeviceSpeedConfig(String deviceId){
+    public ApiResponse<DeviceSpeedConfigVo> getDeviceSpeedConfig(String deviceId) {
         DeviceSpeedConfigVo data = deviceService.getSpeed(deviceId);
         return new ApiResponse<>(data);
     }
 
     @RequestMapping("/getHistoryData")
     public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
-        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId,type));
+        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
     }
 }

@@ -363,48 +363,6 @@ public class DeviceDataService {
         return "";
     }
 
-    public List<AppDeviceDataVo> getDeviceList(Integer userId) {
-        DeviceGroupItemPo quryPo = new DeviceGroupItemPo();
-        quryPo.setUserId(userId);
-        quryPo.setStatus(1);
-        List<DeviceGroupItemPo> deviceGroupItemPos = deviceGroupMapper.queryGroupItems(quryPo);
-        List<AppDeviceDataVo> appDeviceDataVos = deviceGroupItemPos.stream().map(
-                deviceGroupItemPo -> {
-                    AppDeviceDataVo appDeviceDataVo = new AppDeviceDataVo();
-
-                    Integer deviceId = deviceGroupItemPo.getDeviceId();
-                    DevicePo devicePo = deviceMapper.selectById(deviceId);
-                    appDeviceDataVo.setDeviceId(devicePo.getDeviceId());
-                    appDeviceDataVo.setDeviceName(devicePo.getName());
-                    Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
-                    appDeviceDataVo.setCo2(getData(datas,SensorTypeEnums.CO2_IN.getCode()));
-                    appDeviceDataVo.setHum(getData(datas,SensorTypeEnums.HUMIDITY_IN.getCode()));
-                    appDeviceDataVo.setTem(getData(datas,SensorTypeEnums.TEMPERATURE_IN.getCode()));
-                    appDeviceDataVo.setPm(getData(datas,SensorTypeEnums.PM25_IN.getCode()));
-                    appDeviceDataVo.setId(devicePo.getId());
-                    String tvocData = getData(datas, SensorTypeEnums.TVOC_IN.getCode());
-                    if (StringUtils.isNotEmpty(tvocData)) {
-                        Integer digData = Integer.valueOf(tvocData);
-                        appDeviceDataVo.setTvoc(FloatDataUtil.getFloat(digData));
-                    } else {
-                        appDeviceDataVo.setTvoc("0");
-                    }
-
-                    String hchoData = getData(datas, SensorTypeEnums.HCHO_IN.getCode());
-                    if (StringUtils.isNotEmpty(hchoData)) {
-                        Integer digData = Integer.valueOf(hchoData);
-                        appDeviceDataVo.setHcho(FloatDataUtil.getFloat(digData));
-                    } else {
-                        appDeviceDataVo.setHcho("0");
-                    }
-
-                    return appDeviceDataVo;
-                }
-        )
-                .collect(Collectors.toList());
-        return appDeviceDataVos;
-    }
-
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
