@@ -31,7 +31,7 @@
          and createTime <= #{endTime}
            ]]>
         and deviceId = #{deviceId}
-        order by createTime createTime
+        order by createTime asc
 
     </select>
 
