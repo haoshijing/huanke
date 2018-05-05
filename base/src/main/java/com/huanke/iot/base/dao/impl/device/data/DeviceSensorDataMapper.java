@@ -12,8 +12,7 @@ import java.util.List;
  **/
 public interface DeviceSensorDataMapper extends BaseMapper<DeviceSensorPo>{
 
-    DeviceSensorPo selectData(@Param("deviceId")Integer deviceId,
+    List<DeviceSensorPo> selectData(@Param("deviceId")Integer deviceId,
                                     @Param("startTime")Long startTime,
-                                    @Param("endTime")Long endTime,
-                                    @Param("sensorType") String sensorType);
+                                    @Param("endTime")Long endTime);
 }

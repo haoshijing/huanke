@@ -31,9 +31,7 @@
          and createTime <= #{endTime}
            ]]>
         and deviceId = #{deviceId}
-        and sensorType = #{sensorType}
-        limit 1
-
+        order by createTime createTime
 
     </select>
 
