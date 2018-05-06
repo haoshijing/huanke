@@ -32,23 +32,26 @@ public class DeviceTimerJob {
 
     @Scheduled(cron = "0/15 * * * * ?")
     public void doWork(){
-
-        Long t = System.currentTimeMillis();
-        List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryTimers(t);
-        deviceTimerPos.forEach(deviceTimerPo -> {
-            Integer deviceId = deviceTimerPo.getDeviceId();
-            if(deviceTimerPo.getTimerType() == 1){
-                sendFunc(deviceId, FuncTypeEnums.TIMER_OEPN.getCode());
-            }else{
-                sendFunc(deviceId, FuncTypeEnums.TIMER_CLOSE.getCode());
-            }
-            DeviceTimerPo updatePo = new DeviceTimerPo();
-            updatePo.setId(deviceTimerPo.getId());
-            updatePo.setStatus(4);
-            updatePo.setExecuteRet(2);
-            updatePo.setExecuteTime(System.currentTimeMillis());
-            deviceTimerMapper.updateById(updatePo);
-        });
+        try {
+            Long t = System.currentTimeMillis();
+            List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryTimers(t);
+            deviceTimerPos.forEach(deviceTimerPo -> {
+                Integer deviceId = deviceTimerPo.getDeviceId();
+                if (deviceTimerPo.getTimerType() == 1) {
+                    sendFunc(deviceId, FuncTypeEnums.TIMER_OEPN.getCode());
+                } else {
+                    sendFunc(deviceId, FuncTypeEnums.TIMER_CLOSE.getCode());
+                }
+                DeviceTimerPo updatePo = new DeviceTimerPo();
+                updatePo.setId(deviceTimerPo.getId());
+                updatePo.setStatus(4);
+                updatePo.setExecuteRet(2);
+                updatePo.setExecuteTime(System.currentTimeMillis());
+                deviceTimerMapper.updateById(updatePo);
+            });
+        }catch (Exception e){
+            log.error("",e);
+        }
     }
 
     public String sendFunc(Integer deviceId,String funcId) {
