@@ -232,7 +232,7 @@ groupName varchar(100) comment '设备组名称',
 userId int comment '用户id',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间',
-status int comment '状态1-正常,2-已删除'
+status int comment '状态1-正常,2-已删除',
 );
 
 alter table t_device_group add (
@@ -240,7 +240,7 @@ alter table t_device_group add (
 `memo` varchar(2048) comment '分组说明',
 `videoCover` varchar(1024) comment '分组封面',
 `videoUrl` varchar(1024) comment '分组视频链接'
-)
+);
 
 drop table if EXISTS t_device_group_item;
 create table t_device_group_item(

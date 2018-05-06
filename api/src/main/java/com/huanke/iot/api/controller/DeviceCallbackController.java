@@ -63,7 +63,7 @@ public class DeviceCallbackController {
             deviceBindService.handlerDeviceEvent(request,requestMap,event);
         }
         } catch (Exception e) {
-
+            log.error("",e);
         }
         return respMessage;
     }
