@@ -3,7 +3,6 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
@@ -431,6 +430,12 @@ public class DeviceDataService {
         remain.setData(getData(controlDatas, FuncTypeEnums.TIMER_REMAIN.getCode()));
         remain.setUnit("秒");
         deviceDetailVo.setRemain(remain);
+
+        DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
+        screen.setData(getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode()));
+        screen.setUnit("秒");
+        deviceDetailVo.setScreen(screen);
+
 
         DeviceDetailVo.DataItem modeItem = new DeviceDetailVo.DataItem();
         modeItem.setChoice(FuncTypeEnums.MODE.getRange());
