@@ -61,7 +61,7 @@
         where id = #{id}
     </select>
     
-    <select id="queryTimers">
+    <select id="queryTimers" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
         select * from <include refid="tableName"/>
         where executeTime > #{time}
     </select>
