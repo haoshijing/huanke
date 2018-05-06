@@ -1,4 +1,5 @@
 CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+use iot;
 drop TABLE IF EXISTS t_admin;
 create table t_admin
 (
@@ -25,13 +26,13 @@ deviceTypeId int comment '设备类型',
 bindStatus int comment '绑定状态1-初始化2-已绑定3-已解绑',
 createTime bigint comment '添加时间',
 lastUpdateTime bigint comment '最后修改时间',
-bindTime bigint comment '绑定和解绑时间',
+bindTime bigint comment '绑定和解绑时间'
 );
-
 
 alter table t_device add column speedConfig varchar(4096) comment '转速配置';
 alter table t_device  add index idxDeviceId(deviceId);
 alter table t_device add column ip varchar(200) comment '机器Ip';
+
 drop table if  EXISTS  t_device_type;
 create table t_device_type
 (

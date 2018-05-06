@@ -13,7 +13,7 @@ sensorList
 values (
 3,
 '净化设备',
-'http://huanke.bcard.vip/deviceimg/a.png',
+'http://huanke.bcard.vip/deviceimg/xinfeng.png',
 '210,220,230,240,250,270,280,2A0,310,320,330,340,350',
 '110,120,130,140,150,160'
 );
@@ -31,7 +31,7 @@ sensorList
 values (
 4,
 '新风设备',
-'http://huanke.bcard.vip/deviceimg/b.png',
+'http://huanke.bcard.vip/deviceimg/xinfeng.png',
 '210,220,230,240,250,270,280,281,290,310,320,330,340,350',
 '110,111,120,121,130,131,140,141,150,160'
 );
