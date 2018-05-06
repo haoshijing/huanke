@@ -60,7 +60,12 @@
         select * from <include refid="tableName"/>
         where id = #{id}
     </select>
-
+    
+    <select id="queryTimers">
+        select * from <include refid="tableName"/>
+        where executeTime > #{time}
+    </select>
+    
     <update id="updateById">
         update <include refid="tableName"/>
         <set>
@@ -82,4 +87,8 @@
         </set>
         where id = #{id} and userId = #{userId}
     </update>
+
+    <select id = "">
+
+    </select>
 </mapper>

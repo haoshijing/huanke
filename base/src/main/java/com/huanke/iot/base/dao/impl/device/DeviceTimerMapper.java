@@ -9,4 +9,6 @@ public interface DeviceTimerMapper extends BaseMapper<DeviceTimerPo>{
     List<DeviceTimerPo> selectTimerList(DeviceTimerPo deviceTimerPo);
 
     Integer cancelTimer(DeviceTimerPo updatePo);
+
+    List<DeviceTimerPo> queryTimers(Long t);
 }
