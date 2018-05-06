@@ -25,7 +25,7 @@ public class DeviceDetailVo {
     private SysDataItem hcho;
     private SysDataItem remain;
     private SysDataItem screen;
-    private List<SysDataItem> screens;
+    private List<DataItem> screens;
     private DataItem modeItem;
     private List<OtherItem> windItems;
     private List<JSONArray> funcs;

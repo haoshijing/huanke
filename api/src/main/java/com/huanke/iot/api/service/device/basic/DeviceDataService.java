@@ -479,10 +479,11 @@ public class DeviceDataService {
 
             List<String> screens = getType(FuncTypeEnums.TIMER_SCREEN.getCode().substring(0,2),funcTypeList);
             if(screens.size() > 0){
-                List<DeviceDetailVo.SysDataItem> screentItems = screens.stream().map(screenStr->{
-                    DeviceDetailVo.SysDataItem screen1 = new DeviceDetailVo.SysDataItem();
-                    screen1.setData(getData(controlDatas, screenStr));
-                    screen1.setUnit("秒");
+                List<DeviceDetailVo.DataItem> screentItems = screens.stream().map(screenStr->{
+                    DeviceDetailVo.DataItem screen1 = new DeviceDetailVo.DataItem();
+                    screen1.setValue(getData(controlDatas, screenStr));
+                    screen1.setType(screenStr);
+                    screen1.setChoice("0");
                     return  screen1;
                 }).collect(Collectors.toList());
                 deviceDetailVo.setScreens(screentItems);
