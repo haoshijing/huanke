@@ -108,6 +108,7 @@ public class DeviceTimerService {
             if(t <0 ){
                 t = 0L;
             }
+            deviceTimerVo.setRemainTime(t);
             deviceTimerVo.setId(deviceTimerPo.getId());
             deviceTimerVo.setTimerType(deviceTimerPo.getTimerType());
             deviceTimerVo.setStatus(deviceTimerPo.getStatus());
@@ -121,6 +122,7 @@ public class DeviceTimerService {
         updatePo.setId(deviceTimerRequest.getId());
         updatePo.setName(deviceTimerRequest.getName());
         updatePo.setStatus(deviceTimerRequest.getStatus());
+        updatePo.setUserId(deviceTimerRequest.getUserId());
         updatePo.setExecuteTime(deviceTimerRequest.getAfterTime()+System.currentTimeMillis());
         updatePo.setLastUpdateTime(System.currentTimeMillis());
         deviceTimerRequest.setUserId(userId);
