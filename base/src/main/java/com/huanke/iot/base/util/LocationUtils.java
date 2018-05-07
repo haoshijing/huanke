@@ -30,7 +30,7 @@ public class LocationUtils {
         if (StringUtils.isEmpty(ip)) {
             return null;
         }
-        String deviceIpStr = stringRedisTemplate.opsForValue().get(ip);
+        String deviceIpStr = stringRedisTemplate.opsForValue().get(ip+".location");
         if (StringUtils.isEmpty(deviceIpStr)) {
             if(needReset) {
                 JSONObject jsonObject = doGetLocation(ip);
