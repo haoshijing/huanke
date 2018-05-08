@@ -29,7 +29,7 @@ public class DeviceRemoteJob {
     private MqttSendService mqttSendService;
 
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void doWork(){
         log.info("start work");
         List<DevicePo> devicePoList = deviceMapper.selectAll();
@@ -45,7 +45,10 @@ public class DeviceRemoteJob {
                     String humidity = jsonObject.getString("humidity");
                     String aqi =   jsonObject.getString("aqi");
                     String tem = jsonObject.getString("temperature_curr");
-                    String wea =jsonObject.getString("weather_curr");
+                    if(humidity == null || aqi == null ||
+                            tem == null){
+                        return;
+                    }
                     ByteBuf byteBuf = Unpooled.buffer(2+2+aqi.getBytes().length+2+humidity.getBytes().length+
                             2+tem.getBytes().length);
                     byteBuf.writeShortLE(0X0E11);
