@@ -344,11 +344,6 @@ public class DeviceDataService {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;
             String funcId = deviceFuncVo.getFuncId();
-            boolean isScreenOrJd = false;
-            isScreenOrJd = funcId.contains("2A") || funcId.contains("33");
-            if(isScreenOrJd){
-                topic = "/down/cfg/" + deviceId;
-            }
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
