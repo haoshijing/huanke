@@ -1,8 +1,13 @@
 package com.huanke.iot.job;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.util.LocationUtils;
+import com.huanke.iot.job.gateway.MqttSendService;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,10 @@ public class DeviceRemoteJob {
     @Autowired
     private LocationUtils locationUtils;
 
+    @Autowired
+    private MqttSendService mqttSendService;
+
+
     @Scheduled(cron = "0 0/2 * * * ?")
     public void doWork(){
         log.info("start work");
@@ -28,7 +37,26 @@ public class DeviceRemoteJob {
             String ip = devicePo.getIp();
             if(StringUtils.isNotEmpty(devicePo.getIp())){
                 locationUtils.getLocation(ip,true);
-                locationUtils.getWeather(ip,true);
+                JSONObject jsonObject = locationUtils.getWeather(ip,true);
+                if(jsonObject != null){
+                    String topic = "/down/cfg/"+devicePo.getId();
+                    String humidity = jsonObject.getString("humidity");
+                    String aqi =   jsonObject.getString("aqi");
+                    String tem = jsonObject.getString("temperature_curr");
+                    String wea =jsonObject.getString("weather_curr");
+                    ByteBuf byteBuf = Unpooled.buffer(2+2+aqi.getBytes().length+2+humidity.getBytes().length+
+                            2+tem.getBytes().length);
+                    byteBuf.writeShortLE(0X0E11);
+                    byteBuf.writeShortLE(tem.getBytes().length);
+                    byteBuf.writeBytes(tem.getBytes());
+
+                    byteBuf.writeShortLE(humidity.getBytes().length);
+                    byteBuf.writeBytes(humidity.getBytes());
+
+                    byteBuf.writeShortLE(aqi.getBytes().length);
+                    byteBuf.writeBytes(aqi.getBytes());
+                    mqttSendService.sendMessage(topic,byteBuf.array());
+                }
             }
         });
         log.info(" end work");

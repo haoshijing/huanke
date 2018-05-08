@@ -56,11 +56,12 @@ public class LocationUtils {
                 if (jsonObject != null) {
                     stringRedisTemplate.opsForValue().set(ip+".weather", jsonObject.toJSONString());
                     stringRedisTemplate.expire(ip+".weather",2, TimeUnit.MINUTES);
+                    return jsonObject;
                 }
             }
             return null;
         }
-        return JSON.parseObject(deviceIpStr);
+      return JSON.parseObject(deviceIpStr);
     }
 
 

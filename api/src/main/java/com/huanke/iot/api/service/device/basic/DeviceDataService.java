@@ -23,6 +23,8 @@ import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.data.DeviceSensorPo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import com.huanke.iot.base.util.LocationUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
@@ -341,6 +343,12 @@ public class DeviceDataService {
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;
+            String funcId = deviceFuncVo.getFuncId();
+            boolean isScreenOrJd = false;
+            isScreenOrJd = funcId.contains("2A") || funcId.contains("33");
+            if(isScreenOrJd){
+                topic = "/down/cfg/" + deviceId;
+            }
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
@@ -356,11 +364,32 @@ public class DeviceDataService {
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(deviceFuncVo.getValue());
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
-            mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
+            if(isScreenOrJd){
+                   if(funcId.contains("33")){
+                       ByteBuf byteBuf = Unpooled.buffer(2+1);
+                       byteBuf.writeShortLE(0x0213);
+                       byteBuf.writeShortLE(1);
+                       mqttSendService.sendMessage(topic, byteBuf.array());
+                   }else if(funcId.contains("2A")){
+                       ByteBuf byteBuf = Unpooled.buffer(3);
+                       byteBuf.writeShortLE(0x0212);
+                       String value  = deviceFuncVo.getValue();
+                       if(StringUtils.equals(value,"0")){
+                           byteBuf.writeShortLE(0);
+                       }else{
+                           byteBuf.writeShortLE(1);
+                       }
+                       mqttSendService.sendMessage(topic, byteBuf.array());
+                   }
+            }else {
+                mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
+            }
             return requestId;
         }
         return "";
     }
+
+
 
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
@@ -549,7 +578,11 @@ public class DeviceDataService {
             if (valves.size() > 0) {
                 List<DeviceDetailVo.OtherItem> valvesItems = valves.stream().map(valve -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
-                    otherItem.setName(FuncTypeEnums.getByCode(valve).getMark());
+                    if (valves.size() == 1) {
+                        otherItem.setName("循环阀");
+                    } else {
+                        otherItem.setName(FuncTypeEnums.getByCode(valve).getMark());
+                    }
                     otherItem.setType(valve);
                     otherItem.setValue(getData(controlDatas, valve));
                     return otherItem;
@@ -587,7 +620,6 @@ public class DeviceDataService {
                 jsonArrays.add(array);
             }
             deviceDetailVo.setFuncs(jsonArrays);
-
 
             List<DeviceDetailVo.OtherItem> timers = Lists.newArrayList();
             deviceDetailVo.setTimers(timers);
