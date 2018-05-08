@@ -9,7 +9,9 @@ import java.util.List;
 
 @Repository
 public class DeviceTypeService {
+
     public List<DeviceTypeVo> selectList(DeviceQueryRequest deviceQueryRequest) {
+
         return Lists.newArrayList();
     }
 

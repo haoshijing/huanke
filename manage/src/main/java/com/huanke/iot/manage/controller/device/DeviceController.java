@@ -181,7 +181,6 @@ public class DeviceController {
         try {
             uploadToOss(fileName,file.getBytes());
         }catch (Exception e){
-
         }
 
         DeviceUpgradePo queryPo = deviceUpgradeMapper.selectByFileName(fileName);
