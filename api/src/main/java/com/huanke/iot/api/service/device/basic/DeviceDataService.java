@@ -364,26 +364,10 @@ public class DeviceDataService {
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(deviceFuncVo.getValue());
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
-            if(isScreenOrJd){
-                   if(funcId.contains("33")){
-                       ByteBuf byteBuf = Unpooled.buffer(2+1);
-                       byteBuf.writeShortLE(0x0213);
-                       byteBuf.writeShortLE(1);
-                       mqttSendService.sendMessage(topic, byteBuf.array());
-                   }else if(funcId.contains("2A")){
-                       ByteBuf byteBuf = Unpooled.buffer(3);
-                       byteBuf.writeShortLE(0x0212);
-                       String value  = deviceFuncVo.getValue();
-                       if(StringUtils.equals(value,"0")){
-                           byteBuf.writeShortLE(0);
-                       }else{
-                           byteBuf.writeShortLE(1);
-                       }
-                       mqttSendService.sendMessage(topic, byteBuf.array());
-                   }
-            }else {
-                mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
-            }
+
+            mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
+
+            stringRedisTemplate.opsForHash().put("control." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             return requestId;
         }
         return "";
