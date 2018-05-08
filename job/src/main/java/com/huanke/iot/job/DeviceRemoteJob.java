@@ -33,7 +33,9 @@ public class DeviceRemoteJob {
     public void doWork(){
         log.info("start work");
         List<DevicePo> devicePoList = deviceMapper.selectAll();
-        devicePoList.forEach(devicePo -> {
+        devicePoList.stream().filter(devicePo -> {
+            return devicePo != null;
+        }).forEach(devicePo -> {
             String ip = devicePo.getIp();
             if(StringUtils.isNotEmpty(devicePo.getIp())){
                 locationUtils.getLocation(ip,true);
