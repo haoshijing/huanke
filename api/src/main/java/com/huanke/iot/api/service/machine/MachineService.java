@@ -65,6 +65,7 @@ public class MachineService {
     }
 
     public Integer createNew(String mac,Integer typeId){
+
         DevicePo devicePo = new DevicePo();
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
         if(deviceTypePo == null){
@@ -74,7 +75,18 @@ public class MachineService {
         if(queryDevicePo != null){
             return 1;
         }
+        String url =  String.format("http://www.hcocloud.com/api/machine/createNew?typeId=%d&mac=%s",mac,typeId);
+        HttpGet httpGet = new HttpGet();
+        try {
+            httpGet.setURI(new URI(url));
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            return 1;
+        }catch (Exception e){
+            log.error("",e);
+        }
+
         JSONObject jsonObject = obtainDeviceJson();
+
         if(jsonObject != null){
             String deviceId = jsonObject.getString("deviceid");
             String devicelicence = jsonObject.getString("devicelicence");
