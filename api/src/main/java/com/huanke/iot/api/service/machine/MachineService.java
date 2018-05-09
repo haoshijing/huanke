@@ -75,15 +75,6 @@ public class MachineService {
         if(queryDevicePo != null){
             return 1;
         }
-        String url =  String.format("http://www.hcocloud.com/dash/machine/createNew?typeId=%d&mac=%s",mac,typeId);
-        HttpGet httpGet = new HttpGet();
-        try {
-            httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            return 1;
-        }catch (Exception e){
-            log.error("",e);
-        }
 
         JSONObject jsonObject = obtainDeviceJson();
 
