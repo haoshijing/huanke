@@ -34,7 +34,7 @@ public class DeviceRemoteJob {
     }
 
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/2 * * * ?")
     public void doWork(){
         log.info("start remote work");
         List<DevicePo> devicePoList = deviceMapper.selectAll();
@@ -47,25 +47,28 @@ public class DeviceRemoteJob {
                 JSONObject jsonObject = locationUtils.getWeather(ip,true);
                 if(jsonObject != null){
                     String topic = "/down/cfg/"+devicePo.getId();
-                    String humidity = jsonObject.getString("humidity");
-                    String aqi =   jsonObject.getString("aqi");
-                    String tem = jsonObject.getString("temperature_curr");
-                    if(humidity == null || aqi == null ||
-                            tem == null){
-                        return;
+                    if(jsonObject.containsKey("result")) {
+                        JSONObject result = jsonObject.getJSONObject("result");
+                        String humidity = result.getString("humidity");
+                        String aqi = result.getString("aqi");
+                        String tem = result.getString("temperature_curr");
+                        if (humidity == null || aqi == null ||
+                                tem == null) {
+                            return;
+                        }
+                        ByteBuf byteBuf = Unpooled.buffer(2 + 2 + aqi.getBytes().length + 2 + humidity.getBytes().length +
+                                2 + tem.getBytes().length);
+                        byteBuf.writeShortLE(0X0E11);
+                        byteBuf.writeShortLE(tem.getBytes().length);
+                        byteBuf.writeBytes(tem.getBytes());
+
+                        byteBuf.writeShortLE(humidity.getBytes().length);
+                        byteBuf.writeBytes(humidity.getBytes());
+
+                        byteBuf.writeShortLE(aqi.getBytes().length);
+                        byteBuf.writeBytes(aqi.getBytes());
+                        mqttSendService.sendMessage(topic, byteBuf.array());
                     }
-                    ByteBuf byteBuf = Unpooled.buffer(2+2+aqi.getBytes().length+2+humidity.getBytes().length+
-                            2+tem.getBytes().length);
-                    byteBuf.writeShortLE(0X0E11);
-                    byteBuf.writeShortLE(tem.getBytes().length);
-                    byteBuf.writeBytes(tem.getBytes());
-
-                    byteBuf.writeShortLE(humidity.getBytes().length);
-                    byteBuf.writeBytes(humidity.getBytes());
-
-                    byteBuf.writeShortLE(aqi.getBytes().length);
-                    byteBuf.writeBytes(aqi.getBytes());
-                    mqttSendService.sendMessage(topic,byteBuf.array());
                 }
             }
         });
