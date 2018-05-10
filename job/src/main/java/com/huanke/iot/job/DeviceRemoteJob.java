@@ -56,7 +56,8 @@ public class DeviceRemoteJob {
                                 tem == null) {
                             return;
                         }
-                        ByteBuf byteBuf = Unpooled.buffer(2 + 2 + aqi.getBytes().length + 2 + humidity.getBytes().length +
+                        ByteBuf byteBuf = Unpooled.buffer(2 + 2 + aqi.getBytes().length + 2 +
+                                humidity.getBytes().length +
                                 2 + tem.getBytes().length);
                         byteBuf.writeShortLE(0X0E11);
                         byteBuf.writeShortLE(tem.getBytes().length);

@@ -233,7 +233,9 @@ public class DeviceService {
             List<DeviceSpeedConfigVo.SpeedConfigItem> outItems= Lists.newArrayList();
             if(inArray != null) {
                 for (int i = 0; i < inArray.size(); i++) {
-                    DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem(i + 1, (Integer) inArray.get(i));
+                    DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem();
+                    item.setLevel(i+1);
+                    item.setSpeed(inArray.getInteger(i));
                     inItems.add(item);
                 }
             }
@@ -241,9 +243,19 @@ public class DeviceService {
             JSONArray outArray = jsonObject.getJSONArray("out");
             if(outArray != null) {
                 for (int i = 0; i < outArray.size(); i++) {
-                    DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem(i + 1, (Integer) outArray.get(i));
+                    DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem();
+                    item.setLevel(i+1);
+                    item.setSpeed(inArray.getInteger(i));
                     outItems.add(item);
                 }
+            }else{
+                outItems =
+                        Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
+                                , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
+                                new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
+                                new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
+                                new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
+                                new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
             }
             deviceSpeedConfigVo.setOutItems(outItems);
             deviceSpeedConfigVo.setInItems(inItems);
