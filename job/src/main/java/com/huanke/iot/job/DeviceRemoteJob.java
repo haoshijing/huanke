@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Repository
@@ -27,7 +28,10 @@ public class DeviceRemoteJob {
 
     @Autowired
     private MqttSendService mqttSendService;
-
+    @PostConstruct
+    public void init(){
+        doWork();
+    }
 
     @Scheduled(cron = "* * 0/1 * * ?")
     public void doWork(){

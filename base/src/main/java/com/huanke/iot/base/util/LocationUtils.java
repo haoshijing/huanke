@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -31,6 +32,7 @@ public class LocationUtils {
     @Value("${weather.sign}")
     private String sign;
 
+
     public JSONObject getLocation(String ip,boolean needReset) {
         if (StringUtils.isEmpty(ip)) {
             return null;
@@ -41,7 +43,6 @@ public class LocationUtils {
                 JSONObject jsonObject = doGetLocation(ip);
                 if (jsonObject != null) {
                     stringRedisTemplate.opsForValue().set(ip+".location",jsonObject.toJSONString());
-                    stringRedisTemplate.expire(ip+".location",2, TimeUnit.MINUTES);
 
                 }
             }
@@ -58,9 +59,8 @@ public class LocationUtils {
         if (StringUtils.isEmpty(deviceIpStr)) {
             if(needReset) {
                 JSONObject jsonObject = doGetWeather(ip);
-                if (jsonObject != null) {
+                if (jsonObject != null && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather") ) {
                     stringRedisTemplate.opsForValue().set(ip+".weather", jsonObject.toJSONString());
-                    stringRedisTemplate.expire(ip+".weather",2, TimeUnit.MINUTES);
                     return jsonObject;
                 }
             }
