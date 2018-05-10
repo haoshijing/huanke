@@ -101,6 +101,11 @@ public class DeviceController extends BaseController {
         if (StringUtils.isNotEmpty(funcId) && funcId.contains("33")) {
             deviceFuncVo.setValue(String.valueOf(3600*3000));
         }
+        if(StringUtils.isNotEmpty(funcId) && funcId.contains("28")){
+            if(StringUtils.equals(deviceFuncVo.getValue(),"0")){
+                deviceFuncVo.setValue("1");
+            }
+        }
         String requestId = deviceDataService.sendFunc(deviceFuncVo);
         return new ApiResponse<>(requestId);
     }
