@@ -34,7 +34,7 @@ public class DeviceRemoteJob {
     }
 
 
-    @Scheduled(cron = "0 0 0/2 * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void doWork(){
         log.info("start remote work");
         List<DevicePo> devicePoList = deviceMapper.selectAll();
