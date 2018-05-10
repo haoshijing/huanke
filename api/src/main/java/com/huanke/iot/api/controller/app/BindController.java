@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,13 +20,16 @@ import java.net.URLEncoder;
 
 @RequestMapping("/app/api")
 @Slf4j
-@RestController
+@Controller
 public class BindController {
     @Autowired
     private WechartUtil wechartUtil;
 
     @Value("${gameServerHost}")
     private String gameServerHost;
+
+    @Value("${appId}")
+    private String appId;
 
     @Autowired
     private AppUserMapper appUserMapper;

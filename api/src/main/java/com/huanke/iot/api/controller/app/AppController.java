@@ -40,9 +40,6 @@ import java.util.List;
 public class AppController extends BaseController {
 
 
-    @Value("${appId}")
-    private String appId;
-
     @Autowired
     private DeviceDataService deviceDataService;
 
