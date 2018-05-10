@@ -29,7 +29,7 @@ public class DeviceRemoteJob {
     private MqttSendService mqttSendService;
 
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "* * 0/1 * * ?")
     public void doWork(){
         log.info("start work");
         List<DevicePo> devicePoList = deviceMapper.selectAll();

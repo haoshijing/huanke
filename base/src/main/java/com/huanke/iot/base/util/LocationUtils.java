@@ -11,6 +11,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,10 @@ public class LocationUtils {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Value("${weather.key}")
+    private String key;
+    @Value("${weather.sign}")
+    private String sign;
 
     public JSONObject getLocation(String ip,boolean needReset) {
         if (StringUtils.isEmpty(ip)) {
@@ -70,7 +75,7 @@ public class LocationUtils {
         if (StringUtils.isEmpty(ip)) {
             return null;
         }
-        String url = String.format("http://api.k780.com:88/?app=weather.today&weaid=%s&appkey=33302&sign=96b4d475536090dac84ff04daa37d785&format=json",
+        String url = String.format("http://api.k780.com:88/?app=weather.today&weaid=%s&appkey="+key+"&sign="+sign+"&format=json",
                 ip);
         try {
             HttpGet httpGet = new HttpGet();
