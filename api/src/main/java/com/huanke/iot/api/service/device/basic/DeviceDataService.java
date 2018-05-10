@@ -84,7 +84,7 @@ public class DeviceDataService {
         }
         String storeToken = stringRedisTemplate.opsForValue().get("token."+deviceIdStr);
         if(StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken,token)){
-            return false;
+            //return false;
         }
         if (appUserPo.getId().equals(toId)) {
             return false;
