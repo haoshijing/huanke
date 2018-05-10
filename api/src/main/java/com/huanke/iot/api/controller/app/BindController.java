@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ public class BindController {
     @Autowired
     private AppUserMapper appUserMapper;
     @RequestMapping("/bind")
+    @ResponseBody
     public ApiResponse<Boolean> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String imei = request.getParameter("IMEI");
         if (StringUtils.isEmpty(imei)) {
