@@ -54,20 +54,21 @@ public class LocationUtils {
         if (StringUtils.isEmpty(ip)) {
             return null;
         }
-        String deviceIpStr = stringRedisTemplate.opsForValue().get(ip);
-        if (StringUtils.isEmpty(deviceIpStr)) {
+        String key = ip+".weather";
+        String weatherStr = stringRedisTemplate.opsForValue().get(key);
+        if (StringUtils.isEmpty(weatherStr)) {
             if(needReset) {
                 JSONObject jsonObject = doGetWeather(ip);
                 log.info("jsonObject = {}",jsonObject);
                 if (jsonObject != null && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather") ) {
-                    stringRedisTemplate.opsForValue().set(ip+".weather", jsonObject.toJSONString());
-                    stringRedisTemplate.expire(ip+".weather",2,TimeUnit.HOURS);
+                    stringRedisTemplate.opsForValue().set(key, jsonObject.toJSONString());
+                    stringRedisTemplate.expire(key,2,TimeUnit.HOURS);
                     return jsonObject;
                 }
             }
             return null;
         }
-        JSONObject jsonObject =  JSON.parseObject(deviceIpStr);
+        JSONObject jsonObject =  JSON.parseObject(weatherStr);
         if(jsonObject != null  && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather")){
             return  jsonObject;
         }
