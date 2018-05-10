@@ -70,7 +70,6 @@ public class BindController {
                 return new ApiResponse<>(false);
             }
         }
-        response.sendRedirect("http://www.baidu.com");
         return new ApiResponse<>(true);
     }
 }
