@@ -69,7 +69,7 @@ public class AppController extends BaseController {
         if (appUserPo == null) {
             String code = request.getParameter("code");
             if (StringUtils.isEmpty(code)) {
-                String redirectUrl = gameServerHost + "/api/app/api/bind?IMEI=" + imei;
+                String redirectUrl = gameServerHost + "/app/api/bind?IMEI=" + imei;
                 try {
                     redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
                 } catch (Exception e) {
