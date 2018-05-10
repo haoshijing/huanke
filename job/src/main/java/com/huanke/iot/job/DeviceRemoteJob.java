@@ -33,9 +33,10 @@ public class DeviceRemoteJob {
         doWork();
     }
 
-    @Scheduled(cron = "* * 0/1 * * ?")
+
+    @Scheduled(cron = "0 0 0/2 * * ?")
     public void doWork(){
-        log.info("start work");
+        log.info("start remote work");
         List<DevicePo> devicePoList = deviceMapper.selectAll();
         devicePoList.stream().filter(devicePo -> {
             return devicePo != null;
@@ -68,6 +69,6 @@ public class DeviceRemoteJob {
                 }
             }
         });
-        log.info(" end work");
+        log.info(" end remote work ");
     }
 }

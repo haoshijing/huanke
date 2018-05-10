@@ -43,7 +43,6 @@ public class LocationUtils {
                 JSONObject jsonObject = doGetLocation(ip);
                 if (jsonObject != null) {
                     stringRedisTemplate.opsForValue().set(ip+".location",jsonObject.toJSONString());
-
                 }
             }
             return null;
@@ -59,14 +58,20 @@ public class LocationUtils {
         if (StringUtils.isEmpty(deviceIpStr)) {
             if(needReset) {
                 JSONObject jsonObject = doGetWeather(ip);
+                log.info("jsonObject = {}",jsonObject);
                 if (jsonObject != null && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather") ) {
                     stringRedisTemplate.opsForValue().set(ip+".weather", jsonObject.toJSONString());
+                    stringRedisTemplate.expire(ip+".weather",2,TimeUnit.HOURS);
                     return jsonObject;
                 }
             }
             return null;
         }
-      return JSON.parseObject(deviceIpStr);
+        JSONObject jsonObject =  JSON.parseObject(deviceIpStr);
+        if(jsonObject != null  && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather")){
+            return  jsonObject;
+        }
+        return null;
     }
 
 
