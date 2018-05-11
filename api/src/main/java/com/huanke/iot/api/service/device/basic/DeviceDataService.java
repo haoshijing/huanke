@@ -190,7 +190,6 @@ public class DeviceDataService {
     public List<SensorDataVo> getHistoryData(String deviceId, Integer type) {
         Long startTimestamp = new DateTime().plusDays(-1).getMillis();
         Long endTimeStamp = System.currentTimeMillis();
-
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
 
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
