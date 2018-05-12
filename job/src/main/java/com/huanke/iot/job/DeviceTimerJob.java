@@ -46,6 +46,7 @@ public class DeviceTimerJob {
                 DeviceTimerPo updatePo = new DeviceTimerPo();
                 updatePo.setId(deviceTimerPo.getId());
                 updatePo.setStatus(4);
+                updatePo.setUserId(deviceTimerPo.getUserId());
                 updatePo.setExecuteRet(2);
                 updatePo.setExecuteTime(System.currentTimeMillis());
                 deviceTimerMapper.updateById(updatePo);
