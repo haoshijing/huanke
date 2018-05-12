@@ -30,10 +30,11 @@ public class DeviceTimerJob {
     @Autowired
     private DeviceOperLogMapper deviceOperLogMapper;
 
-    @Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void doWork(){
         try {
             Long t = System.currentTimeMillis();
+            log.info("start timer job t = {}",t);
             List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryTimers(t);
             deviceTimerPos.forEach(deviceTimerPo -> {
                 Integer deviceId = deviceTimerPo.getDeviceId();
@@ -49,6 +50,7 @@ public class DeviceTimerJob {
                 updatePo.setExecuteTime(System.currentTimeMillis());
                 deviceTimerMapper.updateById(updatePo);
             });
+            log.info("end timer job");
         }catch (Exception e){
             log.error("",e);
         }
