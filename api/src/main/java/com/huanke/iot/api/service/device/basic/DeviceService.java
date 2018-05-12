@@ -245,7 +245,7 @@ public class DeviceService {
                 for (int i = 0; i < outArray.size(); i++) {
                     DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem();
                     item.setLevel(i+1);
-                    item.setSpeed(inArray.getInteger(i));
+                    item.setSpeed(outArray.getInteger(i));
                     outItems.add(item);
                 }
             }else{
