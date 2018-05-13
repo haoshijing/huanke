@@ -2,15 +2,22 @@ package com.huanke.iot.gateway.onlinecheck;
 
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Repository
+@Slf4j
 public class OnlineCheckService {
 
     private ConcurrentHashMap<Integer, OnlineCheckData> idMap =
@@ -19,7 +26,23 @@ public class OnlineCheckService {
     @Autowired
     private DeviceMapper deviceMapper;
 
-    @Scheduled(cron = "0/10 * * * * * ?")
+    private ScheduledExecutorService executorService;
+
+    @PostConstruct
+    public void init(){
+        executorService = Executors.newScheduledThreadPool(1,new DefaultThreadFactory("ScanIdThread"));
+        executorService.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    doScan();
+                }catch (Exception e){
+                    log.error("",e);
+                }
+            }
+        },1,15, TimeUnit.SECONDS);
+    }
+
     public void doScan() {
         Iterator<Map.Entry<Integer, OnlineCheckData>> it = idMap.entrySet().iterator();
         while (it.hasNext()){
