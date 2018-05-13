@@ -62,8 +62,6 @@
         </where>
     </select>
 
-
-
     <select id="selectByDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
@@ -86,6 +84,9 @@
             </if>
             <if test = "name != null">
                 name = #{name},
+            </if>
+            <if test = "onlineStatus != null">
+                onlineStatus = #{onlineStatus},
             </if>
             <if test = "ip != null and ip != ''">
                 ip = #{ip},

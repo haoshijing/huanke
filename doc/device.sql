@@ -32,6 +32,7 @@ bindTime bigint comment '绑定和解绑时间'
 alter table t_device add column speedConfig varchar(4096) comment '转速配置';
 alter table t_device  add index idxDeviceId(deviceId);
 alter table t_device add column ip varchar(200) comment '机器Ip';
+alter table t_device add column onlineStatus int DEFAULT 2 comment '在线状态';
 
 drop table if  EXISTS  t_device_type;
 create table t_device_type
