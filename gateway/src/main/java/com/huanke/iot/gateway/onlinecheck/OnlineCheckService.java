@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,32 +21,49 @@ public class OnlineCheckService {
 
     @Scheduled(cron = "0/10 * * * * * ?")
     public void doScan() {
-
-        for (Map.Entry<Integer, OnlineCheckData> entry : idMap.entrySet()) {
-            OnlineCheckData data = entry.getValue();
+        Iterator<Map.Entry<Integer, OnlineCheckData>> it = idMap.entrySet().iterator();
+        while (it.hasNext()){
+            OnlineCheckData data = it.next().getValue();
             if (data.getLastUpdateTime() < (System.currentTimeMillis() - 1000)) {
                 data.setFailCount(data.getFailCount() + 1);
                 if (data.getFailCount() > 3) {
                     data.setOnline(false);
                 }
             }
-        }
-
-        for (Map.Entry<Integer, OnlineCheckData> entry : idMap.entrySet()) {
-            OnlineCheckData data = entry.getValue();
-            if (!data.isOnline()) {
+            if(!data.isOnline()){
                 DevicePo updatePo = new DevicePo();
-                updatePo.setId(data.getId());
                 updatePo.setOnlineStatus(2);
+                updatePo.setId(it.next().getKey());
                 deviceMapper.updateById(updatePo);
+                it.remove();
             }
         }
-
-
     }
 
-
-    public void addDataToScan(OnlineCheckData onlineCheckData) {
-        idMap.putIfAbsent(onlineCheckData.getId(), onlineCheckData);
+    public void resetOnline(Integer id){
+       OnlineCheckData data =   idMap.get(id);
+       boolean needUpdateDd  =false;
+       if(data == null){
+           data = new OnlineCheckData();
+           data.setFailCount(0);
+           data.setLastUpdateTime(System.currentTimeMillis());
+           data.setOnline(true);
+           needUpdateDd = true;
+           data.setId(id);
+       }else{
+           if(!data.isOnline()) {
+               needUpdateDd = true;
+           }
+           data.setFailCount(0);
+           data.setLastUpdateTime(System.currentTimeMillis());
+           data.setOnline(true);
+       }
+        idMap.put(id,data);
+       if(needUpdateDd){
+           DevicePo updatePo = new DevicePo();
+           updatePo.setId(id);
+           updatePo.setOnlineStatus(1);
+           deviceMapper.updateById(updatePo);
+       }
     }
 }
