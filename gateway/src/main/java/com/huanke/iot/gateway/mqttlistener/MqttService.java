@@ -32,7 +32,7 @@ public class MqttService {
             try {
                 mqttClient = new MqttClient(mqttServerUrl, "ServerClient");
             }catch (Exception e){
-
+                log.error("",e);
             }
         }
     }
