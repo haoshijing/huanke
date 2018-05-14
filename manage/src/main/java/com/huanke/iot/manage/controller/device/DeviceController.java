@@ -214,7 +214,7 @@ public class DeviceController {
     @RequestMapping("/updateDevice")
     public ApiResponse<Boolean> updateDevice(@RequestBody DeviceUpdateRequest deviceUpdateRequest){
 
-        if(StringUtils.isEmpty(deviceUpdateRequest.getDeviceName())){
+        if(StringUtils.isEmpty(deviceUpdateRequest.getName())){
             return new ApiResponse(RetCode.PARAM_ERROR);
         }
         Boolean updateRet = deviceService.updateDevice(deviceUpdateRequest);

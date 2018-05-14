@@ -66,7 +66,7 @@ public class DeviceService {
 
         DevicePo updatePo = new DevicePo();
         updatePo.setId(deviceUpdateRequest.getId());
-        updatePo.setName(deviceUpdateRequest.getDeviceName());
+        updatePo.setName(deviceUpdateRequest.getName());
         return deviceMapper.updateById(updatePo) > 0;
     }
 }
