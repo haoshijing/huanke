@@ -25,7 +25,8 @@
 
     <select id="selectData" resultType="com.huanke.iot.base.po.device.data.DeviceSensorPo">
 
-        select sensorValue, sensorType, createTime from <include refid="tableName"/>
+        select sensorValue, sensorType, createTime
+         from <include refid="tableName"/>
         where createTime > #{startTime}
         <![CDATA[
          and createTime <= #{endTime}
