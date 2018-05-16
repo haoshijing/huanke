@@ -12,40 +12,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 
-@RequestMapping("/app/api")
-@Slf4j
+/**
+ * @author haoshijing
+ * @version 2018年05月16日 10:01
+ **/
 @Controller
+@Slf4j
+@RequestMapping("/app/api")
 public class BindController {
+
     @Autowired
     private WechartUtil wechartUtil;
 
-    @Value("${gameServerHost}")
-    private String gameServerHost;
-
-    @Value("${appId}")
-    private String appId;
-
     @Autowired
     private AppUserMapper appUserMapper;
+
+    @Value("${gameServerHost}")
+    private String gameServerHost;
+    @Value("${appId}")
+    private String appId;
     @RequestMapping("/bind")
-    @ResponseBody
-    public ApiResponse<Boolean> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String imei = request.getParameter("IMEI");
         if (StringUtils.isEmpty(imei)) {
-            return new ApiResponse<>(RetCode.PARAM_ERROR, "mac地址不能为空");
+            return "fail";
         }
         AppUserPo appUserPo = appUserMapper.selectByMac(imei);
         if (appUserPo == null) {
             String code = request.getParameter("code");
             if (StringUtils.isEmpty(code)) {
-                String redirectUrl = gameServerHost + "/app/api/bind?IMEI=" + imei;
+                String redirectUrl = gameServerHost + "/api/app/api/bind?IMEI=" + imei;
                 try {
                     redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
                 } catch (Exception e) {
@@ -58,20 +59,21 @@ public class BindController {
             }
             JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
             if (authTokenJSONObject == null) {
-                return new ApiResponse<>(RetCode.CODE_ERROR, "获取用户的accessToken错误");
+                return "fail";
             }
             String openId = authTokenJSONObject.getString("openid");
             if (StringUtils.isEmpty(openId)) {
-                return new ApiResponse<>(RetCode.CODE_ERROR, "获取openId错误");
+                return "fail";
             }
             AppUserPo updateAppUserPo = new AppUserPo();
             updateAppUserPo.setOpenId(openId);
             updateAppUserPo.setAndroidMac(imei);
             int ret = appUserMapper.updateAndroidMac(updateAppUserPo);
             if (ret == 0) {
-                return new ApiResponse<>(false);
+                return "fail";
             }
         }
-        return new ApiResponse<>(true);
+        return "succ";
     }
+
 }
