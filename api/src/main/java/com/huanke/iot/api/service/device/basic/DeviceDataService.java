@@ -206,8 +206,6 @@ public class DeviceDataService {
         String[] sensorTypes = sensorList.split(",");
 
         List<DeviceSensorPo> deviceSensorPos = deviceSensorDataMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
-
-
         for (String sensorType : sensorTypes) {
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
