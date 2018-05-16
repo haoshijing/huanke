@@ -39,7 +39,6 @@ import java.util.List;
 @RestController
 public class AppController extends BaseController {
 
-
     @Autowired
     private DeviceDataService deviceDataService;
 
@@ -48,7 +47,6 @@ public class AppController extends BaseController {
 
     @Autowired
     private DeviceService deviceService;
-
 
     @RequestMapping("/queryDeviceList")
     public ApiResponse<DeviceListVo> queryDeviceList(HttpServletRequest request) {
