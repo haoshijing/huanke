@@ -31,7 +31,7 @@
          and createTime <= #{endTime}
            ]]>
         and deviceId = #{deviceId}
-        order by id asc limiit 1000
+        order by id asc limit 1000
 
     </select>
 
