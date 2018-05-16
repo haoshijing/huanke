@@ -23,6 +23,7 @@ import java.net.URLEncoder;
  **/
 @Controller
 @Slf4j
+@RequestMapping("/app/api")
 public class BindController {
 
     @Autowired
