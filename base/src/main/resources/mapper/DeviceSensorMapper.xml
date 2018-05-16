@@ -36,4 +36,17 @@
 
     </select>
 
+    <select id="selectAvgData" resultType="java.lang.Integer">
+
+        select AVG(sensorValue)
+        from <include refid="tableName"/>
+        where createTime > #{startTime}
+        <![CDATA[
+         and createTime <= #{endTime}
+           ]]>
+        and sensorType = #{sensorType}
+        and deviceId = #{deviceId}
+
+    </select>
+
 </mapper>

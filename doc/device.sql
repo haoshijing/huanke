@@ -276,3 +276,21 @@ md5 int comment '文件md5',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
+
+create table t_device_sensor_stat(
+id int PRIMARY KEY AUTO_INCRMENT  COMMENT '主键ID',
+deviceId int comment '设备Id',
+co2 int comment '平均co2',
+hcho int comment '平均hcho',
+pm int comment '平均pm',
+hum int comment '平均hum',
+tvoc int comment '平均tvoc',
+tem int comment '平均温度',
+startTime bigint comment '开始时间',
+endTime bigint comment '结束时间',
+insertTime bigint comment '写入时间',
+index idx_did(deviceId)
+);
+
+
+)

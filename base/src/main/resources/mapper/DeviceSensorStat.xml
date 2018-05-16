@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.impl.device.stat.DeviceSensorStatMapper">
+
+    <sql id="tableName">
+        t_device_sensor_stat
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" parameterType="com.huanke.iot.base.po.device.stat.DeviceSensorStatPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        deviceId,
+        co2,
+        pm,
+        tem,
+        hum,
+        hcho,
+        tvoc,
+        startTime,
+        endTime,
+        insertTime
+        )
+        VALUE (
+        #{deviceId},
+        #{co2},
+        #{pm},
+        #{tem},
+        #{hum},
+        #{hcho},
+        #{tvoc},
+        #{startTime},
+        #{endTime},
+        #{insertTime}
+        )
+    </insert>
+
+    <select id = "selectHistoryData" resultType="com.huanke.iot.base.po.device.stat.DeviceSensorStatPo">
+        select * from  <include refid="tableName"/>
+        where deviceId = #{deviceId}
+        and startTime >= #{statrTime}
+        <![CDATA[
+        and endTime <= #{endTime}
+            ]]>
+    </select>
+</mapper>
