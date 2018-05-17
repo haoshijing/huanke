@@ -50,6 +50,7 @@ public class DeviceGroupService {
             DeviceGroupPo updatePo = new DeviceGroupPo();
             updatePo.setGroupName(newRequest.getGroupName());
             updatePo.setStatus(1);
+            updatePo.setId(groupId);
             deviceGroupMapper.updateById(updatePo);
         }
         if (!CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
