@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +19,7 @@ import java.util.List;
  * @version 2018年04月08日 13:22
  **/
 @Repository
+@Slf4j
 public class DeviceGroupService {
 
     @Autowired
@@ -45,13 +47,14 @@ public class DeviceGroupService {
             deviceGroupPo.setStatus(1);
             deviceGroupMapper.insert(deviceGroupPo);
             groupId = deviceGroupPo.getId();
-        }else{
+        } else {
             groupId = queryGroupPo.getId();
             DeviceGroupPo updatePo = new DeviceGroupPo();
             updatePo.setGroupName(newRequest.getGroupName());
             updatePo.setStatus(1);
             updatePo.setId(groupId);
-            deviceGroupMapper.updateById(updatePo);
+            int ret = deviceGroupMapper.updateById(updatePo);
+            log.info("ret = {}",ret);
         }
         if (!CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
             DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
