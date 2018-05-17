@@ -37,5 +37,5 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
                             @Param("newGroupId") int newGroupId,
                             @Param("deviceId") Integer deviceId);
 
-    DeviceGroupPo queryByName(String groupName);
+    DeviceGroupPo queryByName(DeviceGroupPo deviceGroupPo);
 }

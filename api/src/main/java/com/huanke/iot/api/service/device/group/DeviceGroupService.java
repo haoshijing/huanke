@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author haoshijing
@@ -30,21 +29,34 @@ public class DeviceGroupService {
 
     public Integer createDeviceGroup(Integer userId, DeviceGroupNewRequest newRequest) {
         String groupName = newRequest.getGroupName();
-        Integer groupCount = deviceGroupMapper.queryGroupCount(userId, groupName);
-        if (groupCount == null || groupCount == 0) {
+        DeviceGroupPo queryPo = new DeviceGroupPo();
+        queryPo.setGroupName(groupName);
+        queryPo.setUserId(userId);
+        DeviceGroupPo queryGroupPo = deviceGroupMapper.queryByName(queryPo);
+        if (queryGroupPo != null && queryGroupPo.getStatus() == 1) {
+            return 0;
+        }
+        Integer groupId = 0;
+        if (queryGroupPo == null) {
             DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
             deviceGroupPo.setCreateTime(System.currentTimeMillis());
             deviceGroupPo.setUserId(userId);
             deviceGroupPo.setGroupName(groupName);
             deviceGroupPo.setStatus(1);
             deviceGroupMapper.insert(deviceGroupPo);
-            Integer groupId =  deviceGroupPo.getId();
-            if(!CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
-                DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
-                deviceGroupRequest.setDeviceIds(newRequest.getDeviceIds());
-                deviceGroupRequest.setGroupId(groupId);
-                updateDeviceGroup(userId, deviceGroupRequest);
-            }
+            groupId = deviceGroupPo.getId();
+        }else{
+            groupId = queryGroupPo.getId();
+            DeviceGroupPo updatePo = new DeviceGroupPo();
+            updatePo.setGroupName(newRequest.getGroupName());
+            updatePo.setStatus(1);
+            deviceGroupMapper.updateById(updatePo);
+        }
+        if (!CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
+            DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
+            deviceGroupRequest.setDeviceIds(newRequest.getDeviceIds());
+            deviceGroupRequest.setGroupId(groupId);
+            updateDeviceGroup(userId, deviceGroupRequest);
             return 1;
         }
         return 0;
@@ -52,19 +64,19 @@ public class DeviceGroupService {
 
     public Boolean deleteGroup(Integer userId, Integer groupId) {
         DeviceGroupPo groupPo = deviceGroupMapper.selectById(groupId);
-        if(groupPo != null && StringUtils.equals(groupPo.getGroupName(),"默认组")){
+        if (groupPo != null && StringUtils.equals(groupPo.getGroupName(), "默认组")) {
             return false;
         }
-        Boolean updateRet = deviceGroupMapper.updateGroupStatus(userId, groupId,2) > 0;
+        Boolean updateRet = deviceGroupMapper.updateGroupStatus(userId, groupId, 2) > 0;
         if (updateRet) {
             DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
             deviceGroupPo.setGroupName("默认组");
             deviceGroupPo.setUserId(userId);
             deviceGroupPo.setStatus(1);
-            List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(deviceGroupPo,1,0);
+            List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(deviceGroupPo, 1, 0);
             Integer defaultGroupId = 0;
 
-            if(deviceGroupPos.size() > 0 ){
+            if (deviceGroupPos.size() > 0) {
                 defaultGroupId = deviceGroupPos.get(0).getId();
             }
             deviceGroupMapper.updateDeviceGroupItem(userId, groupId, defaultGroupId);
@@ -78,24 +90,27 @@ public class DeviceGroupService {
                     DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
                     if (devicePo != null) {
                         Integer dId = devicePo.getId();
-                       deviceGroupMapper.updateDeviceGroupId(userId,groupId,dId);
+                        deviceGroupMapper.updateDeviceGroupId(userId, groupId, dId);
                     }
                 }
         );
         return true;
     }
 
-    public Boolean updateGroupName(Integer groupId, String groupName) {
-        DeviceGroupPo deviceGroupPo = deviceGroupMapper.queryByName(groupName);
-        if(deviceGroupPo != null){
+    public Boolean updateGroupName(Integer userId, Integer groupId, String groupName) {
+        DeviceGroupPo queryPo = new DeviceGroupPo();
+        queryPo.setGroupName(groupName);
+        queryPo.setUserId(userId);
+        DeviceGroupPo deviceGroupPo = deviceGroupMapper.queryByName(queryPo);
+        if (deviceGroupPo != null && deviceGroupPo.getStatus() == 1) {
             return false;
         }
-
         DeviceGroupPo updatePo = new DeviceGroupPo();
         updatePo.setId(groupId);
         updatePo.setGroupName(groupName);
+        updatePo.setStatus(1);
         updatePo.setLastUpdateTime(System.currentTimeMillis());
         int ret = deviceGroupMapper.updateById(updatePo);
-        return ret >0;
+        return ret > 0;
     }
 }
