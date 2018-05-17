@@ -40,8 +40,8 @@ public class DeviceSensorStatWorker {
             Long startTime = new DateTime().withMillisOfSecond(0).plusMinutes(-40).getMillis();
             Long endTime = new DateTime().withMillisOfSecond(0).plusMinutes(-40).getMillis();
             devicePoList.forEach(devicePo -> {
-                defaultEventExecutorGroup.submit()
+
             });
-        }while (devicePoList.size() > 0)
+        }while (devicePoList.size() > 0);
     }
 }
