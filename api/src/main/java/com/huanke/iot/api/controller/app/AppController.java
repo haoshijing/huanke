@@ -109,6 +109,8 @@ public class AppController extends BaseController {
             deviceFuncVo.setFuncId("210");
             deviceFuncVo.setValue("1");
         }
+        deviceDataService.sendFunc(deviceFuncVo);
+
         return new ApiResponse<>(true);
     }
 
