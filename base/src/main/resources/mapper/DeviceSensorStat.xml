@@ -35,7 +35,7 @@
         )
     </insert>
 
-    <select id = "selectHistoryData" resultType="com.huanke.iot.base.po.device.stat.DeviceSensorStatPo">
+    <select id = "selectData" resultType="com.huanke.iot.base.po.device.stat.DeviceSensorStatPo">
         select * from  <include refid="tableName"/>
         where deviceId = #{deviceId}
         and startTime >= #{statrTime}
