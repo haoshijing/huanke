@@ -48,7 +48,7 @@ public class DeviceSensorStatWorker {
         List<DevicePo> devicePoList = deviceMapper.selectList(queryPo, 100, offset);
         do {
             final Long startTime = new DateTime().withMillisOfSecond(0).plusMinutes(-40).getMillis();
-            final Long endTime = new DateTime().withMillisOfSecond(0).plusMinutes(-40).getMillis();
+            final Long endTime = new DateTime().withMillisOfSecond(0).plusMinutes(-10).getMillis();
             devicePoList.forEach(devicePo -> {
                 Future<Integer> co2 = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(), startTime, endTime, SensorTypeEnums.CO2_IN.getCode()));
                 Future<Integer>  hcho = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.HCHO_IN.getCode()));
