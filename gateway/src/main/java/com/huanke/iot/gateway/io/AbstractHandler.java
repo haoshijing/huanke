@@ -1,6 +1,8 @@
 package com.huanke.iot.gateway.io;
 
 import com.google.common.collect.Maps;
+import com.huanke.iot.gateway.onlinecheck.OnlineCheckService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +15,8 @@ import java.util.concurrent.ConcurrentMap;
 public abstract  class AbstractHandler {
 
     private static  ConcurrentMap<String,AbstractHandler> handlerMap= Maps.newConcurrentMap();
-
+    @Autowired
+    private OnlineCheckService onlineCheckService;
     @PostConstruct
     public void init(){
         handlerMap.putIfAbsent(getTopicType(),this);
@@ -21,6 +24,10 @@ public abstract  class AbstractHandler {
     protected abstract String getTopicType();
 
 
+    public  void  handler(String topic, byte[] payloads){
+        onlineCheckService.resetOnline(getDeviceIdFromTopic(topic));
+        doHandler(topic,payloads);
+    }
     public abstract void  doHandler(String topic, byte[] payloads);
 
     public static AbstractHandler getHandler(String topic){
@@ -30,7 +37,8 @@ public abstract  class AbstractHandler {
 
     protected Integer getDeviceIdFromTopic(String topic){
         int idx = topic.lastIndexOf("/");
-        return Integer.valueOf(topic.substring(idx+1));
+        Integer deviceId =  Integer.valueOf(topic.substring(idx+1));
+        return deviceId;
     }
     private static String getTypeFromTopic(String topic){
         int idx = topic.lastIndexOf("/");

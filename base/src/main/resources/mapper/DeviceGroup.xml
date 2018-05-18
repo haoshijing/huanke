@@ -112,6 +112,10 @@
             <if test = "videoCover != null">
                 videoCover = #{videoCover},
             </if>
+            <if test = "status != null">
+                status = #{status},
+            </if>
+
 
             <if test = "videoUrl != null">
                 videoUrl = #{videoUrl},

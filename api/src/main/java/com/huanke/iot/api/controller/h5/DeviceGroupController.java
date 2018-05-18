@@ -44,12 +44,13 @@ public class DeviceGroupController extends BaseController{
     }
 
     @RequestMapping("/updateGroupName")
-    public ApiResponse<Boolean> updateGroupName(Integer groupId,String groupName){
+    public ApiResponse<Boolean> updateGroupName(HttpServletRequest request,Integer groupId,String groupName){
+        Integer userId = getCurrentUserId(request);
         if(groupId == null  || StringUtils.isEmpty(groupName)){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
         }
         ApiResponse apiResponse = new ApiResponse(true);
-        Boolean ret = deviceGroupService.updateGroupName(groupId,groupName);
+        Boolean ret = deviceGroupService.updateGroupName(userId,groupId,groupName);
         apiResponse.setData(ret);
         if(!ret){
             apiResponse.setMsg("该组名已存在");

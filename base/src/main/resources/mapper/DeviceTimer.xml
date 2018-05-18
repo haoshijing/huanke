@@ -63,7 +63,7 @@
     
     <select id="queryTimers" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
         select * from <include refid="tableName"/>
-        where executeTime > #{time} and status = 1
+        where executeTime <![CDATA[ <     ]]> #{time} and status = 1
     </select>
     
     <update id="updateById">
@@ -88,7 +88,4 @@
         where id = #{id} and userId = #{userId}
     </update>
 
-    <select id = "">
-
-    </select>
 </mapper>

@@ -68,6 +68,7 @@ public class MachineService {
     }
 
     public Integer createNew(String mac,Integer typeId){
+
         DevicePo devicePo = new DevicePo();
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
         if(deviceTypePo == null){
@@ -77,7 +78,9 @@ public class MachineService {
         if(queryDevicePo != null){
             return 1;
         }
+
         JSONObject jsonObject = obtainDeviceJson();
+
         if(jsonObject != null){
             String deviceId = jsonObject.getString("deviceid");
             String devicelicence = jsonObject.getString("devicelicence");

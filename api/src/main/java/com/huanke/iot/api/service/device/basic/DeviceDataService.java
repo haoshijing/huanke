@@ -84,7 +84,7 @@ public class DeviceDataService {
         }
         String storeToken = stringRedisTemplate.opsForValue().get("token."+deviceIdStr);
         if(StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken,token)){
-            //return false;
+           // return false;
         }
         if (appUserPo.getId().equals(toId)) {
             return false;
@@ -190,6 +190,7 @@ public class DeviceDataService {
     public List<SensorDataVo> getHistoryData(String deviceId, Integer type) {
         Long startTimestamp = new DateTime().plusDays(-1).getMillis();
         Long endTimeStamp = System.currentTimeMillis();
+
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
 
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
@@ -205,8 +206,6 @@ public class DeviceDataService {
         String[] sensorTypes = sensorList.split(",");
 
         List<DeviceSensorPo> deviceSensorPos = deviceSensorDataMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
-
-
         for (String sensorType : sensorTypes) {
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
@@ -459,7 +458,7 @@ public class DeviceDataService {
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
                 dataItem.setType(wind);
-                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速");
+                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速,4:四挡风速,5:五档风速,6:六档风速");
                 dataItem.setValue(getData(controlDatas, wind));
                 if (winds.size() == 1) {
                     dataItem.setName("风速");

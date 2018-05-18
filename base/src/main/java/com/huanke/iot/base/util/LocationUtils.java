@@ -11,9 +11,11 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -25,6 +27,11 @@ public class LocationUtils {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Value("${weather.key}")
+    private String key;
+    @Value("${weather.sign}")
+    private String sign;
+
 
     public JSONObject getLocation(String ip,boolean needReset) {
         if (StringUtils.isEmpty(ip)) {
@@ -36,8 +43,6 @@ public class LocationUtils {
                 JSONObject jsonObject = doGetLocation(ip);
                 if (jsonObject != null) {
                     stringRedisTemplate.opsForValue().set(ip+".location",jsonObject.toJSONString());
-                    stringRedisTemplate.expire(ip+".location",2, TimeUnit.MINUTES);
-
                 }
             }
             return null;
@@ -49,19 +54,25 @@ public class LocationUtils {
         if (StringUtils.isEmpty(ip)) {
             return null;
         }
-        String deviceIpStr = stringRedisTemplate.opsForValue().get(ip);
-        if (StringUtils.isEmpty(deviceIpStr)) {
+        String key = ip+".weather";
+        String weatherStr = stringRedisTemplate.opsForValue().get(key);
+        if (StringUtils.isEmpty(weatherStr)) {
             if(needReset) {
                 JSONObject jsonObject = doGetWeather(ip);
-                if (jsonObject != null) {
-                    stringRedisTemplate.opsForValue().set(ip+".weather", jsonObject.toJSONString());
-                    stringRedisTemplate.expire(ip+".weather",2, TimeUnit.MINUTES);
+                log.info("jsonObject = {}",jsonObject);
+                if (jsonObject != null && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather") ) {
+                    stringRedisTemplate.opsForValue().set(key, jsonObject.toJSONString());
+                    stringRedisTemplate.expire(key,2,TimeUnit.HOURS);
                     return jsonObject;
                 }
             }
             return null;
         }
-      return JSON.parseObject(deviceIpStr);
+        JSONObject jsonObject =  JSON.parseObject(weatherStr);
+        if(jsonObject != null  && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather")){
+            return  jsonObject;
+        }
+        return null;
     }
 
 
@@ -70,7 +81,7 @@ public class LocationUtils {
         if (StringUtils.isEmpty(ip)) {
             return null;
         }
-        String url = String.format("http://api.k780.com:88/?app=weather.today&weaid=%s&appkey=33302&sign=96b4d475536090dac84ff04daa37d785&format=json",
+        String url = String.format("http://api.k780.com:88/?app=weather.today&weaid=%s&appkey="+key+"&sign="+sign+"&format=json",
                 ip);
         try {
             HttpGet httpGet = new HttpGet();

@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class DeviceUpdateRequest {
     private Integer id;
-    private String deviceName;
+    private String name;
 }
