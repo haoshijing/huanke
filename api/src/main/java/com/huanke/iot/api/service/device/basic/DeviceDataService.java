@@ -226,6 +226,8 @@ public class DeviceDataService {
                     ydata.add(deviceSensorPo.getPm().toString());
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.TVOC_IN.getCode())) {
                     ydata.add(deviceSensorPo.getTvoc().toString());
+                }else{
+                    continue;
                 }
             }
             sensorDataVo.setXdata(xdata);
