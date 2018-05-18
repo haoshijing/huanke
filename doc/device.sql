@@ -278,7 +278,7 @@ lastUpdateTime bigint comment '最后修改时间'
 );
 
 create table t_device_sensor_stat(
-id int PRIMARY KEY AUTO_INCRMENT  COMMENT '主键ID',
+id int PRIMARY KEY auto_increment  COMMENT '主键ID',
 deviceId int comment '设备Id',
 co2 int comment '平均co2',
 hcho int comment '平均hcho',

@@ -21,7 +21,7 @@
         endTime,
         insertTime
         )
-        VALUE (
+        VALUES (
         #{deviceId},
         #{co2},
         #{pm},
