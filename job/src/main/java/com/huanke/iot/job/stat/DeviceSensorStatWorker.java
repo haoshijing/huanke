@@ -80,6 +80,7 @@ public class DeviceSensorStatWorker {
             });
 
             offset += devicePoList.size();
+            devicePoList = deviceMapper.selectList(queryPo, 100, offset);
         } while (devicePoList.size() > 0);
         log.info("DeviceSensorStatWorker end work");
     }
