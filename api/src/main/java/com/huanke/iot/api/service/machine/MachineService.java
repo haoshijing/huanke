@@ -142,7 +142,7 @@ public class MachineService {
     }
 
     private Integer getCanUseProductId(){
-       String productIdStr =  stringRedisTemplate.opsForValue().get("productId");
+       String productIdStr =  stringRedisTemplate.opsForValue().get("dask.productId");
        if(StringUtils.isNotEmpty(productIdStr)){
            return  Integer.valueOf(productIdStr);
        }
