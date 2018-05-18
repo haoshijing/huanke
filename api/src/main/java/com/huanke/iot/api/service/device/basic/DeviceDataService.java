@@ -14,17 +14,15 @@ import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
-import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
+import com.huanke.iot.base.dao.impl.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
-import com.huanke.iot.base.po.device.data.DeviceSensorPo;
+import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import com.huanke.iot.base.util.LocationUtils;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
@@ -64,7 +62,7 @@ public class DeviceDataService {
     private AppUserMapper appUserMapper;
 
     @Autowired
-    private DeviceSensorDataMapper deviceSensorDataMapper;
+    private DeviceSensorStatMapper deviceSensorStatMapper;
 
     @Autowired
     private LocationUtils locationUtils;
@@ -82,9 +80,9 @@ public class DeviceDataService {
         if (appUserPo == null) {
             return false;
         }
-        String storeToken = stringRedisTemplate.opsForValue().get("token."+deviceIdStr);
-        if(StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken,token)){
-           // return false;
+        String storeToken = stringRedisTemplate.opsForValue().get("token." + deviceIdStr);
+        if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
+            // return false;
         }
         if (appUserPo.getId().equals(toId)) {
             return false;
@@ -205,7 +203,7 @@ public class DeviceDataService {
         String sensorList = deviceTypePo.getSensorList();
         String[] sensorTypes = sensorList.split(",");
 
-        List<DeviceSensorPo> deviceSensorPos = deviceSensorDataMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
+        List<DeviceSensorStatPo> deviceSensorPos = deviceSensorStatMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
         for (String sensorType : sensorTypes) {
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
@@ -214,21 +212,26 @@ public class DeviceDataService {
             sensorDataVo.setType(sensorType);
             List<String> xdata = Lists.newArrayList();
             List<String> ydata = Lists.newArrayList();
-            for (DeviceSensorPo deviceSensorPo : deviceSensorPos) {
-                String dbSensorType = deviceSensorPo.getSensorType();
-                if(StringUtils.equals(dbSensorType,sensorType)){
-                    xdata.add(String.valueOf(deviceSensorPo.getCreateTime()));
-                    if(StringUtils.equals(SensorTypeEnums.HCHO_IN.getCode(),sensorType)
-                            || StringUtils.equals(SensorTypeEnums.TVOC_IN.getCode(),sensorType)) {
-                        ydata.add(String.valueOf(FloatDataUtil.getFloat(deviceSensorPo.getSensorValue())));
-                    }else{
-                        ydata.add(String.valueOf(deviceSensorPo.getSensorValue()));
-                    }
+            for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
+                xdata.add(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:mm:ss"));
+                if(StringUtils.equals(sensorType,SensorTypeEnums.CO2_IN.getCode())) {
+                    ydata.add(deviceSensorPo.getCo2().toString());
+                }else  if(StringUtils.equals(sensorType,SensorTypeEnums.HUMIDITY_IN.getCode())) {
+                    ydata.add(deviceSensorPo.getHum().toString());
+                }else  if(StringUtils.equals(sensorType,SensorTypeEnums.TEMPERATURE_IN.getCode())) {
+                    ydata.add(deviceSensorPo.getTem().toString());
+                }else  if(StringUtils.equals(sensorType,SensorTypeEnums.HCHO_IN.getCode())) {
+                    ydata.add(deviceSensorPo.getHcho().toString());
+                }else  if(StringUtils.equals(sensorType,SensorTypeEnums.PM25_IN.getCode())) {
+                    ydata.add(deviceSensorPo.getPm().toString());
+                }else  if(StringUtils.equals(sensorType,SensorTypeEnums.TVOC_IN.getCode())) {
+                    ydata.add(deviceSensorPo.getTvoc().toString());
                 }
             }
             sensorDataVo.setXdata(xdata);
             sensorDataVo.setYdata(ydata);
             sensorDataVos.add(sensorDataVo);
+
         }
 
         return sensorDataVos;
@@ -236,27 +239,27 @@ public class DeviceDataService {
 
     public List<DeviceShareVo> shareList(Integer userId, String deviceIdStr) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
-        if(devicePo != null){
+        if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
             deviceGroupItemPo.setUserId(userId);
             deviceGroupItemPo.setDeviceId(deviceId);
 
             List<DeviceGroupItemPo> groupItemPos = deviceGroupMapper.queryGroupItems(deviceGroupItemPo);
-            if(groupItemPos.size() > 0 ){
+            if (groupItemPos.size() > 0) {
                 DeviceGroupItemPo itemPo = groupItemPos.get(0);
-                if(itemPo.getIsMaster() == 1){
+                if (itemPo.getIsMaster() == 1) {
                     DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
                     deviceRelationPo.setDeviceId(deviceId);
                     deviceRelationPo.setStatus(1);
-                    List<DeviceRelationPo> deviceRelationPos = deviceRelationMapper.selectList(deviceRelationPo,100,0);
+                    List<DeviceRelationPo> deviceRelationPos = deviceRelationMapper.selectList(deviceRelationPo, 100, 0);
                     List<DeviceShareVo> shareVos = deviceRelationPos.stream()
-                            .map(deviceRelationPo1 ->{
+                            .map(deviceRelationPo1 -> {
                                 DeviceShareVo deviceShareVo = new DeviceShareVo();
                                 Integer joinUserId = deviceRelationPo1.getJoinUserId();
                                 AppUserPo appUserPo = appUserMapper.selectById(joinUserId);
 
-                                if(appUserPo != null) {
+                                if (appUserPo != null) {
                                     deviceShareVo.setOpenId(appUserPo.getOpenId());
                                     deviceShareVo.setAvatar(appUserPo.getHeadimgurl());
                                     deviceShareVo.setNickname(appUserPo.getNickname());
@@ -304,11 +307,11 @@ public class DeviceDataService {
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
         }
 
-        JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(),false);
-        if(weatherJson != null){
-            if(weatherJson.containsKey("result")){
+        JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), false);
+        if (weatherJson != null) {
+            if (weatherJson.containsKey("result")) {
                 JSONObject result = weatherJson.getJSONObject("result");
-                if(result != null){
+                if (result != null) {
                     deviceDetailVo.setOuterHum(result.getString("humidity"));
                     deviceDetailVo.setOuterPm(result.getString("aqi"));
                     deviceDetailVo.setOuterTem(result.getString("temperature_curr"));
@@ -316,14 +319,14 @@ public class DeviceDataService {
                 }
             }
         }
-        JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(),false);
-        if(locationJson != null){
-            if(locationJson.containsKey("content")){
+        JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+        if (locationJson != null) {
+            if (locationJson.containsKey("content")) {
                 JSONObject content = locationJson.getJSONObject("content");
-                if(content != null){
-                    if(content.containsKey("address_detail")){
+                if (content != null) {
+                    if (content.containsKey("address_detail")) {
                         JSONObject addressDetail = content.getJSONObject("address_detail");
-                        if(addressDetail != null){
+                        if (addressDetail != null) {
                             deviceDetailVo.setProvince(addressDetail.getString("province"));
                             deviceDetailVo.setCity(addressDetail.getString("city"));
                         }
@@ -365,7 +368,6 @@ public class DeviceDataService {
         }
         return "";
     }
-
 
 
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
@@ -483,14 +485,14 @@ public class DeviceDataService {
                 jsonArrays.add(uv);
             }
 
-            List<String> screens = getType(FuncTypeEnums.TIMER_SCREEN.getCode().substring(0,2),funcTypeList);
-            if(screens.size() > 0){
-                List<DeviceDetailVo.DataItem> screentItems = screens.stream().map(screenStr->{
+            List<String> screens = getType(FuncTypeEnums.TIMER_SCREEN.getCode().substring(0, 2), funcTypeList);
+            if (screens.size() > 0) {
+                List<DeviceDetailVo.DataItem> screentItems = screens.stream().map(screenStr -> {
                     DeviceDetailVo.DataItem screen1 = new DeviceDetailVo.DataItem();
                     screen1.setValue(getData(controlDatas, screenStr));
                     screen1.setType(screenStr);
                     screen1.setChoice("0");
-                    return  screen1;
+                    return screen1;
                 }).collect(Collectors.toList());
                 deviceDetailVo.setScreens(screentItems);
             }
