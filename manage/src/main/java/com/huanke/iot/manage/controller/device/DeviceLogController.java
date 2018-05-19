@@ -2,7 +2,6 @@ package com.huanke.iot.manage.controller.device;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
