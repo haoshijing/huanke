@@ -55,7 +55,6 @@ public class MockSendMessageController {
     @Autowired
     private MqttSendService mqttSendService;
 
-
     @RequestMapping("/sendData")
     @ResponseBody
     public String sendData(@RequestBody SwitchData switchData ){
@@ -64,8 +63,6 @@ public class MockSendMessageController {
         mqttSendService.sendMessage(topic,JSON.toJSONString(switchData));
         return "ok";
     }
-
-
 
     @RequestMapping("/sendControl")
     @ResponseBody
@@ -104,5 +101,4 @@ public class MockSendMessageController {
         mqttSendService.sendMessage("/up/alarm/1",message);
         return "111";
     }
-
 }
