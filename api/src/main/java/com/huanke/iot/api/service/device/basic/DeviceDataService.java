@@ -33,6 +33,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -307,7 +308,14 @@ public class DeviceDataService {
             }
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
-            deviceDetailVo.setAqi("28");
+            if(deviceDetailVo.getPm() == null || StringUtils.isEmpty(deviceDetailVo.getPm().getData()) ||  StringUtils.equals("0",deviceDetailVo.getPm().getData())){
+                deviceDetailVo.setAqi("0");
+            }else{
+                Integer pm = Integer.valueOf(deviceDetailVo.getPm().getData());
+                Integer api = pm*(1+new Random().nextInt(50))/pm;
+                deviceDetailVo.setAqi(String.valueOf(api));
+            }
+
             deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
         }
