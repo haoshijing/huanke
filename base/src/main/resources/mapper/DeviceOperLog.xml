@@ -28,7 +28,8 @@
     <select id = "queryLogList" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo">
         select * from  <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
-        limit #{limit} , #{offset}
+        order by id desc
+        limit #{limit} offset #{offset}
     </select>
 
     <!-- 根据信息筛选返回数据 -->
