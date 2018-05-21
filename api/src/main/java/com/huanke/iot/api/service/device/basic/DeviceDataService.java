@@ -342,6 +342,7 @@ public class DeviceDataService {
                         if (addressDetail != null) {
                             deviceDetailVo.setProvince(addressDetail.getString("province"));
                             deviceDetailVo.setCity(addressDetail.getString("city"));
+                            deviceDetailVo.setArea(deviceDetailVo.getCity());
                         }
                     }
 
@@ -357,7 +358,6 @@ public class DeviceDataService {
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;
-            String funcId = deviceFuncVo.getFuncId();
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
