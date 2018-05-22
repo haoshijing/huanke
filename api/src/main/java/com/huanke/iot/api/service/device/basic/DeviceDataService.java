@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -308,16 +309,17 @@ public class DeviceDataService {
             }
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
+            deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
+            getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
             if(deviceDetailVo.getPm() == null || StringUtils.isEmpty(deviceDetailVo.getPm().getData()) ||  StringUtils.equals("0",deviceDetailVo.getPm().getData())){
                 deviceDetailVo.setAqi("0");
             }else{
                 Integer pm = Integer.valueOf(deviceDetailVo.getPm().getData());
-                Integer api = pm*(1+new Random().nextInt(50))/pm;
-                deviceDetailVo.setAqi(String.valueOf(api));
+                Double api = pm+new Random().nextInt(50)/(Double.valueOf(String.valueOf(pm)));
+                BigDecimal bigDecimal = new BigDecimal(api);
+                deviceDetailVo.setAqi(String.valueOf(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
             }
 
-            deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
-            getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
         }
 
         JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), false);
