@@ -350,7 +350,6 @@ public class DeviceDataService {
 
                 }
             }
-
         }
         return deviceDetailVo;
     }
