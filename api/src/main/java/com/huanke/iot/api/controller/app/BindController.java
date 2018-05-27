@@ -42,30 +42,45 @@ public class BindController {
         if (StringUtils.isEmpty(imei)) {
             return "fail";
         }
+        String code = request.getParameter("code");
+        if (StringUtils.isEmpty(code)) {
+            String redirectUrl = gameServerHost + "/app/api/bind?IMEI=" + imei;
+            try {
+                redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
+            } catch (Exception e) {
+                log.error("",e);
+            }
+            String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl +
+                    "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+            response.sendRedirect(url);
+            return null;
+        }
+        JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
+        if (authTokenJSONObject == null) {
+            return "fail";
+        }
+        String openId = authTokenJSONObject.getString("openid");
         AppUserPo appUserPo = appUserMapper.selectByMac(imei);
         if (appUserPo == null) {
-            String code = request.getParameter("code");
-            if (StringUtils.isEmpty(code)) {
-                String redirectUrl = gameServerHost + "/api/app/api/bind?IMEI=" + imei;
-                try {
-                    redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
-                } catch (Exception e) {
-                    log.error("",e);
-                }
-                String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl +
-                        "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-                response.sendRedirect(url);
-                return null;
-            }
-            JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
-            if (authTokenJSONObject == null) {
-                return "fail";
-            }
-            String openId = authTokenJSONObject.getString("openid");
             if (StringUtils.isEmpty(openId)) {
                 return "fail";
             }
             AppUserPo updateAppUserPo = new AppUserPo();
+            updateAppUserPo.setOpenId(openId);
+            updateAppUserPo.setAndroidMac(imei);
+            int ret = appUserMapper.updateAndroidMac(updateAppUserPo);
+            if (ret == 0) {
+                return "fail";
+            }
+        }else{
+            if(StringUtils.equals(openId,appUserPo.getOpenId())){
+                return "succ";
+            }
+            //先把当前的绑定人给解绑,在绑定自己
+            AppUserPo updateAppUserPo = new AppUserPo();
+            updateAppUserPo.setOpenId(appUserPo.getOpenId());
+            updateAppUserPo.setAndroidMac("1");
+            appUserMapper.updateAndroidMac(updateAppUserPo);
             updateAppUserPo.setOpenId(openId);
             updateAppUserPo.setAndroidMac(imei);
             int ret = appUserMapper.updateAndroidMac(updateAppUserPo);
