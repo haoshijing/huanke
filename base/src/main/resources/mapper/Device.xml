@@ -98,7 +98,9 @@
                 speedConfig = #{speedConfig},
             </if>
         </set>
-         where id = #{id}
+         where
+        <if test = "id != null">     id = #{id} </if>
+        <if test = "deviceId != null">     deviceId = #{deviceId} </if>
     </update>
 
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">

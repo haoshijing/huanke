@@ -262,4 +262,11 @@ public class DeviceService {
         }
         return deviceSpeedConfigVo;
     }
+
+    public Boolean editDeviceLoc(Integer userId, String deviceId, String location) {
+        DevicePo devicePo = new DevicePo();
+        devicePo.setDeviceId(deviceId);
+        devicePo.setLocation(location);
+        return deviceMapper.updateByDeviceId(devicePo) > 0;
+    }
 }
