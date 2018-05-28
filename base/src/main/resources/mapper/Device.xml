@@ -85,6 +85,9 @@
             <if test = "name != null">
                 name = #{name},
             </if>
+            <if test = "location != null">
+                location = #{location},
+            </if>
             <if test = "onlineStatus != null">
                 onlineStatus = #{onlineStatus},
             </if>

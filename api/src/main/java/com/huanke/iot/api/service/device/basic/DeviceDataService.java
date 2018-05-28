@@ -72,6 +72,8 @@ public class DeviceDataService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    private static final String TOKEN_PREFIX = "token.";
+
     public Boolean shareDevice(String master, Integer toId, String deviceIdStr, String token) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
@@ -82,7 +84,7 @@ public class DeviceDataService {
         if (appUserPo == null) {
             return false;
         }
-        String storeToken = stringRedisTemplate.opsForValue().get("token." + deviceIdStr);
+        String storeToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + deviceIdStr);
         if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
             // return false;
         }
