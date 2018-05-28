@@ -237,8 +237,6 @@ public class DeviceDataService {
             if(!ydata.isEmpty()) {
                 sensorDataVos.add(sensorDataVo);
             }
-
-
         }
 
         return sensorDataVos;
@@ -315,9 +313,9 @@ public class DeviceDataService {
                 deviceDetailVo.setAqi("0");
             }else{
                 Integer pm = Integer.valueOf(deviceDetailVo.getPm().getData());
-                Double api = pm+new Random().nextInt(50)/(Double.valueOf(String.valueOf(pm)));
-                BigDecimal bigDecimal = new BigDecimal(api);
-                deviceDetailVo.setAqi(String.valueOf(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+                //BigDecimal bigDecimal = new BigDecimal(getAqi(pm));
+                //deviceDetailVo.setAqi(String.valueOf(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+                deviceDetailVo.setAqi(String.valueOf(getAqi(pm)));
             }
 
         }
@@ -672,4 +670,20 @@ public class DeviceDataService {
         }
         return "0";
     }
+
+    private static  int getAqi(Integer pm2_5){
+         float [] tbl_aqi ={0f,50f,100f,150f,200f,300f,400f,500f};
+         float[] tbl_pm2_5={0f,35f,75f,115f,150f,250f,350f,500f};
+        int i;
+        if(pm2_5>tbl_pm2_5[7]) {
+            return (int) tbl_aqi[7];
+        }
+        for(i=0;i<8-1;i++){
+            if((pm2_5 >= tbl_pm2_5[i]) && (pm2_5 < tbl_pm2_5[i+1])){
+                break;
+            }
+        }
+        return (int)(((tbl_aqi[i+1]-tbl_aqi[i])/(tbl_pm2_5[i+1]-tbl_pm2_5[i])*(pm2_5-tbl_pm2_5[i])+tbl_aqi[i]));
+    }
+
 }
