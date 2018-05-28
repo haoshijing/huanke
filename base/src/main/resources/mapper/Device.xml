@@ -72,7 +72,15 @@
     <update id="updateByDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
 
       update <include refid="tableName"/>
-        set name = #{name} where
+        <set>
+            <if test = "name != null">
+                name = #{name},
+            </if>
+            <if test = "location != null">
+                location = #{location},
+            </if>
+        </set>
+       where
         deviceId = #{deviceId}
     </update>
 
