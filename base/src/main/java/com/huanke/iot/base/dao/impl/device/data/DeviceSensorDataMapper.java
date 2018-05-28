@@ -24,4 +24,6 @@ public interface DeviceSensorDataMapper extends BaseMapper<DeviceSensorPo> {
             @Param("endTime") Long endTime,
             @Param("sensorType") Integer sensorType
     );
+
+    void clearData(long millis);
 }
