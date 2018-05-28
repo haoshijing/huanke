@@ -114,7 +114,7 @@ public class DeviceService {
                         DevicePo devicePo = deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getDeviceId());
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());
-                        deviceItemPo.setOnlineStatus(1);
+                        deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
                         deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
                         if (deviceTypePo != null) {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
