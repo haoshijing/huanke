@@ -334,22 +334,27 @@ public class DeviceDataService {
                 }
             }
         }
-        JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
-        if (locationJson != null) {
-            if (locationJson.containsKey("content")) {
-                JSONObject content = locationJson.getJSONObject("content");
-                if (content != null) {
-                    if (content.containsKey("address_detail")) {
-                        JSONObject addressDetail = content.getJSONObject("address_detail");
-                        if (addressDetail != null) {
-                            deviceDetailVo.setProvince(addressDetail.getString("province"));
-                            deviceDetailVo.setCity(addressDetail.getString("city"));
-                            deviceDetailVo.setArea(deviceDetailVo.getCity());
+        if(StringUtils.isEmpty(devicePo.getLocation())) {
+            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+            if (locationJson != null) {
+                if (locationJson.containsKey("content")) {
+                    JSONObject content = locationJson.getJSONObject("content");
+                    if (content != null) {
+                        if (content.containsKey("address_detail")) {
+                            JSONObject addressDetail = content.getJSONObject("address_detail");
+                            if (addressDetail != null) {
+                                deviceDetailVo.setProvince(addressDetail.getString("province"));
+                                deviceDetailVo.setCity(addressDetail.getString("city"));
+                                deviceDetailVo.setArea(deviceDetailVo.getCity());
+                                deviceDetailVo.setLocation(deviceDetailVo.getProvince()+","+deviceDetailVo.getCity());
+                            }
                         }
-                    }
 
+                    }
                 }
             }
+        }else{
+            deviceDetailVo.setLocation(devicePo.getLocation());
         }
         return deviceDetailVo;
     }

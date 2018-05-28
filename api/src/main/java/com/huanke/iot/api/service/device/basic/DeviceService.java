@@ -213,17 +213,12 @@ public class DeviceService {
             List<DeviceSpeedConfigVo.SpeedConfigItem> inItems =
                     Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
                             , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
+                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30));
             List<DeviceSpeedConfigVo.SpeedConfigItem> outItems =
                     Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
                             , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
+                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30)
+                    );
             deviceSpeedConfigVo.setInItems(inItems);
             deviceSpeedConfigVo.setOutItems(outItems);
         }else{
