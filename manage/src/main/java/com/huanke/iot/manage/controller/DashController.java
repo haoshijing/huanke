@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class DashController {
     @Autowired
     private DashBoardIndexService dashBoardIndexService;
+
+    @RequestMapping("/obtainIndexVo")
     public ApiResponse<DashBoardIndexVo> obtainIndexVo(){
         DashBoardIndexVo dashBoardIndexVo = dashBoardIndexService.obtainData();
         return new ApiResponse<>(dashBoardIndexVo);
