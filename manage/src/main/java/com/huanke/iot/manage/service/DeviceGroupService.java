@@ -5,10 +5,12 @@ import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.manage.controller.device.request.DeviceGroupQueryRequest;
 import com.huanke.iot.manage.controller.device.response.DeviceGroupItemVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class DeviceGroupService {
 
     @Autowired
