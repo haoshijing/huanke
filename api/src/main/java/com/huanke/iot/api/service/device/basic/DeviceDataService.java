@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
@@ -354,6 +355,8 @@ public class DeviceDataService {
                 }
             }
         }else{
+            String [] locationArray = devicePo.getLocation().split(",");
+            deviceDetailVo.setArea(Joiner.on(" ").join(locationArray));
             deviceDetailVo.setLocation(devicePo.getLocation());
         }
         return deviceDetailVo;
