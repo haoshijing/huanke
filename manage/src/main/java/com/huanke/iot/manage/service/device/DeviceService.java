@@ -40,7 +40,21 @@ public class DeviceService {
             deviceVo.setName(devicePo.getName());
             deviceVo.setMac(devicePo.getMac());
             deviceVo.setId(devicePo.getId());
-            deviceVo.setBindStatus(devicePo.getBindStatus());
+            if(devicePo.getBindStatus() != null){
+                if(devicePo.getBindStatus() == 2){
+                    deviceVo.setBindStatus("已绑定");
+                }else if(devicePo.getBindStatus() == 3){
+                    deviceVo.setBindStatus("已解绑");
+                } else if(devicePo.getBindStatus() == 1){
+                    deviceVo.setBindStatus("未绑定");
+                }
+            }
+            if(devicePo.getOnlineStatus() == 1){
+                deviceVo.setOnlineStatus("在线");
+            }else if(devicePo.getOnlineStatus() == 2){
+                deviceVo.setOnlineStatus("离线");
+            }
+
             DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByDevId(devicePo.getDeviceId());
             if(deviceInfoPo != null){
                 String version = deviceInfoPo.getVersion();

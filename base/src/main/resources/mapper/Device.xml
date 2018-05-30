@@ -37,26 +37,41 @@
     <select id="selectByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE mac = #{mac} limit 1
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select * from <include refid="tableName"/>
+        select * from
+        <include refid="tableName"/>
         <where>
-            <if test = "param.mac != null and param.mac != ''">
-                 mac = #{param.mac}
+            1 = 1
+            <if test="param.mac != null and param.mac != ''">
+                AND mac = #{param.mac}
             </if>
-
+            <if test="param.name != null  and param.name != ''  ">
+                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.onlineStatus != null">
+                AND onlineStatus = #{param.onlineStatus}
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer">
-        select count(1) from <include refid="tableName"/>
+        select count(1) from
+        <include refid="tableName"/>
         <where>
-            <if test = "param.mac != null and param.mac != ''">
+            <if test="param.mac != null and param.mac != ''">
                 AND mac = #{param.mac}
+            </if>
+            <if test="param.name != null  and param.name != ''  ">
+                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.onlineStatus != null">
+                AND onlineStatus = #{param.onlineStatus}
             </if>
 
         </where>
@@ -65,12 +80,16 @@
     <select id="selectByDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE deviceId = #{deviceId} limit 1
     </select>
 
     <update id="updateByDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
 
+        update
+        <include refid="tableName"/>
+        set name = #{name} where
       update <include refid="tableName"/>
         <set>
             <if test = "name != null">
@@ -85,24 +104,26 @@
     </update>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
-        update <include refid="tableName"/>
+        update
+        <include refid="tableName"/>
         <set>
-            <if test = "bindStatus != null">
+            <if test="bindStatus != null">
                 bindStatus = #{bindStatus},
             </if>
-            <if test = "name != null">
+            <if test="name != null">
                 name = #{name},
             </if>
             <if test = "location != null">
                 location = #{location},
             </if>
             <if test = "onlineStatus != null">
+            <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
             </if>
-            <if test = "ip != null and ip != ''">
+            <if test="ip != null and ip != ''">
                 ip = #{ip},
             </if>
-            <if test = "speedConfig != null">
+            <if test="speedConfig != null">
                 speedConfig = #{speedConfig},
             </if>
         </set>
@@ -112,6 +133,7 @@
     </update>
 
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select * from <include refid="tableName" />
+        select * from
+        <include refid="tableName"/>
     </select>
 </mapper>

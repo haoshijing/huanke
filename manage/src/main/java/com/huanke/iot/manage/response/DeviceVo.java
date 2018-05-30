@@ -11,8 +11,9 @@ public class DeviceVo {
     private String deviceId;
     private String name;
     private String mac;
-    private Integer bindStatus;
+    private String bindStatus;
     private Integer id;
     private String software;
     private String hardware;
+    private String onlineStatus;
 }

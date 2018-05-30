@@ -35,7 +35,6 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -240,6 +239,12 @@ public class DeviceDataService {
             if(!ydata.isEmpty()) {
                 sensorDataVos.add(sensorDataVo);
             }
+            }
+            sensorDataVo.setXdata(xdata);
+            sensorDataVo.setYdata(ydata);
+            if(!ydata.isEmpty()) {
+                sensorDataVos.add(sensorDataVo);
+            }
         }
 
         return sensorDataVos;
@@ -362,7 +367,7 @@ public class DeviceDataService {
         return deviceDetailVo;
     }
 
-    public String sendFunc(DeviceFuncVo deviceFuncVo) {
+    public String sendFunc(DeviceFuncVo deviceFuncVo,Integer userId,Integer operType) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceFuncVo.getDeviceId());
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
@@ -371,6 +376,8 @@ public class DeviceDataService {
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
             deviceOperLogPo.setDeviceId(deviceId);
+            deviceOperLogPo.setOperType(operType);
+            deviceOperLogPo.setOperUserId(userId);
             deviceOperLogPo.setFuncValue(deviceFuncVo.getValue());
             deviceOperLogPo.setRequestId(requestId);
             deviceOperLogPo.setCreateTime(System.currentTimeMillis());

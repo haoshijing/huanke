@@ -3,6 +3,7 @@ package com.huanke.iot.job;
 import com.alibaba.fastjson.JSON;
 import com.huanke.iot.base.dao.impl.device.DeviceTimerMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTimerPo;
@@ -11,6 +12,7 @@ import com.huanke.iot.job.gateway.MqttSendService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
@@ -29,6 +31,15 @@ public class DeviceTimerJob {
 
     @Autowired
     private DeviceOperLogMapper deviceOperLogMapper;
+
+    @Autowired
+    private DeviceSensorDataMapper sensorDataMapper;
+
+    @Scheduled(cron = "0 0 1 * *  ?")
+    public void cleanSensorData(){
+        DateTime dateTime = new DateTime().plusDays(-1);
+        sensorDataMapper.clearData(dateTime.getMillis());
+    }
 
     @Scheduled(cron = "0 0/1 * * * ?")
     public void doWork(){
@@ -64,6 +75,8 @@ public class DeviceTimerJob {
             deviceOperLogPo.setFuncId(funcId);
             deviceOperLogPo.setDeviceId(deviceId);
             deviceOperLogPo.setRequestId(requestId);
+            deviceOperLogPo.setOperType(4);
+            deviceOperLogPo.setOperUserId(0);
             deviceOperLogPo.setCreateTime(System.currentTimeMillis());
             deviceOperLogMapper.insert(deviceOperLogPo);
             FuncListMessage funcListMessage = new FuncListMessage();
