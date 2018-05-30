@@ -194,7 +194,6 @@ public class DeviceDataService {
         Long endTimeStamp = System.currentTimeMillis();
 
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
-
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
         if (devicePo == null) {
             return null;
@@ -238,7 +237,6 @@ public class DeviceDataService {
             }
             if(!ydata.isEmpty()) {
                 sensorDataVos.add(sensorDataVo);
-            }
             }
             sensorDataVo.setXdata(xdata);
             sensorDataVo.setYdata(ydata);
