@@ -462,7 +462,12 @@ public class DeviceDataService {
         deviceDetailVo.setRemain(remain);
 
         DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
-        screen.setData(getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode()));
+        String time = getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode());
+        if(StringUtils.isNotEmpty(time)){
+            screen.setData(String.valueOf(Integer.valueOf(time)*3600));
+        }else{
+            screen.setData("0");
+        }
         screen.setUnit("秒");
         deviceDetailVo.setScreen(screen);
 
@@ -482,7 +487,7 @@ public class DeviceDataService {
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
                 dataItem.setType(wind);
-                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速,4:四挡风速,5:五档风速,6:六档风速");
+                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速");
                 dataItem.setValue(getData(controlDatas, wind));
                 if (winds.size() == 1) {
                     dataItem.setName("风速");
