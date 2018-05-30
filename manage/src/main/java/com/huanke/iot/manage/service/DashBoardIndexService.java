@@ -41,6 +41,15 @@ public class DashBoardIndexService {
             dashBoardIndexVo.setDeviceCount(count);
         });
 
+        Future <Integer> onlineDeviceF = defaultEventExecutorGroup.submit(()->{
+            DevicePo devicePo = new DevicePo();
+            devicePo.setOnlineStatus(1);
+            Integer deviceTotalCount = deviceMapper.selectCount(devicePo);
+            return deviceTotalCount;
+        }).addListener((future)->{
+            Integer count  = (Integer)future.get();
+            dashBoardIndexVo.setOnlineCount(count);
+        });
         Future <Integer> userCountF =   defaultEventExecutorGroup.submit(()->{
             return appUserMapper.selectCount(new AppUserPo());
         }).addListener(future -> {
@@ -51,6 +60,7 @@ public class DashBoardIndexService {
         try{
             deviceCountF.get();
             userCountF.get();
+            onlineDeviceF.get();
         }catch (InterruptedException e){
 
         }catch (ExecutionException e){

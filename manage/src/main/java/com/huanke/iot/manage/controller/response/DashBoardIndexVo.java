@@ -14,6 +14,11 @@ public class DashBoardIndexVo {
     private Integer deviceCount;
 
     /**
+     * 在线总数
+     */
+    private Integer onlineCount;
+
+    /**
      * 用户总数
      */
     private Integer userCount;
