@@ -96,7 +96,7 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
+    public ApiResponse<String> sendFunc(HttpServletRequest request,@RequestBody DeviceFuncVo deviceFuncVo) {
         String funcId = deviceFuncVo.getFuncId();
         if (StringUtils.isNotEmpty(funcId) && funcId.contains("33")) {
             deviceFuncVo.setValue(String.valueOf(3600*3000));
@@ -106,7 +106,7 @@ public class DeviceController extends BaseController {
                 deviceFuncVo.setValue("1");
             }
         }
-        String requestId = deviceDataService.sendFunc(deviceFuncVo);
+        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserId(request),1);
         return new ApiResponse<>(requestId);
     }
 

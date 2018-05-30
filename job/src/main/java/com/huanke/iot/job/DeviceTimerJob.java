@@ -75,6 +75,8 @@ public class DeviceTimerJob {
             deviceOperLogPo.setFuncId(funcId);
             deviceOperLogPo.setDeviceId(deviceId);
             deviceOperLogPo.setRequestId(requestId);
+            deviceOperLogPo.setOperType(4);
+            deviceOperLogPo.setOperUserId(0);
             deviceOperLogPo.setCreateTime(System.currentTimeMillis());
             deviceOperLogMapper.insert(deviceOperLogPo);
             FuncListMessage funcListMessage = new FuncListMessage();

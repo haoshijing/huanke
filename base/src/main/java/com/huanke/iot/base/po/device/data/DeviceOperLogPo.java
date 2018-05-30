@@ -16,6 +16,14 @@ public class DeviceOperLogPo {
     private String funcValue;
     private Long createTime;
     private Long responseTime;
+    /**
+     * 操作人id
+     */
+    private Integer operUserId;
+    /**
+     * 操作类型1-h5,2-安卓,3-管理端
+     */
+    private Integer operType;
     private String retMsg;
     private Integer dealRet;
 }

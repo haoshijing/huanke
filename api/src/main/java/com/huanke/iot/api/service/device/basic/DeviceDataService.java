@@ -342,16 +342,17 @@ public class DeviceDataService {
         return deviceDetailVo;
     }
 
-    public String sendFunc(DeviceFuncVo deviceFuncVo) {
+    public String sendFunc(DeviceFuncVo deviceFuncVo,Integer userId,Integer operType) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceFuncVo.getDeviceId());
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;
-            String funcId = deviceFuncVo.getFuncId();
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
             deviceOperLogPo.setDeviceId(deviceId);
+            deviceOperLogPo.setOperType(operType);
+            deviceOperLogPo.setOperUserId(userId);
             deviceOperLogPo.setFuncValue(deviceFuncVo.getValue());
             deviceOperLogPo.setRequestId(requestId);
             deviceOperLogPo.setCreateTime(System.currentTimeMillis());
