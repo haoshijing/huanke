@@ -2,27 +2,28 @@ package com.huanke.iot.manage.controller.device;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.impl.device.DeviceUpgradeMapper;
-import com.huanke.iot.base.dao.impl.device.data.DeviceLocationMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.DeviceUpgradePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import com.huanke.iot.manage.controller.device.request.DeviceLogQueryRequest;
 import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
 import com.huanke.iot.manage.controller.device.request.DeviceUpdateRequest;
+import com.huanke.iot.manage.controller.device.response.DeviceOperLogVo;
 import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.gateway.MqttSendService;
 import com.huanke.iot.manage.message.OtaDeviceVo;
 import com.huanke.iot.manage.response.DeviceTypeVo;
 import com.huanke.iot.manage.response.DeviceVo;
-import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.DeviceService;
 import com.huanke.iot.manage.service.device.DeviceTypeService;
 import com.huanke.iot.manage.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -33,7 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author haoshijing
@@ -43,6 +43,19 @@ import java.util.UUID;
 @RequestMapping("/api/device")
 @Slf4j
 public class DeviceController {
+
+
+    @Value("${accessKeyId}")
+    private String accessKeyId;
+
+    @Value("${accessKeySecret}")
+    private String accessKeySecret;
+
+    @Value("${bucketUrl}")
+    private String bucketUrl;
+
+    @Value("${bucketName}")
+    private String bucketName;
 
     @Autowired
     private DeviceService deviceService;
@@ -59,18 +72,10 @@ public class DeviceController {
     @Autowired
     private DeviceOperLogMapper deviceOperLogMapper;
 
-
-    @Value("${accessKeyId}")
-    private String accessKeyId;
-
-    @Value("${accessKeySecret}")
-    private String accessKeySecret;
-
-    @Value("${bucketUrl}")
-    private String bucketUrl;
-
-    @Value("${bucketName}")
-    private String bucketName;
+    @Autowired
+    private DeviceOperLogService deviceOperLogService;
+    @Autowired
+    private DeviceTypeService deviceTypeService;
 
     @RequestMapping("/resetPid")
     public ApiResponse<Boolean> resetPid(String productId){
@@ -78,8 +83,6 @@ public class DeviceController {
         return new ApiResponse<>(true);
     }
 
-    @Autowired
-    private DeviceTypeService deviceTypeService;
     @RequestMapping("/queryList")
     public ApiResponse<List<DeviceVo>> queryList(@RequestBody DeviceQueryRequest deviceQueryRequest){
         List<DeviceVo> deviceVos = deviceService.selectList(deviceQueryRequest);
@@ -91,6 +94,16 @@ public class DeviceController {
         return new ApiResponse<>(deviceService.selectCount(deviceQueryRequest));
     }
 
+    @RequestMapping("/queryOperLogList")
+    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
+        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);
+        return new ApiResponse<>(deviceOperLogVos);
+    }
+
+    @RequestMapping("/queryOperLogCount")
+    public ApiResponse<Integer>queryOperLogCount(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
+        return new ApiResponse<>(0);
+    }
     @RequestMapping("/otaDevice")
     public ApiResponse<Boolean> otaDevice(@RequestBody OtaDeviceRequest request){
         Integer deviceId = request.getId();
@@ -123,6 +136,8 @@ public class DeviceController {
 
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId("800");
+        deviceOperLogPo.setOperUserId(0);
+        deviceOperLogPo.setOperType(3);
         deviceOperLogPo.setDeviceId(deviceId);
         deviceOperLogPo.setFuncValue(JSON.toJSONString(otaDeviceVo));
         deviceOperLogPo.setRequestId(otaDeviceVo.getRequestId());
@@ -165,6 +180,8 @@ public class DeviceController {
 
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId("800");
+        deviceOperLogPo.setOperUserId(0);
+        deviceOperLogPo.setOperType(3);
         deviceOperLogPo.setDeviceId(deviceId);
         deviceOperLogPo.setFuncValue(JSON.toJSONString(otaDeviceVo));
         deviceOperLogPo.setRequestId(otaDeviceVo.getRequestId());
