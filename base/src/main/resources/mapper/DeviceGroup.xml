@@ -84,13 +84,20 @@
       )
     </insert>
 
-
     <select id="queryGroupItems" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo" resultType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
         select * from t_device_group_item
         where status = 1
-        and userId = #{userId}
+
         <if test = "groupId != null">
             AND  groupId = #{groupId}
+        </if>
+        <if test = "userId != null">
+            and userId = #{userId}
+        </if>
+
+
+        <if test = "isMaster != null">
+            AND isMaster = #{isMaster}
         </if>
 
     </select>
