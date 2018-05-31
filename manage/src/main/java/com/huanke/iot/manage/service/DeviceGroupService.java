@@ -98,4 +98,8 @@ public class DeviceGroupService {
         deviceGroupPo.setStatus(1);
         return deviceGroupMapper.selectCount(deviceGroupPo);
     }
+
+    public void updateGroup(DeviceGroupPo deviceGroupPo) {
+         deviceGroupMapper.updateById(deviceGroupPo);
+    }
 }

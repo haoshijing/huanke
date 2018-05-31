@@ -1,7 +1,9 @@
 package com.huanke.iot.manage.controller.device;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.manage.controller.device.request.DeviceGroupQueryRequest;
+import com.huanke.iot.manage.controller.device.request.DeviceGroupUpdateVo;
 import com.huanke.iot.manage.controller.device.response.DeviceGroupItemVo;
 import com.huanke.iot.manage.service.DeviceGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,18 @@ public class DeviceGroupController {
     public ApiResponse<List<DeviceGroupItemVo>> selectList(@RequestBody DeviceGroupQueryRequest request){
         List<DeviceGroupItemVo> groupItemVos = deviceGroupService.selectList(request);
         return new ApiResponse<>(groupItemVos);
+    }
+
+    @RequestMapping("/update")
+    public ApiResponse<Boolean> updateDeviceGroup(@RequestBody DeviceGroupUpdateVo updateVo){
+        DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
+        deviceGroupPo.setId(updateVo.getId());
+        deviceGroupPo.setIcon(updateVo.getIcon());
+        deviceGroupPo.setMemo(updateVo.getMemo());
+        deviceGroupPo.setVideoCover(updateVo.getCoverUrl());
+        deviceGroupPo.setVideoUrl(updateVo.getVideoUrl());
+        deviceGroupService.updateGroup(deviceGroupPo);
+        return new ApiResponse<>(true);
     }
     @RequestMapping("/selectCount")
     public ApiResponse<Integer> selectCount(@RequestBody DeviceGroupQueryRequest request){

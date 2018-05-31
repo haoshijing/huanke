@@ -94,8 +94,6 @@
         <if test = "userId != null">
             and userId = #{userId}
         </if>
-
-
         <if test = "isMaster != null">
             AND isMaster = #{isMaster}
         </if>
@@ -138,7 +136,6 @@
             <if test = "status != null">
                 status = #{status},
             </if>
-
 
             <if test = "videoUrl != null">
                 videoUrl = #{videoUrl},
