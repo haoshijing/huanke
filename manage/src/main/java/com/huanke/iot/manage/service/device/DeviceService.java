@@ -28,6 +28,7 @@ public class DeviceService {
 
         DevicePo queryDevicePo = new DevicePo();
         queryDevicePo.setMac(deviceQueryRequest.getMac());
+        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
         Integer page = deviceQueryRequest.getPage();
         Integer limit = deviceQueryRequest.getLimit();
         Integer offset  = (page - 1)*limit;
@@ -73,6 +74,7 @@ public class DeviceService {
 
         DevicePo queryDevicePo = new DevicePo();
         queryDevicePo.setMac(deviceQueryRequest.getMac());
+        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
         return deviceMapper.selectCount(queryDevicePo);
     }
 

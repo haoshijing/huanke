@@ -19,11 +19,9 @@ public class DeviceGroupController {
     private DeviceGroupService deviceGroupService;
     @RequestMapping("/select")
     public ApiResponse<List<DeviceGroupItemVo>> selectList(@RequestBody DeviceGroupQueryRequest request){
-
         List<DeviceGroupItemVo> groupItemVos = deviceGroupService.selectList(request);
         return new ApiResponse<>(groupItemVos);
     }
-
     @RequestMapping("/selectCount")
     public ApiResponse<Integer> selectCount(@RequestBody DeviceGroupQueryRequest request){
 
