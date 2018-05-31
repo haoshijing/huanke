@@ -31,6 +31,7 @@ public class DeviceGroupController {
         deviceGroupPo.setId(updateVo.getId());
         deviceGroupPo.setIcon(updateVo.getIcon());
         deviceGroupPo.setMemo(updateVo.getMemo());
+        deviceGroupPo.setGroupName(updateVo.getGroupName());
         deviceGroupPo.setVideoCover(updateVo.getCoverUrl());
         deviceGroupPo.setVideoUrl(updateVo.getVideoUrl());
         deviceGroupService.updateGroup(deviceGroupPo);
