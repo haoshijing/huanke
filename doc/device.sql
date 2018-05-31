@@ -301,6 +301,3 @@ endTime bigint comment '结束时间',
 insertTime bigint comment '写入时间',
 index idx_did(deviceId)
 );
-
-
-)
