@@ -41,7 +41,7 @@
     </select>
 
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceTypePo">
         select * from <include refid="tableName"/>
         <where>
 
