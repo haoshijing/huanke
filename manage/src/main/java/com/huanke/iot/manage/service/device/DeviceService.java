@@ -56,7 +56,7 @@ public class DeviceService {
                 deviceVo.setOnlineStatus("离线");
             }
 
-            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByDevId(devicePo.getDeviceId());
+            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByMac(devicePo.getMac());
             if(deviceInfoPo != null){
                 String version = deviceInfoPo.getVersion();
                 JSONObject jsonObject = JSON.parseObject(version);
