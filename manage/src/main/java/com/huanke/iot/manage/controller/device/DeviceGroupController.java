@@ -39,7 +39,6 @@ public class DeviceGroupController {
     }
     @RequestMapping("/selectCount")
     public ApiResponse<Integer> selectCount(@RequestBody DeviceGroupQueryRequest request){
-
         Integer count = deviceGroupService.selectCount(request);
         return new ApiResponse<>(count);
     }

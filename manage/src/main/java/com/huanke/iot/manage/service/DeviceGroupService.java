@@ -2,14 +2,12 @@ package com.huanke.iot.manage.service;
 
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import com.huanke.iot.manage.controller.device.request.DeviceGroupQueryRequest;
 import com.huanke.iot.manage.controller.device.response.DeviceGroupItemVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +42,9 @@ public class DeviceGroupService {
         DeviceGroupPo queryGroup = new DeviceGroupPo();
         queryGroup.setGroupName(request.getName());
         queryGroup.setStatus(1);
-        Integer offset = (request.getPage() - 1)*request.getLimit();
+        Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
-        List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryGroup,limit,offset);
+        List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryGroup, limit, offset);
 
         return deviceGroupPos.stream().map(deviceGroupPo -> {
             DeviceGroupItemVo itemVo = new DeviceGroupItemVo();
@@ -69,21 +67,13 @@ public class DeviceGroupService {
             if (StringUtils.isEmpty(memo)) {
                 memo = MEMO;
             }
-
             itemVo.setGroupName(deviceGroupPo.getGroupName());
             itemVo.setId(deviceGroupPo.getId());
             itemVo.setIcon(icon);
-            DeviceGroupItemPo groupItemPo = new DeviceGroupItemPo();
-            groupItemPo.setGroupId(deviceGroupPo.getId());
-            groupItemPo.setIsMaster(1);
-            List<DeviceGroupItemPo> itemPos = deviceGroupMapper.queryGroupItems(groupItemPo);
-            if(itemPos.size() > 0){
-                DeviceGroupItemPo deviceGroupItemPo = itemPos.get(0);
-                Integer userId= deviceGroupItemPo.getUserId();
-                AppUserPo appUserPo = appUserMapper.selectById(userId);
-                if(appUserPo != null){
-                    itemVo.setMaskNickname(appUserPo.getNickname());
-                }
+            Integer userId = deviceGroupPo.getUserId();
+            AppUserPo appUserPo = appUserMapper.selectById(userId);
+            if (appUserPo != null) {
+                itemVo.setMaskNickname(appUserPo.getNickname());
             }
             itemVo.setMemo(memo);
             itemVo.setVideoCover(videoCover);
@@ -100,6 +90,6 @@ public class DeviceGroupService {
     }
 
     public void updateGroup(DeviceGroupPo deviceGroupPo) {
-         deviceGroupMapper.updateById(deviceGroupPo);
+        deviceGroupMapper.updateById(deviceGroupPo);
     }
 }
