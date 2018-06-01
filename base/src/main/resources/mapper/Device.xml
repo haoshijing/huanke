@@ -116,7 +116,6 @@
             <if test = "location != null">
                 location = #{location},
             </if>
-            <if test = "onlineStatus != null">
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
             </if>
