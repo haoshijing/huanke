@@ -46,6 +46,7 @@ public class DeviceTypeService {
             for(String funcType :funcIdArr){
                 funcListSb.append(FuncTypeEnums.getByCode(funcType).getMark()).append(" ");
             }
+            deviceTypeResponseVo.setFuncListStr(deviceTypePo.getFuncList());
             deviceTypeResponseVo.setSensorListStr(sensorListSb.toString());
             deviceTypeResponseVo.setFuncListStr(funcListSb.toString());
             return deviceTypeResponseVo;

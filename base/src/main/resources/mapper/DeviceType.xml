@@ -34,7 +34,7 @@
         select count(1)
         from <include refid="tableName"/>
         <where>
-            <if test = "param.name != null">
+            <if test = "param.name != null and param.name != ''">
                 and name = #{param.name}
             </if>
         </where>
@@ -45,7 +45,7 @@
         select * from <include refid="tableName"/>
         <where>
 
-            <if test = "param.name != null">
+            <if test = "param.name != null and param.name != ''">
                 and name = #{param.name}
             </if>
         </where>
