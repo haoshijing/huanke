@@ -47,7 +47,6 @@ import java.util.UUID;
 @Slf4j
 public class DeviceController {
 
-
     @Value("${accessKeyId}")
     private String accessKeyId;
 
