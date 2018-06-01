@@ -240,9 +240,6 @@ public class DeviceDataService {
             }
             sensorDataVo.setXdata(xdata);
             sensorDataVo.setYdata(ydata);
-            if(!ydata.isEmpty()) {
-                sensorDataVos.add(sensorDataVo);
-            }
         }
 
         return sensorDataVos;

@@ -23,8 +23,13 @@ public class InfoHandler extends AbstractHandler {
         private String imsi;
         private String mac;
         private VersionItem version;
-        private WxInfoItem wx_info;
+        private Info info;
 
+    }
+
+    @Data
+    private class Info{
+        WxInfoItem wx_info;
     }
 
     @Data
@@ -51,9 +56,9 @@ public class InfoHandler extends AbstractHandler {
         if (infoItem != null) {
             DeviceInfoPo deviceInfoPo = new DeviceInfoPo();
             String devId = "";
-            if (infoItem.getWx_info() != null &&
-                    StringUtils.isNotEmpty(infoItem.getWx_info().getDev_id())) {
-                devId = infoItem.getWx_info().getDev_id();
+            if (infoItem.getInfo() != null &&
+                    StringUtils.isNotEmpty(infoItem.getInfo().getWx_info().getDev_id())) {
+                devId = infoItem.getInfo().getWx_info().getDev_id();
             }
             if (StringUtils.isEmpty(devId)) {
                 log.warn("devId {} is blank ", devId);
