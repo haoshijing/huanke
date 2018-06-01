@@ -70,6 +70,10 @@ public class DeviceService {
                     if (StringUtils.isEmpty(icon)) {
                         icon = Constants.DEFAULT_ICON;
                     }
+                    String qrcode = deviceGroupPo.getQrcode();
+                    if(StringUtils.isEmpty(qrcode)){
+                        qrcode = "https://idcfota.oss-cn-hangzhou.aliyuncs.com/group/WechatIMG4213.jpeg";
+                    }
 
                     String videoUrl = deviceGroupPo.getVideoUrl();
                     if (StringUtils.isEmpty(videoUrl)) {
@@ -90,7 +94,7 @@ public class DeviceService {
                     deviceGroupData.setVideoUrl(videoUrl);
                     deviceGroupData.setVideoCover(videoCover);
                     deviceGroupData.setIcon(icon);
-
+                    deviceGroupData.setQrcode(qrcode);
                     DeviceGroupItemPo queryDeviceGroupItem = new DeviceGroupItemPo();
                     queryDeviceGroupItem.setUserId(userId);
                     queryDeviceGroupItem.setStatus(1);
