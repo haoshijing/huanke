@@ -28,7 +28,7 @@ public class InfoHandler extends AbstractHandler {
     }
 
     @Data
-    private class Info{
+    private static class Info{
         WxInfoItem wx_info;
     }
 
