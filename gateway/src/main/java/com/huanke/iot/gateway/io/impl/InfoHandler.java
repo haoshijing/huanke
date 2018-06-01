@@ -65,7 +65,7 @@ public class InfoHandler extends AbstractHandler {
                 return;
             }
             try {
-                DeviceInfoPo queryDeviceInfo = deviceInfoMapper.selectByDevId(devId);
+                DeviceInfoPo queryDeviceInfo = deviceInfoMapper.selectByMac(infoItem.getInfo().getMac());
                 if (queryDeviceInfo != null) {
                     DeviceInfoPo updatePo = new DeviceInfoPo();
                     updatePo.setId(queryDeviceInfo.getId());
