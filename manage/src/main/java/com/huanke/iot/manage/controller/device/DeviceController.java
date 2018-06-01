@@ -241,19 +241,6 @@ public class DeviceController {
     }
 
 
-    @RequestMapping("/queryTypeList")
-    public ApiResponse<List<DeviceTypeVo>> queryTypeList(@RequestBody DeviceQueryRequest deviceQueryRequest){
-        List<DeviceTypeVo> deviceVos = deviceTypeService.selectList(deviceQueryRequest);
-        return new ApiResponse<>(deviceVos);
-    }
-
-    @RequestMapping("/queryTypeCount")
-    public ApiResponse<Integer> queryTypeCount(@RequestBody DeviceQueryRequest deviceQueryRequest){
-        Integer typeCount = deviceTypeService.selectCount(deviceQueryRequest);
-        return new ApiResponse<>(typeCount);
-    }
-
-
     private void uploadToOss(String fileKey,byte[] content){
         OSSClient ossClient = new OSSClient(bucketUrl, accessKeyId,accessKeySecret);
         try {
