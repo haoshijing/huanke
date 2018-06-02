@@ -200,7 +200,9 @@ public class DeviceController {
         int idx = fileName.lastIndexOf(".");
         String fileExt = fileName.substring(idx+1);
         if(!StringUtils.contains(fileExt,"bin")){
-            return new ApiResponse(RetCode.PARAM_ERROR);
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setCode(RetCode.PARAM_ERROR);
+            return apiResponse;
         }
         try {
             uploadToOss(fileName,file.getBytes());
