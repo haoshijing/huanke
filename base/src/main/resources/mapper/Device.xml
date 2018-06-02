@@ -127,8 +127,9 @@
             </if>
         </set>
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="deviceId != null and deviceId != ''">deviceId = #{deviceId}</if>
+             1= 1
+            <if test="id != null"> and id = #{id}</if>
+            <if test="deviceId != null and deviceId != ''"> and deviceId = #{deviceId}</if>
         </where>
     </update>
 
