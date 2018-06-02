@@ -61,23 +61,6 @@ bindTime bigint comment '绑定和解绑时间'
 );
 
 
-drop table if  EXISTS  t_product;
-create table t_product
-(
-id int primary key  comment '产品id',
-name varchar(200) comment '产品名称' DEFAULT  '',
-insertTime bigint comment '添加时间',
-lastUpdateTime bigint comment '最后修改时间'
-);
-
-drop table if  EXISTS  t_project;
-create table t_project
-(
-id int primary key  comment '项目id',
-name varchar(200) comment '项目名称' DEFAULT  '',
-insertTime bigint comment '添加时间',
-lastUpdateTime bigint comment '最后修改时间'
-);
 drop table  if EXISTS t_device_data_alarm;
 create table t_device_data_alarm(
   id int primary key auto_increment comment '主键id',
@@ -90,7 +73,6 @@ create table t_device_data_alarm(
   createTime bigint comment '创建时间'
 );
 
-alter table t_device_data_sensor add index idxDeviceId(deviceId);
 
 drop table  if EXISTS t_device_timer;
 create table t_device_timer(
@@ -114,6 +96,7 @@ create table t_device_data_sensor(
   sensorValue int comment '传感器数值',
   createTime bigint comment '创建时间'
 );
+alter table t_device_data_sensor add index idxDeviceId(deviceId);
 
 drop table  if EXISTS t_device_data_location;
 create table t_device_data_location(
@@ -190,20 +173,20 @@ create table t_device_operlog(
 );
 ALTER  table t_device_operlog add COLUMN operUserId int DEFAULT 0 comment '操作用户id';
 ALTER  table t_device_operlog add COLUMN operType int DEFAULT  0 comment '操作来源';
-drop table if not EXISTS  t_product;
+drop table if  EXISTS  t_product;
 create table t_product(
   id int PRIMARY  key comment '主键id',
-  productKey varchar comment 'PK',
-  productName varchar comment '产品名称',
+  productKey varchar(320) comment 'PK',
+  productName varchar(320) comment '产品名称',
   insertTime bigint comment '写入时间',
   lastUpdateTime bigint comment '最后修改时间'
 );
 
-drop table if not EXISTS t_project ;
+drop table if  EXISTS t_project ;
 create table t_project(
   id int PRIMARY  key comment '主键id',
-  projectSn varchar comment '项目序列号',
-  projectName varchar comment '项目名称',
+  projectSn varchar(320) comment '项目序列号',
+  projectName varchar(320) comment '项目名称',
   insertTime bigint comment '写入时间',
   lastUpdateTime bigint comment '最后修改时间'
 );
@@ -234,14 +217,15 @@ groupName varchar(100) comment '设备组名称',
 userId int comment '用户id',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间',
-status int comment '状态1-正常,2-已删除',
+status int comment '状态1-正常,2-已删除'
 );
 
 alter table t_device_group add (
 `icon` varchar(200) comment '分组图标',
 `memo` varchar(2048) comment '分组说明',
 `videoCover` varchar(1024) comment '分组封面',
-`videoUrl` varchar(1024) comment '分组视频链接'
+`videoUrl` varchar(1024) comment '分组视频链接',
+`qrcode` varchar(1024) comment '二维码链接'
 );
 
 drop table if EXISTS t_device_group_item;
@@ -252,7 +236,7 @@ userId int comment '用户id',
 groupId int comment '设备组id',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间',
-status int comment '状态1-绑定,2-已解绑',
+status int comment '状态1-绑定,2-已解绑'
 );
 
 alter table t_device_group_item add column isMaster int comment '是否是主拥有人';
@@ -263,7 +247,7 @@ id int primary key auto_increment comment '主键id',
 name varchar(512) comment '功能类型',
 valueRange varchar(512) comment '值的范围',
 valueType varchar(20) comment '值的类型',
-createTime bigint comment '创建时间',
+createTime bigint comment '创建时间'
 ) comment '设备功能表';
 
 
@@ -281,7 +265,7 @@ lastUpdateTime bigint comment '最后修改时间'
 drop table if EXISTS t_system_config;
 create table t_system_config(
 id  int  primary key auto_increment comment '主键id',
-systemKey varchar(200) comment '对应key'
+systemKey varchar(200) comment '对应key',
 systemValue varchar(1024) comment '对应值',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
