@@ -19,17 +19,17 @@ public class InfoHandler extends AbstractHandler {
 
     @Data
     private static class InfoItem {
-        private String imei;
-        private String imsi;
-        private String mac;
-        private VersionItem version;
         private Info info;
 
     }
 
     @Data
-    private class Info{
+    private static class Info{
         WxInfoItem wx_info;
+        private VersionItem version;
+        private String imei;
+        private String imsi;
+        private String mac;
     }
 
     @Data
@@ -65,19 +65,19 @@ public class InfoHandler extends AbstractHandler {
                 return;
             }
             try {
-                DeviceInfoPo queryDeviceInfo = deviceInfoMapper.selectByDevId(devId);
+                DeviceInfoPo queryDeviceInfo = deviceInfoMapper.selectByMac(infoItem.getInfo().getMac());
                 if (queryDeviceInfo != null) {
                     DeviceInfoPo updatePo = new DeviceInfoPo();
                     updatePo.setId(queryDeviceInfo.getId());
-                    updatePo.setVersion(JSON.toJSONString(infoItem.getVersion()));
+                    updatePo.setVersion(JSON.toJSONString(infoItem.getInfo().getVersion()));
                     updatePo.setLastUpdateTime(System.currentTimeMillis());
                     deviceInfoMapper.updateById(updatePo);
                 } else {
-                    deviceInfoPo.setImei(infoItem.getImei());
-                    deviceInfoPo.setImsi(infoItem.getImsi());
-                    deviceInfoPo.setMac(infoItem.getMac());
+                    deviceInfoPo.setImei(infoItem.getInfo().getImei());
+                    deviceInfoPo.setImsi(infoItem.getInfo().getImsi());
+                    deviceInfoPo.setMac(infoItem.getInfo().getMac());
                     deviceInfoPo.setCreateTime(System.currentTimeMillis());
-                    deviceInfoPo.setVersion(JSON.toJSONString(infoItem.getVersion()));
+                    deviceInfoPo.setVersion(JSON.toJSONString(infoItem.getInfo().getVersion()));
                     deviceInfoMapper.insert(deviceInfoPo);
                 }
             } catch (Exception e) {

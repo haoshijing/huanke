@@ -30,4 +30,26 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id = "selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from <include refid="tableName"/>
+        <where>
+            <if test = "param.name != null and param.name != ''">
+                and name = #{param.name}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceTypePo">
+        select * from <include refid="tableName"/>
+        <where>
+
+            <if test = "param.name != null and param.name != ''">
+                and name = #{param.name}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
+
 </mapper>

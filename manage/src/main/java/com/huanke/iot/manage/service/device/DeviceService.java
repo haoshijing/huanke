@@ -28,6 +28,7 @@ public class DeviceService {
 
         DevicePo queryDevicePo = new DevicePo();
         queryDevicePo.setMac(deviceQueryRequest.getMac());
+        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
         Integer page = deviceQueryRequest.getPage();
         Integer limit = deviceQueryRequest.getLimit();
         Integer offset  = (page - 1)*limit;
@@ -55,7 +56,7 @@ public class DeviceService {
                 deviceVo.setOnlineStatus("离线");
             }
 
-            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByDevId(devicePo.getDeviceId());
+            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByMac(devicePo.getMac());
             if(deviceInfoPo != null){
                 String version = deviceInfoPo.getVersion();
                 JSONObject jsonObject = JSON.parseObject(version);
@@ -73,6 +74,7 @@ public class DeviceService {
 
         DevicePo queryDevicePo = new DevicePo();
         queryDevicePo.setMac(deviceQueryRequest.getMac());
+        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
         return deviceMapper.selectCount(queryDevicePo);
     }
 

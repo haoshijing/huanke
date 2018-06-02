@@ -31,6 +31,23 @@
         )
     </insert>
 
+    <select id = "selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from <include refid="tableName"/>
+        <where>
+            <if test = "param.userId != null and param.userId != 0">
+                AND userId = #{param.userId}
+            </if>
+            <if test = "param.status != null">
+                AND status = #{param.status}
+            </if>
+            <if test = "param.groupName != null">
+                and groupName = #{param.groupName}
+            </if>
+        </where>
+    </select>
+
+
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
         select * from <include refid="tableName"/>
         <where>
@@ -43,7 +60,6 @@
             <if test = "param.groupName != null">
                 and groupName = #{param.groupName}
             </if>
-
         </where>
         limit #{limit} offset #{offset}
     </select>
@@ -68,13 +84,18 @@
       )
     </insert>
 
-
     <select id="queryGroupItems" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo" resultType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
         select * from t_device_group_item
         where status = 1
-        and userId = #{userId}
+
         <if test = "groupId != null">
             AND  groupId = #{groupId}
+        </if>
+        <if test = "userId != null">
+            and userId = #{userId}
+        </if>
+        <if test = "isMaster != null">
+            AND isMaster = #{isMaster}
         </if>
 
     </select>
@@ -119,7 +140,6 @@
             <if test = "status != null">
                 status = #{status},
             </if>
-
 
             <if test = "videoUrl != null">
                 videoUrl = #{videoUrl},

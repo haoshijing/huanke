@@ -83,7 +83,7 @@
         limit 1
     </select>
 
-    <select id="selectCount" parameterType="com.huanke.iot.base.po.user.AppUserPo">
+    <select id="selectCount" parameterType="com.huanke.iot.base.po.user.AppUserPo" resultType="java.lang.Integer">
         select count(1) from <include refid="tableName"/>
     </select>
 

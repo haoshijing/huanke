@@ -44,7 +44,6 @@ import java.util.List;
 @Slf4j
 public class DeviceController {
 
-
     @Value("${accessKeyId}")
     private String accessKeyId;
 
@@ -192,10 +191,16 @@ public class DeviceController {
         return new ApiResponse<>(true);
     }
 
-
     @RequestMapping("/upload")
     public ApiResponse<String> uploadBinFile(MultipartFile file){
         String fileName = file.getOriginalFilename();
+        int idx = fileName.lastIndexOf(".");
+        String fileExt = fileName.substring(idx+1);
+        if(!StringUtils.contains(fileExt,"bin")){
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setCode(RetCode.PARAM_ERROR);
+            return apiResponse;
+        }
         try {
             uploadToOss(fileName,file.getBytes());
         }catch (Exception e){
@@ -231,7 +236,6 @@ public class DeviceController {
 
     @RequestMapping("/updateDevice")
     public ApiResponse<Boolean> updateDevice(@RequestBody DeviceUpdateRequest deviceUpdateRequest){
-
         if(StringUtils.isEmpty(deviceUpdateRequest.getName())){
             return new ApiResponse(RetCode.PARAM_ERROR);
         }
@@ -240,25 +244,12 @@ public class DeviceController {
     }
 
 
-    @RequestMapping("/queryTypeList")
-    public ApiResponse<List<DeviceTypeVo>> queryTypeList(@RequestBody DeviceQueryRequest deviceQueryRequest){
-        List<DeviceTypeVo> deviceVos = deviceTypeService.selectList(deviceQueryRequest);
-        return new ApiResponse<>(deviceVos);
-    }
-
-    @RequestMapping("/queryTypeCount")
-    public ApiResponse<Integer> queryTypeCount(@RequestBody DeviceQueryRequest deviceQueryRequest){
-        Integer typeCount = deviceTypeService.selectCount(deviceQueryRequest);
-        return new ApiResponse<>(typeCount);
-    }
-
-
     private void uploadToOss(String fileKey,byte[] content){
         OSSClient ossClient = new OSSClient(bucketUrl, accessKeyId,accessKeySecret);
         try {
             ossClient.putObject("idcfota", fileKey, new ByteArrayInputStream(content));
         }catch (Exception e){
-
+            log.error("",e);
         }finally {
             if(ossClient != null){
                 ossClient.shutdown();
