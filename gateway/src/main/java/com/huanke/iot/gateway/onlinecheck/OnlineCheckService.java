@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -30,6 +31,7 @@ public class OnlineCheckService {
 
     @PostConstruct
     public void init(){
+        loadOnlineFromDb();
         executorService = Executors.newScheduledThreadPool(1,new DefaultThreadFactory("ScanIdThread"));
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
@@ -82,5 +84,14 @@ public class OnlineCheckService {
            updatePo.setOnlineStatus(1);
            deviceMapper.updateById(updatePo);
        }
+    }
+
+    private void loadOnlineFromDb(){
+        DevicePo queryPo = new DevicePo();
+        queryPo.setOnlineStatus(1);
+        List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,0,100000);
+        devicePoList.forEach(devicePo -> {
+            resetOnline(devicePo.getId());
+        });
     }
 }
