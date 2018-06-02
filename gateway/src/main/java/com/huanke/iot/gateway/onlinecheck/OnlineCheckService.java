@@ -74,9 +74,7 @@ public class OnlineCheckService {
            needUpdateDd = true;
            data.setId(id);
        }else{
-           if(!data.isOnline()) {
-               needUpdateDd = true;
-           }
+           needUpdateDd = true;
            data.setFailCount(0);
            data.setLastUpdateTime(System.currentTimeMillis());
            data.setOnline(true);

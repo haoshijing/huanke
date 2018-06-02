@@ -28,7 +28,6 @@ public abstract  class AbstractHandler {
 
     public  void  handler(String topic, byte[] payloads){
         Integer id = getDeviceIdFromTopic(topic);
-        log.info("id = {} receive data",id);
         onlineCheckService.resetOnline(id);
         doHandler(topic,payloads);
     }
