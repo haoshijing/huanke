@@ -194,10 +194,14 @@ public class DeviceController {
         return new ApiResponse<>(true);
     }
 
-
     @RequestMapping("/upload")
     public ApiResponse<String> uploadBinFile(MultipartFile file){
         String fileName = file.getOriginalFilename();
+        int idx = fileName.lastIndexOf(".");
+        String fileExt = fileName.substring(idx+1);
+        if(!StringUtils.contains(fileExt,"bin")){
+            return new ApiResponse(RetCode.PARAM_ERROR);
+        }
         try {
             uploadToOss(fileName,file.getBytes());
         }catch (Exception e){
