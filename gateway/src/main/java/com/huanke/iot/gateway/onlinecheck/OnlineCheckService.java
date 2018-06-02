@@ -61,7 +61,6 @@ public class OnlineCheckService {
                 deviceMapper.updateById(updatePo);
                 it.remove();
             }
-
         }
     }
 
@@ -70,17 +69,12 @@ public class OnlineCheckService {
        boolean needUpdateDd  =false;
        if(data == null){
            data = new OnlineCheckData();
-           data.setFailCount(0);
-           data.setLastUpdateTime(System.currentTimeMillis());
-           data.setOnline(true);
-           needUpdateDd = true;
-           data.setId(id);
-       }else{
-           needUpdateDd = true;
-           data.setFailCount(0);
-           data.setLastUpdateTime(System.currentTimeMillis());
-           data.setOnline(true);
        }
+       data.setFailCount(0);
+        data.setLastUpdateTime(System.currentTimeMillis());
+        data.setOnline(true);
+        needUpdateDd = true;
+        data.setId(id);
         idMap.put(id,data);
        if(needUpdateDd){
            DevicePo updatePo = new DevicePo();
