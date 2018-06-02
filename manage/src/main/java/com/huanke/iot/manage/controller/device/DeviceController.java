@@ -246,7 +246,7 @@ public class DeviceController {
         try {
             ossClient.putObject("idcfota", fileKey, new ByteArrayInputStream(content));
         }catch (Exception e){
-
+            log.error("",e);
         }finally {
             if(ossClient != null){
                 ossClient.shutdown();

@@ -273,7 +273,7 @@ id  int  primary key auto_increment comment '主键id',
 deviceId int comment '设备Id',
 fileName varchar(1024) comment '文件名',
 fileSize int comment '文件大小',
-md5 int comment '文件md5',
+md5 varchar(40) comment '文件md5',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
