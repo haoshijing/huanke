@@ -33,7 +33,7 @@ public class DeviceTypeController {
         return new ApiResponse<>(typeResponseVos);
     }
 
-    @RequestMapping("/update")
+    @RequestMapping("/typeUpdate")
     public ApiResponse<Boolean> updateDeviceType(@RequestBody DeviceTypeCreateUpdateVo deviceTypeCreateUpdateVo){
         if(!checkRequestValid(deviceTypeCreateUpdateVo)){
             return ApiResponse.PARAM_ERROR;
@@ -42,7 +42,7 @@ public class DeviceTypeController {
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/create")
+    @RequestMapping("/typeCreate")
     public ApiResponse<Boolean> createDeviceType(@RequestBody DeviceTypeCreateUpdateVo deviceTypeCreateUpdateVo){
         if(!checkRequestValid(deviceTypeCreateUpdateVo)){
             return ApiResponse.PARAM_ERROR;

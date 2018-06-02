@@ -43,11 +43,7 @@ public class UploadController {
         int idx = fileName.lastIndexOf(".");
         String fileExt = fileName.substring(idx+1);
         newFileName = newFileName + "."+fileExt;
-        if(!StringUtils.contains(fileExt,"bin")){
-            ApiResponse apiResponse = new ApiResponse();
-            apiResponse.setCode(RetCode.PARAM_ERROR);
-            return apiResponse;
-        }
+
         try {
             uploadToOss(newFileName,file.getBytes());
         }catch (Exception e){
