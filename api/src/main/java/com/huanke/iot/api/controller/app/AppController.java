@@ -45,8 +45,12 @@ public class AppController extends BaseController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+
     @Autowired
     private DeviceService deviceService;
+
+    @Value("${apkKey}")
+    private String apkKey;
 
     @RequestMapping("/queryDeviceList")
     public ApiResponse<DeviceListVo> queryDeviceList(HttpServletRequest request) {
@@ -76,7 +80,7 @@ public class AppController extends BaseController {
     @RequestMapping("/obtainApk")
     public ApiResponse<AppInfoVo> obtainApk() {
 
-        String apkInfo = stringRedisTemplate.opsForValue().get("apkInfo");
+        String apkInfo = stringRedisTemplate.opsForValue().get(apkKey);
         if (StringUtils.isNotEmpty(apkInfo)) {
             AppInfoVo appInfoVo = JSON.parseObject(apkInfo, AppInfoVo.class);
             return new ApiResponse<>(appInfoVo);
@@ -110,15 +114,6 @@ public class AppController extends BaseController {
             deviceFuncVo.setValue("1");
         }
         deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(request),2);
-        return new ApiResponse<>(true);
-    }
-
-    @RequestMapping("/setApkInfo")
-    public ApiResponse<Boolean> setApkInfo(String v, String u) {
-        AppInfoVo appInfoVo = new AppInfoVo();
-        appInfoVo.setApkUrl(u);
-        appInfoVo.setCurrentVersion(v);
-        stringRedisTemplate.opsForValue().set("apkInfo", JSON.toJSONString(appInfoVo));
         return new ApiResponse<>(true);
     }
 }

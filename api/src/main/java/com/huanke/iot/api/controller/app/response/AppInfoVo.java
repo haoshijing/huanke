@@ -8,6 +8,7 @@ import lombok.Data;
  **/
 @Data
 public class AppInfoVo {
-    private String currentVersion = "";
+    private String versionCode = "";
     private String apkUrl;
+    private String versionName = "";
 }
