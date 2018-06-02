@@ -59,7 +59,9 @@ public class OnlineCheckService {
                 updatePo.setOnlineStatus(2);
                 updatePo.setId(it.next().getKey());
                 deviceMapper.updateById(updatePo);
+                it.remove();
             }
+
         }
     }
 
