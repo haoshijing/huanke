@@ -76,8 +76,7 @@ public class DeviceController {
 
     @Autowired
     private DeviceOperLogService deviceOperLogService;
-    @Autowired
-    private DeviceTypeService deviceTypeService;
+
 
     @RequestMapping("/resetPid")
     public ApiResponse<Boolean> resetPid(String productId){
@@ -207,6 +206,7 @@ public class DeviceController {
         try {
             uploadToOss(fileName,file.getBytes());
         }catch (Exception e){
+            return ApiResponse.responseError(e);
         }
 
         DeviceUpgradePo queryPo = deviceUpgradeMapper.selectByFileName(fileName);
@@ -232,7 +232,6 @@ public class DeviceController {
             insertPo.setFileName(fileName);
             deviceUpgradeMapper.insert(insertPo);
         }
-
         return new ApiResponse<>(fileName);
     }
 
@@ -258,6 +257,5 @@ public class DeviceController {
                 ossClient.shutdown();
             }
         }
-
     }
 }

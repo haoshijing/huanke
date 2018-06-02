@@ -6,10 +6,12 @@ import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DeviceTypePo;
 import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
+import com.huanke.iot.manage.controller.device.request.type.DeviceTypeCreateUpdateVo;
 import com.huanke.iot.manage.controller.device.request.type.DeviceTypeQueryRequest;
 import com.huanke.iot.manage.controller.device.request.type.DeviceTypeResponseVo;
 import com.huanke.iot.manage.response.DeviceTypeVo;
 import org.assertj.core.util.Lists;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +23,7 @@ public class DeviceTypeService {
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
     public List<DeviceTypeResponseVo> selectList(DeviceTypeQueryRequest queryRequest) {
         DeviceTypePo queryTypePo = new DeviceTypePo();
         queryTypePo.setName(queryRequest.getName());
@@ -59,5 +62,19 @@ public class DeviceTypeService {
         queryTypePo.setName(queryRequest.getName());
 
         return deviceTypeMapper.selectCount(queryTypePo);
+    }
+
+    public Boolean createOrUpdate(DeviceTypeCreateUpdateVo deviceTypeCreateUpdateVo) {
+        DeviceTypePo deviceTypePo = new DeviceTypePo();
+        BeanUtils.copyProperties(deviceTypePo,deviceTypeCreateUpdateVo);
+        int effectCount = 0;
+        if(deviceTypePo.getId() != null && deviceTypePo.getId() > 0){
+            deviceTypePo.setCreateTime(System.currentTimeMillis());
+            effectCount =  deviceTypeMapper.updateById(deviceTypePo);
+        }else{
+            deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
+            effectCount = deviceTypeMapper.insert(deviceTypePo);
+        }
+        return effectCount > 0;
     }
 }

@@ -13,6 +13,7 @@ public class ApiResponse<T> {
     private String msg;
     private T data;
 
+    public static ApiResponse PARAM_ERROR = new ApiResponse(RetCode.CODE_ERROR,"参数错误");
 
     public ApiResponse() {
         this.code = RetCode.OK;
@@ -39,7 +40,7 @@ public class ApiResponse<T> {
     }
 
     public static ApiResponse responseError(Exception e) {
-        return new ApiResponse(RetCode.ERROR, e.getMessage(), null);
+        return new ApiResponse(RetCode.ERROR, "服务器发生错误", null);
     }
 
 }

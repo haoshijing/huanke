@@ -13,15 +13,37 @@
         name,
         icon,
         funcList,
+        sensorList,
         createTime
         )
         VALUES (
         #{name},
         #{icon},
         #{funcList},
+        #{sensorList},
         #{createTime}
         )
     </insert>
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceTypePo">
+        update <include refid="tableName"/>
+        <set>
+            <if test = "name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test = "icon != null and icon != ''">
+                icon = #{icon},
+            </if>
+            <if test = "sensorList != null and sensorList != ''">
+                sensorList = #{sensorList},
+            </if>
+            <if test = "funcList != null and funcList != ''">
+                funcList = #{funcList},
+            </if>
+
+            lastUpdatetime = #{lastUpdatetime}
+        </set>
+        where id = #{id}
+    </update>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceTypePo">
         select
