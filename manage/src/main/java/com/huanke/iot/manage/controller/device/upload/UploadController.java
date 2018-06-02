@@ -43,14 +43,12 @@ public class UploadController {
         int idx = fileName.lastIndexOf(".");
         String fileExt = fileName.substring(idx+1);
         newFileName = newFileName + "."+fileExt;
-
         try {
             uploadToOss(newFileName,file.getBytes());
         }catch (Exception e){
             return ApiResponse.responseError(e);
         }
-
-        return new ApiResponse<>(fileName);
+        return new ApiResponse<>(newFileName);
     }
     private void uploadToOss(String fileKey,byte[] content){
         OSSClient ossClient = new OSSClient(bucketUrl, accessKeyId,accessKeySecret);
