@@ -8,7 +8,8 @@
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DevicePo">
-        INSERT INTO <include refid="tableName"/>
+        INSERT INTO
+        <include refid="tableName"/>
         (
         mac,
         name,
@@ -30,7 +31,8 @@
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
 
@@ -89,17 +91,15 @@
 
         update
         <include refid="tableName"/>
-        set name = #{name} where
-      update <include refid="tableName"/>
         <set>
-            <if test = "name != null">
+            <if test="name != null">
                 name = #{name},
             </if>
-            <if test = "location != null">
+            <if test="location != null">
                 location = #{location},
             </if>
         </set>
-       where
+        where
         deviceId = #{deviceId}
     </update>
 
@@ -113,7 +113,7 @@
             <if test="name != null">
                 name = #{name},
             </if>
-            <if test = "location != null">
+            <if test="location != null">
                 location = #{location},
             </if>
             <if test="onlineStatus != null">
@@ -126,9 +126,10 @@
                 speedConfig = #{speedConfig},
             </if>
         </set>
-         where
-        <if test = "id != null">     id = #{id} </if>
-        <if test = "deviceId != null">     deviceId = #{deviceId} </if>
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="deviceId != null and deviceId != ''">deviceId = #{deviceId}</if>
+        </where>
     </update>
 
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
