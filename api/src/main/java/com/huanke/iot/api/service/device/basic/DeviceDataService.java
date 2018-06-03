@@ -225,7 +225,11 @@ public class DeviceDataService {
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.HCHO_IN.getCode())) {
                     ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getHcho()));
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.PM25_IN.getCode())) {
-                    ydata.add(deviceSensorPo.getPm().toString());
+                    if(deviceSensorPo.getPm() != null) {
+                        ydata.add(deviceSensorPo.getPm().toString());
+                    }else{
+                        ydata.add("");
+                    }
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.TVOC_IN.getCode())) {
                     ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getTvoc()));
                 }else{
