@@ -5,7 +5,6 @@ import com.huanke.iot.base.po.device.DevicePo;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -59,7 +58,7 @@ public class OnlineCheckService {
             if(!data.isOnline()){
                 DevicePo updatePo = new DevicePo();
                 updatePo.setOnlineStatus(2);
-                updatePo.setId(it.next().getKey());
+                updatePo.setId(data.getId());
                 deviceMapper.updateById(updatePo);
                 it.remove();
             }
