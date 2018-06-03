@@ -82,6 +82,12 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(shareOk);
     }
 
+    @RequestMapping("/deleteDevice")
+    public ApiResponse<Boolean> deleteDevice(HttpServletRequest request,String deviceId){
+        Integer userId = getCurrentUserId(request);
+        Boolean ret = deviceDataService.deleteDevice(userId,deviceId);
+        return new ApiResponse<>(ret);
+    }
     @RequestMapping("/clearRelation")
     public ApiResponse<Boolean> clearRelation(HttpServletRequest request, String deviceId, String joinOpenId) {
         Integer userId = getCurrentUserId(request);

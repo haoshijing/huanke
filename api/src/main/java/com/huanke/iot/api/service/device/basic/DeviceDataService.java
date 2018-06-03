@@ -284,6 +284,20 @@ public class DeviceDataService {
         return Lists.newArrayList();
     }
 
+    public Boolean deleteDevice(Integer userId, String deviceId) {
+        if(StringUtils.isEmpty(deviceId)){
+            return false;
+        }
+        DevicePo devicePo  = deviceMapper.selectByDeviceId(deviceId);
+        if(devicePo == null ){
+            return false;
+        }
+        Boolean ret  =false;
+        ret = deviceGroupMapper.deleteDeviceGroupItem(devicePo.getId(),userId) > 0;
+        ret = ret &&  deviceRelationMapper.deleteRelation(devicePo.getId(),userId) > 0;
+        return ret;
+    }
+
     @Data
     public static class FuncItemMessage {
         private String type;
