@@ -16,8 +16,8 @@ import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.gateway.MqttSendService;
 import com.huanke.iot.manage.message.OtaDeviceVo;
 import com.huanke.iot.manage.response.DeviceVo;
+import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.DeviceService;
-import com.huanke.iot.manage.service.device.DeviceTypeService;
 import com.huanke.iot.manage.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -70,7 +70,7 @@ public class DeviceController {
     private DeviceOperLogMapper deviceOperLogMapper;
 
     @Autowired
-    private DeviceTypeService deviceTypeService;
+    private DeviceOperLogService deviceOperLogService;
 
     @RequestMapping("/resetPid")
     public ApiResponse<Boolean> resetPid(String productId){
