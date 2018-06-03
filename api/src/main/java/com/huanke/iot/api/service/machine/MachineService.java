@@ -39,6 +39,9 @@ public class MachineService {
     @Autowired
     private WechartUtil wechartUtil;
 
+    @Value("${productKey}")
+    private String productKey;
+
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -142,7 +145,7 @@ public class MachineService {
     }
 
     private Integer getCanUseProductId(){
-       String productIdStr =  stringRedisTemplate.opsForValue().get("productId");
+       String productIdStr =  stringRedisTemplate.opsForValue().get(productKey);
        if(StringUtils.isNotEmpty(productIdStr)){
            return  Integer.valueOf(productIdStr);
        }

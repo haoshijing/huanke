@@ -7,6 +7,7 @@ import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.apache.commons.lang3.StringUtils;
@@ -85,6 +86,16 @@ public class DeviceController extends BaseController {
     public ApiResponse<Boolean> clearRelation(HttpServletRequest request, String deviceId, String joinOpenId) {
         Integer userId = getCurrentUserId(request);
         Boolean clearOk = deviceDataService.clearRelation(joinOpenId, userId, deviceId);
+        return new ApiResponse<>(clearOk);
+    }
+
+    @RequestMapping("/updateDeviceLocation")
+    public ApiResponse<Boolean> updateDeviceLocation(HttpServletRequest request,String deviceId,String location){
+        if(StringUtils.isEmpty(location)){
+            return new ApiResponse(RetCode.PARAM_ERROR);
+        }
+        Integer userId = getCurrentUserId(request);
+        Boolean clearOk = deviceService.editDeviceLoc(userId, deviceId,location);
         return new ApiResponse<>(clearOk);
     }
 

@@ -75,15 +75,13 @@ public class DeviceController {
     private DeviceOperLogMapper deviceOperLogMapper;
 
     @Autowired
-    private DeviceOperLogService deviceOperLogService;
-
+    private DeviceTypeService deviceTypeService;
 
     @RequestMapping("/resetPid")
     public ApiResponse<Boolean> resetPid(String productId){
         stringRedisTemplate.opsForValue().set("productId", productId);
         return new ApiResponse<>(true);
     }
-
 
     @RequestMapping("/queryList")
     public ApiResponse<List<DeviceVo>> queryList(@RequestBody DeviceQueryRequest deviceQueryRequest){

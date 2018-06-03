@@ -48,4 +48,6 @@ public class DeviceGroupPo {
      * 视频链接
      */
     private String videoUrl;
+
+    private String qrcode;
 }

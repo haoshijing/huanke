@@ -29,12 +29,15 @@ public class WechartUtil {
     private String appId;
     @Value("${appSecret}")
     private String appSecret;
+    @Value("${accessTokenKey}")
+    private String accessTokenKey;
 
-    private static final String ACCESS_TOKEN = "access_token";
+    @Value("${ticketKey}")
+    private String ticketKey;
 
-    private static final String TICKET = "ticket";
+    @Value("${jsapiKey}")
+    private String jsapiKey;
 
-    private static final String JSAPI = "jsapi";
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -42,7 +45,7 @@ public class WechartUtil {
     public String getAccessToken(boolean getFromSever) {
         boolean needFromServer = getFromSever;
         if (!needFromServer) {
-            String storeAccessToken = stringRedisTemplate.opsForValue().get(ACCESS_TOKEN);
+            String storeAccessToken = stringRedisTemplate.opsForValue().get(accessTokenKey);
             if (StringUtils.isNotEmpty(storeAccessToken)) {
                 return storeAccessToken;
             }
@@ -67,7 +70,7 @@ public class WechartUtil {
                 if (json.containsKey("access_token")) {
                     String queryAccessToken = json.getString("access_token");
                     if (StringUtils.isNotEmpty(queryAccessToken)) {
-                        stringRedisTemplate.opsForValue().set(ACCESS_TOKEN, queryAccessToken);
+                        stringRedisTemplate.opsForValue().set(accessTokenKey, queryAccessToken);
                         return queryAccessToken;
                     }
                 }
@@ -106,7 +109,7 @@ public class WechartUtil {
     }
 
     public  String getJsApi(){
-        String jsapi  = stringRedisTemplate.opsForValue().get(JSAPI);
+        String jsapi  = stringRedisTemplate.opsForValue().get(jsapiKey);
         if(StringUtils.isNotEmpty(jsapi)){
             return jsapi;
         }
@@ -122,8 +125,8 @@ public class WechartUtil {
         if (json.containsKey("ticket")) {
             String queryTicket = json.getString("ticket");
             if (StringUtils.isNotEmpty(queryTicket)) {
-                stringRedisTemplate.opsForValue().set(TICKET, queryTicket);
-                stringRedisTemplate.expire(TICKET, 7000,TimeUnit.SECONDS);
+                stringRedisTemplate.opsForValue().set(ticketKey, queryTicket);
+                stringRedisTemplate.expire(ticketKey, 7000,TimeUnit.SECONDS);
 
                 return queryTicket;
             }
@@ -151,31 +154,6 @@ public class WechartUtil {
         }
     }
 
-    public String getTicket() {
-        String ticket = stringRedisTemplate.opsForValue().get(TICKET);
-        if(StringUtils.isNotEmpty(ticket)){
-            return ticket;
-        }
-        String ticketResult = obtainRemoteTicket();
-        log.info("ticket result = {}", ticketResult);
-        JSONObject json = JSONObject.parseObject(ticketResult);
-        int errorCode = json.getInteger("errcode");
-        if (errorCode == 42001) {
-            getAccessToken(true);
-            ticketResult = obtainRemoteTicket();
-            json = JSONObject.parseObject(ticketResult);
-        }
-        if (json.containsKey("ticket")) {
-            String queryTicket = json.getString("ticket");
-            if (StringUtils.isNotEmpty(queryTicket)) {
-                stringRedisTemplate.opsForValue().set(TICKET, queryTicket);
-                stringRedisTemplate.expire(TICKET, 7000,TimeUnit.SECONDS);
-
-                return queryTicket;
-            }
-        }
-        return "";
-    }
     public JSONObject obtainUserUserInfo(String accessToken,String openId){
         String url = "https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openId+"&lang=zh_CN";
         try {

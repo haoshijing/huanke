@@ -71,7 +71,7 @@ public class UserService {
         }
         AppUserPo appUserPo = appUserMapper.selectByMac(imei);
         if(appUserPo == null){
-            log.error(" openId = {} , user is null" ,imei);
+            log.error(" imei = {} , user is null" ,imei);
             return 0;
         }
         return appUserPo.getId();

@@ -91,7 +91,15 @@
 
         update
         <include refid="tableName"/>
-        set name = #{name} where
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="location != null">
+                location = #{location},
+            </if>
+        </set>
+        where
         deviceId = #{deviceId}
     </update>
 
@@ -105,6 +113,9 @@
             <if test="name != null">
                 name = #{name},
             </if>
+            <if test="location != null">
+                location = #{location},
+            </if>
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
             </if>
@@ -115,7 +126,11 @@
                 speedConfig = #{speedConfig},
             </if>
         </set>
-        where id = #{id}
+        <where>
+             1= 1
+            <if test="id != null"> and id = #{id}</if>
+            <if test="deviceId != null and deviceId != ''"> and deviceId = #{deviceId}</if>
+        </where>
     </update>
 
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">

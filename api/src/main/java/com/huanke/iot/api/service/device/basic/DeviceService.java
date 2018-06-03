@@ -70,6 +70,10 @@ public class DeviceService {
                     if (StringUtils.isEmpty(icon)) {
                         icon = Constants.DEFAULT_ICON;
                     }
+                    String qrcode = deviceGroupPo.getQrcode();
+                    if(StringUtils.isEmpty(qrcode)){
+                        qrcode = "https://idcfota.oss-cn-hangzhou.aliyuncs.com/group/WechatIMG4213.jpeg";
+                    }
 
                     String videoUrl = deviceGroupPo.getVideoUrl();
                     if (StringUtils.isEmpty(videoUrl)) {
@@ -90,7 +94,7 @@ public class DeviceService {
                     deviceGroupData.setVideoUrl(videoUrl);
                     deviceGroupData.setVideoCover(videoCover);
                     deviceGroupData.setIcon(icon);
-
+                    deviceGroupData.setQrcode(qrcode);
                     DeviceGroupItemPo queryDeviceGroupItem = new DeviceGroupItemPo();
                     queryDeviceGroupItem.setUserId(userId);
                     queryDeviceGroupItem.setStatus(1);
@@ -114,7 +118,7 @@ public class DeviceService {
                         DevicePo devicePo = deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getDeviceId());
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());
-                        deviceItemPo.setOnlineStatus(1);
+                        deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
                         deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
                         if (deviceTypePo != null) {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
@@ -213,17 +217,12 @@ public class DeviceService {
             List<DeviceSpeedConfigVo.SpeedConfigItem> inItems =
                     Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
                             , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
+                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30));
             List<DeviceSpeedConfigVo.SpeedConfigItem> outItems =
                     Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
                             , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
+                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30)
+                    );
             deviceSpeedConfigVo.setInItems(inItems);
             deviceSpeedConfigVo.setOutItems(outItems);
         }else{
@@ -261,5 +260,12 @@ public class DeviceService {
             deviceSpeedConfigVo.setInItems(inItems);
         }
         return deviceSpeedConfigVo;
+    }
+
+    public Boolean editDeviceLoc(Integer userId, String deviceId, String location) {
+        DevicePo devicePo = new DevicePo();
+        devicePo.setDeviceId(deviceId);
+        devicePo.setLocation(location);
+        return deviceMapper.updateByDeviceId(devicePo) > 0;
     }
 }

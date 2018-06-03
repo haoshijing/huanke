@@ -43,7 +43,7 @@ public class DeviceDetailVo {
     private String date;
     private String aqi;
     private String ip;
-
+    private String location;
 
     private DataItem childItem;
 

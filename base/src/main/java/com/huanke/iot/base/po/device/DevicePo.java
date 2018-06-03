@@ -40,4 +40,5 @@ public class DevicePo {
     private Long lastUpdateTime;
     private Integer bindStatus;
     private Long bindTime;
+    private String location;
 }

@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -70,6 +72,8 @@ public class DeviceDataService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    private static final String TOKEN_PREFIX = "token.";
+
     public Boolean shareDevice(String master, Integer toId, String deviceIdStr, String token) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
@@ -80,7 +84,7 @@ public class DeviceDataService {
         if (appUserPo == null) {
             return false;
         }
-        String storeToken = stringRedisTemplate.opsForValue().get("token." + deviceIdStr);
+        String storeToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + deviceIdStr);
         if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
             // return false;
         }
@@ -190,7 +194,6 @@ public class DeviceDataService {
         Long endTimeStamp = System.currentTimeMillis();
 
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
-
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
         if (devicePo == null) {
             return null;
@@ -229,12 +232,14 @@ public class DeviceDataService {
                 }else{
                     continue;
                 }
+                sensorDataVo.setXdata(xdata);
+                sensorDataVo.setYdata(ydata);
             }
-            sensorDataVo.setXdata(xdata);
-            sensorDataVo.setYdata(ydata);
             if(!ydata.isEmpty()) {
                 sensorDataVos.add(sensorDataVo);
             }
+            sensorDataVo.setXdata(xdata);
+            sensorDataVo.setYdata(ydata);
         }
 
         return sensorDataVos;
@@ -305,9 +310,17 @@ public class DeviceDataService {
             }
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
-            deviceDetailVo.setAqi("28");
             deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
+            if(deviceDetailVo.getPm() == null || StringUtils.isEmpty(deviceDetailVo.getPm().getData()) ||  StringUtils.equals("0",deviceDetailVo.getPm().getData())){
+                deviceDetailVo.setAqi("0");
+            }else{
+                Integer pm = Integer.valueOf(deviceDetailVo.getPm().getData());
+                //BigDecimal bigDecimal = new BigDecimal(getAqi(pm));
+                //deviceDetailVo.setAqi(String.valueOf(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+                deviceDetailVo.setAqi(String.valueOf(getAqi(pm)));
+            }
+
         }
 
         JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), false);
@@ -322,22 +335,29 @@ public class DeviceDataService {
                 }
             }
         }
-        JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
-        if (locationJson != null) {
-            if (locationJson.containsKey("content")) {
-                JSONObject content = locationJson.getJSONObject("content");
-                if (content != null) {
-                    if (content.containsKey("address_detail")) {
-                        JSONObject addressDetail = content.getJSONObject("address_detail");
-                        if (addressDetail != null) {
-                            deviceDetailVo.setProvince(addressDetail.getString("province"));
-                            deviceDetailVo.setCity(addressDetail.getString("city"));
+        if(StringUtils.isEmpty(devicePo.getLocation())) {
+            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+            if (locationJson != null) {
+                if (locationJson.containsKey("content")) {
+                    JSONObject content = locationJson.getJSONObject("content");
+                    if (content != null) {
+                        if (content.containsKey("address_detail")) {
+                            JSONObject addressDetail = content.getJSONObject("address_detail");
+                            if (addressDetail != null) {
+                                deviceDetailVo.setProvince(addressDetail.getString("province"));
+                                deviceDetailVo.setCity(addressDetail.getString("city"));
+                                deviceDetailVo.setArea(deviceDetailVo.getCity());
+                                deviceDetailVo.setLocation(deviceDetailVo.getProvince()+","+deviceDetailVo.getCity());
+                            }
                         }
-                    }
 
+                    }
                 }
             }
-
+        }else{
+            String [] locationArray = devicePo.getLocation().split(",");
+            deviceDetailVo.setArea(Joiner.on(" ").join(locationArray));
+            deviceDetailVo.setLocation(devicePo.getLocation());
         }
         return deviceDetailVo;
     }
@@ -444,7 +464,12 @@ public class DeviceDataService {
         deviceDetailVo.setRemain(remain);
 
         DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
-        screen.setData(getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode()));
+        String time = getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode());
+        if(StringUtils.isNotEmpty(time)){
+            screen.setData(String.valueOf(Integer.valueOf(time)*3600));
+        }else{
+            screen.setData("0");
+        }
         screen.setUnit("秒");
         deviceDetailVo.setScreen(screen);
 
@@ -464,7 +489,7 @@ public class DeviceDataService {
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
                 dataItem.setType(wind);
-                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速,4:四挡风速,5:五档风速,6:六档风速");
+                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速");
                 dataItem.setValue(getData(controlDatas, wind));
                 if (winds.size() == 1) {
                     dataItem.setName("风速");
@@ -662,4 +687,20 @@ public class DeviceDataService {
         }
         return "0";
     }
+
+    private static  int getAqi(Integer pm2_5){
+         float [] tbl_aqi ={0f,50f,100f,150f,200f,300f,400f,500f};
+         float[] tbl_pm2_5={0f,35f,75f,115f,150f,250f,350f,500f};
+        int i;
+        if(pm2_5>tbl_pm2_5[7]) {
+            return (int) tbl_aqi[7];
+        }
+        for(i=0;i<8-1;i++){
+            if((pm2_5 >= tbl_pm2_5[i]) && (pm2_5 < tbl_pm2_5[i+1])){
+                break;
+            }
+        }
+        return (int)(((tbl_aqi[i+1]-tbl_aqi[i])/(tbl_pm2_5[i+1]-tbl_pm2_5[i])*(pm2_5-tbl_pm2_5[i])+tbl_aqi[i]));
+    }
+
 }
