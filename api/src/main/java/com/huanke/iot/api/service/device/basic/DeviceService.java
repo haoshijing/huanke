@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceSpeedConfigVo;
@@ -15,6 +16,7 @@ import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
+import com.huanke.iot.base.util.LocationUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +54,9 @@ public class DeviceService {
     @Value("${oss.url}")
     private String ossUrl;
 
+    @Autowired
+    private LocationUtils locationUtils;
+
 
     @Autowired
     private MqttSendService mqttSendService;
@@ -62,7 +67,6 @@ public class DeviceService {
 
         DeviceGroupPo queryDevicePo = new DeviceGroupPo();
         queryDevicePo.setUserId(userId);
-
         List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryDevicePo, 100000, 0);
 
         List<DeviceListVo.DeviceGroupData> groupDatas = deviceGroupPos.stream().map(
@@ -139,6 +143,25 @@ public class DeviceService {
                         if (deviceTypePo != null) {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                             deviceItemPo.setIcon(deviceTypePo.getIcon());
+                        }
+                        if(StringUtils.isEmpty(devicePo.getLocation())) {
+                            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+                            if (locationJson != null) {
+                                if (locationJson.containsKey("content")) {
+                                    JSONObject content = locationJson.getJSONObject("content");
+                                    if (content != null) {
+                                        if (content.containsKey("address_detail")) {
+                                            JSONObject addressDetail = content.getJSONObject("address_detail");
+                                            if (addressDetail != null) {
+                                                deviceItemPo.setLocation(addressDetail.getString("province")+","+addressDetail.getString("city"));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                            String [] locationArray = devicePo.getLocation().split(",");
+                            deviceItemPo.setLocation(Joiner.on(" ").join(locationArray));
                         }
                         Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
                         deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
