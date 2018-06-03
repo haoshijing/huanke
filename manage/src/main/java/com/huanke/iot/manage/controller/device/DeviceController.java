@@ -2,9 +2,9 @@ package com.huanke.iot.manage.controller.device;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.impl.device.DeviceUpgradeMapper;
-import com.huanke.iot.base.dao.impl.device.data.DeviceLocationMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.DeviceUpgradePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
@@ -15,17 +15,13 @@ import com.huanke.iot.manage.controller.device.response.DeviceOperLogVo;
 import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.gateway.MqttSendService;
 import com.huanke.iot.manage.message.OtaDeviceVo;
-import com.huanke.iot.manage.response.DeviceTypeVo;
 import com.huanke.iot.manage.response.DeviceVo;
-import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.DeviceService;
 import com.huanke.iot.manage.service.device.DeviceTypeService;
 import com.huanke.iot.manage.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -36,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author haoshijing

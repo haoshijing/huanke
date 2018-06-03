@@ -20,6 +20,7 @@ import io.netty.buffer.Unpooled;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -48,6 +49,10 @@ public class DeviceService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Value("${oss.url}")
+    private String ossUrl;
+
+
     @Autowired
     private MqttSendService mqttSendService;
 
@@ -74,7 +79,18 @@ public class DeviceService {
                     if(StringUtils.isEmpty(qrcode)){
                         qrcode = "https://idcfota.oss-cn-hangzhou.aliyuncs.com/group/WechatIMG4213.jpeg";
                     }
-
+                    List<String> adImages = Lists.newArrayList();
+                    String adImageStr = deviceGroupPo.getAdImages();
+                    if(StringUtils.isNotEmpty(adImageStr)){
+                        String adImageStrArr[] = adImageStr.split(",");
+                        for(String adImage:adImageStrArr){
+                            if(StringUtils.isNotEmpty(adImage) && adImage.startsWith("http")) {
+                                adImages.add(adImage);
+                            }else{
+                                adImages.add(ossUrl+"/"+adImage);
+                            }
+                        }
+                    }
                     String videoUrl = deviceGroupPo.getVideoUrl();
                     if (StringUtils.isEmpty(videoUrl)) {
                         videoUrl = Constants.DEFAULT_VIDEO_URl;

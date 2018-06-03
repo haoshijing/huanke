@@ -50,4 +50,8 @@ public class DeviceGroupPo {
     private String videoUrl;
 
     private String qrcode;
+    /**
+     * 广告图片
+     */
+    private String adImages;
 }

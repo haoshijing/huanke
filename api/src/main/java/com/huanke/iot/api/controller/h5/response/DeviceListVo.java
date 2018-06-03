@@ -22,6 +22,7 @@ public class DeviceListVo {
         private String videoCover;
         private String memo;
         private String qrcode;
+        private List<String> adImages;
         private List<DeviceItemPo> deviceItemPos = Lists.newArrayList();
         public void addItemPo(DeviceItemPo deviceItemPo){
             deviceItemPos.add(deviceItemPo);

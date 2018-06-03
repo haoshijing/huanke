@@ -140,7 +140,9 @@
             <if test = "status != null">
                 status = #{status},
             </if>
-
+            <if test = "adImages  != null and adImages != ''">
+                adImages = #{adImages},
+            </if>
             <if test = "videoUrl != null">
                 videoUrl = #{videoUrl},
             </if>
