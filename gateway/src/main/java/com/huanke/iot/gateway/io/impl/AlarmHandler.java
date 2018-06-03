@@ -47,7 +47,7 @@ public  class AlarmHandler extends AbstractHandler {
             }).collect(Collectors.toList());
             deviceAlarmPos.forEach(deviceAlarmPo -> {
                 deviceAlarmPo.setCreateTime(System.currentTimeMillis());
-                deviceAlarmMapper.insert(deviceAlarmPo);
+                //deviceAlarmMapper.insert(deviceAlarmPo);
             });
         }
     }
