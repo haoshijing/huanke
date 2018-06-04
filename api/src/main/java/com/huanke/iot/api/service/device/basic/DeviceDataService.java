@@ -215,6 +215,9 @@ public class DeviceDataService {
             List<String> xdata = Lists.newArrayList();
             List<String> ydata = Lists.newArrayList();
             for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
+                if(deviceSensorPo.getPm() == null){
+                    continue;
+                }
                 xdata.add(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:mm:ss"));
                 if(StringUtils.equals(sensorType,SensorTypeEnums.CO2_IN.getCode())) {
                     ydata.add(deviceSensorPo.getCo2().toString());
