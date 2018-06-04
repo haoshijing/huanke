@@ -16,4 +16,5 @@ public class DeviceVo {
     private String software;
     private String hardware;
     private String onlineStatus;
+    private String location;
 }

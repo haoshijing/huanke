@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -216,7 +215,11 @@ public class DeviceDataService {
             List<String> xdata = Lists.newArrayList();
             List<String> ydata = Lists.newArrayList();
             for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
+                if(deviceSensorPo.getCo2() == null){
+                    continue;
+                }
                 xdata.add(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:mm:ss"));
+
                 if(StringUtils.equals(sensorType,SensorTypeEnums.CO2_IN.getCode())) {
                     ydata.add(deviceSensorPo.getCo2().toString());
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.HUMIDITY_IN.getCode())) {
@@ -226,7 +229,11 @@ public class DeviceDataService {
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.HCHO_IN.getCode())) {
                     ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getHcho()));
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.PM25_IN.getCode())) {
-                    ydata.add(deviceSensorPo.getPm().toString());
+                    if(deviceSensorPo.getPm() != null) {
+                        ydata.add(deviceSensorPo.getPm().toString());
+                    }else{
+                        ydata.add("");
+                    }
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.TVOC_IN.getCode())) {
                     ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getTvoc()));
                 }else{
@@ -283,6 +290,20 @@ public class DeviceDataService {
             }
         }
         return Lists.newArrayList();
+    }
+
+    public Boolean deleteDevice(Integer userId, String deviceId) {
+        if(StringUtils.isEmpty(deviceId)){
+            return false;
+        }
+        DevicePo devicePo  = deviceMapper.selectByDeviceId(deviceId);
+        if(devicePo == null ){
+            return false;
+        }
+        Boolean ret  =false;
+        ret = deviceGroupMapper.deleteDeviceGroupItem(devicePo.getId(),userId) > 0;
+        ret = ret &&  deviceRelationMapper.deleteRelation(devicePo.getId(),userId) > 0;
+        return ret;
     }
 
     @Data

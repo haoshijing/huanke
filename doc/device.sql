@@ -226,7 +226,8 @@ alter table t_device_group add (
 `memo` varchar(2048) comment '分组说明',
 `videoCover` varchar(1024) comment '分组封面',
 `videoUrl` varchar(1024) comment '分组视频链接',
-`qrcode` varchar(1024) comment '二维码链接'
+`qrcode` varchar(1024) comment '二维码链接',
+`adImages` varchar(10240) comment '广告图片集'
 );
 
 drop table if EXISTS t_device_group_item;

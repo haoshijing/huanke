@@ -55,7 +55,7 @@ public class DeviceService {
             }else if(devicePo.getOnlineStatus() == 2){
                 deviceVo.setOnlineStatus("离线");
             }
-
+            deviceVo.setLocation(devicePo.getLocation());
             DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByMac(devicePo.getMac());
             if(deviceInfoPo != null){
                 String version = deviceInfoPo.getVersion();

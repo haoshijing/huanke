@@ -140,7 +140,9 @@
             <if test = "status != null">
                 status = #{status},
             </if>
-
+            <if test = "adImages  != null and adImages != ''">
+                adImages = #{adImages},
+            </if>
             <if test = "videoUrl != null">
                 videoUrl = #{videoUrl},
             </if>
@@ -187,4 +189,9 @@
         select * from  <include refid="tableName"/>
         where groupName = #{groupName} and userId = #{userId}
     </select>
+
+    <delete id="deleteDeviceGroupItem">
+        delete from t_device_group_item
+        where deviceId = #{deviceId} and userId = #{userId}
+    </delete>
 </mapper>

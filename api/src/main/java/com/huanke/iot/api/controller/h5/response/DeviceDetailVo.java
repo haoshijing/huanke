@@ -1,9 +1,7 @@
 package com.huanke.iot.api.controller.h5.response;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import lombok.Data;
-import org.assertj.core.util.Lists;
 
 import java.util.List;
 

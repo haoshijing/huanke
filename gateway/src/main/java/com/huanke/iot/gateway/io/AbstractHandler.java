@@ -2,6 +2,7 @@ package com.huanke.iot.gateway.io;
 
 import com.google.common.collect.Maps;
 import com.huanke.iot.gateway.onlinecheck.OnlineCheckService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author haoshijing
  * @version 2018年04月02日 15:17
  **/
+@Slf4j
 public abstract  class AbstractHandler {
 
     private static  ConcurrentMap<String,AbstractHandler> handlerMap= Maps.newConcurrentMap();
@@ -25,7 +27,8 @@ public abstract  class AbstractHandler {
 
 
     public  void  handler(String topic, byte[] payloads){
-        onlineCheckService.resetOnline(getDeviceIdFromTopic(topic));
+        Integer id = getDeviceIdFromTopic(topic);
+        onlineCheckService.resetOnline(id);
         doHandler(topic,payloads);
     }
     public abstract void  doHandler(String topic, byte[] payloads);

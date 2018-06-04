@@ -2,6 +2,7 @@ package com.huanke.iot.manage.controller.device;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.impl.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
@@ -14,12 +15,9 @@ import com.huanke.iot.manage.controller.device.response.DeviceOperLogVo;
 import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.gateway.MqttSendService;
 import com.huanke.iot.manage.message.OtaDeviceVo;
-import com.huanke.iot.manage.response.DeviceTypeVo;
 import com.huanke.iot.manage.response.DeviceVo;
-import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.DeviceService;
-import com.huanke.iot.manage.service.device.DeviceTypeService;
 import com.huanke.iot.manage.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -70,9 +68,6 @@ public class DeviceController {
 
     @Autowired
     private DeviceOperLogMapper deviceOperLogMapper;
-
-    @Autowired
-    private DeviceTypeService deviceTypeService;
 
     @Autowired
     private DeviceOperLogService deviceOperLogService;
@@ -204,6 +199,7 @@ public class DeviceController {
         try {
             uploadToOss(fileName,file.getBytes());
         }catch (Exception e){
+            return ApiResponse.responseError(e);
         }
 
         DeviceUpgradePo queryPo = deviceUpgradeMapper.selectByFileName(fileName);
@@ -229,7 +225,6 @@ public class DeviceController {
             insertPo.setFileName(fileName);
             deviceUpgradeMapper.insert(insertPo);
         }
-
         return new ApiResponse<>(fileName);
     }
 
@@ -255,6 +250,5 @@ public class DeviceController {
                 ossClient.shutdown();
             }
         }
-
     }
 }

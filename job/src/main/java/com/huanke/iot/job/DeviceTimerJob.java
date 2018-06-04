@@ -5,7 +5,6 @@ import com.huanke.iot.base.dao.impl.device.DeviceTimerMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
-import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTimerPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.job.gateway.MqttSendService;
@@ -35,9 +34,9 @@ public class DeviceTimerJob {
     @Autowired
     private DeviceSensorDataMapper sensorDataMapper;
 
-    @Scheduled(cron = "0 0 1 * *  ?")
+    @Scheduled(cron = "0 0/30 * * *  ?")
     public void cleanSensorData(){
-        DateTime dateTime = new DateTime().plusDays(-1);
+        DateTime dateTime = new DateTime().plusMinutes(-30);
         sensorDataMapper.clearData(dateTime.getMillis());
     }
 

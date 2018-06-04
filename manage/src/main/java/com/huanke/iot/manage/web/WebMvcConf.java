@@ -26,6 +26,7 @@ public class WebMvcConf extends WebMvcConfigurerAdapter {
 
     /**
      * 请求拦截器
+     *
      * @param registry
      */
     @Override
@@ -38,9 +39,6 @@ public class WebMvcConf extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**").
                 excludePathPatterns("/api/device/otaDevice")
                 .excludePathPatterns("/api/device/resetPid")
-                .excludePathPatterns("/api/device/upload");;
+                .excludePathPatterns("/api/device/upload", "/api/upload");
     }
-
-
-
 }

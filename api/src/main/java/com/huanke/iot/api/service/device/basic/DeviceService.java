@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceSpeedConfigVo;
@@ -15,11 +16,13 @@ import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
+import com.huanke.iot.base.util.LocationUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -48,6 +51,13 @@ public class DeviceService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Value("${oss.url}")
+    private String ossUrl;
+
+    @Autowired
+    private LocationUtils locationUtils;
+
+
     @Autowired
     private MqttSendService mqttSendService;
 
@@ -57,7 +67,6 @@ public class DeviceService {
 
         DeviceGroupPo queryDevicePo = new DeviceGroupPo();
         queryDevicePo.setUserId(userId);
-
         List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryDevicePo, 100000, 0);
 
         List<DeviceListVo.DeviceGroupData> groupDatas = deviceGroupPos.stream().map(
@@ -74,7 +83,19 @@ public class DeviceService {
                     if(StringUtils.isEmpty(qrcode)){
                         qrcode = "https://idcfota.oss-cn-hangzhou.aliyuncs.com/group/WechatIMG4213.jpeg";
                     }
-
+                    List<String> adImages = Lists.newArrayList();
+                    String adImageStr = deviceGroupPo.getAdImages();
+                    if(StringUtils.isNotEmpty(adImageStr)){
+                        String adImageStrArr[] = adImageStr.split(",");
+                        for(String adImage:adImageStrArr){
+                            if(StringUtils.isNotEmpty(adImage) && adImage.startsWith("http")) {
+                                adImages.add(adImage);
+                            }else{
+                                adImages.add(ossUrl+"/"+adImage);
+                            }
+                        }
+                    }
+                    deviceGroupData.setAdImages(adImages);
                     String videoUrl = deviceGroupPo.getVideoUrl();
                     if (StringUtils.isEmpty(videoUrl)) {
                         videoUrl = Constants.DEFAULT_VIDEO_URl;
@@ -123,6 +144,25 @@ public class DeviceService {
                         if (deviceTypePo != null) {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                             deviceItemPo.setIcon(deviceTypePo.getIcon());
+                        }
+                        if(StringUtils.isEmpty(devicePo.getLocation())) {
+                            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+                            if (locationJson != null) {
+                                if (locationJson.containsKey("content")) {
+                                    JSONObject content = locationJson.getJSONObject("content");
+                                    if (content != null) {
+                                        if (content.containsKey("address_detail")) {
+                                            JSONObject addressDetail = content.getJSONObject("address_detail");
+                                            if (addressDetail != null) {
+                                                deviceItemPo.setLocation(addressDetail.getString("province")+","+addressDetail.getString("city"));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                            String [] locationArray = devicePo.getLocation().split(",");
+                            deviceItemPo.setLocation(Joiner.on(" ").join(locationArray));
                         }
                         Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
                         deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));

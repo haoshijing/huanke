@@ -5,11 +5,11 @@ import com.huanke.iot.base.po.device.DevicePo;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -30,6 +30,7 @@ public class OnlineCheckService {
 
     @PostConstruct
     public void init(){
+        loadOnlineFromDb();
         executorService = Executors.newScheduledThreadPool(1,new DefaultThreadFactory("ScanIdThread"));
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
@@ -57,8 +58,9 @@ public class OnlineCheckService {
             if(!data.isOnline()){
                 DevicePo updatePo = new DevicePo();
                 updatePo.setOnlineStatus(2);
-                updatePo.setId(it.next().getKey());
+                updatePo.setId(data.getId());
                 deviceMapper.updateById(updatePo);
+                it.remove();
             }
         }
     }
@@ -68,19 +70,12 @@ public class OnlineCheckService {
        boolean needUpdateDd  =false;
        if(data == null){
            data = new OnlineCheckData();
-           data.setFailCount(0);
-           data.setLastUpdateTime(System.currentTimeMillis());
-           data.setOnline(true);
-           needUpdateDd = true;
-           data.setId(id);
-       }else{
-           if(!data.isOnline()) {
-               needUpdateDd = true;
-           }
-           data.setFailCount(0);
-           data.setLastUpdateTime(System.currentTimeMillis());
-           data.setOnline(true);
        }
+       data.setFailCount(0);
+        data.setLastUpdateTime(System.currentTimeMillis());
+        data.setOnline(true);
+        needUpdateDd = true;
+        data.setId(id);
         idMap.put(id,data);
        if(needUpdateDd){
            DevicePo updatePo = new DevicePo();
@@ -88,5 +83,14 @@ public class OnlineCheckService {
            updatePo.setOnlineStatus(1);
            deviceMapper.updateById(updatePo);
        }
+    }
+
+    private void loadOnlineFromDb(){
+        DevicePo queryPo = new DevicePo();
+        queryPo.setOnlineStatus(1);
+        List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,0,100000);
+        devicePoList.forEach(devicePo -> {
+            resetOnline(devicePo.getId());
+        });
     }
 }

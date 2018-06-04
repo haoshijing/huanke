@@ -1,11 +1,7 @@
 package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.huanke.iot.api.controller.app.request.AppFuncVo;
-import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
-import com.huanke.iot.api.controller.app.response.VideoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
@@ -13,24 +9,16 @@ import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
-import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.dao.impl.user.AppUserMapper;
-import com.huanke.iot.base.enums.FuncTypeEnums;
-import com.huanke.iot.base.po.user.AppUserPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import java.util.List;
 
 
@@ -45,8 +33,12 @@ public class AppController extends BaseController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+
     @Autowired
     private DeviceService deviceService;
+
+    @Value("${apkKey}")
+    private String apkKey;
 
     @RequestMapping("/queryDeviceList")
     public ApiResponse<DeviceListVo> queryDeviceList(HttpServletRequest request) {
@@ -76,7 +68,7 @@ public class AppController extends BaseController {
     @RequestMapping("/obtainApk")
     public ApiResponse<AppInfoVo> obtainApk() {
 
-        String apkInfo = stringRedisTemplate.opsForValue().get("apkInfo");
+        String apkInfo = stringRedisTemplate.opsForValue().get(apkKey);
         if (StringUtils.isNotEmpty(apkInfo)) {
             AppInfoVo appInfoVo = JSON.parseObject(apkInfo, AppInfoVo.class);
             return new ApiResponse<>(appInfoVo);
@@ -110,15 +102,6 @@ public class AppController extends BaseController {
             deviceFuncVo.setValue("1");
         }
         deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(request),2);
-        return new ApiResponse<>(true);
-    }
-
-    @RequestMapping("/setApkInfo")
-    public ApiResponse<Boolean> setApkInfo(String v, String u) {
-        AppInfoVo appInfoVo = new AppInfoVo();
-        appInfoVo.setApkUrl(u);
-        appInfoVo.setCurrentVersion(v);
-        stringRedisTemplate.opsForValue().set("apkInfo", JSON.toJSONString(appInfoVo));
         return new ApiResponse<>(true);
     }
 }
