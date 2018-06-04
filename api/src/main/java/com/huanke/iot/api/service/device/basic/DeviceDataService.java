@@ -488,7 +488,7 @@ public class DeviceDataService {
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
                 dataItem.setType(wind);
-                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速");
+                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速,4:四档风速,5:五档风速,6:六档风速");
                 dataItem.setValue(getData(controlDatas, wind));
                 if (winds.size() == 1) {
                     dataItem.setName("风速");
@@ -701,5 +701,4 @@ public class DeviceDataService {
         }
         return (int)(((tbl_aqi[i+1]-tbl_aqi[i])/(tbl_pm2_5[i+1]-tbl_pm2_5[i])*(pm2_5-tbl_pm2_5[i])+tbl_aqi[i]));
     }
-
 }
