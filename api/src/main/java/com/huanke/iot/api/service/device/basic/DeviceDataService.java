@@ -311,6 +311,7 @@ public class DeviceDataService {
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
             deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
+            deviceDetailVo.setIp(devicePo.getIp());
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
             if(deviceDetailVo.getPm() == null || StringUtils.isEmpty(deviceDetailVo.getPm().getData()) ||  StringUtils.equals("0",deviceDetailVo.getPm().getData())){
                 deviceDetailVo.setAqi("0");
