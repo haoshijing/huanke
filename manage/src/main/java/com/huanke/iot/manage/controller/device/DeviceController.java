@@ -170,7 +170,7 @@ public class DeviceController {
         item.setSize(deviceUpgradePo.getFileSize());
         item.setMd5(deviceUpgradePo.getMd5());
         String data = JSON.toJSONString(otaDeviceVo);
-        log.info("data={}",data);
+        log.info("data={},topic = {}",data,topic);
         mqttSendService.sendMessage(topic, data);
 
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
