@@ -307,6 +307,7 @@ public class DeviceDataService {
     public DeviceDetailVo queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+
         if (devicePo != null) {
             deviceDetailVo.setDeviceName(devicePo.getName());
             deviceDetailVo.setDeviceId(devicePo.getDeviceId());
@@ -324,6 +325,7 @@ public class DeviceDataService {
                 Integer pm = Integer.valueOf(deviceDetailVo.getPm().getData());
                 deviceDetailVo.setAqi(String.valueOf(getAqi(pm)));
             }
+            fillDeviceInfo(deviceDetailVo,devicePo);
         }
 
         JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), false);
@@ -363,6 +365,11 @@ public class DeviceDataService {
             deviceDetailVo.setLocation(devicePo.getLocation());
         }
         return deviceDetailVo;
+    }
+
+    private void fillDeviceInfo(DeviceDetailVo deviceDetailVo,DevicePo devicePo) {
+        DeviceDetailVo.DeviceInfoItem info = new DeviceDetailVo.DeviceInfoItem();
+        info.setDeviceSupport("");
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo,Integer userId,Integer operType) {
