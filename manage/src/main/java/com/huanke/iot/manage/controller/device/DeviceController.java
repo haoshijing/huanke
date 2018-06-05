@@ -109,7 +109,7 @@ public class DeviceController {
 //        }
         OtaDeviceVo otaDeviceVo = new OtaDeviceVo();
         OtaDeviceVo.OtaDeviceItem item = new OtaDeviceVo.OtaDeviceItem();
-        item.setType(request.getType());
+        item.setType(request.getOtaType());
         String fileName = request.getFileName();
         int idx = fileName.lastIndexOf(".");
         String fileOriginName = fileName.substring(0,idx);
@@ -152,7 +152,7 @@ public class DeviceController {
         }
         OtaDeviceVo otaDeviceVo = new OtaDeviceVo();
         OtaDeviceVo.OtaDeviceItem item = new OtaDeviceVo.OtaDeviceItem();
-        item.setType(request.getType());
+        item.setType(request.getOtaType());
         String fileName = request.getFileName();
         int idx = fileName.lastIndexOf(".");
         String fileOriginName = fileName.substring(0,idx);

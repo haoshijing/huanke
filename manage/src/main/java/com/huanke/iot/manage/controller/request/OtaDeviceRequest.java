@@ -6,5 +6,5 @@ import lombok.Data;
 public class OtaDeviceRequest {
     private Integer id;
     private String fileName;
-    private String type;
+    private String otaType;
 }
