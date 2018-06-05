@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +71,9 @@ public class DeviceDataService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Value("${speed}")
+    private int speed;
 
     private static final String TOKEN_PREFIX = "token.";
 
@@ -318,11 +322,8 @@ public class DeviceDataService {
                 deviceDetailVo.setAqi("0");
             }else{
                 Integer pm = Integer.valueOf(deviceDetailVo.getPm().getData());
-                //BigDecimal bigDecimal = new BigDecimal(getAqi(pm));
-                //deviceDetailVo.setAqi(String.valueOf(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
                 deviceDetailVo.setAqi(String.valueOf(getAqi(pm)));
             }
-
         }
 
         JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), false);
@@ -491,7 +492,14 @@ public class DeviceDataService {
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
                 dataItem.setType(wind);
-                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速,4:四档风速,5:五档风速,6:六档风速");
+                StringBuilder choiceSb = new StringBuilder();
+                String []  dataArray = {"一","二","三","四","五","六","七"};
+                for(int i =0; i <  speed;i++){
+                    choiceSb.append((i+1)).append(":").append(dataArray[i]).append("档风速");
+                    if(i != (speed - 1)){
+                        choiceSb.append(",");
+                    }
+                }
                 dataItem.setValue(getData(controlDatas, wind));
                 if (winds.size() == 1) {
                     dataItem.setName("风速");
