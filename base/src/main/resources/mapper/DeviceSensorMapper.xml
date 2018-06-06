@@ -51,7 +51,7 @@
 
     <delete id="clearData">
         delete from <include refid="tableName"/> where    <![CDATA[
-         and createTime <= #{lastTime}
+         createTime <= #{lastTime}
            ]]>
     </delete>
 

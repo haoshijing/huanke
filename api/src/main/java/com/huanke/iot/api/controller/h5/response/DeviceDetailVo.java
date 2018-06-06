@@ -42,8 +42,19 @@ public class DeviceDetailVo {
     private String aqi;
     private String ip;
     private String location;
-
     private DataItem childItem;
+    private DeviceInfoItem deviceInfoItem;
+
+
+    @Data
+    public static class DeviceInfoItem{
+        private Integer id;
+        private String mac;
+        private String hardVersion;
+        private String softVersion;
+        private String deviceSupport;
+        private String softSupport;
+    }
 
     @Data
     public static class DataItem{

@@ -57,10 +57,11 @@ public class DeviceService {
     @Autowired
     private LocationUtils locationUtils;
 
-
     @Autowired
     private MqttSendService mqttSendService;
 
+    @Value("${speed}")
+    private int speed;
 
     public DeviceListVo obtainMyDevice(Integer userId) {
         DeviceListVo deviceListVo = new DeviceListVo();
@@ -80,18 +81,18 @@ public class DeviceService {
                         icon = Constants.DEFAULT_ICON;
                     }
                     String qrcode = deviceGroupPo.getQrcode();
-                    if(StringUtils.isEmpty(qrcode)){
+                    if (StringUtils.isEmpty(qrcode)) {
                         qrcode = "https://idcfota.oss-cn-hangzhou.aliyuncs.com/group/WechatIMG4213.jpeg";
                     }
                     List<String> adImages = Lists.newArrayList();
                     String adImageStr = deviceGroupPo.getAdImages();
-                    if(StringUtils.isNotEmpty(adImageStr)){
+                    if (StringUtils.isNotEmpty(adImageStr)) {
                         String adImageStrArr[] = adImageStr.split(",");
-                        for(String adImage:adImageStrArr){
-                            if(StringUtils.isNotEmpty(adImage) && adImage.startsWith("http")) {
+                        for (String adImage : adImageStrArr) {
+                            if (StringUtils.isNotEmpty(adImage) && adImage.startsWith("http")) {
                                 adImages.add(adImage);
-                            }else{
-                                adImages.add(ossUrl+"/"+adImage);
+                            } else {
+                                adImages.add(ossUrl + "/" + adImage);
                             }
                         }
                     }
@@ -145,7 +146,7 @@ public class DeviceService {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                             deviceItemPo.setIcon(deviceTypePo.getIcon());
                         }
-                        if(StringUtils.isEmpty(devicePo.getLocation())) {
+                        if (StringUtils.isEmpty(devicePo.getLocation())) {
                             JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
                             if (locationJson != null) {
                                 if (locationJson.containsKey("content")) {
@@ -154,14 +155,14 @@ public class DeviceService {
                                         if (content.containsKey("address_detail")) {
                                             JSONObject addressDetail = content.getJSONObject("address_detail");
                                             if (addressDetail != null) {
-                                                deviceItemPo.setLocation(addressDetail.getString("province")+","+addressDetail.getString("city"));
+                                                deviceItemPo.setLocation(addressDetail.getString("province") + "," + addressDetail.getString("city"));
                                             }
                                         }
                                     }
                                 }
                             }
-                        }else{
-                            String [] locationArray = devicePo.getLocation().split(",");
+                        } else {
+                            String[] locationArray = devicePo.getLocation().split(",");
                             deviceItemPo.setLocation(Joiner.on(" ").join(locationArray));
                         }
                         Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
@@ -254,47 +255,44 @@ public class DeviceService {
         DeviceSpeedConfigVo deviceSpeedConfigVo = new DeviceSpeedConfigVo();
         String config = devicePo.getSpeedConfig();
         if (StringUtils.isEmpty(config)) {
-            List<DeviceSpeedConfigVo.SpeedConfigItem> inItems =
-                    Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
-                            , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30));
-            List<DeviceSpeedConfigVo.SpeedConfigItem> outItems =
-                    Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
-                            , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
-                            new DeviceSpeedConfigVo.SpeedConfigItem(3, 30)
-                    );
+            List<DeviceSpeedConfigVo.SpeedConfigItem> inItems = Lists.newArrayList();
+            for (int i = 1; i <= speed; i++) {
+                inItems.add(new DeviceSpeedConfigVo.SpeedConfigItem(i, 10 * i));
+            }
+
+            List<DeviceSpeedConfigVo.SpeedConfigItem> outItems = Lists.newArrayList();
+            for (int i = 1; i <= speed; i++) {
+                outItems.add(new DeviceSpeedConfigVo.SpeedConfigItem(i, 10 * i));
+            }
             deviceSpeedConfigVo.setInItems(inItems);
             deviceSpeedConfigVo.setOutItems(outItems);
-        }else{
+        } else {
             JSONObject jsonObject = JSON.parseObject(devicePo.getSpeedConfig());
             JSONArray inArray = jsonObject.getJSONArray("in");
-            List<DeviceSpeedConfigVo.SpeedConfigItem> inItems= Lists.newArrayList();
-            List<DeviceSpeedConfigVo.SpeedConfigItem> outItems= Lists.newArrayList();
-            if(inArray != null) {
+            List<DeviceSpeedConfigVo.SpeedConfigItem> inItems = Lists.newArrayList();
+            List<DeviceSpeedConfigVo.SpeedConfigItem> outItems = Lists.newArrayList();
+            if (inArray != null) {
                 for (int i = 0; i < inArray.size(); i++) {
                     DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem();
-                    item.setLevel(i+1);
+                    item.setLevel(i + 1);
                     item.setSpeed(inArray.getInteger(i));
                     inItems.add(item);
                 }
             }
 
             JSONArray outArray = jsonObject.getJSONArray("out");
-            if(outArray != null) {
+            if (outArray != null) {
                 for (int i = 0; i < outArray.size(); i++) {
                     DeviceSpeedConfigVo.SpeedConfigItem item = new DeviceSpeedConfigVo.SpeedConfigItem();
-                    item.setLevel(i+1);
+                    item.setLevel(i + 1);
                     item.setSpeed(outArray.getInteger(i));
                     outItems.add(item);
                 }
-            }else{
-                outItems =
-                        Lists.newArrayList(new DeviceSpeedConfigVo.SpeedConfigItem(1, 10)
-                                , new DeviceSpeedConfigVo.SpeedConfigItem(2, 20),
-                                new DeviceSpeedConfigVo.SpeedConfigItem(3, 30),
-                                new DeviceSpeedConfigVo.SpeedConfigItem(4, 40),
-                                new DeviceSpeedConfigVo.SpeedConfigItem(5, 50),
-                                new DeviceSpeedConfigVo.SpeedConfigItem(6, 60));
+            } else {
+                outItems = Lists.newArrayList();
+                for (int i = 1; i <= speed; i++) {
+                    outItems.add(new DeviceSpeedConfigVo.SpeedConfigItem(i, 10 * i));
+                }
             }
             deviceSpeedConfigVo.setOutItems(outItems);
             deviceSpeedConfigVo.setInItems(inItems);

@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +71,9 @@ public class DeviceDataService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Value("${speed}")
+    private int speed;
 
     private static final String TOKEN_PREFIX = "token.";
 
@@ -215,11 +219,10 @@ public class DeviceDataService {
             List<String> xdata = Lists.newArrayList();
             List<String> ydata = Lists.newArrayList();
             for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
-                if(deviceSensorPo.getCo2() == null){
+                if(deviceSensorPo.getPm() == null){
                     continue;
                 }
                 xdata.add(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:mm:ss"));
-
                 if(StringUtils.equals(sensorType,SensorTypeEnums.CO2_IN.getCode())) {
                     ydata.add(deviceSensorPo.getCo2().toString());
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.HUMIDITY_IN.getCode())) {
@@ -322,6 +325,7 @@ public class DeviceDataService {
     public DeviceDetailVo queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+
         if (devicePo != null) {
             deviceDetailVo.setDeviceName(devicePo.getName());
             deviceDetailVo.setDeviceId(devicePo.getDeviceId());
@@ -338,11 +342,9 @@ public class DeviceDataService {
                 deviceDetailVo.setAqi("0");
             }else{
                 Integer pm = Integer.valueOf(deviceDetailVo.getPm().getData());
-                //BigDecimal bigDecimal = new BigDecimal(getAqi(pm));
-                //deviceDetailVo.setAqi(String.valueOf(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
                 deviceDetailVo.setAqi(String.valueOf(getAqi(pm)));
             }
-
+            fillDeviceInfo(deviceDetailVo,devicePo);
         }
 
         JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), false);
@@ -382,6 +384,11 @@ public class DeviceDataService {
             deviceDetailVo.setLocation(devicePo.getLocation());
         }
         return deviceDetailVo;
+    }
+
+    private void fillDeviceInfo(DeviceDetailVo deviceDetailVo,DevicePo devicePo) {
+        DeviceDetailVo.DeviceInfoItem info = new DeviceDetailVo.DeviceInfoItem();
+        info.setDeviceSupport("");
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo,Integer userId,Integer operType) {
@@ -511,7 +518,14 @@ public class DeviceDataService {
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
                 dataItem.setType(wind);
-                dataItem.setChoice("1:一档风速,2:二档风速,3:三档风速");
+                StringBuilder choiceSb = new StringBuilder();
+                String []  dataArray = {"一","二","三","四","五","六","七"};
+                for(int i =0; i <  speed;i++){
+                    choiceSb.append((i+1)).append(":").append(dataArray[i]).append("档风速");
+                    if(i != (speed - 1)){
+                        choiceSb.append(",");
+                    }
+                }
                 dataItem.setValue(getData(controlDatas, wind));
                 if (winds.size() == 1) {
                     dataItem.setName("风速");
@@ -724,5 +738,4 @@ public class DeviceDataService {
         }
         return (int)(((tbl_aqi[i+1]-tbl_aqi[i])/(tbl_pm2_5[i+1]-tbl_pm2_5[i])*(pm2_5-tbl_pm2_5[i])+tbl_aqi[i]));
     }
-
 }
