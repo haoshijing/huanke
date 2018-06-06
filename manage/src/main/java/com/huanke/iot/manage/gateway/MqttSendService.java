@@ -26,7 +26,7 @@ public class MqttSendService {
             try {
                 mqttClient = new MqttClient(mqttServerUrl, "MessageProducer");
             }catch (Exception e){
-
+                log.error("",e);
             }
         }
     }
