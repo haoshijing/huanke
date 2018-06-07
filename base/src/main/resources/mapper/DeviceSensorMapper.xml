@@ -40,7 +40,7 @@
 
         select AVG(sensorValue)
         from <include refid="tableName"/>
-        where createTime > #{statrTime}
+        where createTime > #{startTime}
         <![CDATA[
          and createTime <= #{endTime}
            ]]>
