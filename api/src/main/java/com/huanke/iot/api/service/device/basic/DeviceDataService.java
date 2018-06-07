@@ -476,7 +476,7 @@ public class DeviceDataService {
         DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
         String time = getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode());
         if(StringUtils.isNotEmpty(time)){
-            screen.setData(String.valueOf(Integer.valueOf(time)*3600));
+            screen.setData(String.valueOf(Integer.valueOf(time)));
         }else{
             screen.setData("0");
         }
