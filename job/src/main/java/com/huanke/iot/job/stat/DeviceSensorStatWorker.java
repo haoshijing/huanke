@@ -70,7 +70,7 @@ public class DeviceSensorStatWorker {
                     deviceSensorStatPo.setTvoc(tvoc.get());
                     deviceSensorStatPo.setTem(tem.get());
                 }catch (Exception e){
-
+                    log.error("",e);
                 }
                 try {
                     deviceSensorStatMapper.insert(deviceSensorStatPo);
@@ -101,6 +101,7 @@ public class DeviceSensorStatWorker {
             if (data == null) {
                 data = 0;
             }
+            log.info("data = {}",data);
             return data;
         }
     }
