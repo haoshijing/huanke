@@ -232,7 +232,11 @@ public class DeviceDataService {
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.HCHO_IN.getCode())) {
                     ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getHcho()));
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.PM25_IN.getCode())) {
-                    ydata.add(deviceSensorPo.getPm().toString());
+                    if(deviceSensorPo.getPm() != null) {
+                        ydata.add(deviceSensorPo.getPm().toString());
+                    }else{
+                        ydata.add("");
+                    }
                 }else  if(StringUtils.equals(sensorType,SensorTypeEnums.TVOC_IN.getCode())) {
                     ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getTvoc()));
                 }else{
@@ -291,6 +295,20 @@ public class DeviceDataService {
         return Lists.newArrayList();
     }
 
+    public Boolean deleteDevice(Integer userId, String deviceId) {
+        if(StringUtils.isEmpty(deviceId)){
+            return false;
+        }
+        DevicePo devicePo  = deviceMapper.selectByDeviceId(deviceId);
+        if(devicePo == null ){
+            return false;
+        }
+        Boolean ret  =false;
+        ret = deviceGroupMapper.deleteDeviceGroupItem(devicePo.getId(),userId) > 0;
+        ret = ret &&  deviceRelationMapper.deleteRelation(devicePo.getId(),userId) > 0;
+        return ret;
+    }
+
     @Data
     public static class FuncItemMessage {
         private String type;
@@ -318,6 +336,7 @@ public class DeviceDataService {
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
             deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
+            deviceDetailVo.setIp(devicePo.getIp());
             getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
             if(deviceDetailVo.getPm() == null || StringUtils.isEmpty(deviceDetailVo.getPm().getData()) ||  StringUtils.equals("0",deviceDetailVo.getPm().getData())){
                 deviceDetailVo.setAqi("0");

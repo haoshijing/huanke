@@ -96,6 +96,7 @@ public class DeviceService {
                             }
                         }
                     }
+                    deviceGroupData.setAdImages(adImages);
                     String videoUrl = deviceGroupPo.getVideoUrl();
                     if (StringUtils.isEmpty(videoUrl)) {
                         videoUrl = Constants.DEFAULT_VIDEO_URl;
