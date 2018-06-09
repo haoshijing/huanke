@@ -14,12 +14,14 @@ import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
+import com.huanke.iot.base.dao.impl.device.data.DeviceInfoMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.impl.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
+import com.huanke.iot.base.po.device.data.DeviceInfoPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.user.AppUserPo;
@@ -67,6 +69,9 @@ public class DeviceDataService {
     private DeviceSensorStatMapper deviceSensorStatMapper;
 
     @Autowired
+    private DeviceInfoMapper deviceInfoMapper;
+
+    @Autowired
     private LocationUtils locationUtils;
 
     @Autowired
@@ -98,6 +103,7 @@ public class DeviceDataService {
         DeviceGroupItemPo queryGroupItemPo = new DeviceGroupItemPo();
         queryGroupItemPo.setDeviceId(deviceId);
         queryGroupItemPo.setUserId(appUserPo.getId());
+        queryGroupItemPo.setStatus(1);
         Integer itemCount = deviceGroupMapper.queryItemCount(queryGroupItemPo);
         if (itemCount == 0) {
             return false;
@@ -388,7 +394,20 @@ public class DeviceDataService {
 
     private void fillDeviceInfo(DeviceDetailVo deviceDetailVo,DevicePo devicePo) {
         DeviceDetailVo.DeviceInfoItem info = new DeviceDetailVo.DeviceInfoItem();
-        info.setDeviceSupport("");
+        info.setDeviceSupport("环可科技");
+        info.setSoftSupport("环可科技");
+        info.setMac(devicePo.getMac());
+        info.setId(devicePo.getId());
+        DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByMac(devicePo.getMac());
+        if(deviceInfoPo != null){
+            String version = deviceInfoPo.getVersion();
+            JSONObject jsonObject = JSON.parseObject(version);
+            if(jsonObject != null) {
+                info.setHardVersion(jsonObject.getString("hardware"));
+                info.setSoftVersion(jsonObject.getString("software"));
+            }
+        }
+        deviceDetailVo.setDeviceInfoItem(info);
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo,Integer userId,Integer operType) {
