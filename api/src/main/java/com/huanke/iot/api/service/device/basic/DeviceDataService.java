@@ -577,6 +577,7 @@ public class DeviceDataService {
                         choiceSb.append(",");
                     }
                 }
+                dataItem.setChoice(choiceSb.toString());
                 dataItem.setValue(getData(controlDatas, wind));
                 if (winds.size() == 1) {
                     dataItem.setName("风速");
