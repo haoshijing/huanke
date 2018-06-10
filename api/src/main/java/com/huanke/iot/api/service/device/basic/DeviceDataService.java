@@ -367,8 +367,9 @@ public class DeviceDataService {
                 List<DeviceDetailVo.ModeItem> modeItems = Lists.newArrayList();
                 String modeArr[] = mode.split(",");
                 for(String modeStr:modeArr){
-                    modeItems.add(new DeviceDetailVo.ModeItem(Integer.valueOf(modeStr),modeArr[Integer.valueOf(modeStr)-1]));
+                    modeItems.add(new DeviceDetailVo.ModeItem(Integer.valueOf(modeStr),modes[Integer.valueOf(modeStr)-1]));
                 }
+                deviceDetailVo.setModeItems(modeItems);
             }
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
