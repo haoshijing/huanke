@@ -103,6 +103,8 @@ public class DeviceBindService {
             deviceMapper.updateById(updatePo);
             userId = appUserPo.getId();
             Integer dId = devicePo.getId();
+            //删除和设备的关联,删除所有的这个设备人的关系和绑定关系
+            //deviceGroupMapper.deleteDeviceGroupItem(dId,userId);
             deviceGroupMapper.updateGroupItemStatus(dId, userId,2);
         }
     }
