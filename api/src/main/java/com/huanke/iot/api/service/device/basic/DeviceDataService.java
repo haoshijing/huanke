@@ -77,6 +77,8 @@ public class DeviceDataService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    private static String [] modes = {"云端大数据联动","神经网络算法","模糊驱动算法","深度学习算法"};
+
     @Value("${speed}")
     private int speed;
 
@@ -315,6 +317,27 @@ public class DeviceDataService {
         return ret;
     }
 
+    public Boolean updateMode(Integer userId, String deviceId, String mode) {
+        if(StringUtils.isEmpty(deviceId)){
+            return false;
+        }
+        DevicePo devicePo  = deviceMapper.selectByDeviceId(deviceId);
+        if(devicePo == null ){
+            return false;
+        }
+        DeviceGroupItemPo itemPo = new DeviceGroupItemPo();
+        itemPo.setUserId(userId);
+        itemPo.setDeviceId(devicePo.getId());
+        Integer count = deviceGroupMapper.queryItemCount(itemPo);
+        if(count > 0){
+            DevicePo updatePo = new DevicePo();
+            updatePo.setId(devicePo.getId());
+            updatePo.setMode(mode);
+            return  deviceMapper.updateById(updatePo) > 0;
+        }
+        return false;
+    }
+
     @Data
     public static class FuncItemMessage {
         private String type;
@@ -338,6 +361,14 @@ public class DeviceDataService {
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());
             if (deviceTypePo != null) {
                 deviceDetailVo.setDeviceTypeName(deviceTypePo.getName());
+            }
+            String mode = devicePo.getMode();
+            if(StringUtils.isNotEmpty(mode)){
+                List<DeviceDetailVo.ModeItem> modeItems = Lists.newArrayList();
+                String modeArr[] = mode.split(",");
+                for(String modeStr:modeArr){
+                    modeItems.add(new DeviceDetailVo.ModeItem(Integer.valueOf(modeStr),modeArr[Integer.valueOf(modeStr)-1]));
+                }
             }
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());

@@ -35,6 +35,8 @@ alter table t_device add column ip varchar(200) comment '机器Ip';
 alter table t_device add column onlineStatus int DEFAULT 2 comment '在线状态';
 alter table t_device  add COLUMN location varchar(500) DEFAULT '' comment '位置';
 
+alter table t_device  add COLUMN mode varchar(20) DEFAULT '' comment '模式';
+
 drop table if  EXISTS  t_device_type;
 create table t_device_type
 (

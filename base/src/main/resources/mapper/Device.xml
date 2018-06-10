@@ -118,7 +118,9 @@
             </if>
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
-            </if>
+            </if>   <if test="mode != null">
+               mode = #{mode},
+             </if>
             <if test="ip != null and ip != ''">
                 ip = #{ip},
             </if>

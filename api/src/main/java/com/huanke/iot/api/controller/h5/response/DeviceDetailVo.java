@@ -1,6 +1,7 @@
 package com.huanke.iot.api.controller.h5.response;
 
 import com.alibaba.fastjson.JSONArray;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class DeviceDetailVo {
     private List<OtherItem> windItems;
     private List<JSONArray> funcs;
     private List<OtherItem> timers;
+    private List<ModeItem> modeItems;
 
     private String outerPm= "";
     private String airQuality= "";
@@ -46,6 +48,12 @@ public class DeviceDetailVo {
     private DeviceInfoItem deviceInfoItem;
 
 
+    @Data
+    @AllArgsConstructor
+    public static class ModeItem{
+        private Integer id;
+        private String name;
+    }
     @Data
     public static class DeviceInfoItem{
         private Integer id;
