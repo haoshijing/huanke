@@ -127,7 +127,6 @@ public class DeviceDataService {
         DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
         queryItemPo.setDeviceId(deviceId);
         queryItemPo.setUserId(toId);
-        queryItemPo.setStatus(1);
         Integer count = deviceGroupMapper.queryItemCount(queryItemPo);
         if (count == 0) {
             DeviceGroupItemPo insertDeviceGroupItemPo = queryItemPo;
