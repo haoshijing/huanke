@@ -137,6 +137,8 @@ public class DeviceDataService {
             insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
             insertDeviceGroupItemPo.setIsMaster(2);
             deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
+        }else{
+            deviceGroupMapper.updateGroupItemStatus(deviceId,toId,1);
         }
 
         DeviceRelationPo queryPo = new DeviceRelationPo();
