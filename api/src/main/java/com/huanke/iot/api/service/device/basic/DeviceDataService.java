@@ -74,6 +74,9 @@ public class DeviceDataService {
     @Autowired
     private LocationUtils locationUtils;
 
+    @Value("${unit}")
+    private Integer unit;
+
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -547,7 +550,7 @@ public class DeviceDataService {
         DeviceDetailVo.SysDataItem screen = new DeviceDetailVo.SysDataItem();
         String time = getData(controlDatas, FuncTypeEnums.TIMER_SCREEN.getCode());
         if(StringUtils.isNotEmpty(time)){
-            screen.setData(String.valueOf(Integer.valueOf(time)));
+            screen.setData(String.valueOf(unit*Integer.valueOf(time)));
         }else{
             screen.setData("0");
         }
