@@ -1,6 +1,8 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.requestcontext.UserRequestContext;
+import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
@@ -8,12 +10,13 @@ import com.huanke.iot.base.constant.RetCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 @RestController
 @RequestMapping("/h5/api")
@@ -26,19 +29,19 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @Value("${appId}")
-    private String appId;
-
 
     @RequestMapping("/user/auth")
     public ApiResponse<String> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String code = request.getParameter("code");
-        if(StringUtils.isEmpty(code)){
-            response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri=http%3A%2F%2Fhuanke.bcard.vip%2Fapi%2Fh5%2Fapi%2Fuser%2Fauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
-            return null ;
-        }
+        UserRequestContext userRequestContext = UserRequestContextHolder.get();
+        String appId = userRequestContext.getCacheVo().getAppId();
+        if(StringUtils.isEmpty(code)){}
         JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
         if(authTokenJSONObject == null){
+            String redirect_uri = request.getRequestURL()+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+            String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid"+appId+"&redirect_uri="
+                    + URLEncoder.encode(redirect_uri, "UTF-8");
+            response.sendRedirect(fullRedirectUrl);
             return new ApiResponse<>(RetCode.CODE_ERROR,"获取用户的accessToken错误");
         }
         String openId = authTokenJSONObject.getString("openid");

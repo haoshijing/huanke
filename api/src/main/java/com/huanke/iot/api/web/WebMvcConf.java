@@ -17,6 +17,9 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
     @Autowired
     private AppAuthInterceptor appAuthInterceptor;
 
+    @Autowired
+    private HostInterceptor hostInterceptor;
+
     /**
      * 请求拦截器
      * @param registry
@@ -33,6 +36,8 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
         registry.addInterceptor(appAuthInterceptor).
                 addPathPatterns("/app/**").excludePathPatterns("/app/api/setApkInfo")
                 .excludePathPatterns("/app/api/bind");
+
+        registry.addInterceptor(hostInterceptor).addPathPatterns("/*");
 
     }
     @Override
