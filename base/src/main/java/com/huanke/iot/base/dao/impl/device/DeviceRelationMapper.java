@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.impl.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.DeviceRelationPo;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -11,5 +12,7 @@ import org.apache.ibatis.annotations.Param;
 public interface DeviceRelationMapper extends BaseMapper<DeviceRelationPo> {
     Integer updateStatus(DeviceRelationPo deviceRelationPo);
 
-    Integer deleteRelation(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId);
+    Integer deleteByDeviceId(Integer deviceId);
+
+    Integer deleteRelationForJoinId(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId);
 }

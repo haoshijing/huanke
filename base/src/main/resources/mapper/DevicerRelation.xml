@@ -45,10 +45,14 @@
          set status = #{status} , lastUpdateTime = #{lastUpdateTime}
         WHERE joinUserId = #{joinUserId} and deviceId = #{deviceId}
     </select>
-    
-    <delete id="deleteRelation">
+
+    <delete id="deleteByDeviceId">
+        delete from <include refid="tableName"/>
+        where deviceId = #{deviceId}
+    </delete>
+    <delete id="deleteRelationForJoinId">
         delete from    <include refid="tableName"/>
         where deviceId = #{deviceId}
-        and ( (joinUserId = #{userId}) or (masterUserId = #{userId}))
+        and joinUserId = #{userId}
     </delete>
 </mapper>

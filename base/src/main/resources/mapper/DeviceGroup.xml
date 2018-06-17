@@ -191,7 +191,11 @@
     </select>
 
     <delete id="deleteDeviceGroupItem">
-        delete from t_device_group_item
+        delete from <include refid="tableName"/>
         where deviceId = #{deviceId} and userId = #{userId}
+    </delete>
+    <delete id="deleteGroupItemByDeviceId">
+        delete from <include refid="tableName"/>
+        where deviceId = #{deviceId}
     </delete>
 </mapper>

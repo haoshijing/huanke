@@ -306,4 +306,5 @@ public class DeviceService {
         devicePo.setLocation(location);
         return deviceMapper.updateByDeviceId(devicePo) > 0;
     }
+
 }

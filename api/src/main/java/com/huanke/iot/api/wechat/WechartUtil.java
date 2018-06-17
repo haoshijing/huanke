@@ -2,6 +2,8 @@ package com.huanke.iot.api.wechat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.requestcontext.UserRequestContext;
+import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,10 +26,6 @@ import java.util.concurrent.TimeUnit;
 @Repository
 @Slf4j
 public class WechartUtil {
-    @Value("${appId}")
-    private String appId;
-    @Value("${appSecret}")
-    private String appSecret;
     @Value("${accessTokenKey}")
     private String accessTokenKey;
 
@@ -42,6 +40,9 @@ public class WechartUtil {
     private StringRedisTemplate stringRedisTemplate;
 
     public String getAccessToken(boolean getFromSever) {
+        UserRequestContext context =  UserRequestContextHolder.get();
+        String appId = context.getCacheVo().getAppId();
+        String appSecret = context.getCacheVo().getAppSecret();
         boolean needFromServer = getFromSever;
         if (!needFromServer) {
             String storeAccessToken = stringRedisTemplate.opsForValue().get(accessTokenKey);
@@ -74,12 +75,15 @@ public class WechartUtil {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("",e);
             }
         }
         return "";
     }
     public JSONObject obtainAuthAccessToken(String code){
+        UserRequestContext context =  UserRequestContextHolder.get();
+        String appId = context.getCacheVo().getAppId();
+        String appSecret = context.getCacheVo().getAppSecret();
         String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+appSecret+"&code="+code+"&grant_type=authorization_code";
         log.info("obtainAuthAccessToken url = {}",url);
         try {
@@ -102,7 +106,7 @@ public class WechartUtil {
                 }
            }
         }catch (Exception e){
-
+            log.error("",e);
         }
         return null;
     }
@@ -149,6 +153,7 @@ public class WechartUtil {
             }
             return result.toString();
         } catch (Exception e) {
+            log.error("",e);
             return "";
         }
     }
@@ -175,6 +180,7 @@ public class WechartUtil {
                 }
             }
         } catch (Exception e) {
+            log.error("",e);
             return null;
         }
         return null;
@@ -223,11 +229,15 @@ public class WechartUtil {
             }
             return result.toString();
         } catch (Exception e) {
+            log.error("",e);
             return "";
         }
     }
 
     public JSONObject getByRefreshToken(String refresh_token) {
+        UserRequestContext context =  UserRequestContextHolder.get();
+        String appId = context.getCacheVo().getAppId();
+        String appSecret = context.getCacheVo().getAppSecret();
         String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+appId+"&grant_type=refresh_token&refresh_token="+refresh_token;
         try {
             HttpGet httpGet = new HttpGet();
@@ -245,6 +255,7 @@ public class WechartUtil {
             JSONObject jsonObject = JSON.parseObject(result.toString());
             return  jsonObject;
         } catch (Exception e) {
+            log.error("",e);
             return null;
         }
     }

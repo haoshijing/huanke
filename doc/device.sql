@@ -275,6 +275,7 @@ createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
 
+drop table if EXISTS t_device_sensor_stat;
 create table t_device_sensor_stat(
 id int PRIMARY KEY auto_increment  COMMENT '主键ID',
 deviceId int comment '设备Id',
@@ -288,4 +289,27 @@ startTime bigint comment '开始时间',
 endTime bigint comment '结束时间',
 insertTime bigint comment '写入时间',
 index idx_did(deviceId)
+);
+
+drop table if EXISTS t_public_number;
+
+create table t_public_number(
+id int PRIMARY KEY auto_increment  COMMENT '主键ID',
+host varchar(200) comment '匹配的Host前缀',
+appId varchar(200) comment 'appId',
+status int comment '公众号状态',
+appSecret varchar(200) comment 'appSecret',
+createTime bigint comment '创建时间',
+lastUpdateTime bigint comment '最后修改时间'
+);
+
+alter table t_device add publicId int DEFAULT  1 comment '公众号id';
+drop table if EXISTS  t_deviceid_pool;
+
+create t_deviceid_pool
+(
+id int PRIMARY KEY AUTO_INCREMENT COMMENT '主键id',
+devcieId varchar(200) comment '设备id',
+publicId int comment '公众号id',
+createTime bigint comment '创建时间'
 );

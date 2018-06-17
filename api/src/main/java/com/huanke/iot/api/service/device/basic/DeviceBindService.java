@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.basic;
 import com.huanke.iot.api.util.IpUtils;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
@@ -33,6 +34,9 @@ public class DeviceBindService {
     @Autowired(required = false)
     private DeviceGroupMapper deviceGroupMapper;
 
+    @Autowired
+    private DeviceDataService deviceDataService;
+
     // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6, Con
     // tent=, CreateTime=1523200569, Event=unbind, ToUserName=gh_7f3ba47c70a3, FromUserName=okOTjwpDwxJR666hVWnj_L_jp87w, MsgType=device_event, SessionID=0, OpenID=okOTjwpDwxJR666hVWnj_L_jp87w}
     public void handlerDeviceEvent(HttpServletRequest request,Map<String, String> requestMap, String event) {
@@ -55,7 +59,6 @@ public class DeviceBindService {
             userId = newUserPo.getId();
         }
 
-        String ip = IpUtils.getIpAddr(request);
         if (StringUtils.equals("bind", event)) {
             DevicePo updateDevicePo = new DevicePo();
             updateDevicePo.setBindTime(System.currentTimeMillis());
@@ -90,8 +93,7 @@ public class DeviceBindService {
                 insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
                 deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
             }else{
-                Integer dId = devicePo.getId();
-                deviceGroupMapper.updateGroupItemStatus(dId, userId,1);
+                deviceGroupMapper.updateGroupItemStatus(devicePo.getId(),userId,1);
             }
         } else if (StringUtils.equals("unbind", event)) {
             if (appUserPo == null) {
@@ -102,10 +104,8 @@ public class DeviceBindService {
             updatePo.setId(devicePo.getId());
             deviceMapper.updateById(updatePo);
             userId = appUserPo.getId();
-            Integer dId = devicePo.getId();
-            //删除和设备的关联,删除所有的这个设备人的关系和绑定关系
-            //deviceGroupMapper.deleteDeviceGroupItem(dId,userId);
-            deviceGroupMapper.updateGroupItemStatus(dId, userId,2);
+            //删除对应的设备
+            deviceDataService.deleteDevice(userId,deviceId);
         }
     }
 }

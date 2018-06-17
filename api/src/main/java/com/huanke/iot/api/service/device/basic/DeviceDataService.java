@@ -82,6 +82,8 @@ public class DeviceDataService {
 
     private static String [] modes = {"云端大数据联动","神经网络算法","模糊驱动算法","深度学习算法"};
 
+    private static final int MASTER = 1;
+    private  static final int SLAVE = 2;
     @Value("${speed}")
     private int speed;
 
@@ -316,8 +318,26 @@ public class DeviceDataService {
             return false;
         }
         Boolean ret  =false;
-        ret = deviceGroupMapper.deleteDeviceGroupItem(devicePo.getId(),userId) > 0;
-        ret = ret &&  deviceRelationMapper.deleteRelation(devicePo.getId(),userId) > 0;
+
+        Integer iDeviceId = devicePo.getId();
+
+        DeviceGroupItemPo queryGroupItemPo = new DeviceGroupItemPo();
+        queryGroupItemPo.setUserId(userId);
+        queryGroupItemPo.setDeviceId(iDeviceId);
+        List<DeviceGroupItemPo> groupItemPos = deviceGroupMapper.queryGroupItems(queryGroupItemPo);
+        if(groupItemPos.isEmpty()){
+            return false;
+        }
+
+        DeviceGroupItemPo queryItemPo = groupItemPos.get(0);
+        Integer sf = queryItemPo.getIsMaster();
+        if(sf ==  SLAVE) {
+            ret = deviceGroupMapper.deleteDeviceGroupItem(iDeviceId, userId) > 0;
+            ret = ret && deviceRelationMapper.deleteRelationForJoinId(devicePo.getId(), userId) > 0;
+        }else{
+            ret = deviceRelationMapper.deleteByDeviceId(iDeviceId) > 0;
+            ret = ret && deviceGroupMapper.deleteGroupItemByDeviceId(iDeviceId) > 0;
+        }
         return ret;
     }
 
