@@ -55,6 +55,7 @@ public class DeviceBindService {
             AppUserPo newUserPo = new AppUserPo();
             newUserPo.setCreateTime(System.currentTimeMillis());
             newUserPo.setOpenId(openId);
+            newUserPo.setPublicId(devicePo.getPublicId());
             appUserMapper.insert(newUserPo);
             userId = newUserPo.getId();
         }

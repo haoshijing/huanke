@@ -10,10 +10,7 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
-import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
+import com.huanke.iot.base.dao.impl.device.*;
 import com.huanke.iot.base.dao.impl.device.data.DeviceInfoMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.impl.device.stat.DeviceSensorStatMapper;
@@ -70,6 +67,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceInfoMapper deviceInfoMapper;
+
+    @Autowired
+    private DeviceIdPoolMapper deviceIdPoolMapper;
 
     @Autowired
     private LocationUtils locationUtils;
@@ -335,6 +335,12 @@ public class DeviceDataService {
             ret = deviceGroupMapper.deleteDeviceGroupItem(iDeviceId, userId) > 0;
             ret = ret && deviceRelationMapper.deleteRelationForJoinId(devicePo.getId(), userId) > 0;
         }else{
+            //回收到池子中
+            DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
+            deviceIdPoolPo.setPublicId(devicePo.getPublicId());
+            deviceIdPoolPo.setDeviceId(devicePo.getDeviceId());
+            deviceIdPoolPo.setCreateTime(System.currentTimeMillis());
+            deviceIdPoolMapper.insert(deviceIdPoolPo);
             ret = deviceRelationMapper.deleteByDeviceId(iDeviceId) > 0;
             ret = ret && deviceGroupMapper.deleteGroupItemByDeviceId(iDeviceId) > 0;
         }

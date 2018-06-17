@@ -23,4 +23,8 @@ public class AppUserPo {
      * 绑定的安卓客户端地址
      */
     private String androidMac;
+    /**
+     * 公众号id
+     */
+    private Integer publicId;
 }

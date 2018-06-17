@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.impl.device.data.DeviceAlarmMapper">
+
+    <sql id="tableName">
+        t_deviceid_pool
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        deviceId,
+        publicId,
+        devicelicence,
+        createTime
+        )
+        VALUES (
+        #{deviceId},
+        #{publicId},
+        #{devicelicence},
+        #{createTime}
+        )
+    </insert>
+
+    <delete id="deleteByd" parameterType="java.lang.Integer">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
+    <select id="selectByPublicId"  resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        select * from <include refid="tableName"/>
+        where publicId = #{publicId} limit 1
+    </select>
+
+</mapper>

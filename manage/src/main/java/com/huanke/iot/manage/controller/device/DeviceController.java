@@ -8,9 +8,9 @@ import com.huanke.iot.base.dao.impl.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.DeviceUpgradePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import com.huanke.iot.manage.controller.device.request.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.controller.device.request.DeviceLogQueryRequest;
 import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
-import com.huanke.iot.manage.controller.device.request.DeviceUpdateRequest;
 import com.huanke.iot.manage.controller.device.response.DeviceOperLogVo;
 import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.gateway.MqttSendService;
@@ -42,12 +42,6 @@ import java.util.List;
 @Slf4j
 public class DeviceController {
 
-    @Value("${accessKeyId}")
-    private String accessKeyId;
-
-    @Value("${accessKeySecret}")
-    private String accessKeySecret;
-
     @Value("${bucketUrl}")
     private String bucketUrl;
 
@@ -71,6 +65,17 @@ public class DeviceController {
 
     @Autowired
     private DeviceOperLogService deviceOperLogService;
+
+    @RequestMapping("/createDevice")
+    public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest request){
+        if(StringUtils.isEmpty(request.getName()) ||
+                StringUtils.isEmpty(request.getMac())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
+        }
+
+        Boolean ret =  deviceService.createDevice(request);
+        return new ApiResponse<>(ret);
+    }
 
     @RequestMapping("/resetPid")
     public ApiResponse<Boolean> resetPid(String productId){

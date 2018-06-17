@@ -42,4 +42,8 @@ public class DevicePo {
     private Long bindTime;
     private String location;
     private String mode;
+    /**
+     * 设备所属公众号
+     */
+    private Integer publicId;
 }

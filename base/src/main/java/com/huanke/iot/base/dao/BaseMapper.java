@@ -9,6 +9,8 @@ public interface BaseMapper<T> {
 
     T selectById(Integer id);
 
+    int deleteById(Integer id);
+
     int updateById(T bean);
 
     List<T> selectList(@Param("param") T queryBean,@Param("limit") int limit ,@Param("offset") int offset);

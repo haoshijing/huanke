@@ -26,7 +26,10 @@ public class HostInterceptor extends HandlerInterceptorAdapter {
             PublicNumberCacheVo publicNumberCacheVo =  publicNumberCache.selectByHost(webSiteHost);
             if(publicNumberCacheVo != null){
                 userRequestContext.setCacheVo(publicNumberCacheVo);
+            }else{
+                throw new RuntimeException("没有匹配到任何公众号");
             }
+
         }
         return true;
     }

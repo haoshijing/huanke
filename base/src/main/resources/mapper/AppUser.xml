@@ -17,6 +17,7 @@
         nickname,
         headimgurl,
         unionid,
+        publicId,
         createTime
         )
         VALUES (
@@ -27,6 +28,7 @@
         #{nickname},
         #{headimgurl},
         #{unionid},
+        #{publicId},
         #{createTime}
         )
     </insert>
