@@ -7,8 +7,10 @@
         t_device_group
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
-        INSERT INTO <include refid="tableName"/>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
+        INSERT INTO
+        <include refid="tableName"/>
         (
         groupName,
         userId,
@@ -31,17 +33,18 @@
         )
     </insert>
 
-    <select id = "selectCount" resultType="java.lang.Integer">
+    <select id="selectCount" resultType="java.lang.Integer">
         select count(1)
-        from <include refid="tableName"/>
+        from
+        <include refid="tableName"/>
         <where>
-            <if test = "param.userId != null and param.userId != 0">
+            <if test="param.userId != null and param.userId != 0">
                 AND userId = #{param.userId}
             </if>
-            <if test = "param.status != null">
+            <if test="param.status != null">
                 AND status = #{param.status}
             </if>
-            <if test = "param.groupName != null">
+            <if test="param.groupName != null">
                 and groupName = #{param.groupName}
             </if>
         </where>
@@ -49,15 +52,16 @@
 
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
-        select * from <include refid="tableName"/>
+        select * from
+        <include refid="tableName"/>
         <where>
-            <if test = "param.userId != null and param.userId != 0">
+            <if test="param.userId != null and param.userId != 0">
                 AND userId = #{param.userId}
             </if>
-            <if test = "param.status != null">
-               AND status = #{param.status}
+            <if test="param.status != null">
+                AND status = #{param.status}
             </if>
-            <if test = "param.groupName != null">
+            <if test="param.groupName != null">
                 and groupName = #{param.groupName}
             </if>
         </where>
@@ -84,31 +88,35 @@
       )
     </insert>
 
-    <select id="queryGroupItems" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo" resultType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
+    <select id="queryGroupItems" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo"
+            resultType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
         select * from t_device_group_item
-        where status = 1
-
-        <if test = "groupId != null">
-            AND  groupId = #{groupId}
+        where 1= 1
+        <if test="status != null">
+            and status = #{status}
         </if>
-        <if test = "userId != null">
+        <if test="groupId != null">
+            AND groupId = #{groupId}
+        </if>
+        <if test="userId != null">
             and userId = #{userId}
         </if>
-        <if test = "deviceId != null">
+        <if test="deviceId != null">
             and deviceId = #{deviceId}
         </if>
-        <if test = "isMaster != null">
+        <if test="isMaster != null">
             AND isMaster = #{isMaster}
         </if>
 
     </select>
 
 
-    <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo" resultType="java.lang.Integer">
+    <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo"
+            resultType="java.lang.Integer">
         select count(1) from t_device_group_item
         where userId = #{userId} and deviceId = #{deviceId}
-        <if test = "status != null">
-             and status = #{status}
+        <if test="status != null">
+            and status = #{status}
         </if>
     </select>
 
@@ -119,34 +127,35 @@
     </update>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
-        update <include refid="tableName"/>
+        update
+        <include refid="tableName"/>
         <set>
-            <if test = "groupName != null">
+            <if test="groupName != null">
                 groupName = #{groupName},
             </if>
-            <if test = "qrcode != null and qrcode! = ''">
+            <if test="qrcode != null and qrcode! = ''">
                 qrcode = #{qrcode},
             </if>
 
 
-            <if test = "icon != null">
+            <if test="icon != null">
                 icon = #{icon},
             </if>
 
-            <if test = "memo != null">
+            <if test="memo != null">
                 memo = #{memo},
             </if>
 
-            <if test = "videoCover != null">
+            <if test="videoCover != null">
                 videoCover = #{videoCover},
             </if>
-            <if test = "status != null">
+            <if test="status != null">
                 status = #{status},
             </if>
-            <if test = "adImages  != null and adImages != ''">
+            <if test="adImages  != null and adImages != ''">
                 adImages = #{adImages},
             </if>
-            <if test = "videoUrl != null">
+            <if test="videoUrl != null">
                 videoUrl = #{videoUrl},
             </if>
             lastUpdateTime = #{lastUpdateTime}
@@ -158,18 +167,21 @@
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
     <select id="queryGroupCount" resultType="java.lang.Integer">
-        select count(1) FROM <include refid="tableName"/>
+        select count(1) FROM
+        <include refid="tableName"/>
         where userId = #{userId}
         and groupName = #{groupName}
     </select>
 
     <update id="updateGroupStatus">
-        update <include refid="tableName"/>
-        set status = #{status} where  userId = #{userId}
+        update
+        <include refid="tableName"/>
+        set status = #{status} where userId = #{userId}
         and id = #{groupId}
     </update>
 
@@ -189,7 +201,8 @@
     </update>
 
     <select id="queryByName" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
-        select * from  <include refid="tableName"/>
+        select * from
+        <include refid="tableName"/>
         where groupName = #{groupName} and userId = #{userId}
     </select>
 

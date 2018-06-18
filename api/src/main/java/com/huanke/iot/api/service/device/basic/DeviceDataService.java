@@ -276,6 +276,7 @@ public class DeviceDataService {
             DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
             deviceGroupItemPo.setUserId(userId);
             deviceGroupItemPo.setDeviceId(deviceId);
+            deviceGroupItemPo.setStatus(1);
 
             List<DeviceGroupItemPo> groupItemPos = deviceGroupMapper.queryGroupItems(deviceGroupItemPo);
             if (groupItemPos.size() > 0) {
