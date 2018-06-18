@@ -306,10 +306,11 @@ lastUpdateTime bigint comment '最后修改时间'
 alter table t_device add publicId int DEFAULT  1 comment '公众号id';
 drop table if EXISTS  t_deviceid_pool;
 
-create t_deviceid_pool
+create table t_deviceid_pool
 (
 id int PRIMARY KEY AUTO_INCREMENT COMMENT '主键id',
-devcieId varchar(200) comment '设备id',
+deviceId varchar(200) comment '设备id',
+devicelicence varchar(200) comment '设备licence',
 publicId int comment '公众号id',
 createTime bigint comment '创建时间'
 );

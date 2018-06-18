@@ -61,6 +61,7 @@ public class DeviceService {
             Integer publicId = request.getPublicId();
 
             DeviceIdPoolPo deviceIdPoolPo = deviceIdPoolMapper.selectByPublicId(publicId);
+
             if (deviceIdPoolPo == null) {
                 //没有从池子中获取到设备id
                 PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
@@ -69,7 +70,7 @@ public class DeviceService {
                     String appSecret = publicNumberPo.getAppSecret();
                     JSONObject jsonObject = obtainDeviceInfo(appId, appSecret, publicId);
                     if(jsonObject == null){
-
+                        return false;
                     }else{
                         String deviceId = jsonObject.getString("deviceid");
                         String devicelicence = jsonObject.getString("devicelicence");
@@ -80,14 +81,21 @@ public class DeviceService {
                         insertPo.setDeviceId(deviceId);
                         insertPo.setDevicelicence(devicelicence);
                         insertPo.setDeviceTypeId(request.getDeviceTypeId());
-
                         deviceMapper.insert(insertPo);
                     }
                 }
             } else {
-
+                String deviceId = deviceIdPoolPo.getDeviceId();
+                String devicelicence = deviceIdPoolPo.getDevicelicence();
+                DevicePo insertPo = new DevicePo();
+                insertPo.setPublicId(publicId);
+                insertPo.setMac(request.getMac());
+                insertPo.setName(request.getName());
+                insertPo.setDeviceId(deviceId);
+                insertPo.setDevicelicence(devicelicence);
+                insertPo.setDeviceTypeId(request.getDeviceTypeId());
+                deviceMapper.insert(insertPo);
             }
-
 
         }
         return true;

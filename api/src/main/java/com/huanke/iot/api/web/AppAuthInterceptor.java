@@ -1,6 +1,8 @@
 package com.huanke.iot.api.web;
 
 import com.alibaba.fastjson.JSON;
+import com.huanke.iot.api.requestcontext.UserRequestContext;
+import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
@@ -25,6 +27,8 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
         if(StringUtils.isNotEmpty(imei)){
             Integer userId = userService.getUserIdByIMei(imei);
             if(userId != 0){
+                UserRequestContext requestContext = UserRequestContextHolder.get();
+                requestContext.setCurrentId(userId);
                 return  true;
             }
         }

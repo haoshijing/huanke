@@ -18,7 +18,6 @@ import com.huanke.iot.manage.message.OtaDeviceVo;
 import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.DeviceService;
-import com.huanke.iot.manage.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +65,12 @@ public class DeviceController {
     @Autowired
     private DeviceOperLogService deviceOperLogService;
 
+    @Value("${accessKeyId}")
+    private String accessKeyId;
+
+    @Value("${accessKeySecret}")
+    private String accessKeySecret;
+
     @RequestMapping("/createDevice")
     public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest request){
         if(StringUtils.isEmpty(request.getName()) ||
@@ -103,48 +108,6 @@ public class DeviceController {
     @RequestMapping("/queryOperLogCount")
     public ApiResponse<Integer>queryOperLogCount(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
         return new ApiResponse<>(0);
-    }
-    @RequestMapping("/otaDevice")
-    public ApiResponse<Boolean> otaDevice(@RequestBody OtaDeviceRequest request){
-        Integer deviceId = request.getId();
-        String topic = "/down/fota/"+deviceId;
-//        DeviceUpgradePo deviceUpgradePo = deviceUpgradeMapper.selectByFileName(request.getFileName());
-//        if(deviceUpgradePo == null){
-//            return new ApiResponse<>(false);
-//        }
-        OtaDeviceVo otaDeviceVo = new OtaDeviceVo();
-        OtaDeviceVo.OtaDeviceItem item = new OtaDeviceVo.OtaDeviceItem();
-        item.setType(request.getOtaType());
-        String fileName = request.getFileName();
-        int idx = fileName.lastIndexOf(".");
-        String fileOriginName = fileName.substring(0,idx);
-        String[] strArr = fileOriginName.split("_");
-        if(strArr.length != 3){
-            return  new ApiResponse<>(false);
-        }
-        OtaDeviceVo.VersionPo versionPo = new OtaDeviceVo.VersionPo();
-        versionPo.setHardware(strArr[1]);
-        versionPo.setSoftware(strArr[0]);
-        item.setVersion(versionPo);
-        otaDeviceVo.setFota(item);
-        String url = String.format("http://%s.%s/%s",bucketName,bucketUrl,request.getFileName());
-        item.setUrl(url);
-        item.setSize(FileUtil.getFileLength(url));
-        String data = JSON.toJSONString(otaDeviceVo);
-        log.info("data={}",data);
-        mqttSendService.sendMessage(topic, data);
-
-        DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
-        deviceOperLogPo.setFuncId("800");
-        deviceOperLogPo.setOperUserId(0);
-        deviceOperLogPo.setOperType(3);
-        deviceOperLogPo.setDeviceId(deviceId);
-        deviceOperLogPo.setFuncValue(JSON.toJSONString(otaDeviceVo));
-        deviceOperLogPo.setRequestId(otaDeviceVo.getRequestId());
-        deviceOperLogPo.setCreateTime(System.currentTimeMillis());
-        deviceOperLogMapper.insert(deviceOperLogPo);
-
-        return new ApiResponse<>(true);
     }
 
     @RequestMapping("/otaDevice1")
@@ -235,7 +198,7 @@ public class DeviceController {
 
 
     @RequestMapping("/updateDevice")
-    public ApiResponse<Boolean> updateDevice(@RequestBody DeviceUpdateRequest deviceUpdateRequest){
+    public ApiResponse<Boolean> updateDevice(@RequestBody DeviceCreateOrUpdateRequest deviceUpdateRequest){
         if(StringUtils.isEmpty(deviceUpdateRequest.getName())){
             return new ApiResponse(RetCode.PARAM_ERROR);
         }

@@ -44,8 +44,8 @@ public class DeviceController extends BaseController {
 
 
     @RequestMapping("/obtainMyDevice")
-    public ApiResponse<DeviceListVo> obtainMyDevice(HttpServletRequest httpServletRequest) {
-        Integer userId = getCurrentUserId(httpServletRequest);
+    public ApiResponse<DeviceListVo> obtainMyDevice() {
+        Integer userId = getCurrentUserId();
         DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
         return new ApiResponse<>(deviceListVo);
     }
@@ -57,14 +57,14 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/editDevice")
-    public ApiResponse<Boolean> editDevice(HttpServletRequest request, String deviceId, String deviceName) {
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<Boolean> editDevice(String deviceId, String deviceName) {
+        Integer userId = getCurrentUserId();
         boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);
     }
 
     @RequestMapping("/token")
-    public ApiResponse<String> obtainShareToken(HttpServletRequest request, String deviceId) {
+    public ApiResponse<String> obtainShareToken(String deviceId) {
         String lastToken = stringRedisTemplate.opsForValue().get("token." + deviceId);
         if (StringUtils.isNotEmpty(lastToken)) {
             return new ApiResponse<>(lastToken);
@@ -76,8 +76,8 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/updateMode")
-    public ApiResponse<Boolean> updateMode(HttpServletRequest request,String deviceId,String mode){
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<Boolean> updateMode(String deviceId,String mode){
+        Integer userId = getCurrentUserId();
         if(StringUtils.isEmpty(mode) || StringUtils.isEmpty(deviceId)){
             return ApiResponse.PARAM_ERROR;
         }
@@ -86,43 +86,43 @@ public class DeviceController extends BaseController {
     }
     @RequestMapping("/share")
     public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
-        Integer userId = getCurrentUserId(request);
+        Integer userId = getCurrentUserId();
         Boolean shareOk = deviceDataService.shareDevice(masterOpenId, userId, deviceId, token);
         return new ApiResponse<>(shareOk);
     }
 
     @RequestMapping("/deleteDevice")
     public ApiResponse<Boolean> deleteDevice(HttpServletRequest request,String deviceId){
-        Integer userId = getCurrentUserId(request);
+        Integer userId = getCurrentUserId();
         Boolean ret = deviceDataService.deleteDevice(userId,deviceId);
         return new ApiResponse<>(ret);
     }
     @RequestMapping("/clearRelation")
-    public ApiResponse<Boolean> clearRelation(HttpServletRequest request, String deviceId, String joinOpenId) {
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<Boolean> clearRelation(String deviceId, String joinOpenId) {
+        Integer userId = getCurrentUserId();
         Boolean clearOk = deviceDataService.clearRelation(joinOpenId, userId, deviceId);
         return new ApiResponse<>(clearOk);
     }
 
     @RequestMapping("/updateDeviceLocation")
-    public ApiResponse<Boolean> updateDeviceLocation(HttpServletRequest request,String deviceId,String location){
+    public ApiResponse<Boolean> updateDeviceLocation(String deviceId,String location){
         if(StringUtils.isEmpty(location)){
             return new ApiResponse(RetCode.PARAM_ERROR);
         }
-        Integer userId = getCurrentUserId(request);
+        Integer userId = getCurrentUserId();
         Boolean clearOk = deviceService.editDeviceLoc(userId, deviceId,location);
         return new ApiResponse<>(clearOk);
     }
 
     @RequestMapping("/shareList")
-    public ApiResponse<List<DeviceShareVo>> shareList(HttpServletRequest request, String deviceId) {
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<List<DeviceShareVo>> shareList(String deviceId) {
+        Integer userId = getCurrentUserId();
         List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId, deviceId);
         return new ApiResponse<>(deviceShareVos);
     }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<String> sendFunc(HttpServletRequest request,@RequestBody DeviceFuncVo deviceFuncVo) {
+    public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
         String funcId = deviceFuncVo.getFuncId();
         if (StringUtils.isNotEmpty(funcId) && funcId.contains("33")) {
             deviceFuncVo.setValue(String.valueOf(3600*3000));
@@ -132,7 +132,7 @@ public class DeviceController extends BaseController {
                 deviceFuncVo.setValue("1");
             }
         }
-        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserId(request),1);
+        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserId(),1);
         return new ApiResponse<>(requestId);
     }
 

@@ -41,8 +41,8 @@ public class AppController extends BaseController {
     private String apkKey;
 
     @RequestMapping("/queryDeviceList")
-    public ApiResponse<DeviceListVo> queryDeviceList(HttpServletRequest request) {
-        Integer userId = getCurrentUserIdForApp(request);
+    public ApiResponse<DeviceListVo> queryDeviceList() {
+        Integer userId = getCurrentUserIdForApp();
         DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
         return new ApiResponse<>(deviceListVo);
     }
@@ -59,8 +59,8 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/editDevice")
-    public ApiResponse<Boolean> editDevice(HttpServletRequest request, String deviceId, String deviceName) {
-        Integer userId = getCurrentUserIdForApp(request);
+    public ApiResponse<Boolean> editDevice(String deviceId, String deviceName) {
+        Integer userId = getCurrentUserIdForApp();
         boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);
     }
@@ -77,7 +77,7 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<Boolean> sendFuc(HttpServletRequest request,String deviceId,String funcId){
+    public ApiResponse<Boolean> sendFuc(String deviceId,String funcId){
         DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
         if(StringUtils.equals("1", funcId)){
             deviceFuncVo.setDeviceId(deviceId);
@@ -101,7 +101,7 @@ public class AppController extends BaseController {
             deviceFuncVo.setFuncId("210");
             deviceFuncVo.setValue("1");
         }
-        deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(request),2);
+        deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),2);
         return new ApiResponse<>(true);
     }
 }

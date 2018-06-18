@@ -24,28 +24,28 @@ public class DeviceGroupController extends BaseController{
     @Autowired
     DeviceGroupService deviceGroupService;
     @RequestMapping("/createGroup")
-    public ApiResponse<Integer> createDeviceGroup(HttpServletRequest request, @RequestBody DeviceGroupNewRequest deviceGroupNewRequest){
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<Integer> createDeviceGroup( @RequestBody DeviceGroupNewRequest deviceGroupNewRequest){
+        Integer userId = getCurrentUserId();
         Integer groupId = deviceGroupService.createDeviceGroup(userId,deviceGroupNewRequest);
         return new ApiResponse<>(groupId);
     }
 
     @RequestMapping("/deleteGroup")
-    public ApiResponse<Boolean> delDeviceGroup(HttpServletRequest request,Integer groupId){
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<Boolean> delDeviceGroup(Integer groupId){
+        Integer userId = getCurrentUserId();
         Boolean ret  = deviceGroupService.deleteGroup(userId,groupId);
         return new ApiResponse<>(ret);
     }
     @RequestMapping("/updateDeviceGroup")
-    public ApiResponse<Boolean> updateDeviceGroup(HttpServletRequest request,@RequestBody DeviceGroupRequest deviceGroupRequest){
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<Boolean> updateDeviceGroup(@RequestBody DeviceGroupRequest deviceGroupRequest){
+        Integer userId = getCurrentUserId();
         Boolean ret = deviceGroupService.updateDeviceGroup(userId,deviceGroupRequest);
         return new ApiResponse<>(ret);
     }
 
     @RequestMapping("/updateGroupName")
-    public ApiResponse<Boolean> updateGroupName(HttpServletRequest request,Integer groupId,String groupName){
-        Integer userId = getCurrentUserId(request);
+    public ApiResponse<Boolean> updateGroupName(Integer groupId,String groupName){
+        Integer userId = getCurrentUserId();
         if(groupId == null  || StringUtils.isEmpty(groupName)){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
         }

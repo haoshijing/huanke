@@ -339,6 +339,7 @@ public class DeviceDataService {
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
             deviceIdPoolPo.setPublicId(devicePo.getPublicId());
             deviceIdPoolPo.setDeviceId(devicePo.getDeviceId());
+            deviceIdPoolPo.setDevicelicence(devicePo.getDevicelicence());
             deviceIdPoolPo.setCreateTime(System.currentTimeMillis());
             deviceIdPoolMapper.insert(deviceIdPoolPo);
             ret = deviceRelationMapper.deleteByDeviceId(iDeviceId) > 0;
