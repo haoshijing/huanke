@@ -39,6 +39,7 @@ public class AuthController {
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid"+appId+"&redirect_uri="
                     + URLEncoder.encode(redirect_uri, "UTF-8");
             response.sendRedirect(fullRedirectUrl);
+            return null;
         }
         JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
         if(authTokenJSONObject == null){
