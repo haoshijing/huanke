@@ -8,7 +8,7 @@
     <sql id = "tableName">
         t_public_number
     </sql>
-    <select id="selectByHost" resultType="com.huanke.iot.base.po.publicnumber" parameterType="java.lang.String">
+    <select id="selectByHost" resultType="com.huanke.iot.base.po.publicnumber.PublicNumberPo" parameterType="java.lang.String">
         <!-- 具体的sql -->
         SELECT <include refid="all_columns"/> FROM
         <include refid="tableName"/>
