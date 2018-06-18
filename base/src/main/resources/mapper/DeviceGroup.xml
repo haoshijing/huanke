@@ -94,6 +94,9 @@
         <if test = "userId != null">
             and userId = #{userId}
         </if>
+        <if test = "deviceId != null">
+            and deviceId = #{deviceId}
+        </if>
         <if test = "isMaster != null">
             AND isMaster = #{isMaster}
         </if>

@@ -36,8 +36,9 @@ public class AuthController {
         String appId = userRequestContext.getCacheVo().getAppId();
         if(StringUtils.isEmpty(code)){
             String redirect_uri = request.getRequestURL()+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-            String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid"+appId+"&redirect_uri="
+            String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
                     + URLEncoder.encode(redirect_uri, "UTF-8");
+
             response.sendRedirect(fullRedirectUrl);
             return null;
         }
@@ -61,5 +62,4 @@ public class AuthController {
         }
         return new ApiResponse<>(openId);
     }
-
 }

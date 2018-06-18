@@ -10,7 +10,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -234,7 +233,6 @@ public class WechartUtil {
     public JSONObject getByRefreshToken(String refresh_token) {
         UserRequestContext context =  UserRequestContextHolder.get();
         String appId = context.getCacheVo().getAppId();
-        String appSecret = context.getCacheVo().getAppSecret();
         String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+appId+"&grant_type=refresh_token&refresh_token="+refresh_token;
         try {
             HttpGet httpGet = new HttpGet();
