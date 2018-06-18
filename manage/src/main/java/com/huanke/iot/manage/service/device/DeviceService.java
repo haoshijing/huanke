@@ -95,6 +95,8 @@ public class DeviceService {
                 insertPo.setDevicelicence(devicelicence);
                 insertPo.setDeviceTypeId(request.getDeviceTypeId());
                 deviceMapper.insert(insertPo);
+                Integer devicePoolId = deviceIdPoolPo.getId();
+                deviceIdPoolMapper.deleteById(devicePoolId);
             }
 
         }
