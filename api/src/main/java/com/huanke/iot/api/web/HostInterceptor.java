@@ -18,9 +18,9 @@ public class HostInterceptor extends HandlerInterceptorAdapter {
     private PublicNumberCache publicNumberCache;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        String requestUri = request.getRemoteHost();
+        String host = request.getHeader("host");
         UserRequestContext userRequestContext = UserRequestContextHolder.get();
-        String[] hostsArr = requestUri.split(".");
+        String[] hostsArr = host.split(".");
         if (hostsArr.length > 0) {
             String webSiteHost = hostsArr[0];
             PublicNumberCacheVo publicNumberCacheVo =  publicNumberCache.selectByHost(webSiteHost);
