@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 
 @RestController
 @RequestMapping("/h5/api")
@@ -35,13 +34,14 @@ public class AuthController {
         String code = request.getParameter("code");
         UserRequestContext userRequestContext = UserRequestContextHolder.get();
         String appId = userRequestContext.getCacheVo().getAppId();
-        if(StringUtils.isEmpty(code)){}
-        JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
-        if(authTokenJSONObject == null){
+        if(StringUtils.isEmpty(code)){
             String redirect_uri = request.getRequestURL()+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid"+appId+"&redirect_uri="
                     + URLEncoder.encode(redirect_uri, "UTF-8");
             response.sendRedirect(fullRedirectUrl);
+        }
+        JSONObject authTokenJSONObject = wechartUtil.obtainAuthAccessToken(code);
+        if(authTokenJSONObject == null){
             return new ApiResponse<>(RetCode.CODE_ERROR,"获取用户的accessToken错误");
         }
         String openId = authTokenJSONObject.getString("openid");
