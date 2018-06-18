@@ -27,6 +27,7 @@ public class PublicNumberCache {
             PublicNumberPo publicNumberPo = publicNumberMapper.selectByHost(host);
             if(publicNumberPo != null){
                 BeanUtils.copyProperties(publicNumberPo, cacheVo);
+                cacheVo.setPublicId(publicNumberPo.getId());
                 return cacheVo;
             }
             return null;
