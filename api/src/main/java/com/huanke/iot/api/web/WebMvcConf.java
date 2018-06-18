@@ -29,6 +29,8 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
         // 注册监控拦截器
         registry.addInterceptor(processInterceptor)
                 .addPathPatterns("/**");
+        registry.addInterceptor(hostInterceptor).
+                addPathPatterns("/**");
         registry.addInterceptor(userInterceptor)
                 .addPathPatterns("/h5/**")
                 .excludePathPatterns(new String[]{"/h5/api/user/auth","/h5/api/getSign"});
@@ -37,7 +39,6 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
                 addPathPatterns("/app/**").excludePathPatterns("/app/api/setApkInfo")
                 .excludePathPatterns("/app/api/bind");
 
-        registry.addInterceptor(hostInterceptor).addPathPatterns("/*");
 
     }
     @Override
