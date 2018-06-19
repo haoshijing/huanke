@@ -52,7 +52,6 @@ public class DeviceDataService {
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
 
-
     @Autowired
     private DeviceRelationMapper deviceRelationMapper;
 
@@ -169,7 +168,6 @@ public class DeviceDataService {
     }
 
     public Boolean clearRelation(String joinOpenId, Integer userId, String deviceIdStr) {
-        Boolean clear = true;
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
             return false;
@@ -195,15 +193,8 @@ public class DeviceDataService {
         if (deviceGroupItemPo.getIsMaster() != 1) {
             return false;
         }
-        DeviceRelationPo deviceRelationPo = new DeviceRelationPo();
-        deviceRelationPo.setLastUpdateTime(System.currentTimeMillis());
-        deviceRelationPo.setDeviceId(deviceId);
-        deviceRelationPo.setStatus(2);
+        return deleteDevice(appUserPo.getId(), deviceIdStr);
 
-        deviceRelationPo.setJoinUserId(appUserPo.getId());
-
-        Integer updateCount = deviceRelationMapper.updateStatus(deviceRelationPo);
-        return updateCount > 0;
     }
 
     public List<SensorDataVo> getHistoryData(String deviceId, Integer type) {

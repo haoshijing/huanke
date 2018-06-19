@@ -245,14 +245,23 @@ status int comment '状态1-绑定,2-已解绑'
 
 alter table t_device_group_item add column isMaster int comment '是否是主拥有人';
 
-drop table if EXISTS t_device_func;
+drop table if EXISTS t_device_directive;
 create table t_device_func(
 id int primary key auto_increment comment '主键id',
-name varchar(512) comment '功能类型',
-valueRange varchar(512) comment '值的范围',
-valueType varchar(20) comment '值的类型',
+directiveName varchar(512) comment '功能名称',
+directiveValue varchar(200) comment '对外指令值',
+status int comment '状态1-可用,2-无用',
 createTime bigint comment '创建时间'
-) comment '设备功能表';
+) comment '功能表';
+
+drop table if t_device_func_choice;
+create table t_device_func_choice(
+id int primary key auto_increment comment '主键id',
+choiceName varchar(512) comment '选项名称',
+choiceValue varchar(200) comment '选项对应的发送值',
+status int comment '状态1-可用,2-无用',
+createTime bigint comment '创建时间'
+) comment '功能选项表';
 
 
 drop table if EXISTS t_device_upgrade;
