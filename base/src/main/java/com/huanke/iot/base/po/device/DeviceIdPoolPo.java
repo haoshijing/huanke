@@ -9,4 +9,5 @@ public class DeviceIdPoolPo {
     private Integer publicId;
     private String devicelicence;
     private Long createTime;
+    private String wxProductId;
 }

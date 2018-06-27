@@ -137,7 +137,6 @@
                 qrcode = #{qrcode},
             </if>
 
-
             <if test="icon != null">
                 icon = #{icon},
             </if>

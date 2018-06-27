@@ -12,12 +12,14 @@
         (
         deviceId,
         publicId,
+        wxProductId,
         devicelicence,
         createTime
         )
         VALUES (
         #{deviceId},
         #{publicId},
+        #{ wxProductId},
         #{devicelicence},
         #{createTime}
         )
@@ -28,9 +30,9 @@
         where id = #{id}
     </delete>
 
-    <select id="selectByPublicId"  resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+    <select id="selectByPublicIdAndPid"  resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
         select * from <include refid="tableName"/>
-        where publicId = #{publicId} limit 1
+        where publicId = #{publicId}  and wxProductId = #{wxProductId} limit 1
     </select>
 
 </mapper>

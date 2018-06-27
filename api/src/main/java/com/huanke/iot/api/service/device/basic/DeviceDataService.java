@@ -331,6 +331,7 @@ public class DeviceDataService {
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
             deviceIdPoolPo.setPublicId(devicePo.getPublicId());
             deviceIdPoolPo.setDeviceId(devicePo.getDeviceId());
+            deviceIdPoolPo.setWxProductId(devicePo.getWxProductId());
             deviceIdPoolPo.setDevicelicence(devicePo.getDevicelicence());
             deviceIdPoolPo.setCreateTime(System.currentTimeMillis());
             deviceIdPoolMapper.insert(deviceIdPoolPo);

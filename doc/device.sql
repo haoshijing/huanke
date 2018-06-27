@@ -34,7 +34,7 @@ alter table t_device  add index idxDeviceId(deviceId);
 alter table t_device add column ip varchar(200) comment '机器Ip';
 alter table t_device add column onlineStatus int DEFAULT 2 comment '在线状态';
 alter table t_device  add COLUMN location varchar(500) DEFAULT '' comment '位置';
-
+alter table t_device  add COLUMN wxProductId varchar(200) DEFAULT '' comment '微信生成的productId';
 alter table t_device  add COLUMN mode varchar(20) DEFAULT '' comment '模式';
 
 drop table if  EXISTS  t_device_type;
@@ -321,5 +321,6 @@ id int PRIMARY KEY AUTO_INCREMENT COMMENT '主键id',
 deviceId varchar(200) comment '设备id',
 devicelicence varchar(200) comment '设备licence',
 publicId int comment '公众号id',
+productId varchar(100) comment '对应产品Id',
 createTime bigint comment '创建时间'
 );

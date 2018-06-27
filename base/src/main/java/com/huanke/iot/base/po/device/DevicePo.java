@@ -46,4 +46,5 @@ public class DevicePo {
      * 设备所属公众号
      */
     private Integer publicId;
+    private String wxProductId = "";
 }

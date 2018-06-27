@@ -16,7 +16,8 @@
         deviceId,
         devicelicence,
         deviceTypeId,
-        createTime
+        createTime,
+        wxProductId
         )
         VALUES (
         #{mac},
@@ -24,7 +25,8 @@
         #{deviceId},
         #{devicelicence},
         #{deviceTypeId},
-        #{createTime}
+        #{createTime},
+        #{wxProductId}
         )
     </insert>
 
