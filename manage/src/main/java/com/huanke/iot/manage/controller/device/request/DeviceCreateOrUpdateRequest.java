@@ -23,4 +23,6 @@ public class DeviceCreateOrUpdateRequest {
      * 公众号id
      */
     private Integer publicId;
+
+    private String productId;
 }

@@ -59,8 +59,8 @@ public class DeviceService {
 
         } else {
             Integer publicId = request.getPublicId();
-
-            DeviceIdPoolPo deviceIdPoolPo = deviceIdPoolMapper.selectByPublicId(publicId);
+            String  productId = request.getProductId();
+            DeviceIdPoolPo deviceIdPoolPo = deviceIdPoolMapper.selectByPublicIdAndPid(publicId,productId);
 
             if (deviceIdPoolPo == null) {
                 //没有从池子中获取到设备id
@@ -68,7 +68,7 @@ public class DeviceService {
                 if(publicNumberPo != null) {
                     String appId = publicNumberPo.getAppId();
                     String appSecret = publicNumberPo.getAppSecret();
-                    JSONObject jsonObject = obtainDeviceInfo(appId, appSecret, publicId);
+                    JSONObject jsonObject = obtainDeviceInfo(appId, appSecret, publicId,productId);
                     if(jsonObject == null){
                         return false;
                     }else{
@@ -167,11 +167,11 @@ public class DeviceService {
     }
 
 
-    private JSONObject obtainDeviceJson(String appId,String appSecret,Integer publicId) {
-        JSONObject deviceInfo = obtainDeviceInfo(appId,appSecret,publicId);
+    private JSONObject obtainDeviceJson(String appId,String appSecret,Integer publicId,String productId) {
+        JSONObject deviceInfo = obtainDeviceInfo(appId,appSecret,publicId,productId);
         if (deviceInfo == null) {
             wechartUtil.getAccessToken(appId,appSecret,publicId, true);
-            deviceInfo = obtainDeviceInfo(appId, appSecret, publicId);
+            deviceInfo = obtainDeviceInfo(appId, appSecret, publicId,productId);
         }
         if (deviceInfo != null) {
             return deviceInfo;
@@ -179,8 +179,7 @@ public class DeviceService {
         return null;
     }
 
-    private JSONObject obtainDeviceInfo(String appId,String appSecret,Integer publicId) {
-        Integer productId = getCanUseProductId(publicId);
+    private JSONObject obtainDeviceInfo(String appId,String appSecret,Integer publicId,String productId) {
 
         String accessToken = wechartUtil.getAccessToken(appId, appSecret,publicId, false);
         String url = new StringBuilder("https://api.weixin.qq.com/device/getqrcode?access_token=").append(accessToken).append("&product_id=").append(productId).toString();
