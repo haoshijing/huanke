@@ -312,6 +312,8 @@ createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
 
+alter table t_public_number add COLUMN  name varchar(255) comment '公众号名字';
+
 alter table t_device add publicId int DEFAULT  1 comment '公众号id';
 drop table if EXISTS  t_deviceid_pool;
 
