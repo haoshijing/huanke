@@ -12,7 +12,7 @@ public class Constants {
             "8、智能管理，搭载智能可视化管理软件，方便中控手机端随时管控； \n" +
             "9、多屏展示，前台大屏、电梯间、手机扫码同步展示，宣传企业社会责任；";
 
-    public static final String DEFAULT_COVER = "http://idcfota.oss-cn-hangzhou.aliyuncs.com/group.png";
+    public static final String DEFAULT_COVER = "";
 
     public static final String DEFAULT_VIDEO_URl = "http://idcfota.oss-cn-hangzhou.aliyuncs.com/default.mp4";
 
