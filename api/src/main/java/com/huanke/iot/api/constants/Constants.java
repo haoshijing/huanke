@@ -16,6 +16,6 @@ public class Constants {
 
     public static final String DEFAULT_VIDEO_URl = "";
 
-    public static final String DEFAULT_ICON = "http://idcfota.oss-cn-hangzhou.aliyuncs.com/group.png";
+    public static final String DEFAULT_ICON = "";
 
 }
