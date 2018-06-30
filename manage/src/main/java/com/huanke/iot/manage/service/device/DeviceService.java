@@ -55,8 +55,8 @@ public class DeviceService {
     public Boolean createDevice(DeviceCreateOrUpdateRequest request) {
         String mac = request.getMac();
         DevicePo devicePo = deviceMapper.selectByMac(mac);
-        if (devicePo != null) {
-
+        if (devicePo != null && StringUtils.isNotEmpty(devicePo.getDeviceId())) {
+            return false;
         } else {
             Integer publicId = request.getPublicId();
             String  productId = request.getProductId();
@@ -80,6 +80,7 @@ public class DeviceService {
                         insertPo.setName(request.getName());
                         insertPo.setDeviceId(deviceId);
                         insertPo.setDevicelicence(devicelicence);
+                        insertPo.setWxProductId(productId);
                         insertPo.setDeviceTypeId(request.getDeviceTypeId());
                         deviceMapper.insert(insertPo);
                     }
