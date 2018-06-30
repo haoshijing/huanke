@@ -15,6 +15,8 @@ public class PublicNumberController {
 
     @Autowired
     private PublicNumberService publicNumberService;
+
+    @RequestMapping("/obtainList")
     public ApiResponse<List<JSONObject>> obtainList(){
         List<JSONObject> datas = publicNumberService.obtainList();
         return new ApiResponse<>(datas);
