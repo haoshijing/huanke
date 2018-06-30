@@ -14,7 +14,7 @@ public class Constants {
 
     public static final String DEFAULT_COVER = "";
 
-    public static final String DEFAULT_VIDEO_URl = "http://idcfota.oss-cn-hangzhou.aliyuncs.com/default.mp4";
+    public static final String DEFAULT_VIDEO_URl = "";
 
     public static final String DEFAULT_ICON = "http://idcfota.oss-cn-hangzhou.aliyuncs.com/group.png";
 
