@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.impl.device.DeviceFuncMapper">
+
+    <sql id="tableName">
+        t_device_mac
+    </sql>
+
+
+    <select id="selectById" resultType="com.huanke.iot.base.po.device.DeviceMacPo">
+        select * from <include refid="tableName"/>
+        where id = #{id}
+    </select>
+
+    <select id = "selectByMac"  resultType="com.huanke.iot.base.po.device.DeviceMacPo">
+        select * from <include refid="tableName"/>
+        where mac = #{mac}
+    </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceMacPo">
+        update <include refid="tableName"/>
+        <set>
+            <if test = "appUserId != null">
+                appUserId = #{appUserId},
+            </if>
+            <if test = " mac != null and mac != ''">
+                mac = #{mac},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 插入一条记录 -->
+    <insert id="insert" parameterType="com.huanke.iot.base.po.device.DeviceMacPo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="tableName"/>
+        (
+        appUserId,
+        mac,
+        createTime
+        )
+        VALUES (
+        #{appUserId},
+        #{mac},
+        #{createTime}
+        )
+    </insert>
+</mapper>

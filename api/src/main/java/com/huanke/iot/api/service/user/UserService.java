@@ -2,7 +2,9 @@ package com.huanke.iot.api.service.user;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.wechat.WechartUtil;
+import com.huanke.iot.base.dao.impl.device.DeviceMacMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
+import com.huanke.iot.base.po.device.DeviceMacPo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +22,8 @@ public class UserService {
     @Autowired
     private AppUserMapper appUserMapper;
 
+    @Autowired
+    private DeviceMacMapper deviceMacMapper;
     @Autowired
     private WechartUtil wechartUtil;
 
@@ -65,15 +69,12 @@ public class UserService {
     }
 
     public Integer getUserIdByIMei(String imei) {
-        String userIdStr = stringRedisTemplate.opsForValue().get(imei);
-        if(StringUtils.isNotEmpty(userIdStr)){
-            return Integer.valueOf(userIdStr);
-        }
-        AppUserPo appUserPo = appUserMapper.selectByMac(imei);
-        if(appUserPo == null){
-            log.error(" imei = {} , user is null" ,imei);
+
+        DeviceMacPo deviceMacPo = deviceMacMapper.selectByMac(imei);
+        if(deviceMacPo == null){
+            log.error(" imei = {} , data is null" ,imei);
             return 0;
         }
-        return appUserPo.getId();
+        return deviceMacPo.getId();
     }
 }
