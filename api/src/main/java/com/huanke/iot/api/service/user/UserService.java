@@ -70,11 +70,12 @@ public class UserService {
 
     public Integer getUserIdByIMei(String imei) {
 
+
         DeviceMacPo deviceMacPo = deviceMacMapper.selectByMac(imei);
         if(deviceMacPo == null){
             log.error(" imei = {} , data is null" ,imei);
             return 0;
         }
-        return deviceMacPo.getId();
+        return deviceMacPo.getAppUserId();
     }
 }
