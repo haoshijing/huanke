@@ -283,6 +283,14 @@ systemValue varchar(1024) comment '对应值',
 createTime bigint comment '创建时间',
 lastUpdateTime bigint comment '最后修改时间'
 );
+drop table if EXISTS t_device_mac;
+create table t_device_mac(
+id int PRIMARY KEY auto_increment  COMMENT '主键ID',
+appUserId int comment '用户id',
+mac varchar(1024) comment 'mac',
+createTime bigint comment '写入时间'
+);
+
 
 drop table if EXISTS t_device_sensor_stat;
 create table t_device_sensor_stat(
