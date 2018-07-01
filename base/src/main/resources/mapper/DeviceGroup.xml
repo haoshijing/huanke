@@ -133,7 +133,7 @@
             <if test="groupName != null">
                 groupName = #{groupName},
             </if>
-            <if test="qrcode != null and qrcode! = ''">
+            <if test="qrcode != null and qrcode != ''">
                 qrcode = #{qrcode},
             </if>
 
