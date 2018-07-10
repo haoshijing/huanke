@@ -72,7 +72,7 @@ public class DeviceController {
     private String accessKeySecret;
 
     @RequestMapping("/updateDeviceId")
-    public ApiResponse<Boolean> updateDeviceId(String mac,Integer publicId,Integer productId){
+    public ApiResponse<Boolean> updateDeviceId(String mac,Integer publicId,String productId){
         if(StringUtils.isEmpty(mac) || publicId == null || productId == null){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
         }
