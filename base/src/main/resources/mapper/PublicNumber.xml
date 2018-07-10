@@ -23,5 +23,8 @@
         </where>
         limit #{offset},#{limit}
     </select>
-
+    <select id="selectById" resultType="com.huanke.iot.base.po.publicnumber.PublicNumberPo">
+    select * from <include refid="tableName"/>
+    where id = #{publicId}  limit 1
+    </select>
 </mapper>
