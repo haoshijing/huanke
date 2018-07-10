@@ -62,7 +62,7 @@ public class DeviceService {
             String  productId = request.getProductId();
             DeviceIdPoolPo deviceIdPoolPo = deviceIdPoolMapper.selectByPublicIdAndPid(publicId,productId);
 
-            if (deviceIdPoolPo == null) {
+            if (deviceIdPoolPo == null || true) {
                 //没有从池子中获取到设备id
                 PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
                 if(publicNumberPo != null) {

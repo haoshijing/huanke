@@ -71,6 +71,7 @@ public class DeviceController {
     @Value("${accessKeySecret}")
     private String accessKeySecret;
 
+
     @RequestMapping("/createDevice")
     public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest request){
         if(StringUtils.isEmpty(request.getName()) ||
