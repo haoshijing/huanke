@@ -157,7 +157,7 @@ public class DeviceService {
             return false;
         }
         PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
-        if(publicNumberPo == null){
+        if(publicNumberPo != null){
             String appId = publicNumberPo.getAppId();
             String appSecret = publicNumberPo.getAppSecret();
             JSONObject jsonObject = obtainDeviceJson(appId, appSecret,publicId,productId);
