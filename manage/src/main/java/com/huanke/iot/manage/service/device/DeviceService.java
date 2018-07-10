@@ -151,6 +151,29 @@ public class DeviceService {
         return deviceVos;
     }
 
+    public Boolean updateDeviceId(String mac, Integer publicId, String productId) {
+        DevicePo devicePo = deviceMapper.selectByMac(mac);
+        if(devicePo == null){
+            return false;
+        }
+        PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
+        if(publicNumberPo == null){
+            String appId = publicNumberPo.getAppId();
+            String appSecret = publicNumberPo.getAppSecret();
+            JSONObject jsonObject = obtainDeviceJson(appId, appSecret,publicId,productId);
+            if(jsonObject != null){
+                String deviceId = jsonObject.getString("deviceid");
+                String devicelicence = jsonObject.getString("devicelicence");
+
+                DevicePo updatePo = new DevicePo();
+                updatePo.setId(devicePo.getId());
+                updatePo.setDeviceId(deviceId);
+                deviceMapper.updateById(updatePo);
+                return true;
+            }
+        }
+        return false;
+    }
     public Integer selectCount(DeviceQueryRequest deviceQueryRequest) {
 
         DevicePo queryDevicePo = new DevicePo();
@@ -220,4 +243,5 @@ public class DeviceService {
         }
         return Integer.valueOf(productIdStr);
     }
+
 }

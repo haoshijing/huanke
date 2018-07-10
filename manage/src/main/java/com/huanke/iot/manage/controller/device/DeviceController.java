@@ -71,6 +71,14 @@ public class DeviceController {
     @Value("${accessKeySecret}")
     private String accessKeySecret;
 
+    @RequestMapping("/updateDeviceId")
+    public ApiResponse<Boolean> updateDeviceId(String mac,Integer publicId,Integer productId){
+        if(StringUtils.isEmpty(mac) || publicId == null || productId == null){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
+        }
+        Boolean ret =  deviceService.updateDeviceId(mac,publicId,productId);
+        return new ApiResponse<>(ret);
+    }
 
     @RequestMapping("/createDevice")
     public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest request){
@@ -78,7 +86,6 @@ public class DeviceController {
                 StringUtils.isEmpty(request.getMac())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
         }
-
         Boolean ret =  deviceService.createDevice(request);
         return new ApiResponse<>(ret);
     }
