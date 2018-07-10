@@ -137,6 +137,9 @@
         </where>
     </update>
 
+    <update id="updateOnlyDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
+        update  <include refid="tableName"/>  set deviceId = #{deviceId} where id = #{id}
+    </update>
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         <include refid="tableName"/>

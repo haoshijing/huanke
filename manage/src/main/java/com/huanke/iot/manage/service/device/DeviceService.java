@@ -168,7 +168,8 @@ public class DeviceService {
                 DevicePo updatePo = new DevicePo();
                 updatePo.setId(devicePo.getId());
                 updatePo.setDeviceId(deviceId);
-                deviceMapper.updateById(updatePo);
+                int updateRet = deviceMapper.updateOnlyDeviceId(updatePo);
+                log.info("updateRet = {}",updateRet);
                 return true;
             }
         }

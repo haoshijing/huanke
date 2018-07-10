@@ -19,4 +19,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     int updateByDeviceId(DevicePo devicePo);
 
     List<DevicePo> selectAll();
+
+    int updateOnlyDeviceId(DevicePo devicePo);
 }
