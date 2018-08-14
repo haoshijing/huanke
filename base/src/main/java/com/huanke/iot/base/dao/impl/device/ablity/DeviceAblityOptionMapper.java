@@ -1,7 +1,7 @@
-package com.huanke.iot.base.dao.impl.device;
+package com.huanke.iot.base.dao.impl.device.ablity;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.device.DeviceAblityOptionPo;
+import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 
 /**
  * @author Caik
