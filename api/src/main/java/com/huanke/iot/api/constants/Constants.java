@@ -18,4 +18,8 @@ public class Constants {
 
     public static final String DEFAULT_ICON = "";
 
+    /*通用 是否*/
+    private final Integer COMMON_YES = 1; // 是
+    private final Integer COMMON_NO = 0;// 否
+
 }
