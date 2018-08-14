@@ -12,5 +12,5 @@ import java.util.List;
  * @version 2018年05月16日 20:02
  **/
 public interface DeviceSensorStatMapper extends BaseMapper<DeviceSensorStatPo>{
-    List<DeviceSensorStatPo> selectData(@Param("deviceId") Integer deviceId, @Param("startTime")Long startTimestamp,@Param("endTime") Long endTimeStamp);
+    List<DeviceSensorStatPo> selectData(@Param("deviceId") Integer deviceId, @Param("startTime") Long startTimestamp, @Param("endTime") Long endTimeStamp);
 }

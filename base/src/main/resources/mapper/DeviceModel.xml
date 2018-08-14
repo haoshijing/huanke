@@ -7,24 +7,32 @@
         t_device_type
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceModelPo">
         INSERT INTO <include refid="tableName"/>
         (
         name,
         icon,
-        typeNo,
+        typeId,
+        customerId,
+        productId,
+        version,
+        status,
         remark,
         createTime
         )
         VALUES (
         #{name},
         #{icon},
-        #{typeNo},
+        #{typeId},
+        #{customerId},
+        #{productId},
+        #{version},
+        #{status},
         #{remark},
         #{createTime}
         )
     </insert>
-    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceModelPo">
         update <include refid="tableName"/>
         <set>
             <if test = "name != null and name != ''">
@@ -33,8 +41,20 @@
             <if test = "icon != null and icon != ''">
                 icon = #{icon},
             </if>
-            <if test = "typeNo != null and typeNo != ''">
-                typeNo = #{typeNo},
+            <if test = "typeId != null ">
+                typeId = #{typeId},
+            </if>
+            <if test = "customerId != null ">
+                customerId = #{customerId},
+            </if>
+            <if test = "productId != null ">
+                productId = #{productId},
+            </if>
+            <if test = "version != null and version != ''">
+                version = #{version},
+            </if>
+            <if test = "status != null">
+                status = #{status},
             </if>
             <if test = "remark != null and remark != ''">
                 remark = #{remark},
@@ -45,7 +65,7 @@
         where id = #{id}
     </update>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceModelPo">
         select
         *
         FROM <include refid="tableName"/>
@@ -63,7 +83,7 @@
     </select>
 
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceModelPo">
         select * from <include refid="tableName"/>
         <where>
 
