@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.impl.user.CustomerMapper">
+
+    <sql id="tableName">
+        t_app_user
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" parameterType="com.huanke.iot.base.po.user.CustomerPo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="tableName"/>
+        (
+        name,
+        loginname,
+        userType,
+        remark,
+        publicId,
+        publicName,
+        appid,
+        appsecret,
+        SLD,
+        creatUser,
+        createTime
+        )
+        VALUES (
+        #{name},
+        #{loginname},
+        #{userType},
+        #{remark},
+        #{publicId},
+        #{publicName},
+        #{appid},
+        #{appsecret},
+        #{SLD},
+        #{creatUser},
+        #{createTime},
+        )
+    </insert>
+
+    <update id = "updateById" parameterType="com.huanke.iot.base.po.user.CustomerPo">
+        update <include refid="tableName"/>
+        <set>
+            <if test = "name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test = "loginname != null and loginname != ''" >
+                loginname = #{loginname},
+            </if>
+            <if test = "userType != null ">
+                userType = #{userType},
+            </if>
+            <if test = "remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test = "publicId != null ">
+                publicId = #{publicId},
+            </if>
+            <if test = "publicName != null and publicName != ''">
+                publicName = #{publicName},
+            </if>
+            <if test = "appid != null and appid != ''">
+                appid = #{appid},
+            </if>
+            <if test = "appsecret != null and appsecret != ''">
+                appsecret = #{appsecret},
+            </if>
+            <if test = "SLD != null and SLD != ''">
+                SLD = #{SLD},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.user.CustomerPo">
+        SELECT
+        *
+        FROM <include refid="tableName"/>
+        WHERE SLD = #{SLD}
+        limit 1
+    </select>
+
+    <select id="selectCount" parameterType="com.huanke.iot.base.po.user.CustomerPo" resultType="java.lang.Integer">
+        select count(1) from <include refid="tableName"/>
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.user.CustomerPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+</mapper>
