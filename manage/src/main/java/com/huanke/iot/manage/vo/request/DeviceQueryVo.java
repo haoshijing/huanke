@@ -43,10 +43,10 @@ public class DeviceQueryVo {
     /**
      * 工作状态
      */
-    private String workingStatus;
+    private String WorkStatus;
     /**
      * 在线状态
      */
-    private Integer onlineStatus;
+    private String onlineStatus;
 }
 

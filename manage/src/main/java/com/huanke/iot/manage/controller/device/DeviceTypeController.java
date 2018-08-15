@@ -22,11 +22,11 @@ import java.util.List;
 public class DeviceTypeController {
     @Autowired
     private DeviceTypeService deviceTypeService;
-    @RequestMapping("/typeList")
-    public ApiResponse<List<DeviceTypeResponseVo>> selectList(@RequestBody DeviceTypeQueryRequest request){
-        List<DeviceTypeResponseVo> typeResponseVos = deviceTypeService.selectList(request);
-        return new ApiResponse<>(typeResponseVos);
-    }
+//    @RequestMapping("/typeList")
+//    public ApiResponse<List<DeviceTypeResponseVo>> selectList(@RequestBody DeviceTypeQueryRequest request){
+//        List<DeviceTypeResponseVo> typeResponseVos = deviceTypeService.selectList(request);
+//        return new ApiResponse<>(typeResponseVos);
+//    }
 
     @RequestMapping("/typeUpdate")
     public ApiResponse<Boolean> updateDeviceType(@RequestBody DeviceTypeCreateUpdateVo deviceTypeCreateUpdateVo){

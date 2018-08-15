@@ -19,11 +19,11 @@ public class DeviceGroupController {
 
     @Autowired
     private DeviceGroupService deviceGroupService;
-    @RequestMapping("/select")
-    public ApiResponse<List<DeviceGroupItemVo>> selectList(@RequestBody DeviceGroupQueryRequest request){
-        List<DeviceGroupItemVo> groupItemVos = deviceGroupService.selectList(request);
-        return new ApiResponse<>(groupItemVos);
-    }
+//    @RequestMapping("/select")
+//    public ApiResponse<List<DeviceGroupItemVo>> selectList(@RequestBody DeviceGroupQueryRequest request){
+//        List<DeviceGroupItemVo> groupItemVos = deviceGroupService.selectList(request);
+//        return new ApiResponse<>(groupItemVos);
+//    }
 
     @RequestMapping("/update")
     public ApiResponse<Boolean> updateDeviceGroup(@RequestBody DeviceGroupUpdateVo updateVo){

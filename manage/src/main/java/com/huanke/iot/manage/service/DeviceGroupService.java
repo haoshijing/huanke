@@ -1,7 +1,7 @@
 package com.huanke.iot.manage.service;
 
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
-import com.huanke.iot.base.dao.user.AppUserMapper;
+//import com.huanke.iot.base.dao.user.AppUserMapper;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.manage.vo.request.DeviceGroupQueryRequest;
 import com.huanke.iot.manage.vo.response.DeviceGroupItemVo;
@@ -34,52 +34,52 @@ public class DeviceGroupService {
     @Autowired
     private DeviceGroupMapper deviceGroupMapper;
 
-    @Autowired
-    private AppUserMapper appUserMapper;
-
-    public List<DeviceGroupItemVo> selectList(DeviceGroupQueryRequest request) {
-        DeviceGroupPo queryGroup = new DeviceGroupPo();
-        queryGroup.setGroupName(request.getName());
-        queryGroup.setStatus(1);
-        Integer offset = (request.getPage() - 1) * request.getLimit();
-        Integer limit = request.getLimit();
-        List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryGroup, limit, offset);
-
-        return deviceGroupPos.stream().map(deviceGroupPo -> {
-            DeviceGroupItemVo itemVo = new DeviceGroupItemVo();
-            String icon = deviceGroupPo.getIcon();
-            if (StringUtils.isEmpty(icon)) {
-                icon = DEFAULT_ICON;
-            }
-
-            String videoUrl = deviceGroupPo.getVideoUrl();
-            if (StringUtils.isEmpty(videoUrl)) {
-                videoUrl = DEFAULT_VIDEO_URl;
-            }
-
-            String videoCover = deviceGroupPo.getVideoCover();
-            if (StringUtils.isEmpty(videoCover)) {
-                videoCover = DEFAULT_COVER;
-            }
-
-            String memo = deviceGroupPo.getMemo();
-            if (StringUtils.isEmpty(memo)) {
-                memo = MEMO;
-            }
-            itemVo.setGroupName(deviceGroupPo.getGroupName());
-            itemVo.setId(deviceGroupPo.getId());
-            itemVo.setIcon(icon);
-            Integer userId = deviceGroupPo.getUserId();
-            AppUserPo appUserPo = appUserMapper.selectById(userId);
-            if (appUserPo != null) {
-                itemVo.setMaskNickname(appUserPo.getNickname());
-            }
-            itemVo.setMemo(memo);
-            itemVo.setVideoCover(videoCover);
-            itemVo.setVideoUrl(videoUrl);
-            return itemVo;
-        }).collect(Collectors.toList());
-    }
+//    @Autowired
+//    private AppUserMapper appUserMapper;
+//
+//    public List<DeviceGroupItemVo> selectList(DeviceGroupQueryRequest request) {
+//        DeviceGroupPo queryGroup = new DeviceGroupPo();
+//        queryGroup.setGroupName(request.getName());
+//        queryGroup.setStatus(1);
+//        Integer offset = (request.getPage() - 1) * request.getLimit();
+//        Integer limit = request.getLimit();
+//        List<DeviceGroupPo> deviceGroupPos = deviceGroupMapper.selectList(queryGroup, limit, offset);
+//
+//        return deviceGroupPos.stream().map(deviceGroupPo -> {
+//            DeviceGroupItemVo itemVo = new DeviceGroupItemVo();
+//            String icon = deviceGroupPo.getIcon();
+//            if (StringUtils.isEmpty(icon)) {
+//                icon = DEFAULT_ICON;
+//            }
+//
+//            String videoUrl = deviceGroupPo.getVideoUrl();
+//            if (StringUtils.isEmpty(videoUrl)) {
+//                videoUrl = DEFAULT_VIDEO_URl;
+//            }
+//
+//            String videoCover = deviceGroupPo.getVideoCover();
+//            if (StringUtils.isEmpty(videoCover)) {
+//                videoCover = DEFAULT_COVER;
+//            }
+//
+//            String memo = deviceGroupPo.getMemo();
+//            if (StringUtils.isEmpty(memo)) {
+//                memo = MEMO;
+//            }
+//            itemVo.setGroupName(deviceGroupPo.getGroupName());
+//            itemVo.setId(deviceGroupPo.getId());
+//            itemVo.setIcon(icon);
+//            Integer userId = deviceGroupPo.getUserId();
+//            AppUserPo appUserPo = appUserMapper.selectById(userId);
+//            if (appUserPo != null) {
+//                itemVo.setMaskNickname(appUserPo.getNickname());
+//            }
+//            itemVo.setMemo(memo);
+//            itemVo.setVideoCover(videoCover);
+//            itemVo.setVideoUrl(videoUrl);
+//            return itemVo;
+//        }).collect(Collectors.toList());
+//    }
 
     public Integer selectCount(DeviceGroupQueryRequest request) {
         DeviceGroupPo deviceGroupPo = new DeviceGroupPo();

@@ -1,6 +1,6 @@
 package com.huanke.iot.manage.service;
 
-import com.huanke.iot.manage.response.DeviceVo;
+//import com.huanke.iot.manage.response.DeviceVo;
 
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  **/
 public class DeviceAdminService {
 
-    public List<DeviceVo> selectList(){
-        return null;
-    }
+//    public List<DeviceVo> selectList(){
+//        return null;
+//    }
 }

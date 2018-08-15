@@ -18,7 +18,6 @@ import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
-import com.huanke.iot.base.po.device.data.DeviceInfoPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.user.AppUserPo;

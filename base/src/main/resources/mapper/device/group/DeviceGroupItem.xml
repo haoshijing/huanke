@@ -4,7 +4,7 @@
 <mapper namespace="com.huanke.iot.base.dao.device.DeviceGroupMapper">
 
     <sql id="tableName">
-        t_device_group
+        t_device_group_item
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"

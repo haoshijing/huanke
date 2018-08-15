@@ -6,7 +6,7 @@ import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
-import com.huanke.iot.base.dao.device.data.DeviceInfoMapper;
+//import com.huanke.iot.base.dao.device.data.DeviceInfoMapper;
 //2018-08-15
 //import com.huanke.iot.base.dao.publicnumber.PublicNumberMapper;
 import com.huanke.iot.base.po.device.DeviceGroupItemPo;
@@ -41,8 +41,8 @@ public class DeviceService {
     @Autowired
     private DeviceMapper deviceMapper;
 
-    @Autowired
-    private DeviceInfoMapper deviceInfoMapper;
+//    @Autowired
+//    private DeviceInfoMapper deviceInfoMapper;
 
     @Autowired
     private DeviceGroupItemMapper deviceGroupItemMapper;
@@ -115,22 +115,25 @@ public class DeviceService {
 
     /**2018-08-15
      * sixiaojun
-     * @param request
+     * @param deviceCreateOrUpdateRequests
      * @return
      */
-    public Boolean createDevice(DeviceCreateOrUpdateRequest request) {
-        String mac=request.getMac();
-        DevicePo devicePo=deviceMapper.selectByMac(mac);
-        if(null != devicePo && StringUtils.isNotEmpty(devicePo.getDeviceId())){
-            return  false;
-        }
-        else {
-            DevicePo insertPo = new DevicePo();
-            insertPo.setName(request.getName());
-            insertPo.setTypeId(request.getDeviceTypeId());
-            insertPo.setMac(request.getMac());
-            insertPo.setCreateTime(request.getCreateTime());
-            deviceMapper.insert(insertPo);
+    public Boolean createDevice(List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests) {
+        for (DeviceCreateOrUpdateRequest request:deviceCreateOrUpdateRequests
+             ) {
+            String mac=request.getMac();
+            DevicePo devicePo=deviceMapper.selectByMac(mac);
+            if(null != devicePo && StringUtils.isNotEmpty(devicePo.getDeviceId())){
+                return  false;
+            }
+            else {
+                DevicePo insertPo = new DevicePo();
+                insertPo.setName(request.getName());
+                insertPo.setTypeId(request.getDeviceTypeId());
+                insertPo.setMac(request.getMac());
+                insertPo.setCreateTime(request.getCreateTime());
+                deviceMapper.insert(insertPo);
+            }
         }
         return true;
     }
@@ -171,90 +174,106 @@ public class DeviceService {
                 deviceQueryVo.setGroup_name(deviceGroupMapper.selectById(deviceGroupItemMapper.selectByDeviceId(devicePo)).getGroupName());
             }
             else {
-                deviceQueryVo.setGroup_id(0);
+                deviceQueryVo.setGroup_id(-1);
                 deviceQueryVo.setGroup_name("无");
+            }
+            if(null !=devicePo.getWorkStatus()){
+                if(1 == devicePo.getWorkStatus()){
+                    deviceQueryVo.setWorkStatus("租赁中");
+                }
+                if(0 == devicePo.getWorkStatus()){
+                    deviceQueryVo.setWorkStatus("空闲");
+                }
+            }
+            if(null != devicePo.getOnlineStatus()){
+                if(1 == devicePo.getOnlineStatus()){
+                    deviceQueryVo.setOnlineStatus("在线");
+                }
+                if(0 == devicePo.getOnlineStatus()){
+                    deviceQueryVo.setOnlineStatus("离线");
+                }
             }
             return deviceQueryVo;
         }).collect(Collectors.toList());
         return deviceQueryVos;
     }
-    public List<DeviceVo> selectList(DeviceQueryRequest deviceQueryRequest) {
-
-        DevicePo queryDevicePo = new DevicePo();
-        queryDevicePo.setMac(deviceQueryRequest.getMac());
-        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
-        Integer page = deviceQueryRequest.getPage();
-        Integer limit = deviceQueryRequest.getLimit();
-        Integer offset = (page - 1) * limit;
-
-        List<DevicePo> devicePos = deviceMapper.selectList(queryDevicePo, limit, offset);
-
-        List<DeviceVo> deviceVos = devicePos.stream().map(devicePo -> {
-            DeviceVo deviceVo = new DeviceVo();
-            deviceVo.setDeviceId(devicePo.getDeviceId());
-            deviceVo.setName(devicePo.getName());
-            deviceVo.setMac(devicePo.getMac());
-            deviceVo.setId(devicePo.getId());
-            if (devicePo.getBindStatus() != null) {
-                if (devicePo.getBindStatus() == 2) {
-                    deviceVo.setBindStatus("已绑定");
-                } else if (devicePo.getBindStatus() == 3) {
-                    deviceVo.setBindStatus("已解绑");
-                } else if (devicePo.getBindStatus() == 1) {
-                    deviceVo.setBindStatus("未绑定");
-                }
-            }
-            if (devicePo.getOnlineStatus() == 1) {
-                deviceVo.setOnlineStatus("在线");
-            } else if (devicePo.getOnlineStatus() == 2) {
-                deviceVo.setOnlineStatus("离线");
-            }
-            deviceVo.setLocation(devicePo.getLocation());
-            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByMac(devicePo.getMac());
-            if (deviceInfoPo != null) {
-                String version = deviceInfoPo.getVersion();
-                JSONObject jsonObject = JSON.parseObject(version);
-                if (jsonObject != null) {
-                    deviceVo.setHardware(jsonObject.getString("hardware"));
-                    deviceVo.setSoftware(jsonObject.getString("software"));
-                }
-            }
-            return deviceVo;
-        }).collect(Collectors.toList());
-        return deviceVos;
-    }
-
-    public Boolean updateDeviceId(String mac, Integer publicId, String productId) {
-        DevicePo devicePo = deviceMapper.selectByMac(mac);
-        if(devicePo == null){
-            return false;
-        }
-        PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
-        if(publicNumberPo != null){
-            String appId = publicNumberPo.getAppId();
-            String appSecret = publicNumberPo.getAppSecret();
-            JSONObject jsonObject = obtainDeviceJson(appId, appSecret,publicId,productId);
-            if(jsonObject != null){
-                String deviceId = jsonObject.getString("deviceid");
-                String devicelicence = jsonObject.getString("devicelicence");
-
-                DevicePo updatePo = new DevicePo();
-                updatePo.setId(devicePo.getId());
-                updatePo.setDeviceId(deviceId);
-                int updateRet = deviceMapper.updateOnlyDeviceId(updatePo);
-                log.info("updateRet = {}",updateRet);
-                return true;
-            }
-        }
-        return false;
-    }
-    public Integer selectCount(DeviceQueryRequest deviceQueryRequest) {
-
-        DevicePo queryDevicePo = new DevicePo();
-        queryDevicePo.setMac(deviceQueryRequest.getMac());
-        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
-        return deviceMapper.selectCount(queryDevicePo);
-    }
+//    public List<DeviceVo> selectList(DeviceQueryRequest deviceQueryRequest) {
+//
+//        DevicePo queryDevicePo = new DevicePo();
+//        queryDevicePo.setMac(deviceQueryRequest.getMac());
+//        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
+//        Integer page = deviceQueryRequest.getPage();
+//        Integer limit = deviceQueryRequest.getLimit();
+//        Integer offset = (page - 1) * limit;
+//
+//        List<DevicePo> devicePos = deviceMapper.selectList(queryDevicePo, limit, offset);
+//
+//        List<DeviceVo> deviceVos = devicePos.stream().map(devicePo -> {
+//            DeviceVo deviceVo = new DeviceVo();
+//            deviceVo.setDeviceId(devicePo.getDeviceId());
+//            deviceVo.setName(devicePo.getName());
+//            deviceVo.setMac(devicePo.getMac());
+//            deviceVo.setId(devicePo.getId());
+//            if (devicePo.getBindStatus() != null) {
+//                if (devicePo.getBindStatus() == 2) {
+//                    deviceVo.setBindStatus("已绑定");
+//                } else if (devicePo.getBindStatus() == 3) {
+//                    deviceVo.setBindStatus("已解绑");
+//                } else if (devicePo.getBindStatus() == 1) {
+//                    deviceVo.setBindStatus("未绑定");
+//                }
+//            }
+//            if (devicePo.getOnlineStatus() == 1) {
+//                deviceVo.setOnlineStatus("在线");
+//            } else if (devicePo.getOnlineStatus() == 2) {
+//                deviceVo.setOnlineStatus("离线");
+//            }
+//            deviceVo.setLocation(devicePo.getLocation());
+//            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByMac(devicePo.getMac());
+//            if (deviceInfoPo != null) {
+//                String version = deviceInfoPo.getVersion();
+//                JSONObject jsonObject = JSON.parseObject(version);
+//                if (jsonObject != null) {
+//                    deviceVo.setHardware(jsonObject.getString("hardware"));
+//                    deviceVo.setSoftware(jsonObject.getString("software"));
+//                }
+//            }
+//            return deviceVo;
+//        }).collect(Collectors.toList());
+//        return deviceVos;
+//    }
+//
+//    public Boolean updateDeviceId(String mac, Integer publicId, String productId) {
+//        DevicePo devicePo = deviceMapper.selectByMac(mac);
+//        if(devicePo == null){
+//            return false;
+//        }
+//        PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
+//        if(publicNumberPo != null){
+//            String appId = publicNumberPo.getAppId();
+//            String appSecret = publicNumberPo.getAppSecret();
+//            JSONObject jsonObject = obtainDeviceJson(appId, appSecret,publicId,productId);
+//            if(jsonObject != null){
+//                String deviceId = jsonObject.getString("deviceid");
+//                String devicelicence = jsonObject.getString("devicelicence");
+//
+//                DevicePo updatePo = new DevicePo();
+//                updatePo.setId(devicePo.getId());
+//                updatePo.setDeviceId(deviceId);
+//                int updateRet = deviceMapper.updateOnlyDeviceId(updatePo);
+//                log.info("updateRet = {}",updateRet);
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//    public Integer selectCount(DeviceQueryRequest deviceQueryRequest) {
+//
+//        DevicePo queryDevicePo = new DevicePo();
+//        queryDevicePo.setMac(deviceQueryRequest.getMac());
+//        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
+//        return deviceMapper.selectCount(queryDevicePo);
+//    }
 
     public Boolean updateDevice(DeviceCreateOrUpdateRequest deviceUpdateRequest) {
 

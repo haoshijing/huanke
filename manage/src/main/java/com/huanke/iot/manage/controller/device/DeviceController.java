@@ -2,6 +2,7 @@ package com.huanke.iot.manage.controller.device;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
@@ -33,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author haoshijing
@@ -73,22 +75,26 @@ public class DeviceController {
     @Value("${accessKeySecret}")
     private String accessKeySecret;
 
-    @RequestMapping("/updateDeviceId")
-    public ApiResponse<Boolean> updateDeviceId(String mac,Integer publicId,String productId){
-        if(StringUtils.isEmpty(mac) || publicId == null || productId == null){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
-        }
-        Boolean ret =  deviceService.updateDeviceId(mac,publicId,productId);
-        return new ApiResponse<>(ret);
-    }
+//    @RequestMapping("/updateDeviceId")
+//    public ApiResponse<Boolean> updateDeviceId(String mac,Integer publicId,String productId){
+//        if(StringUtils.isEmpty(mac) || publicId == null || productId == null){
+//            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
+//        }
+//        Boolean ret =  deviceService.updateDeviceId(mac,publicId,productId);
+//        return new ApiResponse<>(ret);
+//    }
 
+    /**
+     * 添加新设备
+     * @param body
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
     @RequestMapping("/createDevice")
-    public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest request){
-        if(StringUtils.isEmpty(request.getName()) ||
-                StringUtils.isEmpty(request.getMac())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
-        }
-        Boolean ret =  deviceService.createDevice(request);
+    public ApiResponse<Boolean> createDevice(@RequestBody String body) throws Exception{
+        Map<String,Object> requestParam=new ObjectMapper().readValue(body,Map.class);
+        List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests=(List<DeviceCreateOrUpdateRequest>) requestParam.get("deviceList");
+        Boolean ret =  deviceService.createDevice(deviceCreateOrUpdateRequests);
         return new ApiResponse<>(ret);
     }
 
@@ -104,10 +110,10 @@ public class DeviceController {
         return new ApiResponse<>(deviceVos);
     }
     */
-    @RequestMapping("/queryCount")
-    public ApiResponse<Integer> queryCount(@RequestBody  DeviceQueryRequest deviceQueryRequest){
-        return new ApiResponse<>(deviceService.selectCount(deviceQueryRequest));
-    }
+//    @RequestMapping("/queryCount")
+//    public ApiResponse<Integer> queryCount(@RequestBody  DeviceQueryRequest deviceQueryRequest){
+//        return new ApiResponse<>(deviceService.selectCount(deviceQueryRequest));
+//    }
 
     @RequestMapping("/queryOperLogList")
     public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
