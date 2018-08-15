@@ -27,16 +27,13 @@ public class DevicePo {
     private String devicelicence;
 
     //设备序列号
-<<<<<<< HEAD
     private String sano;
     private Integer deviceTypeId;
-=======
     private String imei;
     private String imsi;
     private String saNo;
 
     private Integer typeId;
->>>>>>> 83aa7a794887d0b57128386e47cd5bb69505e575
     private Integer productId;
 
     private Long bindTime;
