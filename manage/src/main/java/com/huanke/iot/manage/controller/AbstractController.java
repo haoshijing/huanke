@@ -1,7 +1,6 @@
 package com.huanke.iot.manage.controller;
 
 import com.huanke.iot.manage.service.AdminAuthCacheService;
-import com.huanke.iot.manage.vo.AdminAuthInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;

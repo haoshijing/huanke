@@ -2,9 +2,9 @@ package com.huanke.iot.manage.controller.device;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
-import com.huanke.iot.manage.controller.device.request.DeviceGroupQueryRequest;
-import com.huanke.iot.manage.controller.device.request.DeviceGroupUpdateVo;
-import com.huanke.iot.manage.controller.device.response.DeviceGroupItemVo;
+import com.huanke.iot.manage.vo.request.DeviceGroupQueryRequest;
+import com.huanke.iot.manage.vo.request.DeviceGroupUpdateVo;
+import com.huanke.iot.manage.vo.response.DeviceGroupItemVo;
 import com.huanke.iot.manage.service.DeviceGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

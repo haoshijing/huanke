@@ -8,7 +8,6 @@ import com.huanke.iot.manage.controller.request.LoginDataRequest;
 import com.huanke.iot.manage.controller.response.LoginResponse;
 import com.huanke.iot.manage.service.AdminAuthCacheService;
 import com.huanke.iot.manage.service.AdminService;
-import com.huanke.iot.manage.vo.AdminAuthInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

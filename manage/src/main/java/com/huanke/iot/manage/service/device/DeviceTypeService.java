@@ -1,17 +1,13 @@
 package com.huanke.iot.manage.service.device;
 
-import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
+import com.huanke.iot.base.dao.device.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DeviceTypePo;
-import com.huanke.iot.manage.controller.device.request.DeviceQueryRequest;
-import com.huanke.iot.manage.controller.device.request.type.DeviceTypeCreateUpdateVo;
-import com.huanke.iot.manage.controller.device.request.type.DeviceTypeQueryRequest;
-import com.huanke.iot.manage.controller.device.request.type.DeviceTypeResponseVo;
-import com.huanke.iot.manage.response.DeviceTypeVo;
+import com.huanke.iot.manage.vo.request.type.DeviceTypeCreateUpdateVo;
+import com.huanke.iot.manage.vo.request.type.DeviceTypeQueryRequest;
+import com.huanke.iot.manage.vo.request.type.DeviceTypeResponseVo;
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

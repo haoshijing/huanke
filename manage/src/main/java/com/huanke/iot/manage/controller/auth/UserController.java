@@ -7,7 +7,6 @@ import com.huanke.iot.manage.controller.AbstractController;
 import com.huanke.iot.manage.controller.request.UpdatePwdRequest;
 import com.huanke.iot.manage.controller.response.UserDataResponse;
 import com.huanke.iot.manage.service.AdminService;
-import com.huanke.iot.manage.vo.AdminAuthInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

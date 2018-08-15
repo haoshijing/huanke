@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.device.data.DeviceInfoMapper">
+
+    <sql id="tableName">
+        t_device_data_info
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.data.DeviceInfoPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        deviceId,
+        wxInfo,
+        mac,
+        imei,
+        imsi,
+        version,
+        createTime
+        )
+        VALUES (
+        #{deviceId},
+        #{wxInfo},
+        #{mac},
+        #{imei},
+        #{imsi},
+        #{version},
+        #{createTime}
+        )
+    </insert>
+
+    <select id="selectByDevId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.data.DeviceInfoPo">
+        select * from <include refid="tableName"/>
+        where deviceId = #{deviceId}
+    </select>
+
+    <select id="selectByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.data.DeviceInfoPo">
+        select * from <include refid="tableName"/>
+        where mac = #{mac}
+    </select>
+
+    <update id = "updateById" parameterType="com.huanke.iot.base.po.device.data.DeviceInfoPo">
+        update <include refid="tableName"/>
+        set version = #{version},
+        lastUpdateTime = #{lastUpdateTime}
+        where id = #{id}
+    </update>
+</mapper>

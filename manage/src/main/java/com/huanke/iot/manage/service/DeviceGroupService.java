@@ -1,11 +1,10 @@
 package com.huanke.iot.manage.service;
 
-import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
-import com.huanke.iot.base.dao.impl.user.AppUserMapper;
+import com.huanke.iot.base.dao.device.DeviceGroupMapper;
+import com.huanke.iot.base.dao.user.AppUserMapper;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
-import com.huanke.iot.base.po.user.AppUserPo;
-import com.huanke.iot.manage.controller.device.request.DeviceGroupQueryRequest;
-import com.huanke.iot.manage.controller.device.response.DeviceGroupItemVo;
+import com.huanke.iot.manage.vo.request.DeviceGroupQueryRequest;
+import com.huanke.iot.manage.vo.response.DeviceGroupItemVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

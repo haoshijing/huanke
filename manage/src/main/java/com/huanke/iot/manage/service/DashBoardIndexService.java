@@ -1,9 +1,8 @@
 package com.huanke.iot.manage.service;
 
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.dao.impl.user.AppUserMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.user.AppUserMapper;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.user.AppUserPo;
 import com.huanke.iot.manage.controller.response.DashBoardIndexVo;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;

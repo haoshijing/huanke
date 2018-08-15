@@ -1,7 +1,7 @@
 package com.huanke.iot.manage.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huanke.iot.base.dao.impl.publicnumber.PublicNumberMapper;
+import com.huanke.iot.base.dao.publicnumber.PublicNumberMapper;
 import com.huanke.iot.base.po.publicnumber.PublicNumberPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
