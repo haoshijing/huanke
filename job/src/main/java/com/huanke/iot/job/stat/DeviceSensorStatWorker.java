@@ -1,8 +1,8 @@
 package com.huanke.iot.job.stat;
 
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
-import com.huanke.iot.base.dao.impl.device.stat.DeviceSensorStatMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper;
+import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;

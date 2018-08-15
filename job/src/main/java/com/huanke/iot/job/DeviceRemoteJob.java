@@ -1,7 +1,7 @@
 package com.huanke.iot.job;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.job.gateway.MqttSendService;

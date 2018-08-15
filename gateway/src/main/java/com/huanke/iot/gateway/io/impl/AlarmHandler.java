@@ -1,7 +1,7 @@
 package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.huanke.iot.base.dao.impl.device.data.DeviceAlarmMapper;
+import com.huanke.iot.base.dao.device.data.DeviceAlarmMapper;
 import com.huanke.iot.base.po.device.data.DeviceAlarmPo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import lombok.Data;

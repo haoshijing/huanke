@@ -1,6 +1,6 @@
 package com.huanke.iot.gateway.onlinecheck;
 
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
