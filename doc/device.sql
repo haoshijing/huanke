@@ -254,7 +254,7 @@ status int comment '状态1-可用,2-无用',
 createTime bigint comment '创建时间'
 ) comment '功能表';
 
-drop table if t_device_func_choice;
+drop table if EXISTS t_device_func_choice;
 create table t_device_func_choice(
 id int primary key auto_increment comment '主键id',
 choiceName varchar(512) comment '选项名称',
