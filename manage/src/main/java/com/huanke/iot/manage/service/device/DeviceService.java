@@ -5,14 +5,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.data.DeviceInfoMapper;
-import com.huanke.iot.base.dao.publicnumber.PublicNumberMapper;
-import com.huanke.iot.base.po.device.DeviceIdPoolPo;
+//2018-08-15
+//import com.huanke.iot.base.dao.publicnumber.PublicNumberMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceInfoPo;
-import com.huanke.iot.base.po.publicnumber.PublicNumberPo;
+//2018-08-15
+//import com.huanke.iot.base.po.publicnumber.PublicNumberPo;
 import com.huanke.iot.manage.vo.request.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.DeviceQueryRequest;
-import com.huanke.iot.manage.response.DeviceVo;
+//2018-08-15
+//import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +23,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
@@ -39,8 +43,8 @@ public class DeviceService {
     @Autowired
     private DeviceInfoMapper deviceInfoMapper;
 
-    @Autowired
-    private PublicNumberMapper publicNumberMapper;
+//    @Autowired
+//    private PublicNumberMapper publicNumberMapper;
 
     @Autowired
     private DeviceIdPoolMapper deviceIdPoolMapper;
@@ -52,59 +56,97 @@ public class DeviceService {
     @Autowired
     private WechartUtil wechartUtil;
 
+//    public Boolean createDevice(DeviceCreateOrUpdateRequest request) {
+//        String mac = request.getMac();
+//        DevicePo devicePo = deviceMapper.selectByMac(mac);
+//        if (devicePo != null && StringUtils.isNotEmpty(devicePo.getDeviceId())) {
+//            return false;
+//        } else {
+//            Integer publicId = request.getPublicId();
+//            String  productId = request.getProductId();
+//            DeviceIdPoolPo deviceIdPoolPo = deviceIdPoolMapper.selectByPublicIdAndPid(publicId,productId);
+//
+//            if (deviceIdPoolPo == null || true) {
+//                //没有从池子中获取到设备id
+//                PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
+//                if(publicNumberPo != null) {
+//                    String appId = publicNumberPo.getAppId();
+//                    String appSecret = publicNumberPo.getAppSecret();
+//                    JSONObject jsonObject = obtainDeviceInfo(appId, appSecret, publicId,productId);
+//                    if(jsonObject == null){
+//                        return false;
+//                    }else{
+//                        String deviceId = jsonObject.getString("deviceid");
+//                        String devicelicence = jsonObject.getString("devicelicence");
+//                        DevicePo insertPo = new DevicePo();
+//                        insertPo.setPublicId(publicId);
+//                        insertPo.setMac(request.getMac());
+//                        insertPo.setName(request.getName());
+//                        insertPo.setDeviceId(deviceId);
+//                        insertPo.setDevicelicence(devicelicence);
+//                        insertPo.setWxProductId(productId);
+//                        insertPo.setDeviceTypeId(request.getDeviceTypeId());
+//                        deviceMapper.insert(insertPo);
+//                    }
+//                }
+//            } else {
+//                String deviceId = deviceIdPoolPo.getDeviceId();
+//                String devicelicence = deviceIdPoolPo.getDevicelicence();
+//                DevicePo insertPo = new DevicePo();
+//                insertPo.setPublicId(publicId);
+//                insertPo.setMac(request.getMac());
+//                insertPo.setName(request.getName());
+//                insertPo.setDeviceId(deviceId);
+//                insertPo.setDevicelicence(devicelicence);
+//                insertPo.setDeviceTypeId(request.getDeviceTypeId());
+//                deviceMapper.insert(insertPo);
+//                Integer devicePoolId = deviceIdPoolPo.getId();
+//                deviceIdPoolMapper.deleteById(devicePoolId);
+//            }
+//
+//        }
+//        return true;
+//
+//    }
+
+    /**2018-08-15
+     * sixiaojun
+     * @param request
+     * @return
+     */
     public Boolean createDevice(DeviceCreateOrUpdateRequest request) {
-        String mac = request.getMac();
-        DevicePo devicePo = deviceMapper.selectByMac(mac);
-        if (devicePo != null && StringUtils.isNotEmpty(devicePo.getDeviceId())) {
-            return false;
-        } else {
-            Integer publicId = request.getPublicId();
-            String  productId = request.getProductId();
-            DeviceIdPoolPo deviceIdPoolPo = deviceIdPoolMapper.selectByPublicIdAndPid(publicId,productId);
-
-            if (deviceIdPoolPo == null || true) {
-                //没有从池子中获取到设备id
-                PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
-                if(publicNumberPo != null) {
-                    String appId = publicNumberPo.getAppId();
-                    String appSecret = publicNumberPo.getAppSecret();
-                    JSONObject jsonObject = obtainDeviceInfo(appId, appSecret, publicId,productId);
-                    if(jsonObject == null){
-                        return false;
-                    }else{
-                        String deviceId = jsonObject.getString("deviceid");
-                        String devicelicence = jsonObject.getString("devicelicence");
-                        DevicePo insertPo = new DevicePo();
-                        insertPo.setPublicId(publicId);
-                        insertPo.setMac(request.getMac());
-                        insertPo.setName(request.getName());
-                        insertPo.setDeviceId(deviceId);
-                        insertPo.setDevicelicence(devicelicence);
-                        insertPo.setWxProductId(productId);
-                        insertPo.setDeviceTypeId(request.getDeviceTypeId());
-                        deviceMapper.insert(insertPo);
-                    }
-                }
-            } else {
-                String deviceId = deviceIdPoolPo.getDeviceId();
-                String devicelicence = deviceIdPoolPo.getDevicelicence();
-                DevicePo insertPo = new DevicePo();
-                insertPo.setPublicId(publicId);
-                insertPo.setMac(request.getMac());
-                insertPo.setName(request.getName());
-                insertPo.setDeviceId(deviceId);
-                insertPo.setDevicelicence(devicelicence);
-                insertPo.setDeviceTypeId(request.getDeviceTypeId());
-                deviceMapper.insert(insertPo);
-                Integer devicePoolId = deviceIdPoolPo.getId();
-                deviceIdPoolMapper.deleteById(devicePoolId);
-            }
-
+        String mac=request.getMac();
+        DevicePo devicePo=deviceMapper.selectByMac(mac);
+        if(null != devicePo && StringUtils.isNotEmpty(devicePo.getDeviceId())){
+            return  false;
+        }
+        else {
+            DevicePo insertPo = new DevicePo();
+            insertPo.setName(request.getName());
+            insertPo.setTypeId(request.getDeviceTypeId());
+            insertPo.setMac(request.getMac());
+            insertPo.setCreateTime(request.getCreateTime());
+            deviceMapper.insert(insertPo);
         }
         return true;
-
     }
 
+    /**2018-08-15
+     * sixiaojun
+     * @param
+     * @return list
+     */
+    public List<DeviceQueryRequest> selectList_new(){
+        List<DevicePo> devicePos=deviceMapper.selectAll();
+        List<DeviceQueryRequest> deviceQueryRequests=devicePos.stream().map(devicePo -> {
+            DeviceQueryRequest deviceQueryRequest=new DeviceQueryRequest();
+            deviceQueryRequest.setName(devicePo.getName());
+            deviceQueryRequest.setMac(devicePo.getMac());
+            deviceQueryRequest.setDeviceTypeId(devicePo.getDeviceTypeId());
+            deviceQueryRequest.setBindStatus(devicePo.getBindStatus());
+
+        }).collect(Collectors.toList());
+    }
     public List<DeviceVo> selectList(DeviceQueryRequest deviceQueryRequest) {
 
         DevicePo queryDevicePo = new DevicePo();

@@ -12,10 +12,12 @@ import com.huanke.iot.manage.vo.request.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.DeviceLogQueryRequest;
 import com.huanke.iot.manage.vo.request.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.DeviceOperLogVo;
-import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
+//2018-08-15
+//import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.vo.message.OtaDeviceVo;
-import com.huanke.iot.manage.response.DeviceVo;
+//2018-08-15
+//import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.DeviceService;
 import lombok.extern.slf4j.Slf4j;
@@ -95,13 +97,13 @@ public class DeviceController {
         stringRedisTemplate.opsForValue().set("productId", productId);
         return new ApiResponse<>(true);
     }
-
+    /*2018-08-15
     @RequestMapping("/queryList")
     public ApiResponse<List<DeviceVo>> queryList(@RequestBody DeviceQueryRequest deviceQueryRequest){
         List<DeviceVo> deviceVos = deviceService.selectList(deviceQueryRequest);
         return new ApiResponse<>(deviceVos);
     }
-
+    */
     @RequestMapping("/queryCount")
     public ApiResponse<Integer> queryCount(@RequestBody  DeviceQueryRequest deviceQueryRequest){
         return new ApiResponse<>(deviceService.selectCount(deviceQueryRequest));
@@ -117,7 +119,7 @@ public class DeviceController {
     public ApiResponse<Integer>queryOperLogCount(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
         return new ApiResponse<>(0);
     }
-
+    /*2018-08-15
     @RequestMapping("/otaDevice1")
     public ApiResponse<Boolean> otaDevice1(@RequestBody OtaDeviceRequest request){
         Integer deviceId = request.getId();
@@ -161,7 +163,7 @@ public class DeviceController {
 
         return new ApiResponse<>(true);
     }
-
+    */
     @RequestMapping("/upload")
     public ApiResponse<String> uploadBinFile(MultipartFile file){
         String fileName = file.getOriginalFilename();

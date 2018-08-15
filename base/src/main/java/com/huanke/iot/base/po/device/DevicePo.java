@@ -26,7 +26,7 @@ public class DevicePo {
     private String devicelicence;
     //设备序列号
     private String sano;
-    private Integer typeId;
+    private Integer deviceTypeId;
     private Integer productId;
 
     private Long bindTime;
