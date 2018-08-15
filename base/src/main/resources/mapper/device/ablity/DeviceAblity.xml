@@ -12,13 +12,57 @@
         (
         ablityName,
         dirValue,
+        writeStatus,
+        remark,
         createTime
         )
         VALUES (
         #{ablityName},
         #{dirValue},
+        #{writeStatus},
+        #{remark},
         #{createTime}
         )
     </insert>
 
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceAblityPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceAblityPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.ablityName != null and param.ablityName != ''">
+                AND ablityName = #{param.ablityName}
+            </if>
+            <if test="param.dirValue != null and param.dirValue != ''">
+                AND dirValue = #{param.dirValue}
+            </if>
+            <if test="param.writeStatus != null">
+                AND writeStatus = #{param.writeStatus}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceAblityPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="ablityName != null and blityName != ''">
+                name = #{ablityName},
+            </if>
+            <if test="dirValue != null  and dirValue != ''">
+                dirValue = #{dirValue},
+            </if>
+        </set>
+        where
+        deviceId = #{deviceId}
+    </update>
 </mapper>
