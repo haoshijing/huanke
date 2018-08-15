@@ -19,7 +19,7 @@ CREATE TABLE `t_customer`  (
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   `creatUser` varchar(100)  DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = '¿Í»§±í  ÓĞ¹«ÖÚºÅµÄ±í£¬B¶Ë' ;
+)  COMMENT = 'å®¢æˆ·è¡¨  æœ‰å…¬ä¼—å·çš„è¡¨ï¼ŒBç«¯' ;
 
 -- ----------------------------
 -- Table structure for t_customer_user
@@ -39,7 +39,7 @@ CREATE TABLE `t_customer_user`  (
   `lastVisitTime` bigint(20) NULL DEFAULT NULL,
   `mac` varchar(100)  DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'ÖÕ¶ËÓÃ»§±í£¨C¶ËÓÃ»§£©' ;
+)  COMMENT = 'ç»ˆç«¯ç”¨æˆ·è¡¨ï¼ˆCç«¯ç”¨æˆ·ï¼‰' ;
 
 -- ----------------------------
 -- Table structure for t_device
@@ -54,42 +54,42 @@ CREATE TABLE `t_device`  (
   `saNo` varchar(200)  DEFAULT NULL,
   `typeId` int(11) NULL DEFAULT NULL,
   `productId` int(11) NULL DEFAULT NULL,
-  `onlineStatus` int(1) NULL DEFAULT NULL COMMENT 'ÔÚÏß×´Ì¬',
-  `bindStatus` int(1) NULL DEFAULT NULL COMMENT '°ó¶¨×´Ì¬',
+  `onlineStatus` int(1) NULL DEFAULT NULL COMMENT 'åœ¨çº¿çŠ¶æ€',
+  `bindStatus` int(1) NULL DEFAULT NULL COMMENT 'ç»‘å®šçŠ¶æ€',
   `bindTime` bigint(20) NULL DEFAULT NULL,
   `ip` varchar(200)  DEFAULT NULL,
   `speedConfig` varchar(4096)  DEFAULT NULL,
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
-  `enableStatus` int(1) NULL DEFAULT NULL COMMENT 'ÆôÓÃ×´Ì¬',
-  `workStatus` int(1) NULL DEFAULT NULL COMMENT '¹¤×÷×´Ì¬',
+  `enableStatus` int(1) NULL DEFAULT NULL COMMENT 'å¯ç”¨çŠ¶æ€',
+  `workStatus` int(1) NULL DEFAULT NULL COMMENT 'å·¥ä½œçŠ¶æ€',
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸±í £¨»ù´¡ÊôĞÔ£©' ;
+)  COMMENT = 'è®¾å¤‡è¡¨ ï¼ˆåŸºç¡€å±æ€§ï¼‰' ;
 
 -- ----------------------------
 -- Table structure for t_device_ablity
 -- ----------------------------
 DROP TABLE IF EXISTS `t_device_ablity`;
 CREATE TABLE `t_device_ablity`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Ö÷¼üid',
-  `ablityName` varchar(1024)  DEFAULT NULL COMMENT 'ÄÜÁ¦Ãû³Æ',
-  `dirValue` varchar(1024)  DEFAULT NULL COMMENT 'Í¨Ñ¶¶ÔÓ¦Ö¸Áî',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ä¸»é”®id',
+  `ablityName` varchar(1024)  DEFAULT NULL COMMENT 'èƒ½åŠ›åç§°',
+  `dirValue` varchar(1024)  DEFAULT NULL COMMENT 'é€šè®¯å¯¹åº”æŒ‡ä»¤',
   `createTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ÄÜÁ¦±í' ;
+)  COMMENT = 'è®¾å¤‡èƒ½åŠ›è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_ablity_option
 -- ----------------------------
 DROP TABLE IF EXISTS `t_device_ablity_option`;
 CREATE TABLE `t_device_ablity_option`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Ö÷¼üid',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ä¸»é”®id',
   `optionName` varchar(200)  DEFAULT NULL,
-  `ablityId` varchar(11)  DEFAULT NULL COMMENT 'Í¨Ñ¶¶ÔÓ¦Ö¸Áî',
+  `ablityId` varchar(11)  DEFAULT NULL COMMENT 'é€šè®¯å¯¹åº”æŒ‡ä»¤',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpaddateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ÄÜÁ¦Ñ¡Ïî±í' ;
+)  COMMENT = 'è®¾å¤‡èƒ½åŠ›é€‰é¡¹è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_ablity_set
@@ -103,7 +103,7 @@ CREATE TABLE `t_device_ablity_set`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = '¹¦ÄÜ¼¯' ;
+)  COMMENT = 'åŠŸèƒ½é›†' ;
 
 -- ----------------------------
 -- Table structure for t_device_ablity_set_relation
@@ -114,7 +114,7 @@ CREATE TABLE `t_device_ablity_set_relation`  (
   `ablityId` int(11) NULL DEFAULT NULL,
   `ablitySetId` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = '¹¦ÄÜ¼¯ ºÍÄÜÁ¦ ¹ØÁª¹ØÏµ±í' ;
+)  COMMENT = 'åŠŸèƒ½é›† å’Œèƒ½åŠ› å…³è”å…³ç³»è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_alarm
@@ -123,7 +123,7 @@ DROP TABLE IF EXISTS `t_device_alarm`;
 CREATE TABLE `t_device_alarm`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸¸æ¾¯ĞÅÏ¢' ;
+)  COMMENT = 'è®¾å¤‡å‘Šè­¦ä¿¡æ¯' ;
 
 -- ----------------------------
 -- Table structure for t_device_customer_relation
@@ -136,7 +136,7 @@ CREATE TABLE `t_device_customer_relation`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸¿Í»§¹ØÏµ±í' ;
+)  COMMENT = 'è®¾å¤‡å®¢æˆ·å…³ç³»è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_customer_user_relation
@@ -151,7 +151,7 @@ CREATE TABLE `t_device_customer_user_relation`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ ºÍÖÕ¶ËÓÃ»§¹ØÏµ±í' ;
+)  COMMENT = 'è®¾å¤‡ å’Œç»ˆç«¯ç”¨æˆ·å…³ç³»è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_group
@@ -167,7 +167,7 @@ CREATE TABLE `t_device_group`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸Èº' ;
+)  COMMENT = 'è®¾å¤‡ç¾¤' ;
 
 -- ----------------------------
 -- Table structure for t_device_group_item
@@ -181,7 +181,7 @@ CREATE TABLE `t_device_group_item`  (
   `createTIme` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸Èº ºÍÉè±¸¹ØÏµ±í' ;
+)  COMMENT = 'è®¾å¤‡ç¾¤ å’Œè®¾å¤‡å…³ç³»è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_model
@@ -200,7 +200,7 @@ CREATE TABLE `t_device_model`  (
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   `remark` varchar(500)  DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ĞÍºÅ±í' ;
+)  COMMENT = 'è®¾å¤‡å‹å·è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_model_ablity
@@ -215,7 +215,7 @@ CREATE TABLE `t_device_model_ablity`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ĞÍºÅ ¹¦ÄÜ±í' ;
+)  COMMENT = 'è®¾å¤‡å‹å· åŠŸèƒ½è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_model_ablity_option
@@ -229,22 +229,22 @@ CREATE TABLE `t_device_model_ablity_option`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ĞÍºÅ ¹¦ÄÜÑ¡Ïî×Ô¶¨Òå±í' ;
+)  COMMENT = 'è®¾å¤‡å‹å· åŠŸèƒ½é€‰é¡¹è‡ªå®šä¹‰è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_operlog
 -- ----------------------------
 DROP TABLE IF EXISTS `t_device_operlog`;
 CREATE TABLE `t_device_operlog`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Ö÷¼üid',
-  `deviceId` int(11) NULL DEFAULT NULL COMMENT 'Éè±¸id',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ä¸»é”®id',
+  `deviceId` int(11) NULL DEFAULT NULL COMMENT 'è®¾å¤‡id',
   `funcId` int(11) NULL DEFAULT NULL,
   `funcValue` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `requestId` varchar(33) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'ÇëÇóid',
-  `dealRet` int(11) NULL DEFAULT NULL COMMENT '´¦Àí½á¹û',
-  `responseTime` bigint(20) NULL DEFAULT NULL COMMENT 'ÏìÓ¦Ê±¼ä',
-  `retMsg` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '´¦Àí½á¹û',
-  `createTime` bigint(20) NULL DEFAULT NULL COMMENT '²Ù×÷Ê±¼ä',
+  `requestId` varchar(33) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'è¯·æ±‚id',
+  `dealRet` int(11) NULL DEFAULT NULL COMMENT 'å¤„ç†ç»“æœ',
+  `responseTime` bigint(20) NULL DEFAULT NULL COMMENT 'å“åº”æ—¶é—´',
+  `retMsg` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'å¤„ç†ç»“æœ',
+  `createTime` bigint(20) NULL DEFAULT NULL COMMENT 'æ“ä½œæ—¶é—´',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1328 CHARACTER SET = utf8 COLLATE = utf8_general_ci ;
 
@@ -258,14 +258,14 @@ CREATE TABLE `t_device_team`  (
   `name` varchar(100)  DEFAULT NULL,
   `remark` varchar(500)  DEFAULT NULL,
   `masterOpenId` varchar(100)  DEFAULT NULL,
-  `customerId` int(11) NULL DEFAULT NULL COMMENT '¿Í»§id',
+  `customerId` int(11) NULL DEFAULT NULL COMMENT 'å®¢æˆ·id',
   `manageOpenIds` varchar(200)  DEFAULT NULL,
   `status` int(11) NULL DEFAULT NULL,
   `createUser` varchar(100)  DEFAULT NULL,
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸×é' ;
+)  COMMENT = 'è®¾å¤‡ç»„' ;
 
 -- ----------------------------
 -- Table structure for t_device_team_item
@@ -279,7 +279,7 @@ CREATE TABLE `t_device_team_item`  (
   `createTIme` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸×éºÍÉè±¸¹ØÏµ±í' ;
+)  COMMENT = 'è®¾å¤‡ç»„å’Œè®¾å¤‡å…³ç³»è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_type
@@ -294,7 +294,7 @@ CREATE TABLE `t_device_type`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTIme` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ÀàĞÍ ±í' ;
+)  COMMENT = 'è®¾å¤‡ç±»å‹ è¡¨' ;
 
 -- ----------------------------
 -- Table structure for t_device_type_ablity_set
@@ -305,7 +305,7 @@ CREATE TABLE `t_device_type_ablity_set`  (
   `typeId` int(11) NULL DEFAULT NULL,
   `ablitySetId` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸ÀàĞÍ¶ÔÓ¦µÄ ¹¦ÄÜ¼¯±í (1v1)' ;
+)  COMMENT = 'è®¾å¤‡ç±»å‹å¯¹åº”çš„ åŠŸèƒ½é›†è¡¨ (1v1)' ;
 
 -- ----------------------------
 -- Table structure for t_deviceid_pool
@@ -319,7 +319,7 @@ CREATE TABLE `t_deviceid_pool`  (
   `deviceLicence` varchar(1024)  DEFAULT NULL,
   `createTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Éè±¸±¸°¸ºÅ ³Ø' ;
+)  COMMENT = 'è®¾å¤‡å¤‡æ¡ˆå· æ± ' ;
 
 -- ----------------------------
 -- Table structure for t_product
@@ -332,4 +332,4 @@ CREATE TABLE `t_product`  (
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpadateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = 'Î¢ĞÅ Éè±¸ĞÍºÅ±¸°¸±í' ;
+)  COMMENT = 'å¾®ä¿¡ è®¾å¤‡å‹å·å¤‡æ¡ˆè¡¨' ;
