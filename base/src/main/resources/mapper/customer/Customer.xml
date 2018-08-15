@@ -7,7 +7,7 @@
         t_customer
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" parameterType="com.huanke.iot.base.po.user.CustomeUserPo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.huanke.iot.base.po.customer.CustomeUserPo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName"/>
         (
         openId,
@@ -33,7 +33,7 @@
         )
     </insert>
 
-    <update id = "updateById" parameterType="com.huanke.iot.base.po.user.CustomerUserPo">
+    <update id = "updateById" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
         update <include refid="tableName"/>
         <set>
             <if test = "openId != null and openId != ''">
@@ -63,7 +63,7 @@
     </update>
 
     <!-- 根据信息筛选返回数据 -->
-    <select id="selectByOpenId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.user.CustomerUserPo">
+    <select id="selectByOpenId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
         SELECT
         *
         FROM <include refid="tableName"/>
@@ -71,18 +71,18 @@
         limit 1
     </select>
 
-    <update id = "updatevisitTimeByOpenId" parameterType="com.huanke.iot.base.po.user.CustomerUserPo">
+    <update id = "updatevisitTimeByOpenId" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
         update <include refid="tableName"/> set
         lastVisitTime = #{lastVisitTime}
         where openId = #{openId}
     </update>
 
 
-    <select id="selectCount" parameterType="com.huanke.iot.base.po.user.CustomerUserPo" resultType="java.lang.Integer">
+    <select id="selectCount" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo" resultType="java.lang.Integer">
         select count(1) from <include refid="tableName"/>
     </select>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.user.CustomerUserPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
         select
         *
         FROM <include refid="tableName"/>
