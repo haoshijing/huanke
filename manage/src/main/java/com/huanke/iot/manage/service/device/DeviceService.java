@@ -151,7 +151,7 @@ public class DeviceService {
         return deviceVos;
     }
 
-    public Boolean updateDeviceId(String mac, Integer publicId, String productId) {
+    public Boolean updateDeviceId(String mac, Integer publicId, String productId, Integer typeId) {
         DevicePo devicePo = deviceMapper.selectByMac(mac);
         if(devicePo == null){
             return false;
@@ -167,6 +167,7 @@ public class DeviceService {
 
                 DevicePo updatePo = new DevicePo();
                 updatePo.setId(devicePo.getId());
+                updatePo.setDeviceTypeId(typeId);
                 updatePo.setDeviceId(deviceId);
                 int updateRet = deviceMapper.updateOnlyDeviceId(updatePo);
                 log.info("updateRet = {}",updateRet);
