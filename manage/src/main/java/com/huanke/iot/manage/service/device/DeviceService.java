@@ -8,9 +8,13 @@ import com.huanke.iot.base.dao.device.data.DeviceInfoMapper;
 //2018-08-15
 //import com.huanke.iot.base.dao.publicnumber.PublicNumberMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+<<<<<<< HEAD
 import com.huanke.iot.base.po.device.data.DeviceInfoPo;
 //2018-08-15
 //import com.huanke.iot.base.po.publicnumber.PublicNumberPo;
+=======
+import com.huanke.iot.base.po.publicnumber.PublicNumberPo;
+>>>>>>> 83aa7a794887d0b57128386e47cd5bb69505e575
 import com.huanke.iot.manage.vo.request.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.DeviceQueryRequest;
 //2018-08-15

@@ -1,7 +1,6 @@
 package com.huanke.iot.base.dao.device.stat;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.device.data.DeviceSensorPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import org.apache.ibatis.annotations.Param;
 

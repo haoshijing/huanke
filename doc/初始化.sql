@@ -45,27 +45,29 @@ CREATE TABLE `t_customer_user`  (
 -- Table structure for t_device
 -- ----------------------------
 DROP TABLE IF EXISTS `t_device`;
-CREATE TABLE `t_device`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `mac` varchar(200)  DEFAULT NULL,
-  `name` varchar(200)  DEFAULT NULL,
-  `deviceId` varchar(200)  DEFAULT NULL,
-  `devicelicence` varchar(200)  DEFAULT NULL,
-  `saNo` varchar(200)  DEFAULT NULL,
-  `typeId` int(11) NULL DEFAULT NULL,
-  `productId` int(11) NULL DEFAULT NULL,
-  `onlineStatus` int(1) NULL DEFAULT NULL COMMENT '在线状态',
-  `bindStatus` int(1) NULL DEFAULT NULL COMMENT '绑定状态',
-  `bindTime` bigint(20) NULL DEFAULT NULL,
-  `ip` varchar(200)  DEFAULT NULL,
-  `speedConfig` varchar(4096)  DEFAULT NULL,
-  `createTime` bigint(20) NULL DEFAULT NULL,
-  `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
-  `enableStatus` int(1) NULL DEFAULT NULL COMMENT '启用状态',
-  `workStatus` int(1) NULL DEFAULT NULL COMMENT '工作状态',
+CREATE TABLE `t_device` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(200)  COMMENT '设备名称',
+  `mac` varchar(200)  COMMENT 'mac地址',
+  `deviceId` varchar(200)  COMMENT '微信生成的设备id',
+  `devicelicence` varchar(200)  COMMENT '微信生成的序列号',
+  `imei` varchar(200)  COMMENT 'imei',
+  `imsi` varchar(200)  COMMENT 'imsi',
+  `saNo` varchar(200)  COMMENT '序列号',
+  `typeId` int(11) DEFAULT NULL COMMENT '设备类型',
+  `productId` int(11) DEFAULT NULL COMMENT '微信生成的设备类型的productid',
+  `onlineStatus` int(1) DEFAULT NULL COMMENT '在线状态',
+  `bindStatus` int(1) DEFAULT NULL COMMENT '绑定状态',
+  `bindTime` bigint(20) DEFAULT NULL COMMENT '绑定时间',
+  `enableStatus` int(1) DEFAULT NULL COMMENT '启用状态',
+  `workStatus` int(1) DEFAULT NULL COMMENT '工作状态',
+  `ip` varchar(200)  COMMENT '机器ip',
+  `speedConfig` varchar(4096)  COMMENT '转速',
+  `version` varchar(300)  COMMENT '版本',
+  `createTime` bigint(20) DEFAULT NULL COMMENT '写入时间',
+  `lastUpdateTime` bigint(20) DEFAULT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`) USING BTREE
-)  COMMENT = '设备表 （基础属性）' ;
-
+) COMMENT='设备表 （基础属性）';
 -- ----------------------------
 -- Table structure for t_device_ablity
 -- ----------------------------

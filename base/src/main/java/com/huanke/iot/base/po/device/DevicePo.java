@@ -13,20 +13,30 @@ public class DevicePo {
      * 设备id
      */
     private Integer id;
+    private String name;
+
     /**
      * 设备mac地址
      */
     private String mac;
 
-    private String name;
     /**
      * 设备微信备案号
      */
     private String deviceId;
     private String devicelicence;
+
     //设备序列号
+<<<<<<< HEAD
     private String sano;
     private Integer deviceTypeId;
+=======
+    private String imei;
+    private String imsi;
+    private String saNo;
+
+    private Integer typeId;
+>>>>>>> 83aa7a794887d0b57128386e47cd5bb69505e575
     private Integer productId;
 
     private Long bindTime;
@@ -45,6 +55,7 @@ public class DevicePo {
      */
     private String ip;
     private String speedConfig;
+    private String version;
     private Long createTime;
     private Long lastUpdateTime;
 

@@ -11,21 +11,29 @@
         INSERT INTO
         <include refid="tableName"/>
         (
-        mac,
         name,
+        mac,
         deviceId,
         devicelicence,
-        sano,
+        imei,
+        imsi,
+        saNo,
         typeId,
+        productId,
+        speedConfig,
         createTime
         )
         VALUES (
-        #{mac},
         #{name},
+        #{mac},
         #{deviceId},
         #{devicelicence},
-        #{sano},
+        #{imei},
+        #{imsi},
+        #{saNo},
         #{typeId},
+        #{productId},
+        #{speedConfig},
         #{createTime}
         )
     </insert>
@@ -116,6 +124,28 @@
             <if test="location != null">
                 location = #{location},
             </if>
+        </set>
+        where
+        deviceId = #{deviceId}
+    </update>
+    <update id="updateStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
+
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="bindStatus != null">
+                name = #{bindStatus},bindTime = sysdate
+            </if>
+            <if test="onlineStatus != null">
+                onlineStatus = #{onlineStatus},
+            </if>
+            <if test="enableStatus != null">
+                enableStatus = #{enableStatus},
+            </if>
+            <if test="workStatus != null">
+                workStatus = #{workStatus},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
         </set>
         where
         deviceId = #{deviceId}

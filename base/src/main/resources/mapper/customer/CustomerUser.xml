@@ -7,7 +7,7 @@
         t_customer_user
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" parameterType="com.huanke.iot.base.po.user.CustomerPo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.huanke.iot.base.po.customer.CustomerPo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName"/>
         (
         name,
@@ -37,7 +37,7 @@
         )
     </insert>
 
-    <update id = "updateById" parameterType="com.huanke.iot.base.po.user.CustomerPo">
+    <update id = "updateById" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
         update <include refid="tableName"/>
         <set>
             <if test = "name != null and name != ''">
@@ -72,7 +72,7 @@
         where id = #{id}
     </update>
 
-    <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.user.CustomerPo">
+    <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         SELECT
         *
         FROM <include refid="tableName"/>
@@ -80,11 +80,11 @@
         limit 1
     </select>
 
-    <select id="selectCount" parameterType="com.huanke.iot.base.po.user.CustomerPo" resultType="java.lang.Integer">
+    <select id="selectCount" parameterType="com.huanke.iot.base.po.customer.CustomerPo" resultType="java.lang.Integer">
         select count(1) from <include refid="tableName"/>
     </select>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.user.CustomerPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
         *
         FROM <include refid="tableName"/>

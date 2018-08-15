@@ -1,7 +1,7 @@
 package com.huanke.iot.base.dao.user;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.user.CustomerPo;
+import com.huanke.iot.base.po.customer.CustomerPo;
 
 /**
  * @author caikun
