@@ -27,6 +27,8 @@ public class DevicePo {
     private String devicelicence;
 
     //设备序列号
+    private String sano;
+    private Integer deviceTypeId;
     private String imei;
     private String imsi;
     private String saNo;

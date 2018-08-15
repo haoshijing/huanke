@@ -4,15 +4,12 @@ import lombok.Data;
 
 @Data
 public class DeviceCreateOrUpdateRequest {
-    private Integer id;
-
     /**
-     * 设备mac地址
+     * 数据库中的id
      */
-    private String mac;
-
-    /*
-    设备名称
+    private Integer id;
+    /**
+     * 设备名称
      */
     private String name;
     /**
@@ -20,9 +17,12 @@ public class DeviceCreateOrUpdateRequest {
      */
     private Integer deviceTypeId;
     /**
-     * 公众号id
+     * 设备mac地址
      */
-    private Integer publicId;
+    private String mac;
+    /**
+     * 生产日期
+     */
+    private Long createTime;
 
-    private String productId;
 }

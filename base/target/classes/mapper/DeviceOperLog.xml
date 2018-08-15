@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper">
+
+    <sql id="tableName">
+        t_device_operlog
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" parameterType="com.huanke.iot.base.po.device.data.DeviceOperLogPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        deviceId,
+        funcId,
+        funcValue,
+        requestId,
+        operUserId,
+        operType,
+        createTime
+        )
+        VALUE (
+        #{deviceId},
+        #{funcId},
+        #{funcValue},
+        #{requestId},
+        #{operUserId},
+        #{operType},
+        #{createTime}
+        )
+    </insert>
+
+    <select id = "queryLogList" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo">
+        select * from  <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        order by id desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <!-- 根据信息筛选返回数据 -->
+    <select id="updateByRequestId"  parameterType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" resultType="java.lang.Integer" >
+        update
+         <include refid="tableName"/>
+         set dealRet = #{dealRet} , responseTime = #{responseTime}
+          ,retMsg = #{retMsg}
+        WHERE requestId = #{requestId}
+    </select>
+</mapper>

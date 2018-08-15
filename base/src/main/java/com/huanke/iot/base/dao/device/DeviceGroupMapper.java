@@ -39,6 +39,8 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
 
     DeviceGroupPo queryByName(DeviceGroupPo deviceGroupPo);
 
+    DeviceGroupPo selectById(DeviceGroupItemPo deviceGroupItemPo);
+
     Integer deleteDeviceGroupItem(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId);
 
     Integer deleteGroupItemByDeviceId(Integer deviceId);
