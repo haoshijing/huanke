@@ -1,4 +1,4 @@
-package com.huanke.iot.base.dao.user;
+package com.huanke.iot.base.dao.customer;
 
 import com.huanke.iot.base.dao.BaseMapper;
 
