@@ -8,7 +8,6 @@ import com.huanke.iot.base.dao.device.data.DeviceInfoMapper;
 import com.huanke.iot.base.dao.publicnumber.PublicNumberMapper;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.device.data.DeviceInfoPo;
 import com.huanke.iot.base.po.publicnumber.PublicNumberPo;
 import com.huanke.iot.manage.vo.request.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.DeviceQueryRequest;
