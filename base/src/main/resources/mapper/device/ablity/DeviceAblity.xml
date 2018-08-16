@@ -25,7 +25,7 @@
         )
     </insert>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceAblityPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityPo">
         select
         *
         FROM
@@ -33,7 +33,7 @@
         WHERE id = #{id} limit 1
     </select>
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceAblityPo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityPo">
         select * from
         <include refid="tableName"/>
         <where>
@@ -46,12 +46,12 @@
             </if>
             <if test="param.writeStatus != null">
                 AND writeStatus = #{param.writeStatus}
-            </if>
+            </if>UserPo
         </where>
         limit #{offset},#{limit}
     </select>
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceAblityPo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.alibity.DeviceAblityPo">
         update
         <include refid="tableName"/>
         <set>
@@ -63,6 +63,6 @@
             </if>
         </set>
         where
-        deviceId = #{deviceId}
+        id = #{id}
     </update>
 </mapper>
