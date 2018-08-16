@@ -7,7 +7,7 @@
         t_device_type
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         INSERT INTO <include refid="tableName"/>
         (
         name,
@@ -24,7 +24,7 @@
         #{createTime}
         )
     </insert>
-    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         update <include refid="tableName"/>
         <set>
             <if test = "name != null and name != ''">
@@ -39,13 +39,12 @@
             <if test = "remark != null and remark != ''">
                 remark = #{remark},
             </if>
-
             lastUpdatetime = #{lastUpdatetime}
         </set>
         where id = #{id}
     </update>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         select
         *
         FROM <include refid="tableName"/>
@@ -57,18 +56,24 @@
         from <include refid="tableName"/>
         <where>
             <if test = "param.name != null and param.name != ''">
-                and name = #{param.name}
+                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test = "param.typeNo != null and param.typeNo != ''">
+                and name = #{param.typeNo}
             </if>
         </where>
     </select>
 
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceTypePo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         select * from <include refid="tableName"/>
         <where>
 
             <if test = "param.name != null and param.name != ''">
-                and name = #{param.name}
+                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test = "param.typeNo != null and param.typeNo != ''">
+                and name = #{param.typeNo}
             </if>
         </where>
         limit #{limit} offset #{offset}
