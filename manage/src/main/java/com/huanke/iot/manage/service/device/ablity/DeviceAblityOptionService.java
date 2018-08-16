@@ -4,7 +4,7 @@ import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityOptionCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityOptionQueryRequest;
-import com.huanke.iot.manage.vo.response.ablity.DeviceAblityOptionVo;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

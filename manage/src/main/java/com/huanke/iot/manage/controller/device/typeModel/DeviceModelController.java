@@ -5,7 +5,7 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
-import com.huanke.iot.manage.vo.response.ablity.DeviceAblityVo;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

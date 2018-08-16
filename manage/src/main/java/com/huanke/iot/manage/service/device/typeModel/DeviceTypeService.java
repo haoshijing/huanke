@@ -1,10 +1,11 @@
 package com.huanke.iot.manage.service.device.typeModel;
 
-import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
-import com.huanke.iot.manage.vo.response.ablity.DeviceAblityVo;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,42 +19,42 @@ import java.util.stream.Collectors;
 public class DeviceTypeService {
 
     @Autowired
-    private DeviceAblityMapper deviceAblityMapper;
+    private DeviceTypeMapper deviceTypeMapper;
 
 
-    public Boolean createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) {
+    public Boolean createOrUpdate(DeviceTypeCreateOrUpdateRequest typeRequest) {
 
         int effectCount = 0;
-        DeviceAblityPo deviceAblityPo = new DeviceAblityPo();
-        BeanUtils.copyProperties(ablityRequest,deviceAblityPo);
-        if(ablityRequest.getId() != null && ablityRequest.getId() > 0){
-            deviceAblityPo.setLastUpdateTime(System.currentTimeMillis());
-            effectCount = deviceAblityMapper.updateById(deviceAblityPo);
+        DeviceTypePo deviceTypePo = new DeviceTypePo();
+        BeanUtils.copyProperties(typeRequest,deviceTypePo);
+        if(typeRequest.getId() != null && typeRequest.getId() > 0){
+            deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
+            effectCount = deviceTypeMapper.updateById(deviceTypePo);
         }else{
-            deviceAblityPo.setCreateTime(System.currentTimeMillis());
-            effectCount =  deviceAblityMapper.insert(deviceAblityPo);
+            deviceTypePo.setCreateTime(System.currentTimeMillis());
+            effectCount =  deviceTypeMapper.insert(deviceTypePo);
         }
         return effectCount > 0;
     }
 
-    public List<DeviceAblityVo> selectList(DeviceAblityQueryRequest request) {
+    public List<DeviceTypeVo> selectList(DeviceTypeQueryRequest request) {
 
-        DeviceAblityPo queryDeviceAblityPo = new DeviceAblityPo();
-        queryDeviceAblityPo.setAblityName(request.getAblityName());
-        queryDeviceAblityPo.setDirValue(request.getDirValue());
-        queryDeviceAblityPo.setWriteStatus(request.getWriteStatus());
+        DeviceTypePo queryDeviceTypePo = new DeviceTypePo();
+        queryDeviceTypePo.setName(request.getName());
+        queryDeviceTypePo.setTypeNo(request.getTypeNo());
 
         Integer offset = (request.getPage() - 1)*request.getLimit();
         Integer limit = request.getLimit();
 
-        List<DeviceAblityPo> deviceAblityPos = deviceAblityMapper.selectList(queryDeviceAblityPo,limit,offset);
-        return deviceAblityPos.stream().map(deviceAblityPo -> {
-            DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
-            deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
-            deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
-            deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
-            deviceAblityVo.setId(deviceAblityPo.getId());
-            return deviceAblityVo;
+        List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectList(queryDeviceTypePo,limit,offset);
+        return deviceTypePos.stream().map(deviceTypePo -> {
+            DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
+            deviceTypeVo.setName(deviceTypePo.getName());
+            deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
+            deviceTypeVo.setIcon(deviceTypePo.getIcon());
+            deviceTypeVo.setRemark(deviceTypePo.getRemark());
+            deviceTypeVo.setId(deviceTypePo.getId());
+            return deviceTypeVo;
         }).collect(Collectors.toList());
     }
 

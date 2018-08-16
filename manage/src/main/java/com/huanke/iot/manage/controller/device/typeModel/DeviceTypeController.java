@@ -2,10 +2,10 @@ package com.huanke.iot.manage.controller.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
-import com.huanke.iot.manage.vo.response.ablity.DeviceAblityVo;
+import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,44 +21,42 @@ import java.util.List;
  * @version 2018年08月15日 22:11
  **/
 @RestController
-@RequestMapping("/api/deviceAbility")
+@RequestMapping("/api/deviceType")
 @Slf4j
 public class DeviceTypeController {
 
     @Autowired
-    private DeviceAblityService deviceAblityService;
+    private DeviceTypeService deviceTypeService;
 
 
     /**
-     * 添加新能力
-     * @param ablityRequest
+     * 添加新类型
+     * @param typeRrequest
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/createDeviceAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
-        if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
-                StringUtils.isEmpty(ablityRequest.getDirValue())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
+    @RequestMapping(value = "/createDeviceType",method = RequestMethod.POST)
+    public ApiResponse<Boolean> createDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
+        if(StringUtils.isBlank(typeRrequest.getName())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
         }
-        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
+        Boolean ret =  deviceTypeService.createOrUpdate(typeRrequest);
         return new ApiResponse<>(ret);
     }
 
 
     /**
-     * 修改新能力
-     * @param ablityRequest
+     * 修改 类型
+     * @param typeyRequest
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/updateDeviceAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
-        if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
-                StringUtils.isEmpty(ablityRequest.getDirValue())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
+    @RequestMapping(value = "/updateDeviceType",method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeyRequest) throws Exception{
+        if(StringUtils.isBlank(typeyRequest.getName())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
         }
-        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
+        Boolean ret =  deviceTypeService.createOrUpdate(typeyRequest);
         return new ApiResponse<>(ret);
     }
 
@@ -70,9 +68,9 @@ public class DeviceTypeController {
      * @throws Exception
      */
     @RequestMapping(value = "/select")
-    public ApiResponse<List<DeviceAblityVo>> selectList(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
-        List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
-        return new ApiResponse<>(deviceAblityVos);
+    public ApiResponse<List<DeviceTypeVo>> selectList(@RequestBody DeviceTypeQueryRequest ablityRequest) throws Exception{
+        List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(ablityRequest);
+        return new ApiResponse<>(deviceTypeVos);
     }
 
 }
