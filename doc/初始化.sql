@@ -468,7 +468,7 @@ CREATE TABLE `wx_config` (
   `customerId` int(11) DEFAULT NULL COMMENT '客户id',
   `password` varchar(100) NOT NULL COMMENT '高级设置密码',
   `defaultTeamName` varchar(100) DEFAULT NULL COMMENT '默认组名',
-  `htmlType` int(11) DEFAULT NULL COMMENT '页面板式类型',
+  `htmlTypeId` int(11) DEFAULT NULL COMMENT '页面板式类型',
   `backgroundImg` varchar(200) DEFAULT NULL COMMENT '背景图片',
   `themeName` varchar(100) DEFAULT NULL COMMENT '主题名称',
   `logo` varchar(200) DEFAULT NULL COMMENT 'h5logo图标',
@@ -484,7 +484,6 @@ CREATE TABLE `wx_config` (
 DROP TABLE IF EXISTS `wx_html_type`;
 CREATE TABLE `wx_html_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `customerId` varchar(11) DEFAULT NULL COMMENT '客户所在id，可关联查到公众号信息',
   `name` varchar(100) DEFAULT NULL COMMENT '页面版式名称',
   `htmlUrl` varchar(200) DEFAULT NULL COMMENT '页面访问地址',
   `previewImg` varchar(255) DEFAULT NULL COMMENT '页面版式预览图',
