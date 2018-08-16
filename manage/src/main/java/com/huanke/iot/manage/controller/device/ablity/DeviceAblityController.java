@@ -16,11 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-//2018-08-15
-//import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
-//2018-08-15
-//import com.huanke.iot.manage.response.DeviceVo;
-
 /**
  * @author caikun
  * @version 2018年08月15日 22:11
@@ -75,7 +70,7 @@ public class DeviceAblityController {
      * @throws Exception
      */
     @RequestMapping(value = "/select")
-    public ApiResponse<List<DeviceAblityVo>> updateDeviceAblity(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
+    public ApiResponse<List<DeviceAblityVo>> selectList(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
         List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
         return new ApiResponse<>(deviceAblityVos);
     }

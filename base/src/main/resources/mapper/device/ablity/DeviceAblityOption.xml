@@ -21,4 +21,40 @@
         )
     </insert>
 
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.optionName != null and param.optionName != ''">
+                AND optionName like CONCAT('%',CONCAT(#{param.optionName},'%'))
+            </if>
+            <if test="param.ablityId != null">
+                AND ablityId = #{param.ablityId}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="optionName != null and optionName != ''">
+                optionName = #{optionName},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
+
 </mapper>
