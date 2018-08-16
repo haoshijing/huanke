@@ -39,14 +39,14 @@
         <where>
             1 = 1
             <if test="param.ablityName != null and param.ablityName != ''">
-                AND ablityName = #{param.ablityName}
+                AND ablityName like CONCAT('%',CONCAT(#{param.ablityName},'%'))
             </if>
             <if test="param.dirValue != null and param.dirValue != ''">
                 AND dirValue = #{param.dirValue}
             </if>
             <if test="param.writeStatus != null">
                 AND writeStatus = #{param.writeStatus}
-            </if>UserPo
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>
@@ -55,12 +55,19 @@
         update
         <include refid="tableName"/>
         <set>
-            <if test="ablityName != null and blityName != ''">
-                name = #{ablityName},
+            <if test="ablityName != null and ablityName != ''">
+                ablityName = #{ablityName},
             </if>
             <if test="dirValue != null  and dirValue != ''">
                 dirValue = #{dirValue},
             </if>
+            <if test="writeStatus != null">
+                writeStatus = #{writeStatus},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
         </set>
         where
         id = #{id}

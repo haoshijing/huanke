@@ -1,36 +1,20 @@
 package com.huanke.iot.manage.controller.device.ablity;
 
-import com.aliyun.oss.OSSClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
-import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
-import com.huanke.iot.base.po.device.DeviceUpgradePo;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
-import com.huanke.iot.manage.service.DeviceAdminService;
-import com.huanke.iot.manage.service.DeviceOperLogService;
-import com.huanke.iot.manage.service.device.DeviceService;
 import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
-import com.huanke.iot.manage.service.gateway.MqttSendService;
-import com.huanke.iot.manage.vo.request.DeviceCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.DeviceLogQueryRequest;
-import com.huanke.iot.manage.vo.response.DeviceOperLogVo;
+import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
+import com.huanke.iot.manage.vo.response.ablity.DeviceAblityVo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.Map;
 
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
@@ -52,33 +36,48 @@ public class DeviceAblityController {
 
     /**
      * 添加新能力
-     * @param body
+     * @param ablityRequest
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @RequestMapping(value = "/createDeviceAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDevice(@RequestBody String body) throws Exception{
-        Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
-        DeviceAblityPo deviceAblityPo  =(DeviceAblityPo) requestParam.get("deviceAblityPo");
-        Boolean ret =  deviceAblityService.createOrUpdate(deviceAblityPo);
+    public ApiResponse<Boolean> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+        if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
+                StringUtils.isEmpty(ablityRequest.getDirValue())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
+        }
+        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
         return new ApiResponse<>(ret);
     }
 
 
+    /**
+     * 修改新能力
+     * @param ablityRequest
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @RequestMapping(value = "/updateDeviceAblity",method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+        if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
+                StringUtils.isEmpty(ablityRequest.getDirValue())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
+        }
+        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
+        return new ApiResponse<>(ret);
+    }
 
 
-//
-//
-//    private void uploadToOss(String fileKey,byte[] content){
-//        OSSClient ossClient = new OSSClient(bucketUrl, accessKeyId,accessKeySecret);
-//        try {
-//            ossClient.putObject("idcfota", fileKey, new ByteArrayInputStream(content));
-//        }catch (Exception e){
-//            log.error("",e);
-//        }finally {
-//            if(ossClient != null){
-//                ossClient.shutdown();
-//            }
-//        }
-//    }
+    /**
+     * 查询功能列表
+     * @param ablityRequest
+     * @return 返回功能项列表
+     * @throws Exception
+     */
+    @RequestMapping(value = "/select")
+    public ApiResponse<List<DeviceAblityVo>> updateDeviceAblity(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
+        List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
+        return new ApiResponse<>(deviceAblityVos);
+    }
+
 }
