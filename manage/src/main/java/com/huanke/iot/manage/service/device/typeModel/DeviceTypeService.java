@@ -9,6 +9,7 @@ import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,6 +22,17 @@ public class DeviceTypeService {
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
 
+    @Value("${accessKeyId}")
+    private String accessKeyId;
+
+    @Value("${accessKeySecret}")
+    private String accessKeySecret;
+
+    @Value("${bucketUrl}")
+    private String bucketUrl;
+
+    @Value("${bucketName}")
+    private String bucketName;
 
     public Boolean createOrUpdate(DeviceTypeCreateOrUpdateRequest typeRequest) {
 
@@ -51,7 +63,7 @@ public class DeviceTypeService {
             DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
             deviceTypeVo.setName(deviceTypePo.getName());
             deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
-            deviceTypeVo.setIcon(deviceTypePo.getIcon());
+            deviceTypeVo.setIcon("https://"+bucketUrl+"/"+deviceTypeVo.getIcon());
             deviceTypeVo.setRemark(deviceTypePo.getRemark());
             deviceTypeVo.setId(deviceTypePo.getId());
             return deviceTypeVo;
@@ -68,7 +80,7 @@ public class DeviceTypeService {
         DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
         deviceTypeVo.setName(deviceTypePo.getName());
         deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
-        deviceTypeVo.setIcon(deviceTypePo.getIcon());
+        deviceTypeVo.setIcon("https://"+bucketUrl+"/"+deviceTypeVo.getIcon());
         deviceTypeVo.setRemark(deviceTypePo.getRemark());
         deviceTypeVo.setId(deviceTypePo.getId());
 

@@ -8,6 +8,7 @@ import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,6 +21,17 @@ public class DeviceModelService {
     @Autowired
     private DeviceModelMapper deviceModelMapper;
 
+    @Value("${accessKeyId}")
+    private String accessKeyId;
+
+    @Value("${accessKeySecret}")
+    private String accessKeySecret;
+
+    @Value("${bucketUrl}")
+    private String bucketUrl;
+
+    @Value("${bucketName}")
+    private String bucketName;
 
     public Boolean createOrUpdate(DeviceModelCreateOrUpdateRequest modelRequest) {
 
@@ -58,7 +70,7 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setIcon("https://"+bucketUrl+"/"+deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
             return deviceModelVo;
         }).collect(Collectors.toList());
@@ -87,7 +99,7 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setIcon("https://"+bucketUrl+"/"+deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
             return deviceModelVo;
         }).collect(Collectors.toList());
@@ -108,7 +120,7 @@ public class DeviceModelService {
         deviceModelVo.setRemark(deviceModelPo.getRemark());
         deviceModelVo.setStatus(deviceModelPo.getStatus());
         deviceModelVo.setVersion(deviceModelPo.getVersion());
-        deviceModelVo.setIcon(deviceModelPo.getIcon());
+        deviceModelVo.setIcon("https://"+bucketUrl+"/"+deviceModelVo.getIcon());
         deviceModelVo.setId(deviceModelPo.getId());
 
         return deviceModelVo;
