@@ -3,6 +3,7 @@ package com.huanke.iot.manage.controller.device.ablity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.manage.service.device.ablity.DeviceAblitySetRelationService;
 import com.huanke.iot.manage.service.device.ablity.DeviceAblitySetService;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
@@ -33,6 +34,9 @@ public class DeviceAblitySetController {
     @Autowired
     private DeviceAblitySetService deviceAblitySetService;
 
+    @Autowired
+    private DeviceAblitySetRelationService deviceAblitySetRelatoinService;
+
 
     /**
      * 添加新能力集
@@ -49,6 +53,20 @@ public class DeviceAblitySetController {
         return new ApiResponse<>(ret);
     }
 
+    /**
+     * 添加 能力集 中的能力
+     * @param body
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @RequestMapping(value = "/createDeviceAblitySetRelation",method = RequestMethod.POST)
+    public ApiResponse<Boolean> createDeviceAblitySetRelation(@RequestBody String body) throws Exception{
+
+        Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
+
+        Boolean ret =  deviceAblitySetRelatoinService.createOrUpdate(requestParam);
+        return new ApiResponse<>(ret);
+    }
 
     /**
      * 修改能力集
