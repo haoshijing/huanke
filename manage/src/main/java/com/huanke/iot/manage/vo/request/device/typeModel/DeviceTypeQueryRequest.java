@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class DeviceTypeQueryRequest {
 
+    private Integer id;
     private String name;
     private String typeNo;
     private Integer page = 1;

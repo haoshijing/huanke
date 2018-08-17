@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class DeviceModelQueryRequest {
 
+    private Integer id;
     private String name;
     private Integer typeId; //类型id
     private Integer customerId;

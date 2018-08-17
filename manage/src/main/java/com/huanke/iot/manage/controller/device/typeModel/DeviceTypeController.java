@@ -53,6 +53,9 @@ public class DeviceTypeController {
      */
     @RequestMapping(value = "/updateDeviceType",method = RequestMethod.POST)
     public ApiResponse<Boolean> updateDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeyRequest) throws Exception{
+        if(typeyRequest.getId()==null||typeyRequest.getId()<=0){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键不存在");
+        }
         if(StringUtils.isBlank(typeyRequest.getName())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
         }
@@ -62,15 +65,27 @@ public class DeviceTypeController {
 
 
     /**
-     * 查询功能列表
-     * @param ablityRequest
+     * 查询类型列表
+     * @param typeRequest
      * @return 返回功能项列表
      * @throws Exception
      */
     @RequestMapping(value = "/select")
-    public ApiResponse<List<DeviceTypeVo>> selectList(@RequestBody DeviceTypeQueryRequest ablityRequest) throws Exception{
-        List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(ablityRequest);
+    public ApiResponse<List<DeviceTypeVo>> selectList(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
+        List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(typeRequest);
         return new ApiResponse<>(deviceTypeVos);
+    }
+
+    /**
+     * 根据id查询型号
+     * @param modelRequest
+     * @return 返回型号项列表
+     * @throws Exception
+     */
+    @RequestMapping(value = "/selectById")
+    public ApiResponse<DeviceTypeVo> selectById(@RequestBody DeviceTypeQueryRequest modelRequest) throws Exception{
+        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(modelRequest);
+        return new ApiResponse<>(deviceTypeVo);
     }
 
 }

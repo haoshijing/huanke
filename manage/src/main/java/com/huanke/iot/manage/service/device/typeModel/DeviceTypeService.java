@@ -58,6 +58,22 @@ public class DeviceTypeService {
         }).collect(Collectors.toList());
     }
 
+    public DeviceTypeVo selectById(DeviceTypeQueryRequest request) {
+
+        DeviceTypePo queryDeviceTypePo = new DeviceTypePo();
+        queryDeviceTypePo.setId(request.getId());
+
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(queryDeviceTypePo);
+
+        DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
+        deviceTypeVo.setName(deviceTypePo.getName());
+        deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
+        deviceTypeVo.setIcon(deviceTypePo.getIcon());
+        deviceTypeVo.setRemark(deviceTypePo.getRemark());
+        deviceTypeVo.setId(deviceTypePo.getId());
+
+        return deviceTypeVo;
+    }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {
 //        DeviceTypePo queryTypePo = new DeviceTypePo();
 //        queryTypePo.setName(queryRequest.getName());
