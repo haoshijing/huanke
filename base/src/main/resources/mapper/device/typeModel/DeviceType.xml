@@ -59,7 +59,7 @@
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test = "param.typeNo != null and param.typeNo != ''">
-                and name = #{param.typeNo}
+                and typeNo = #{param.typeNo}
             </if>
         </where>
     </select>

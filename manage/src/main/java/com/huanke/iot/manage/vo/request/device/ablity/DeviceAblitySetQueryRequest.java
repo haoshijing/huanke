@@ -1,4 +1,4 @@
-package com.huanke.iot.base.po.device.alibity;
+package com.huanke.iot.manage.vo.request.device.ablity;
 
 import lombok.Data;
 
@@ -7,12 +7,12 @@ import lombok.Data;
  * @date 2018/8/14 19:19
  */
 @Data
-public class DeviceAblitySetPo {
+public class DeviceAblitySetQueryRequest {
 
     private Integer id;
     private String name;
     private Integer status;
     private String remark;
-    private Long createTime;
-    private Long lastUpdateTime;
+    private Integer page = 1;
+    private Integer limit = 20;
 }
