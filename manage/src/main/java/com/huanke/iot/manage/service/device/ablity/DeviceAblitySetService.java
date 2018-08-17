@@ -38,7 +38,7 @@ public class DeviceAblitySetService {
         int effectCount = 0;
         DeviceAblitySetPo deviceAblitySetPo = new DeviceAblitySetPo();
 
-        deviceAblitySetPo.setId(Integer.parseInt((String) requestParam.get("id")));
+        deviceAblitySetPo.setId((Integer)(requestParam.get("id")));
         deviceAblitySetPo.setName((String) requestParam.get("name"));
         deviceAblitySetPo.setRemark((String) requestParam.get("remark"));
         deviceAblitySetPo.setStatus(Integer.parseInt((String) requestParam.get("status")));
@@ -98,10 +98,12 @@ public class DeviceAblitySetService {
 
         DeviceAblitySetVo deviceAblitySetVo = new DeviceAblitySetVo();
 
-        deviceAblitySetVo.setName(deviceAblitySetPo.getName());
-        deviceAblitySetVo.setRemark(deviceAblitySetPo.getRemark());
-        deviceAblitySetVo.setStatus(deviceAblitySetPo.getStatus());
-        deviceAblitySetVo.setId(deviceAblitySetPo.getId());
+        if(deviceAblitySetPo!=null){
+            deviceAblitySetVo.setName(deviceAblitySetPo.getName());
+            deviceAblitySetVo.setRemark(deviceAblitySetPo.getRemark());
+            deviceAblitySetVo.setStatus(deviceAblitySetPo.getStatus());
+            deviceAblitySetVo.setId(deviceAblitySetPo.getId());
+        }
         return deviceAblitySetVo;
     }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {

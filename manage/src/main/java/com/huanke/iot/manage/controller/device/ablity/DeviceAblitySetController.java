@@ -56,8 +56,8 @@ public class DeviceAblitySetController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/updateDeviceAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> updateDeviceAblity(@RequestBody String body) throws Exception{
+    @RequestMapping(value = "/updateDeviceAblitySet",method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateDeviceAblitySet(@RequestBody String body) throws Exception{
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
 
         Boolean ret =  deviceAblitySetService.createOrUpdate(requestParam);
