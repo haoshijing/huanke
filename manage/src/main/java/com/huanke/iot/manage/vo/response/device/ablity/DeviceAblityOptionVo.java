@@ -1,4 +1,4 @@
-package com.huanke.iot.manage.vo.response.ablity;
+package com.huanke.iot.manage.vo.response.device.ablity;
 
 import lombok.Data;
 

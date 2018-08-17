@@ -2,9 +2,9 @@ package com.huanke.iot.manage.service.device.typeModel;
 
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
-public class DeviceTypeService {
+public class DeviceTypeAblitySetService {
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
@@ -34,12 +34,12 @@ public class DeviceTypeService {
     @Value("${bucketName}")
     private String bucketName;
 
-    public Boolean createOrUpdate(DeviceTypeCreateOrUpdateRequest typeRequest) {
+    public Boolean createOrUpdate(DeviceTypeAblitySetCreateOrUpdateRequest request) {
 
         int effectCount = 0;
         DeviceTypePo deviceTypePo = new DeviceTypePo();
-        BeanUtils.copyProperties(typeRequest,deviceTypePo);
-        if(typeRequest.getId() != null && typeRequest.getId() > 0){
+        BeanUtils.copyProperties(request,deviceTypePo);
+        if(request.getId() != null && request.getId() > 0){
             deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
             effectCount = deviceTypeMapper.updateById(deviceTypePo);
         }else{

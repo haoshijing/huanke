@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.device.DeviceTypeMapper">
+<mapper namespace="com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper">
 
     <sql id="tableName">
         t_device_type
@@ -39,7 +39,7 @@
             <if test = "remark != null and remark != ''">
                 remark = #{remark},
             </if>
-            lastUpdatetime = #{lastUpdatetime}
+            lastUpdateTime = #{lastUpdateTime}
         </set>
         where id = #{id}
     </update>
@@ -59,7 +59,7 @@
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test = "param.typeNo != null and param.typeNo != ''">
-                and name = #{param.typeNo}
+                and typeNo = #{param.typeNo}
             </if>
         </where>
     </select>
@@ -73,7 +73,7 @@
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test = "param.typeNo != null and param.typeNo != ''">
-                and name = #{param.typeNo}
+                and typeNo = #{param.typeNo}
             </if>
         </where>
         limit #{limit} offset #{offset}

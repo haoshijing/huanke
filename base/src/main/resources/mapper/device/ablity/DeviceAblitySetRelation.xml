@@ -19,4 +19,60 @@
         )
     </insert>
 
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.alibity.DeviceAblitySetRelationPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="ablityId != null">
+                name = #{ablityId},
+            </if>
+            <if test="ablitySetId != null ">
+                ablitySetId = #{ablitySetId},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+    <delete id="deleteByAblitySetId">
+        delete from <include refid="tableName"/>
+        where ablitySetId = #{ablitySetId}
+    </delete>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblitySetRelationPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+    <select id="selectByAblitySetId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblitySetRelationPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+
+        WHERE ablitySetId = #{ablitySetId} limit 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblitySetRelationPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.ablitySetId != null">
+                AND ablitySetId = #{param.ablitySetId}
+            </if>
+            <if test="param.ablityId != null ">
+                AND ablityId = #{param.ablityId}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
 </mapper>
