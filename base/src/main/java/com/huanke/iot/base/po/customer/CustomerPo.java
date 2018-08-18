@@ -21,5 +21,6 @@ public class CustomerPo {
     private String creatUser;
     private Long createTime;
     private Long lastUpdateTime;
+    private Integer status;
 
 }

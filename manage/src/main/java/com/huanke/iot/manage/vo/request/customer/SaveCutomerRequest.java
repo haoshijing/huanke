@@ -1,6 +1,5 @@
 package com.huanke.iot.manage.vo.request.customer;
 
-import com.huanke.iot.manage.vo.message.OtaDeviceVo;
 import lombok.Data;
 
 import java.util.List;
@@ -35,13 +34,13 @@ public class SaveCutomerRequest {
 
     @Data
     public static class H5Config {
+        private String password;
         private String defaultTeamName;
         private String backgroundImgKey;
         private Integer htmlTypeId;
         private String themeName;
         private String logoKey;
         private String version;
-        private String deviceChangePassword;    //设备切换密码
     }
 
     @Data
@@ -70,14 +69,15 @@ public class SaveCutomerRequest {
         private String name;
         private String logoKey;
         private String version;
-        private List<AndroidConfig> androidConfigList;  //场景列表
+        private String deviceChangePassword;    //设备切换密码
+        private List<AndroidScene> androidSceneList;  //场景列表
     }
 
     /**
      * 安卓场景
      */
     @Data
-    private static class AndroidScene {
+    public static class AndroidScene {
         private String name;
         private String imgsCoverKey;    //图册封面
         private String describe;

@@ -22,11 +22,11 @@
         status,
         createTime,
         lastUpdateTime,
-        createUser
+        creatUser
         )
         VALUES (
         #{name},
-        #{loginname},
+        #{loginName},
         #{userType},
         #{remark},
         #{publicName},
@@ -37,7 +37,7 @@
         #{status},
         #{createTime},
         #{lastUpdateTime},
-        #{createUser}
+        #{creatUser}
         )
     </insert>
 
