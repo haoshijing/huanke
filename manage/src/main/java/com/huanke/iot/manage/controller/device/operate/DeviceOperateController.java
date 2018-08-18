@@ -124,16 +124,16 @@ public class DeviceOperateController {
         return new ApiResponse<>(deviceService.selectCount());
     }
 
-    @RequestMapping("/queryOperLogList")
-    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
-        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);
-        return new ApiResponse<>(deviceOperLogVos);
-    }
-
-    @RequestMapping("/queryOperLogCount")
-    public ApiResponse<Integer>queryOperLogCount(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
-        return new ApiResponse<>(0);
-    }
+//    @RequestMapping("/queryOperLogList")
+//    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
+//        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);
+//        return new ApiResponse<>(deviceOperLogVos);
+//    }
+//
+//    @RequestMapping("/queryOperLogCount")
+//    public ApiResponse<Integer>queryOperLogCount(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
+//        return new ApiResponse<>(0);
+//    }
     /*2018-08-15
     @RequestMapping("/otaDevice1")
     public ApiResponse<Boolean> otaDevice1(@RequestBody OtaDeviceRequest request){

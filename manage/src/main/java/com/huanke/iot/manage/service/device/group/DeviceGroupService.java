@@ -9,9 +9,6 @@ import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupAddNewDeviceRequest;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.group.DeviceGroupQueryRequest;
-import com.huanke.iot.manage.vo.response.DeviceGroupItemVo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,25 +73,47 @@ public class DeviceGroupService {
         return true;
     }
 
+    /**
+     * 向集群中添加选中的设备
+     * @param deviceGroupAddNewDeviceRequests
+     * @return
+     */
     public Boolean addDeviceToGroup(List<DeviceGroupAddNewDeviceRequest> deviceGroupAddNewDeviceRequests){
         for(DeviceGroupAddNewDeviceRequest deviceGroupAddNewDeviceRequest: deviceGroupAddNewDeviceRequests){
             DevicePo devicePo=deviceMapper.selectByMac(deviceGroupAddNewDeviceRequest.getMac());
-            if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
-                return false;
-            }
-            else {
-                DeviceGroupItemPo deviceGroupItemPo=new DeviceGroupItemPo();
-                deviceGroupItemPo.setGroupId(deviceGroupAddNewDeviceRequest.getGroupId());
-                deviceGroupItemPo.setDeviceId(devicePo.getId());
-                deviceGroupItemPo.setStatus(1);
-                deviceGroupItemPo.setCreateTime(System.currentTimeMillis());
-                deviceGroupItemPo.setLastUpdateTime(System.currentTimeMillis());
-                deviceGroupItemMapper.insert(deviceGroupItemPo);
-            }
+            DeviceGroupItemPo deviceGroupItemPo=new DeviceGroupItemPo();
+            deviceGroupItemPo.setGroupId(deviceGroupAddNewDeviceRequest.getGroupId());
+            deviceGroupItemPo.setDeviceId(devicePo.getId());
+            deviceGroupItemPo.setStatus(1);
+            deviceGroupItemPo.setCreateTime(System.currentTimeMillis());
+            deviceGroupItemPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceGroupItemMapper.insert(deviceGroupItemPo);
         }
         return true;
     }
 
+    /**
+     * 查询设备列的集群信息，若存在直接返回集群的相关信息
+     * @param deviceGroupAddNewDeviceRequests
+     * @return
+     */
+    public DeviceGroupPo queryGroupName(List<DeviceGroupAddNewDeviceRequest> deviceGroupAddNewDeviceRequests){
+        DeviceGroupPo deviceGroupPo=null;
+        for (DeviceGroupAddNewDeviceRequest deviceGroupAddNewDeviceRequest : deviceGroupAddNewDeviceRequests) {
+            DevicePo devicePo = deviceMapper.selectByMac(deviceGroupAddNewDeviceRequest.getMac());
+            //若查询到有设备存在集群中，返回该集群的相关信息
+            if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
+                DeviceGroupItemPo deviceGroupItemPo=deviceGroupItemMapper.selectByDeviceId(devicePo.getId());
+                deviceGroupPo= deviceGroupMapper.selectById(deviceGroupItemPo.getGroupId());
+            }
+        }
+        return deviceGroupPo;
+    }
+    /**
+     * 通过集群名查询集群ID
+     * @param deviceGroupCreateOrUpdateRequest
+     * @return
+     */
     public DeviceGroupPo queryIdByName(DeviceGroupCreateOrUpdateRequest deviceGroupCreateOrUpdateRequest){
         DeviceGroupPo queryPo=new DeviceGroupPo();
         queryPo.setName(deviceGroupCreateOrUpdateRequest.getName());
@@ -106,6 +125,27 @@ public class DeviceGroupService {
         else {
             return null;
         }
+    }
+
+    /**
+     * 判定设备列表中的设备是否存在集群冲突
+     * @param deviceGroupAddNewDeviceRequests
+     * @return
+     */
+    public Boolean isGroupConflict(List<DeviceGroupAddNewDeviceRequest> deviceGroupAddNewDeviceRequests){
+        //获取设备列表中第一个设备的集群ID
+        Integer compareGroupId=deviceGroupItemMapper.selectByDeviceId(deviceMapper.selectByMac(deviceGroupAddNewDeviceRequests.get(0).getMac()).getId()).getGroupId();
+        for(DeviceGroupAddNewDeviceRequest deviceGroupAddNewDeviceRequest:deviceGroupAddNewDeviceRequests){
+            DevicePo devicePo=deviceMapper.selectByMac(deviceGroupAddNewDeviceRequest.getMac());
+            if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
+                Integer currentGroupId=deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId();
+                //若当前设备的集群ID与第一个设备的集群ID，则判定当前设备列表中有多个集群，集群冲突
+                if(compareGroupId != currentGroupId){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 //
 //

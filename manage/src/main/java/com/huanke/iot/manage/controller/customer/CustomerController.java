@@ -49,13 +49,13 @@ public class CustomerController {
         return new ApiResponse<>(customerVo);
     }
 
-    /**
-     * 查询客户列表
-     * @return
-     */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ApiResponse<List<Map<String, Object>>> queryList() {
-
-
-    }
+//    /**
+//     * 查询客户列表
+//     * @return
+//     */
+//    @RequestMapping(value = "/list", method = RequestMethod.GET)
+//    public ApiResponse<List<Map<String, Object>>> queryList() {
+//
+//
+//    }
 }

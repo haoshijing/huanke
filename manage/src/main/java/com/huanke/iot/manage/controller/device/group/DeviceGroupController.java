@@ -2,6 +2,7 @@ package com.huanke.iot.manage.controller.device.group;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupAddNewDeviceRequest;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupCreateOrUpdateRequest;
@@ -44,18 +45,54 @@ public class DeviceGroupController {
             deviceGroupCreateOrUpdateRequest.setId(deviceGroupService.queryIdByName(deviceGroupCreateOrUpdateRequest).getId());
             List<DeviceGroupAddNewDeviceRequest> deviceGroupAddNewDeviceRequests=new ArrayList<>();
             List<Map<String, Object>> deviceList = (List<Map<String, Object>>) requestParam.get("deviceList");
-            for(Map<String,Object> m:deviceList){
-                DeviceGroupAddNewDeviceRequest deviceGroupAddNewDeviceRequest=new DeviceGroupAddNewDeviceRequest();
-                deviceGroupAddNewDeviceRequest.setGroupId(deviceGroupCreateOrUpdateRequest.getId());
+            //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群
+            if(null != deviceList) {
+                for (Map<String, Object> m : deviceList) {
+                    DeviceGroupAddNewDeviceRequest deviceGroupAddNewDeviceRequest = new DeviceGroupAddNewDeviceRequest();
+                    deviceGroupAddNewDeviceRequest.setGroupId(deviceGroupCreateOrUpdateRequest.getId());
+                    deviceGroupAddNewDeviceRequest.setDeviceName((String) m.get("deviceName"));
+                    deviceGroupAddNewDeviceRequest.setDeviceTypeId(Integer.parseInt(m.get("deviceTypeId").toString()));
+                    deviceGroupAddNewDeviceRequest.setMac((String) m.get("mac"));
+                    deviceGroupAddNewDeviceRequests.add(deviceGroupAddNewDeviceRequest);
+                }
+                ret = deviceGroupService.addDeviceToGroup(deviceGroupAddNewDeviceRequests);
+            }
+        }
+        return new ApiResponse<>(ret);
+    }
+
+    /**
+     *在设备列表中点击集群时，显示设备列表中已有集群的集群名称，若存在多个集群，则返回错误
+     * @param body
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/queryGroupByDevice")
+    public  ApiResponse<DeviceGroupPo> queryGroupByDevice(@RequestBody String body) throws Exception{
+        DeviceGroupPo deviceGroupPo=null;
+        Map<String,Object> requestParam=new ObjectMapper().readValue(body,Map.class);
+        List<DeviceGroupAddNewDeviceRequest> deviceGroupAddNewDeviceRequests=new ArrayList<>();
+        List<Map<String, Object>> deviceList = (List<Map<String, Object>>) requestParam.get("deviceList");
+        if(null != deviceList) {
+            for (Map<String, Object> m : deviceList) {
+                DeviceGroupAddNewDeviceRequest deviceGroupAddNewDeviceRequest = new DeviceGroupAddNewDeviceRequest();
                 deviceGroupAddNewDeviceRequest.setDeviceName((String) m.get("deviceName"));
                 deviceGroupAddNewDeviceRequest.setDeviceTypeId(Integer.parseInt(m.get("deviceTypeId").toString()));
                 deviceGroupAddNewDeviceRequest.setMac((String) m.get("mac"));
                 deviceGroupAddNewDeviceRequests.add(deviceGroupAddNewDeviceRequest);
             }
-            ret=deviceGroupService.addDeviceToGroup(deviceGroupAddNewDeviceRequests);
+            if(deviceGroupService.isGroupConflict(deviceGroupAddNewDeviceRequests)){
+                return new ApiResponse<>(RetCode.ERROR,"设备列表中存在多个集群");
+            }
+            else {
+                deviceGroupPo=deviceGroupService.queryGroupName(deviceGroupAddNewDeviceRequests);
+            }
         }
-        return new ApiResponse<>(ret);
+        return new ApiResponse(deviceGroupPo);
     }
+
+
+
 //    @RequestMapping("/select")
 //    public ApiResponse<List<DeviceGroupItemVo>> selectList(@RequestBody DeviceGroupQueryRequest request){
 //        List<DeviceGroupItemVo> groupItemVos = deviceGroupService.selectList(request);

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class DeviceGroupQueryRequest {
+    private String mac;
     private String name;
     private Integer page = 1;
     private Integer limit = 20;
