@@ -26,13 +26,13 @@ public class CustomerController {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ApiResponse<Boolean> saveOne(@RequestBody SaveCutomerRequest saveCutomerRequest) {
+    public ApiResponse<Boolean> saveDetail(@RequestBody SaveCutomerRequest saveCutomerRequest) {
         if (StringUtils.isBlank(saveCutomerRequest.getName())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"客户名称不能为空");
         }
 
 
-        Boolean ret =  true;
-        return new ApiResponse<>(ret);
+        this.customerService.saveDetail(saveCutomerRequest);
+        return new ApiResponse<>(true);
     }
 }

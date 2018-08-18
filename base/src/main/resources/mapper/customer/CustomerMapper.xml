@@ -6,6 +6,40 @@
     <sql id="tableName">
         t_customer
     </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        name,
+        loginname,
+        userType,
+        remark,
+        publicName,
+        publicId,
+        appid,
+        appsecret,
+        SLD,
+        status,
+        createTime,
+        lastUpdateTime,
+        createUser
+        )
+        VALUES (
+        #{name},
+        #{loginname},
+        #{userType},
+        #{remark},
+        #{publicName},
+        #{publicId},
+        #{appid},
+        #{appsecret},
+        #{SLD},
+        #{status},
+        #{createTime},
+        #{lastUpdateTime},
+        #{createUser}
+        )
+    </insert>
 
 
 

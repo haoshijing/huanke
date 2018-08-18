@@ -16,22 +16,81 @@ public class SaveCutomerRequest {
     private String publicName;
     private String appid;
     private String appsecret;
-    private String userType;
+    private Integer userType;
     private String loginName;
-    private List<Integer> deviceModelIdList;
-    private;
+    private String SLD;
+    private String remark;  //备注
+    private List<DeviceModel> deviceModelList;  //设备型号列表
+    private H5Config h5Config;  //H5配置
+    private AndroidConfig androidConfig;    //安卓配置
+    private BackendConfig backendConfig;    //管理后台配置
 
-
+    @Data
+    public static class BackendConfig {
+        private Boolean enableStatus;
+        private String logoKey;
+        private String name;
+        private Integer type;
+    }
 
     @Data
     public static class H5Config {
-        private String type;
-        private OtaDeviceVo.VersionPo version;
-        private String url;
-        private Integer size;
-        private String md5;
+        private String defaultTeamName;
+        private String backgroundImgKey;
+        private Integer htmlTypeId;
+        private String themeName;
+        private String logoKey;
+        private String version;
+        private String deviceChangePassword;    //设备切换密码
+    }
+
+    @Data
+    public static class DeviceModel {
+        private String name;
+        private Integer typeId;
+        private Integer productId;
+        private String iconKey;
+        private List<DeviceModelAbility> deviceModelAbilityList;    //功能列表
+        private String remark;  //备注
+    }
+
+    @Data
+    public static class DeviceModelAbility {
+        private Integer ablityId;
+        private String definedName;
     }
 
 
+    /**
+     * 安卓配置
+     */
+    @Data
+    public static class AndroidConfig {
+        private String qrcodeKey;   //二维码
+        private String name;
+        private String logoKey;
+        private String version;
+        private List<AndroidConfig> androidConfigList;  //场景列表
+    }
 
+    /**
+     * 安卓场景
+     */
+    @Data
+    private static class AndroidScene {
+        private String name;
+        private String imgsCoverKey;    //图册封面
+        private String describe;
+        private List<AndroidSceneImg> androidSceneImgList;  //图片列表
+    }
+
+    /**
+     * 安卓场景中图片
+     */
+    @Data
+    public static class AndroidSceneImg {
+        private String name;
+        private String imgVideoKey;    //图片或视频
+        private String describe;
+    }
 }

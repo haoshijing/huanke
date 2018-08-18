@@ -10,7 +10,7 @@ import lombok.Data;
 public class CustomerPo {
     private Integer id;
     private String name;
-    private String loginname;
+    private String loginName;
     private Integer userType;
     private String remark;
     private Integer publicId;
