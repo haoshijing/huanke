@@ -6,7 +6,13 @@
     <sql id="tableName">
         t_customer
     </sql>
-
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
 
 
 </mapper>

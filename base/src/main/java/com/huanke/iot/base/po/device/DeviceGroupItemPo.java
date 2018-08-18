@@ -12,25 +12,21 @@ public class DeviceGroupItemPo {
      * 设备编组id
      */
     private Integer id;
-    /**
-     * 编组id
-     */
-    private Integer groupId;
+
     /**
      * 设备id
      */
     private Integer deviceId;
 
-    private Integer userId;
+    /**
+     * 编组id
+     */
+    private Integer groupId;
+
+    private Integer status;
 
     private Long createTime;
 
     private Long lastUpdateTime;
 
-    private Integer status;
-
-    /**
-     * 是否是主拥有人
-     */
-    private Integer isMaster;
 }

@@ -1,6 +1,5 @@
-package com.huanke.iot.manage.controller.device;
+package com.huanke.iot.manage.controller.device.operate;
 
-import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
@@ -8,19 +7,17 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.DeviceUpgradePo;
-import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
-import com.huanke.iot.manage.vo.request.DeviceCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.DeviceLogQueryRequest;
-import com.huanke.iot.manage.vo.request.DeviceQueryRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceLogQueryRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.DeviceOperLogVo;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
-import com.huanke.iot.manage.vo.message.OtaDeviceVo;
 //2018-08-15
 //import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.DeviceOperLogService;
-import com.huanke.iot.manage.service.device.DeviceService;
+import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author haoshijing
@@ -43,7 +39,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/device")
 @Slf4j
-public class DeviceController {
+public class DeviceOperateController {
 
     @Value("${bucketUrl}")
     private String bucketUrl;
@@ -52,7 +48,7 @@ public class DeviceController {
     private String bucketName;
 
     @Autowired
-    private DeviceService deviceService;
+    private DeviceOperateService deviceService;
 
     @Autowired
     private MqttSendService mqttSendService;
@@ -88,32 +84,45 @@ public class DeviceController {
      * 添加新设备
      * @param body
      * @return 成功返回true，失败返回false
+     * 接口要求的形式为：
+     * {"deviceList":[{"name":"shebei1","deviceTypeId":1,"mac":"0x-2201-22202","createTime":20180815},{"name":"shebei2","deviceTypeId":1,"mac":"0x-2201-22202","createTime":20180815}]}
      * @throws Exception
      */
     @RequestMapping("/createDevice")
     public ApiResponse<Boolean> createDevice(@RequestBody String body) throws Exception{
         Map<String,Object> requestParam=new ObjectMapper().readValue(body,Map.class);
-        List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests=(List<DeviceCreateOrUpdateRequest>) requestParam.get("deviceList");
+        List<Map<String, Object>> deviceList = (List<Map<String, Object>>) requestParam.get("deviceList");
+        List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests=new ArrayList<>();
+        for(Map<String,Object> m:deviceList){
+            DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest=new DeviceCreateOrUpdateRequest();
+            deviceCreateOrUpdateRequest.setName(m.get("name").toString());
+            deviceCreateOrUpdateRequest.setDeviceTypeId(Integer.parseInt(m.get("deviceTypeId").toString()));
+            deviceCreateOrUpdateRequest.setMac(m.get("mac").toString());
+            deviceCreateOrUpdateRequest.setCreateTime(Long.valueOf(m.get("createTime").toString()));
+            deviceCreateOrUpdateRequests.add(deviceCreateOrUpdateRequest);
+        }
         Boolean ret =  deviceService.createDevice(deviceCreateOrUpdateRequests);
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/resetPid")
-    public ApiResponse<Boolean> resetPid(String productId){
-        stringRedisTemplate.opsForValue().set("productId", productId);
-        return new ApiResponse<>(true);
+    /**
+     * sixiaojun
+     * 设备列表
+     * @return
+     * @throws Exception
+     * 查询获取与设备相关的所有信息
+     */
+    @RequestMapping("/queryDevice")
+    public ApiResponse<List<DeviceQueryRequest>> queryAllDevice(@RequestBody String body) throws Exception{
+        Map<String,Object> requestParam=new ObjectMapper().readValue(body,Map.class);
+        Integer page=(Integer) requestParam.get("page");
+        List<DeviceQueryRequest> deviceQueryVos=deviceService.queryDeviceByPage(page);
+        return new ApiResponse<>(deviceQueryVos);
     }
-    /*2018-08-15
-    @RequestMapping("/queryList")
-    public ApiResponse<List<DeviceVo>> queryList(@RequestBody DeviceQueryRequest deviceQueryRequest){
-        List<DeviceVo> deviceVos = deviceService.selectList(deviceQueryRequest);
-        return new ApiResponse<>(deviceVos);
+    @RequestMapping("/queryCount")
+    public ApiResponse<Integer> queryCount(){
+        return new ApiResponse<>(deviceService.selectCount());
     }
-    */
-//    @RequestMapping("/queryCount")
-//    public ApiResponse<Integer> queryCount(@RequestBody  DeviceQueryRequest deviceQueryRequest){
-//        return new ApiResponse<>(deviceService.selectCount(deviceQueryRequest));
-//    }
 
     @RequestMapping("/queryOperLogList")
     public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){

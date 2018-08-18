@@ -2,7 +2,7 @@ package com.huanke.iot.manage.service;
 
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
-import com.huanke.iot.manage.vo.request.DeviceLogQueryRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceLogQueryRequest;
 import com.huanke.iot.manage.vo.response.DeviceOperLogVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

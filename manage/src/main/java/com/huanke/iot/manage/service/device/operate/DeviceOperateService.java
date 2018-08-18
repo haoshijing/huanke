@@ -1,4 +1,4 @@
-package com.huanke.iot.manage.service.device;
+package com.huanke.iot.manage.service.device.operate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -6,17 +6,10 @@ import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
-//import com.huanke.iot.base.dao.device.data.DeviceInfoMapper;
-//2018-08-15
-//import com.huanke.iot.base.dao.publicnumber.PublicNumberMapper;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.manage.vo.request.DeviceCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.DeviceQueryRequest;
-import com.huanke.iot.manage.vo.request.DeviceQueryVo;
-//2018-08-15
-//import com.huanke.iot.manage.response.DeviceVo;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,8 +17,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
@@ -36,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
-public class DeviceService {
+public class DeviceOperateService {
 
     @Autowired
     private DeviceMapper deviceMapper;
@@ -60,65 +51,14 @@ public class DeviceService {
     @Autowired
     private WechartUtil wechartUtil;
 
-//    public Boolean createDevice(DeviceCreateOrUpdateRequest request) {
-//        String mac = request.getMac();
-//        DevicePo devicePo = deviceMapper.selectByMac(mac);
-//        if (devicePo != null && StringUtils.isNotEmpty(devicePo.getDeviceId())) {
-//            return false;
-//        } else {
-//            Integer publicId = request.getPublicId();
-//            String  productId = request.getProductId();
-//            DeviceIdPoolPo deviceIdPoolPo = deviceIdPoolMapper.selectByPublicIdAndPid(publicId,productId);
-//
-//            if (deviceIdPoolPo == null || true) {
-//                //没有从池子中获取到设备id
-//                PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
-//                if(publicNumberPo != null) {
-//                    String appId = publicNumberPo.getAppId();
-//                    String appSecret = publicNumberPo.getAppSecret();
-//                    JSONObject jsonObject = obtainDeviceInfo(appId, appSecret, publicId,productId);
-//                    if(jsonObject == null){
-//                        return false;
-//                    }else{
-//                        String deviceId = jsonObject.getString("deviceid");
-//                        String devicelicence = jsonObject.getString("devicelicence");
-//                        DevicePo insertPo = new DevicePo();
-//                        insertPo.setPublicId(publicId);
-//                        insertPo.setMac(request.getMac());
-//                        insertPo.setName(request.getName());
-//                        insertPo.setDeviceId(deviceId);
-//                        insertPo.setDevicelicence(devicelicence);
-//                        insertPo.setWxProductId(productId);
-//                        insertPo.setDeviceTypeId(request.getDeviceTypeId());
-//                        deviceMapper.insert(insertPo);
-//                    }
-//                }
-//            } else {
-//                String deviceId = deviceIdPoolPo.getDeviceId();
-//                String devicelicence = deviceIdPoolPo.getDevicelicence();
-//                DevicePo insertPo = new DevicePo();
-//                insertPo.setPublicId(publicId);
-//                insertPo.setMac(request.getMac());
-//                insertPo.setName(request.getName());
-//                insertPo.setDeviceId(deviceId);
-//                insertPo.setDevicelicence(devicelicence);
-//                insertPo.setDeviceTypeId(request.getDeviceTypeId());
-//                deviceMapper.insert(insertPo);
-//                Integer devicePoolId = deviceIdPoolPo.getId();
-//                deviceIdPoolMapper.deleteById(devicePoolId);
-//            }
-//
-//        }
-//        return true;
-//
-//    }
-
     /**2018-08-15
      * sixiaojun
+     * 支持批量或单个添加
      * @param deviceCreateOrUpdateRequests
      * @return
      */
     public Boolean createDevice(List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests) {
+
         for (DeviceCreateOrUpdateRequest request:deviceCreateOrUpdateRequests
              ) {
             String mac=request.getMac();
@@ -143,10 +83,18 @@ public class DeviceService {
      * @param
      * @return list
      */
-    public List<DeviceQueryVo> deviceList(DeviceQueryRequest deviceQueryRequest){
-        List<DevicePo> devicePos=deviceMapper.selectAll();
-        List<DeviceQueryVo> deviceQueryVos=devicePos.stream().map(devicePo -> {
-            DeviceQueryVo deviceQueryVo=new DeviceQueryVo();
+    public List<DeviceQueryRequest> queryDeviceByPage(int page){
+        //当期要查询的页
+        Integer currentPage = page;
+        //每页显示的数量
+        Integer limit= 20;
+        //偏移量
+        Integer offset = (currentPage - 1) * limit;
+        //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
+        DevicePo queryPo=new DevicePo();
+        List<DevicePo> devicePos=deviceMapper.selectList(queryPo,limit,offset);
+        List<DeviceQueryRequest> deviceQueryVos=devicePos.stream().map(devicePo -> {
+            DeviceQueryRequest deviceQueryVo=new DeviceQueryRequest();
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setMac(devicePo.getMac());
             deviceQueryVo.setDeviceTypeId(devicePo.getDeviceTypeId());
@@ -169,9 +117,9 @@ public class DeviceService {
                     deviceQueryVo.setEnableStatus("已禁用用");
                 }
             }
-            if(null != deviceGroupItemMapper.selectByDeviceId(devicePo)){
-                deviceQueryVo.setGroup_id(deviceGroupItemMapper.selectByDeviceId(devicePo).getGroupId());
-                deviceQueryVo.setGroup_name(deviceGroupMapper.selectById(deviceGroupItemMapper.selectByDeviceId(devicePo)).getGroupName());
+            if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
+                deviceQueryVo.setGroup_id(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
+                deviceQueryVo.setGroup_name(deviceGroupMapper.selectById(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId()).getName());
             }
             else {
                 deviceQueryVo.setGroup_id(-1);
@@ -197,52 +145,18 @@ public class DeviceService {
         }).collect(Collectors.toList());
         return deviceQueryVos;
     }
-//    public List<DeviceVo> selectList(DeviceQueryRequest deviceQueryRequest) {
-//
-//        DevicePo queryDevicePo = new DevicePo();
-//        queryDevicePo.setMac(deviceQueryRequest.getMac());
-//        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
-//        Integer page = deviceQueryRequest.getPage();
-//        Integer limit = deviceQueryRequest.getLimit();
-//        Integer offset = (page - 1) * limit;
-//
-//        List<DevicePo> devicePos = deviceMapper.selectList(queryDevicePo, limit, offset);
-//
-//        List<DeviceVo> deviceVos = devicePos.stream().map(devicePo -> {
-//            DeviceVo deviceVo = new DeviceVo();
-//            deviceVo.setDeviceId(devicePo.getDeviceId());
-//            deviceVo.setName(devicePo.getName());
-//            deviceVo.setMac(devicePo.getMac());
-//            deviceVo.setId(devicePo.getId());
-//            if (devicePo.getBindStatus() != null) {
-//                if (devicePo.getBindStatus() == 2) {
-//                    deviceVo.setBindStatus("已绑定");
-//                } else if (devicePo.getBindStatus() == 3) {
-//                    deviceVo.setBindStatus("已解绑");
-//                } else if (devicePo.getBindStatus() == 1) {
-//                    deviceVo.setBindStatus("未绑定");
-//                }
-//            }
-//            if (devicePo.getOnlineStatus() == 1) {
-//                deviceVo.setOnlineStatus("在线");
-//            } else if (devicePo.getOnlineStatus() == 2) {
-//                deviceVo.setOnlineStatus("离线");
-//            }
-//            deviceVo.setLocation(devicePo.getLocation());
-//            DeviceInfoPo deviceInfoPo = deviceInfoMapper.selectByMac(devicePo.getMac());
-//            if (deviceInfoPo != null) {
-//                String version = deviceInfoPo.getVersion();
-//                JSONObject jsonObject = JSON.parseObject(version);
-//                if (jsonObject != null) {
-//                    deviceVo.setHardware(jsonObject.getString("hardware"));
-//                    deviceVo.setSoftware(jsonObject.getString("software"));
-//                }
-//            }
-//            return deviceVo;
-//        }).collect(Collectors.toList());
-//        return deviceVos;
-//    }
-//
+
+    /**
+     * 2018-08-18
+     * 获取设备总数
+     * @param
+     * @return
+     */
+    public Integer selectCount() {
+        DevicePo queryDevicePo = new DevicePo();
+        return deviceMapper.selectCount(queryDevicePo);
+    }
+
 //    public Boolean updateDeviceId(String mac, Integer publicId, String productId) {
 //        DevicePo devicePo = deviceMapper.selectByMac(mac);
 //        if(devicePo == null){
@@ -267,13 +181,7 @@ public class DeviceService {
 //        }
 //        return false;
 //    }
-//    public Integer selectCount(DeviceQueryRequest deviceQueryRequest) {
-//
-//        DevicePo queryDevicePo = new DevicePo();
-//        queryDevicePo.setMac(deviceQueryRequest.getMac());
-//        queryDevicePo.setOnlineStatus(deviceQueryRequest.getOnlineStatus());
-//        return deviceMapper.selectCount(queryDevicePo);
-//    }
+
 
     public Boolean updateDevice(DeviceCreateOrUpdateRequest deviceUpdateRequest) {
 

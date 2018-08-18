@@ -189,9 +189,5 @@
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         <include refid="tableName"/>
-        <where>
-            1 = 1
-        </where>
-        limit #{offset},#{limit}
     </select>
 </mapper>

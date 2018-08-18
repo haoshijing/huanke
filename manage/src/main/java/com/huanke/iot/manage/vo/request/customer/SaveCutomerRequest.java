@@ -19,7 +19,6 @@ public class SaveCutomerRequest {
     private String userType;
     private String loginName;
     private List<Integer> deviceModelIdList;
-    private;
 
 
 
