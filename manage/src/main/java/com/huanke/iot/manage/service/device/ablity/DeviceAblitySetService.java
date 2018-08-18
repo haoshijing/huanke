@@ -1,8 +1,10 @@
 package com.huanke.iot.manage.service.device.ablity;
 
 import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetMapper;
+import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetRelationMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblitySetPo;
+import com.huanke.iot.base.po.device.alibity.DeviceAblitySetRelationPo;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblitySetQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblitySetVo;
@@ -25,6 +27,10 @@ public class DeviceAblitySetService {
 
     @Autowired
     private DeviceAblitySetMapper deviceAblitySetMapper;
+
+    @Autowired
+    private DeviceAblitySetRelationMapper deviceAblitySetRelationMapper;
+
 
 
     /**
@@ -54,6 +60,32 @@ public class DeviceAblitySetService {
         return effectCount > 0;
     }
 
+    /**
+     * 删除 该设备功能集
+     *
+     * @param requestParam
+     * @return
+     */
+    public Boolean deleteAblitySet(Map<String, Object> requestParam) {
+
+        Boolean ret  =false;
+        Integer ablitySetId = (Integer) requestParam.get("ablitySetId");//功能集主键
+
+
+        //判断当 功能集id不为空时
+        if( ablitySetId!=null){
+            //先删除 该设备能力集
+            ret = deviceAblitySetMapper.deleteById(ablitySetId) > 0;
+            //再删除 关系表中 与该能力集有关的数据
+            ret = ret && deviceAblitySetRelationMapper.deleteByAblitySetId(ablitySetId) > 0;
+
+        }else{
+            log.error("功能集主键不可为空");
+            return false;
+        }
+
+        return ret;
+    }
     /**
      * 查询 能力集列表
      * @param request

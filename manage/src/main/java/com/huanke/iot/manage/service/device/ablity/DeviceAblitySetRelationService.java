@@ -91,6 +91,58 @@ public class DeviceAblitySetRelationService {
         return effectCount > 0;
     }
 
+    /**
+     * 删除 该设备功能集
+     *
+     * @param requestParam
+     * @return
+     */
+    public Boolean deleteByAblitySetId(Map<String, Object> requestParam) {
+
+        int effectCount = 0;
+        DeviceAblitySetRelationPo deviceAblitySetRelationPo = new DeviceAblitySetRelationPo();
+
+        deviceAblitySetRelationPo.setAblitySetId((Integer) requestParam.get("ablitySetId"));
+        //判断当 能力集id不为空时
+        if( deviceAblitySetRelationPo.getAblitySetId()!=null&&deviceAblitySetRelationPo.getAblitySetId()!=null){
+
+            effectCount = deviceAblitySetRelationMapper.deleteByAblitySetId(deviceAblitySetRelationPo.getAblitySetId());
+
+        }else{
+            log.error("功能集主键不可为空");
+            return false;
+        }
+
+        return effectCount > 0;
+    }
+
+    /**
+     * 删除 设备功能集与 功能的关系
+     *
+     * @param requestParam
+     * @return
+     */
+    public Boolean deleteByAblityId(Map<String, Object> requestParam) {
+
+        int effectCount = 0;
+        DeviceAblitySetRelationPo deviceAblitySetRelationPo = new DeviceAblitySetRelationPo();
+
+        deviceAblitySetRelationPo.setAblityId((Integer) requestParam.get("ablityId"));
+        deviceAblitySetRelationPo.setAblitySetId((Integer) requestParam.get("ablitySetId"));
+        //判断当 能力id 于 能力集id都不为空
+        if(deviceAblitySetRelationPo.getAblityId()!=null&&deviceAblitySetRelationPo.getAblityId()>0&&
+                deviceAblitySetRelationPo.getAblitySetId()!=null&&deviceAblitySetRelationPo.getAblitySetId()!=null){
+
+            effectCount = deviceAblitySetRelationMapper.deleteByAblityId(deviceAblitySetRelationPo);
+
+        }else{
+            log.error("能力主键或功能集主键不可为空");
+            return false;
+        }
+
+        return effectCount > 0;
+    }
+
 //    /**
 //     * 查询 能力集列表
 //     * @param ablitySetId

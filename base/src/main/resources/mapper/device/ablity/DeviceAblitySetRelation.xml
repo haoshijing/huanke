@@ -24,7 +24,7 @@
         <include refid="tableName"/>
         <set>
             <if test="ablityId != null">
-                name = #{ablityId},
+                ablityId = #{ablityId},
             </if>
             <if test="ablitySetId != null ">
                 ablitySetId = #{ablitySetId},
@@ -42,6 +42,12 @@
     <delete id="deleteByAblitySetId">
         delete from <include refid="tableName"/>
         where ablitySetId = #{ablitySetId}
+    </delete>
+
+    <delete id="deleteAblityByAbiltyId">
+        delete from <include refid="tableName"/>
+        where ablityId = #{ablityId}
+        and ablitySetId = #{ablitySetId}
     </delete>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblitySetRelationPo">

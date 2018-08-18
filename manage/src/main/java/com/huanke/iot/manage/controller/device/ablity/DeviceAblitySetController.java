@@ -54,21 +54,6 @@ public class DeviceAblitySetController {
     }
 
     /**
-     * 添加 能力集 中的能力
-     * @param body
-     * @return 成功返回true，失败返回false
-     * @throws Exception
-     */
-    @RequestMapping(value = "/createDeviceAblitySetRelation",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDeviceAblitySetRelation(@RequestBody String body) throws Exception{
-
-        Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
-
-        Boolean ret =  deviceAblitySetRelatoinService.createOrUpdate(requestParam);
-        return new ApiResponse<>(ret);
-    }
-
-    /**
      * 修改能力集
      * @param body
      * @return 成功返回true，失败返回false
@@ -79,6 +64,54 @@ public class DeviceAblitySetController {
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
 
         Boolean ret =  deviceAblitySetService.createOrUpdate(requestParam);
+        return new ApiResponse<>(ret);
+    }
+
+
+    /**
+     * 删除 能力集
+     * 删除能力集表中的数据 并删除 关系表中 与该能力集有关系的数据
+     * @param body
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @RequestMapping(value = "/delteAblitySet",method = RequestMethod.POST)
+    public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody String body) throws Exception{
+
+        Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
+
+        Boolean ret =  deviceAblitySetService.deleteAblitySet(requestParam);
+        return new ApiResponse<>(ret);
+    }
+
+    /**
+     * 添加 能力集 中的能力
+     * @param body
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @RequestMapping(value = "/createDeviceAblitySetItem",method = RequestMethod.POST)
+    public ApiResponse<Boolean> createDeviceAblitySetRelation(@RequestBody String body) throws Exception{
+
+        Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
+
+        Boolean ret =  deviceAblitySetRelatoinService.createOrUpdate(requestParam);
+        return new ApiResponse<>(ret);
+    }
+
+    /**
+     * 删除 能力集 中的能力
+     * 只需要删除关系表中的关系即可
+     * @param body
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @RequestMapping(value = "/delteAblitySetItemByAblityId",method = RequestMethod.POST)
+    public ApiResponse<Boolean> delteDeviceAblitySetItemByAblityId(@RequestBody String body) throws Exception{
+
+        Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
+
+        Boolean ret =  deviceAblitySetRelatoinService.deleteByAblityId(requestParam);
         return new ApiResponse<>(ret);
     }
 
