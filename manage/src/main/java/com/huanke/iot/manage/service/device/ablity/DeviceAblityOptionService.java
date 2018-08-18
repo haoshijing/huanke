@@ -21,6 +21,11 @@ public class DeviceAblityOptionService {
     private DeviceAblityOptionMapper deviceAblityOptionMapper;
 
 
+    /**
+     * 添加 功能的选项
+     * @param optionRequest
+     * @return
+     */
     public Boolean createOrUpdate(DeviceAblityOptionCreateOrUpdateRequest optionRequest) {
 
         int effectCount = 0;
@@ -36,6 +41,11 @@ public class DeviceAblityOptionService {
         return effectCount > 0;
     }
 
+    /**
+     * 查询 选项列表 可根据 功能主键 或者选项名称
+     * @param request
+     * @return
+     */
     public List<DeviceAblityOptionVo> selectList(DeviceAblityOptionQueryRequest request) {
 
         DeviceAblityOptionPo queryDeviceAblityOptionPo = new DeviceAblityOptionPo();
@@ -55,4 +65,23 @@ public class DeviceAblityOptionService {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * 删除 选项
+     * @param optionRequest
+     * @return Boolean
+     */
+    public Boolean deleteOptionById(DeviceAblityOptionQueryRequest optionRequest) {
+
+        Boolean ret  =false;
+
+        //判断当 功能id不为空时
+        if( optionRequest.getId()!=null){
+            //先删除 该 功能
+            ret = deviceAblityOptionMapper.deleteById(optionRequest.getId()) > 0;
+        }else{
+            log.error("选项主键不可为空");
+            return false;
+        }
+        return ret;
+    }
 }

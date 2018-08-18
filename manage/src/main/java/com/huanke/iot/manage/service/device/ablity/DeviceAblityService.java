@@ -96,6 +96,8 @@ public class DeviceAblityService {
         }
         return ret;
     }
+
+
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {
 //        DeviceTypePo queryTypePo = new DeviceTypePo();
 //        queryTypePo.setName(queryRequest.getName());

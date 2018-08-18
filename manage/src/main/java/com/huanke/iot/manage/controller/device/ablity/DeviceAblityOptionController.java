@@ -79,4 +79,18 @@ public class DeviceAblityOptionController {
         return new ApiResponse<>(deviceAblityOptionVos);
     }
 
+
+    /**
+     * 删除 该选项
+     * @param optionRequest
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @RequestMapping(value = "/delteAblityOption",method = RequestMethod.POST)
+    public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody DeviceAblityOptionQueryRequest optionRequest) throws Exception{
+        if(null==optionRequest.getId()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"选项主键不能为空");        }
+        Boolean ret =  deviceAblityOptionService.deleteOptionById(optionRequest);
+        return new ApiResponse<>(ret);
+    }
 }

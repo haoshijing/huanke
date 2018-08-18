@@ -11,4 +11,8 @@ public interface DeviceAblityMapper extends BaseMapper<DeviceAblityPo> {
 
     Integer deleteOptionByAblityId(Integer AblityId);
 
+    Integer deleteOptionByOptionId(Integer OptionId);
+
+
+
 }

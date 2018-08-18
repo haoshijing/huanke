@@ -82,5 +82,4 @@
         delete from t_device_ablity_option
         where ablityId = #{ablityId}
     </delete>
-
 </mapper>
