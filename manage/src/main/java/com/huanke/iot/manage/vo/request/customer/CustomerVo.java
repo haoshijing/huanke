@@ -8,7 +8,7 @@ import java.util.List;
  * 保存客户信息
  */
 @Data
-public class SaveCutomerRequest {
+public class CustomerVo {
 
     private Integer id;
     private String name;
@@ -24,6 +24,9 @@ public class SaveCutomerRequest {
     private AndroidConfig androidConfig;    //安卓配置
     private BackendConfig backendConfig;    //管理后台配置
 
+    /**
+     * 后台配置
+     */
     @Data
     public static class BackendConfig {
         private Boolean enableStatus;
@@ -32,6 +35,9 @@ public class SaveCutomerRequest {
         private Integer type;
     }
 
+    /**
+     * H5配置
+     */
     @Data
     public static class H5Config {
         private String password;
@@ -43,6 +49,9 @@ public class SaveCutomerRequest {
         private String version;
     }
 
+    /**
+     * 设备型号
+     */
     @Data
     public static class DeviceModel {
         private String name;
@@ -58,7 +67,6 @@ public class SaveCutomerRequest {
         private Integer ablityId;
         private String definedName;
     }
-
 
     /**
      * 安卓配置

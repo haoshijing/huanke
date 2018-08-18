@@ -1,14 +1,17 @@
 package com.huanke.iot.manage.service.customer;
 
 import com.huanke.iot.base.dao.customer.*;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.po.customer.*;
-import com.huanke.iot.manage.vo.request.customer.SaveCutomerRequest;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 客户
@@ -37,32 +40,54 @@ public class CustomerService {
     @Autowired
     private AndroidSceneMapper androidSceneMapper;
 
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
+
     /**
      * 保存详情
-     * @param saveCutomerRequest
+     * @param customerVo
      */
-    public void saveDetail(SaveCutomerRequest saveCutomerRequest) {
+    public void saveDetail(CustomerVo customerVo) {
 
         //客户信息
         CustomerPo customerPo = new CustomerPo();
-        customerPo.setName(saveCutomerRequest.getName());
-        customerPo.setLoginName(saveCutomerRequest.getLoginName());
-        customerPo.setUserType(saveCutomerRequest.getUserType());
-        customerPo.setRemark(saveCutomerRequest.getRemark());
-        customerPo.setPublicName(saveCutomerRequest.getPublicName());
-        customerPo.setAppid(saveCutomerRequest.getAppid());
-        customerPo.setAppsecret(saveCutomerRequest.getAppsecret());
-        customerPo.setSLD(saveCutomerRequest.getSLD());
+        customerPo.setName(customerVo.getName());
+        customerPo.setLoginName(customerVo.getLoginName());
+        customerPo.setUserType(customerVo.getUserType());
+        customerPo.setRemark(customerVo.getRemark());
+        customerPo.setPublicName(customerVo.getPublicName());
+        customerPo.setAppid(customerVo.getAppid());
+        customerPo.setAppsecret(customerVo.getAppsecret());
+        customerPo.setSLD(customerVo.getSLD());
         customerPo.setCreateTime(System.currentTimeMillis());
         customerPo.setLastUpdateTime(System.currentTimeMillis());
         this.customerMapper.insert(customerPo);
 
-        //TODO 设备型号信息
+        List<CustomerVo.DeviceModel> deviceModelList = customerVo.getDeviceModelList();
+        for (CustomerVo.DeviceModel deviceModel : deviceModelList) {
 
+            DeviceModelPo deviceModelPo = new DeviceModelPo();
+            deviceModelPo.setName(deviceModel.getName());
+            deviceModelPo.setTypeId(deviceModel.getTypeId());
+            deviceModelPo.setCustomerId(customerPo.getId());
+            deviceModelPo.setProductId(deviceModel.getProductId());
+            deviceModelPo.setIcon("https://"+bucketUrl+"/" + deviceModel.getIconKey());
+            deviceModelPo.setCreateTime(System.currentTimeMillis());
+            deviceModelPo.setRemark(deviceModel.getRemark());
+            deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
+            this.deviceModelMapper.insert(deviceModelPo);
+
+
+            List<CustomerVo.DeviceModelAbility> deviceModelAbilityList = deviceModel.getDeviceModelAbilityList();
+            //TODO 设备型号 功能表
+            for (CustomerVo.DeviceModelAbility deviceModelAbility : deviceModelAbilityList) {
+
+            }
+        }
 
 
         //H5配置信息
-        SaveCutomerRequest.H5Config h5Config = saveCutomerRequest.getH5Config();
+        CustomerVo.H5Config h5Config = customerVo.getH5Config();
         WxConfigPo wxConfigPo = new WxConfigPo();
         wxConfigPo.setCustomerId(customerPo.getId());
         wxConfigPo.setPassword(h5Config.getPassword());
@@ -78,8 +103,8 @@ public class CustomerService {
 
 
         //安卓配置信息
-        SaveCutomerRequest.AndroidConfig androidConfig = saveCutomerRequest.getAndroidConfig();
-        List<SaveCutomerRequest.AndroidScene> androidSceneList = androidConfig.getAndroidSceneList();
+        CustomerVo.AndroidConfig androidConfig = customerVo.getAndroidConfig();
+        List<CustomerVo.AndroidScene> androidSceneList = androidConfig.getAndroidSceneList();
 
         AndroidConfigPo androidConfigPo = new AndroidConfigPo();
         androidConfigPo.setCustomerId(customerPo.getId());
@@ -93,7 +118,7 @@ public class CustomerService {
         this.androidConfigMapper.insert(androidConfigPo);
 
         List<AndroidSceneImgPo> toAddAndroidSceneImgPoList = new ArrayList<>();
-        for (SaveCutomerRequest.AndroidScene androidScene : androidSceneList) {
+        for (CustomerVo.AndroidScene androidScene : androidSceneList) {
             AndroidScenePo androidScenePo = new AndroidScenePo();
             androidScenePo.setConfigId(androidConfigPo.getId());
             androidScenePo.setCustomerId(customerPo.getId());
@@ -104,8 +129,8 @@ public class CustomerService {
             androidScenePo.setLastUpdateTime(System.currentTimeMillis());
             this.androidSceneMapper.insert(androidScenePo);
 
-            List<SaveCutomerRequest.AndroidSceneImg> androidSceneImgList = androidScene.getAndroidSceneImgList();
-            for (SaveCutomerRequest.AndroidSceneImg androidSceneImg : androidSceneImgList) {
+            List<CustomerVo.AndroidSceneImg> androidSceneImgList = androidScene.getAndroidSceneImgList();
+            for (CustomerVo.AndroidSceneImg androidSceneImg : androidSceneImgList) {
                 AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
                 androidSceneImgPo.setConfigId(androidConfigPo.getId());
                 androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
@@ -121,7 +146,7 @@ public class CustomerService {
         this.androidSceneImgMapper.insertBatch(toAddAndroidSceneImgPoList);
 
         //管理后台配置信息
-        SaveCutomerRequest.BackendConfig backendConfig = saveCutomerRequest.getBackendConfig();
+        CustomerVo.BackendConfig backendConfig = customerVo.getBackendConfig();
         BackendConfigPo backendConfigPo = new BackendConfigPo();
         backendConfigPo.setName(backendConfig.getName());
         backendConfigPo.setLogo("https://"+bucketUrl+"/" + backendConfig.getLogoKey());
@@ -131,5 +156,19 @@ public class CustomerService {
         backendConfigPo.setCreateTime(System.currentTimeMillis());
         backendConfigPo.setLastUpdateTime(System.currentTimeMillis());
         this.backendConfigMapper.insert(backendConfigPo);
+    }
+
+
+    /**
+     * 查询客户列表
+     * @param currentPage
+     * @param limit
+     * @return
+     */
+    public List<Map<String, Object>> queryList(Integer currentPage, Integer limit) {
+        Integer offset = (currentPage - 1) * limit;
+
+
+        return null;
     }
 }
