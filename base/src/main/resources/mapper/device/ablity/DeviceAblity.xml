@@ -72,4 +72,14 @@
         where
         id = #{id}
     </update>
+
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteOptionByAblityId">
+        delete from t_device_ablity_option
+        where ablityId = #{ablityId}
+    </delete>
 </mapper>

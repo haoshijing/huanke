@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.controller.device.ablity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author caikun
@@ -62,6 +64,22 @@ public class DeviceAblityController {
         return new ApiResponse<>(ret);
     }
 
+
+
+    /**
+     * 删除 该能力
+     * 删除 能力表中的数据 并删除 选项表中 跟该能力相关的选项
+     * @param ablityRequest
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @RequestMapping(value = "/delteAblity",method = RequestMethod.POST)
+    public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+        if(null==ablityRequest.getId()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能主键不能为空");        }
+        Boolean ret =  deviceAblityService.deleteAblity(ablityRequest);
+        return new ApiResponse<>(ret);
+    }
 
     /**
      * 查询功能列表
