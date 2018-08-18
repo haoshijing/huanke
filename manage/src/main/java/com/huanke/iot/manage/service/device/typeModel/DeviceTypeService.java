@@ -122,6 +122,8 @@ public class DeviceTypeService {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"该功能集不存在");
         }
 
+
+
         //只有 类型与功能集都存在才会进行保存
         DeviceTypeAblitySetPo deviceTypeAblitySetPo = new DeviceTypeAblitySetPo();
         deviceTypeAblitySetPo.setAblitySetId(request.getAblitySetId());
@@ -132,6 +134,12 @@ public class DeviceTypeService {
             deviceTypeAblitySetPo.setId(request.getId());
             deviceTypeAblitySetPo.setLastUpdateTime(System.currentTimeMillis());
         }else{
+            //当新增的时候 判断 该类型是否已经添加有功能集，如果有不允许添加
+            DeviceTypeAblitySetPo queryTypeAblitySetPo = deviceTypeAblitySetMapper.selectByTypeId(request.getTypeId());
+            if(queryTypeAblitySetPo!=null){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"该类型已添加功能集，不可重复添加");
+            }
+
             deviceTypeAblitySetPo.setCreateTime(System.currentTimeMillis());
         }
 

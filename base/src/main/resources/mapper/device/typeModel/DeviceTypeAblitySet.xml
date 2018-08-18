@@ -46,6 +46,13 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE typeId = #{typeId} limit 1
+    </select>
+
     <select id = "selectCount" resultType="java.lang.Integer">
         select count(1)
         from <include refid="tableName"/>
