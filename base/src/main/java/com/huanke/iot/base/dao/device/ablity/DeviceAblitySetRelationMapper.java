@@ -20,5 +20,7 @@ public interface DeviceAblitySetRelationMapper extends BaseMapper<DeviceAblitySe
 
     Integer deleteByAblitySetId(Integer ablitySetId);
 
+    Integer deleteByAblityId(DeviceAblitySetRelationPo queryDeviceAblitySetRelationPo);
+
     Integer deleteRelationForJoinId(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId);
 }

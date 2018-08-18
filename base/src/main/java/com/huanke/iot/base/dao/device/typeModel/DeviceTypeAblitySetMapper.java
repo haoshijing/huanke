@@ -10,6 +10,6 @@ import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
  */
 public interface DeviceTypeAblitySetMapper extends BaseMapper<DeviceTypeAblitySetPo> {
 
-//    DeviceTypeAblitySetPo selectById(DeviceTypePo deviceTypePo);
+    DeviceTypeAblitySetPo selectByTypeId(Integer typeId);
 
 }

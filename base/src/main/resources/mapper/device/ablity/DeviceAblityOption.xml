@@ -57,4 +57,9 @@
         id = #{id}
     </update>
 
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
 </mapper>
