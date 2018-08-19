@@ -64,6 +64,11 @@
         where id = #{id}
     </update>
 
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
         select
         *

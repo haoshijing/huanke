@@ -49,6 +49,13 @@
         where id = #{id}
     </delete>
 
+    <select id="selectTypeAblitySetByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
+        select
+        *
+        FROM t_device_type_ablity_set
+        WHERE typeId = #{typeId} limit 1
+    </select>
+
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         select
         *
@@ -83,5 +90,7 @@
         </where>
         limit #{limit} offset #{offset}
     </select>
+
+
 
 </mapper>

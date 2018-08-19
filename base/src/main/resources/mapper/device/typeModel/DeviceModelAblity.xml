@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper">
+
+    <sql id="tableName">
+        t_device_model_ablity
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        modelId,
+        ablityId,
+        definedName,
+        status,
+        createTime
+        )
+        VALUES (
+        #{modelId},
+        #{ablityId},
+        #{definedName},
+        #{status},
+        #{createTime}
+        )
+    </insert>
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+        update <include refid="tableName"/>
+        <set>
+            <if test = "modelId != null">
+                modelId = #{modelId},
+            </if>
+            <if test = "ablityId != null ">
+                ablityId = #{ablityId},
+            </if>
+            <if test = "definedName != null and definedName != ''  ">
+                definedName = #{definedName},
+            </if>
+            <if test = "status != null ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectByModelId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE modelId = #{modelId} limit 1
+    </select>
+
+    <select id = "selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from <include refid="tableName"/>
+        <where>
+            <if test = "param.modelId != null">
+                and modelId = #{param.modelId}
+            </if>
+            <if test = "param.ablityId != null">
+                and ablityId = #{param.ablityId}
+            </if>
+            <if test = "param.definedName != null and param.definedName != '' ">
+                and definedName = #{param.definedName}
+            </if>
+            <if test = "param.status != null">
+                and status = #{param.status}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+        select * from <include refid="tableName"/>
+        <where>
+
+            <if test = "param.modelId != null">
+                and modelId = #{param.modelId}
+            </if>
+            <if test = "param.ablityId != null">
+                and ablityId = #{param.ablityId}
+            </if>
+            <if test = "param.definedName != null and param.definedName != '' ">
+                and definedName = #{param.definedName}
+            </if>
+            <if test = "param.status != null">
+                and status = #{param.status}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
+
+</mapper>

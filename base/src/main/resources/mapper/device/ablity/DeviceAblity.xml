@@ -82,4 +82,22 @@
         delete from t_device_ablity_option
         where ablityId = #{ablityId}
     </delete>
+
+    <select id="selectAblityListByTypeId" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityPo">
+        SELECT
+        t_device_ablity.*
+        FROM
+        t_device_type_ablity_set,
+        t_device_ablity_set_relation,
+        t_device_ablity
+        WHERE
+        t_device_type_ablity_set.ablitySetId = t_device_ablity_set_relation.ablitySetId
+        AND t_device_ablity.id = t_device_ablity_set_relation.ablityId
+
+        <where>
+            <if test = "param.typeId != null ">
+                AND t_device_type_ablity_set.typeId = #{param.typeId}
+            </if>
+        </where>
+    </select>
 </mapper>

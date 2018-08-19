@@ -1,6 +1,9 @@
 package com.huanke.iot.base.po.device.typeModel;
 
+import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author Caik
@@ -16,5 +19,7 @@ public class DeviceTypePo {
     private String remark;
     private Long createTime;
     private Long lastUpdateTime;
+
+    private List<DeviceAblityPo> deviceAblityPoList;
 
 }

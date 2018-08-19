@@ -2,16 +2,17 @@ package com.huanke.iot.manage.service.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.typeModel.*;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -37,6 +38,9 @@ public class DeviceTypeService {
 
     @Autowired
     private DeviceTypeAblitySetMapper deviceTypeAblitySetMapper;
+
+    @Autowired
+    private DeviceAblityMapper deviceAblityMapper;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -197,6 +201,29 @@ public class DeviceTypeService {
         deviceTypeVo.setId(deviceTypePo.getId());
 
         return deviceTypeVo;
+    }
+
+
+    /**
+     * 根据类型主键 查询 该类型的功能集 下的功能
+     * @param typeId
+     * @return
+     */
+
+    public List<DeviceAblityVo> selectAblitysByTypeId(Integer typeId) {
+
+
+        List<DeviceAblityPo> deviceAblityPos = deviceAblityMapper.selectAblityListByTypeId(typeId);
+
+        return deviceAblityPos.stream().map(deviceAblityPo -> {
+            DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
+            deviceAblityVo.setId(deviceAblityPo.getId());
+            deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
+            deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
+            deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
+            return deviceAblityVo;
+        }).collect(Collectors.toList());
+
     }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {
 //        DeviceTypePo queryTypePo = new DeviceTypePo();

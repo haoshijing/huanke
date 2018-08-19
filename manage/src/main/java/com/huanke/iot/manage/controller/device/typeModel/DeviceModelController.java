@@ -40,6 +40,9 @@ public class DeviceModelController {
         if(StringUtils.isBlank(modelRequest.getName()) ){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"型号名称不能为空");
         }
+        if(modelRequest.getCustomerId()==null ){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"客户主键不能为空");
+        }
         Boolean ret =  deviceModelService.createOrUpdate(modelRequest);
         return new ApiResponse<>(ret);
     }
@@ -62,6 +65,7 @@ public class DeviceModelController {
         Boolean ret =  deviceModelService.createOrUpdate(modelRequest);
         return new ApiResponse<>(ret);
     }
+
     /**
      * 查询型号列表
      * @param modelRequest
@@ -97,4 +101,19 @@ public class DeviceModelController {
         DeviceModelVo deviceModelVo =  deviceModelService.selectById(modelRequest);
         return new ApiResponse<>(deviceModelVo);
     }
+
+
+//
+//    /**
+//     * 添加 型号的能力
+//     * @param modelAblityRequest
+//     * @return 成功返回true，失败返回false
+//     * @throws Exception
+//     */
+//    @RequestMapping(value = "/createDeviceModelAblity",method = RequestMethod.POST)
+//    public ApiResponse<Boolean> createDeviceModelAblity(@RequestBody DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest modelAblityRequest) throws Exception{
+//
+//        ApiResponse<Boolean> result =  deviceModelService.createDeviceModelAblity(modelAblityRequest);
+//        return result;
+//    }
 }

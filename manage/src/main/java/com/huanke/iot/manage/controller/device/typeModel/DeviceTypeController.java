@@ -8,6 +8,7 @@ import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdate
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -148,4 +149,15 @@ public class DeviceTypeController {
         return new ApiResponse<>(deviceTypeVo);
     }
 
+    /**
+     * 根据 类型主键查询 该类型的能力集
+     * @param typeId
+     * @return
+     */
+    @RequestMapping(value = "/selectAblitysByTypeId")
+    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(Integer typeId){
+
+        List<DeviceAblityVo> deviceAblityVos = deviceTypeService.selectAblitysByTypeId(typeId);
+        return new ApiResponse<>(deviceAblityVos);
+    }
 }
