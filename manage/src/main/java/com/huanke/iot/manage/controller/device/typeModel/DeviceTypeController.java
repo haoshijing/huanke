@@ -138,14 +138,14 @@ public class DeviceTypeController {
     }
 
     /**
-     * 根据id查询型号
-     * @param modelRequest
-     * @return 返回型号项列表
+     * 根据id查询 类型
+     * @param typeRequest
+     * @return 返回类型
      * @throws Exception
      */
     @RequestMapping(value = "/selectById")
-    public ApiResponse<DeviceTypeVo> selectById(@RequestBody DeviceTypeQueryRequest modelRequest) throws Exception{
-        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(modelRequest);
+    public ApiResponse<DeviceTypeVo> selectById(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
+        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(typeRequest);
         return new ApiResponse<>(deviceTypeVo);
     }
 

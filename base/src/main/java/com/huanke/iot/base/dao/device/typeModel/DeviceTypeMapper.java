@@ -12,7 +12,6 @@ import java.util.List;
  * @date 2018/8/16 15:21
  */
 public interface DeviceTypeMapper extends BaseMapper<DeviceTypePo> {
-    DeviceTypePo selectById(DeviceTypePo deviceTypePo);
 
 
 }
