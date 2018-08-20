@@ -191,7 +191,7 @@ public class DeviceTypeService {
         DeviceTypePo queryDeviceTypePo = new DeviceTypePo();
         queryDeviceTypePo.setId(request.getId());
 
-        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(queryDeviceTypePo);
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(queryDeviceTypePo.getId());
 
         DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
         deviceTypeVo.setName(deviceTypePo.getName());

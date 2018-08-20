@@ -24,6 +24,28 @@
         #{createTime}
         )
     </insert>
+    <!-- 批量插入 -->
+    <insert id="insertBatch" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        modelId,
+        ablityId,
+        definedName,
+        status,
+        createTime
+        )
+        VALUES
+        <foreach collection ="list" item="ability" index= "index" separator =",">
+            (
+            #{ability.modelId},
+            #{ability.ablityId},
+            #{ability.definedName},
+            #{ability.status},
+            #{ability.createTime}
+            )
+        </foreach>
+
+    </insert>
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
         update <include refid="tableName"/>
         <set>

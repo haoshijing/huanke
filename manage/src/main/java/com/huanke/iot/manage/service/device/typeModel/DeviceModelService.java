@@ -168,10 +168,11 @@ public class DeviceModelService {
         }).collect(Collectors.toList());
     }
 
+
     public DeviceModelVo selectById(DeviceModelQueryRequest request) {
 
         DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
-        queryDeviceModelPo.setTypeId(request.getTypeId());
+        queryDeviceModelPo.setId(request.getId());
 
         DeviceModelPo deviceModelPo = deviceModelMapper.selectById(queryDeviceModelPo);
 
