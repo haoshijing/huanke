@@ -12,5 +12,9 @@ public class DeviceAblityVo {
     private Integer id;
     private String ablityName;
     private String dirValue;
-    private Integer writeStatus; //可读写状态
+    private String remark;
+    private Integer writeStatus; //可写状态
+    private Integer readStatus; //可读状态
+    private Integer runStatus; //可执行状态
+    private Integer configType;//配置方式
 }

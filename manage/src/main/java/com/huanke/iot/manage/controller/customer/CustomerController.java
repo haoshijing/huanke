@@ -2,6 +2,7 @@ package com.huanke.iot.manage.controller.customer;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import org.apache.commons.lang3.StringUtils;
@@ -46,16 +47,16 @@ public class CustomerController {
     public ApiResponse<CustomerVo> queryDetail(Integer id) {
         CustomerVo customerVo = new CustomerVo();
 
+
         return new ApiResponse<>(customerVo);
     }
 
-//    /**
-//     * 查询客户列表
-//     * @return
-//     */
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public ApiResponse<List<Map<String, Object>>> queryList() {
-//
-//
-//    }
+    /**
+     * 查询客户列表
+     * @return
+     */
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ApiResponse<List<CustomerPo>> queryList(Integer page, Integer limit) {
+        return new ApiResponse<>(this.customerService.queryList(page, limit));
+    }
 }

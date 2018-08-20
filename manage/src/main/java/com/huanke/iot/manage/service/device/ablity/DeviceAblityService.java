@@ -1,5 +1,7 @@
 package com.huanke.iot.manage.service.device.ablity;
 
+import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
@@ -28,27 +30,31 @@ public class DeviceAblityService {
 
     /**
      * 新增 功能
+     *
      * @param ablityRequest
      * @return
      */
-    public Boolean createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) {
+    public ApiResponse<Integer> createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) {
 
         int effectCount = 0;
+        Boolean ret = false;
         DeviceAblityPo deviceAblityPo = new DeviceAblityPo();
-        BeanUtils.copyProperties(ablityRequest,deviceAblityPo);
+        BeanUtils.copyProperties(ablityRequest, deviceAblityPo);
         //如果有id则为更新 否则为新增
-        if(ablityRequest.getId() != null && ablityRequest.getId() > 0){
+        if (ablityRequest.getId() != null && ablityRequest.getId() > 0) {
             deviceAblityPo.setLastUpdateTime(System.currentTimeMillis());
-            effectCount = deviceAblityMapper.updateById(deviceAblityPo);
-        }else{
+            ret = deviceAblityMapper.updateById(deviceAblityPo)>0;
+        } else {
             deviceAblityPo.setCreateTime(System.currentTimeMillis());
-            effectCount =  deviceAblityMapper.insert(deviceAblityPo);
+            ret = deviceAblityMapper.insert(deviceAblityPo)>0;
         }
-        return effectCount > 0;
+        return new ApiResponse<>(deviceAblityPo.getId());
+
     }
 
     /**
      * 查询功能列表
+     *
      * @param request
      * @return
      */
@@ -59,15 +65,18 @@ public class DeviceAblityService {
         queryDeviceAblityPo.setDirValue(request.getDirValue());
         queryDeviceAblityPo.setWriteStatus(request.getWriteStatus());
 
-        Integer offset = (request.getPage() - 1)*request.getLimit();
+        Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 
-        List<DeviceAblityPo> deviceAblityPos = deviceAblityMapper.selectList(queryDeviceAblityPo,limit,offset);
+        List<DeviceAblityPo> deviceAblityPos = deviceAblityMapper.selectList(queryDeviceAblityPo, limit, offset);
         return deviceAblityPos.stream().map(deviceAblityPo -> {
             DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
             deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
             deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
             deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
+            deviceAblityVo.setReadStatus(deviceAblityPo.getReadStatus());
+            deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
+            deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
             deviceAblityVo.setId(deviceAblityPo.getId());
             return deviceAblityVo;
         }).collect(Collectors.toList());
@@ -77,23 +86,17 @@ public class DeviceAblityService {
     /**
      * 删除 该功能
      * 并同时删除该功能下 所有的选项
-     * @param ablityRequest
+     *
+     * @param ablityId
      * @return
      */
-    public Boolean deleteAblity(DeviceAblityCreateOrUpdateRequest ablityRequest) {
+    public Boolean deleteAblity(Integer ablityId) {
 
-        Boolean ret  =false;
-
-        //判断当 功能id不为空时
-        if( ablityRequest.getId()!=null){
-            //先删除 该 功能
-            ret = deviceAblityMapper.deleteById(ablityRequest.getId()) > 0;
-            //再删除 选项表中 的选项
-            ret = ret && deviceAblityMapper.deleteOptionByAblityId(ablityRequest.getId()) > 0;
-        }else{
-            log.error("功能主键不可为空");
-            return false;
-        }
+        Boolean ret = false;
+        //先删除 该 功能
+        ret = deviceAblityMapper.deleteById(ablityId) > 0;
+        //再删除 选项表中 的选项
+        ret = ret && deviceAblityMapper.deleteOptionByAblityId(ablityId) > 0;
         return ret;
     }
 

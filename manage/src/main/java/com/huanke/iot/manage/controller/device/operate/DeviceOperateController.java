@@ -1,16 +1,14 @@
 package com.huanke.iot.manage.controller.device.operate;
 
 import com.aliyun.oss.OSSClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceUpgradePo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceLogQueryRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
-import com.huanke.iot.manage.vo.response.DeviceOperLogVo;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceListRequest;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
@@ -26,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,27 +81,23 @@ public class DeviceOperateController {
 
     /**
      * 添加新设备
-     * @param body
+     * @param deviceCreateOrUpdateRequests
      * @return 成功返回true，失败返回false
      * 接口要求的形式为：
-     * {"deviceList":[{"name":"shebei1","deviceTypeId":1,"mac":"0x-2201-22202","createTime":20180815},{"name":"shebei2","deviceTypeId":1,"mac":"0x-2201-22202","createTime":20180815}]}
+     * {"deviceCreateOrUpdateRequests":[{"name":"shebei23","deviceTypeId":1,"mac":"0x-2201-22223","createTime":20180815},{"name":"shebei24","deviceTypeId":1,"mac":"0x-2201-22224","createTime":20180815}]}
      * @throws Exception
      */
-    @RequestMapping("/createDevice")
-    public ApiResponse<Boolean> createDevice(@RequestBody String body) throws Exception{
-        Map<String,Object> requestParam=new ObjectMapper().readValue(body,Map.class);
-        List<Map<String, Object>> deviceList = (List<Map<String, Object>>) requestParam.get("deviceList");
-        List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests=new ArrayList<>();
-        for(Map<String,Object> m:deviceList){
-            DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest=new DeviceCreateOrUpdateRequest();
-            deviceCreateOrUpdateRequest.setName(m.get("name").toString());
-            deviceCreateOrUpdateRequest.setDeviceTypeId(Integer.parseInt(m.get("deviceTypeId").toString()));
-            deviceCreateOrUpdateRequest.setMac(m.get("mac").toString());
-            deviceCreateOrUpdateRequest.setCreateTime(Long.valueOf(m.get("createTime").toString()));
-            deviceCreateOrUpdateRequests.add(deviceCreateOrUpdateRequest);
+    @RequestMapping(value = "/createDevice",method = RequestMethod.POST)
+    public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests) throws Exception{
+        List<DeviceCreateOrUpdateRequest> deviceList=deviceCreateOrUpdateRequests.getDeviceCreateOrUpdateRequests();
+        DevicePo devicePo=deviceService.isDeviceExist(deviceList);
+        if(null != devicePo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址"+devicePo.getMac()+"已存在");
         }
-        Boolean ret =  deviceService.createDevice(deviceCreateOrUpdateRequests);
-        return new ApiResponse<>(ret);
+        else {
+            Boolean ret = deviceService.createDevice(deviceList);
+            return new ApiResponse<>(ret);
+        }
     }
 
     /**
@@ -112,14 +107,12 @@ public class DeviceOperateController {
      * @throws Exception
      * 查询获取与设备相关的所有信息
      */
-    @RequestMapping("/queryDevice")
-    public ApiResponse<List<DeviceQueryRequest>> queryAllDevice(@RequestBody String body) throws Exception{
-        Map<String,Object> requestParam=new ObjectMapper().readValue(body,Map.class);
-        Integer page=(Integer) requestParam.get("page");
-        List<DeviceQueryRequest> deviceQueryVos=deviceService.queryDeviceByPage(page);
+    @RequestMapping(value = "/queryDevice",method = RequestMethod.POST)
+    public ApiResponse<List<DeviceListRequest>> queryAllDevice(@RequestBody DeviceListRequest deviceListRequest) throws Exception{
+        List<DeviceListRequest> deviceQueryVos=deviceService.queryDeviceByPage(deviceListRequest);
         return new ApiResponse<>(deviceQueryVos);
     }
-    @RequestMapping("/queryCount")
+    @RequestMapping(value = "/queryCount",method = RequestMethod.GET)
     public ApiResponse<Integer> queryCount(){
         return new ApiResponse<>(deviceService.selectCount());
     }

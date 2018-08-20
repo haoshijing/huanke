@@ -41,4 +41,15 @@
         )
     </insert>
 
+    <!--查询列白哦-->
+    <select id="selectList">
+        select tc.name,
+        tc.userType,
+        tc.publicName,
+        tc.loginname,
+        tc.remark
+        from <include refid="tableName"/>
+        limit #{limit} offset #{offset}
+    </select>
+
 </mapper>
