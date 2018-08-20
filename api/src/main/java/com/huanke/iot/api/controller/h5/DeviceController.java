@@ -42,7 +42,11 @@ public class DeviceController extends BaseController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-
+    /**
+     * 首页查询我的设备
+     * update by onlymark  2018/8/20
+     * @return
+     */
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice() {
         Integer userId = getCurrentUserId();
@@ -50,6 +54,10 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(deviceListVo);
     }
 
+    /**
+     * 首页查询我的设备
+     * @return
+     */
     @RequestMapping("/queryDetailByDeviceId")
     public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);

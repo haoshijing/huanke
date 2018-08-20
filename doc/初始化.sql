@@ -161,6 +161,7 @@ CREATE TABLE `t_device`  (
   `ip` varchar(200)  NULL DEFAULT NULL COMMENT '机器ip',
   `speedConfig` varchar(4096)  NULL DEFAULT NULL COMMENT '转速',
   `version` varchar(300)  NULL DEFAULT NULL COMMENT '版本',
+  `location` varchar(500) DEFAULT '' COMMENT '位置',
   `createTime` bigint(20) NULL DEFAULT NULL COMMENT '写入时间',
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -392,6 +393,11 @@ CREATE TABLE `t_device_team`  (
   `manageUserIds` varchar(500)  NULL DEFAULT NULL COMMENT '组管理员',
   `status` int(11) NULL DEFAULT NULL COMMENT '状态',
   `createUser` varchar(100)  NULL DEFAULT NULL,
+  `memo` varchar(2048) DEFAULT NULL COMMENT '分组说明',
+  `videoCover` varchar(1024) DEFAULT NULL COMMENT '分组封面',
+  `videoUrl` varchar(1024) DEFAULT NULL COMMENT '分组视频链接',
+  `qrcode` varchar(1024)  NULL DEFAULT NULL COMMENT '二维码链接',
+  `adImages` varchar(1024)  NULL DEFAULT NULL COMMENT '广告图片',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
@@ -442,6 +448,8 @@ CREATE TABLE `t_device_type_ablity_set`  (
   `ablitySetId` int(11) NULL DEFAULT NULL COMMENT '能力集合主键',
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT = '设备类型对应的 功能集表 (1v1)' ;
+
+ALTER TABLE `newiot`.`t_device_type_ablity_set` ADD UNIQUE `uk_typeId` USING BTREE (`typeId`) comment '';
 
 -- ----------------------------
 -- Table structure for t_deviceid_pool
