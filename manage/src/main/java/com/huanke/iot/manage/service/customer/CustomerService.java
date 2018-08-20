@@ -1,8 +1,10 @@
 package com.huanke.iot.manage.service.customer;
 
 import com.huanke.iot.base.dao.customer.*;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.po.customer.*;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,12 @@ public class CustomerService {
     @Autowired
     private DeviceModelMapper deviceModelMapper;
 
+    @Autowired
+    private DeviceModelAblityMapper deviceModelAblityMapper;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+
     /**
      * 保存详情
      * @param customerVo
@@ -64,6 +72,7 @@ public class CustomerService {
         this.customerMapper.insert(customerPo);
 
         List<CustomerVo.DeviceModel> deviceModelList = customerVo.getDeviceModelList();
+        List<DeviceModelAblityPo> toAddAbilityPoList = new ArrayList<>();
         for (CustomerVo.DeviceModel deviceModel : deviceModelList) {
 
             DeviceModelPo deviceModelPo = new DeviceModelPo();
@@ -77,13 +86,18 @@ public class CustomerService {
             deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
             this.deviceModelMapper.insert(deviceModelPo);
 
-
             List<CustomerVo.DeviceModelAbility> deviceModelAbilityList = deviceModel.getDeviceModelAbilityList();
-            //TODO 设备型号 功能表
             for (CustomerVo.DeviceModelAbility deviceModelAbility : deviceModelAbilityList) {
-
+                DeviceModelAblityPo deviceModelAblityPo = new DeviceModelAblityPo();
+                deviceModelAblityPo.setModelId(deviceModelPo.getId());
+                deviceModelAblityPo.setAblityId(deviceModelAbility.getAblityId());
+                deviceModelAblityPo.setDefinedName(deviceModelAbility.getDefinedName());
+                deviceModelAblityPo.setCreateTime(System.currentTimeMillis());
+                deviceModelAblityPo.setLastUpdateTime(System.currentTimeMillis());
+                toAddAbilityPoList.add(deviceModelAblityPo);
             }
         }
+        this.deviceModelAblityMapper.insertBatch(toAddAbilityPoList);
 
 
         //H5配置信息
@@ -165,10 +179,8 @@ public class CustomerService {
      * @param limit
      * @return
      */
-    public List<Map<String, Object>> queryList(Integer currentPage, Integer limit) {
+    public List<CustomerPo> queryList(Integer currentPage, Integer limit) {
         Integer offset = (currentPage - 1) * limit;
-
-
-        return null;
+        return this.customerMapper.selectList(null, currentPage, offset);
     }
 }

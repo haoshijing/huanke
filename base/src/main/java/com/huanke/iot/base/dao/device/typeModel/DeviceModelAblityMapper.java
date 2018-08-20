@@ -14,4 +14,6 @@ public interface DeviceModelAblityMapper extends BaseMapper<DeviceModelAblityPo>
 //    DeviceTypePo selectById(DeviceTypePo deviceTypePo);
 
     List<DeviceModelAblityPo> selectByModelId(Integer modelId);
+
+    void insertBatch(List<DeviceModelAblityPo> deviceModelAblityPoList);
 }

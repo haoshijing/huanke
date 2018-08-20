@@ -45,16 +45,16 @@
         lastUpdateTime
         )
         VALUES
-        <foreach collection ="list" item="reddemCode" index= "index" separator =",">
+        <foreach collection ="list" item="item" index= "index" separator =",">
             (
-            #{configId},
-            #{androidSceneId},
-            #{customerId},
-            #{name},
-            #{imgVideo},
-            #{describe},
-            #{createTime},
-            #{lastUpdateTime}
+            #{item.configId},
+            #{item.androidSceneId},
+            #{item.customerId},
+            #{item.name},
+            #{item.imgVideo},
+            #{item.describe},
+            #{item.createTime},
+            #{item.lastUpdateTime}
             )
         </foreach>
     </insert>
