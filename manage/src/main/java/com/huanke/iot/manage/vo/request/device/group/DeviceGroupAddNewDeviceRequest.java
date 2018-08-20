@@ -3,6 +3,8 @@ package com.huanke.iot.manage.vo.request.device.group;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class DeviceGroupAddNewDeviceRequest {
 
@@ -22,5 +24,8 @@ public class DeviceGroupAddNewDeviceRequest {
      * 设备mac地址
      */
     private String mac;
+
+    private List<DeviceGroupAddNewDeviceRequest> deviceGroupAddNewDeviceRequests;
+
 
 }
