@@ -85,7 +85,7 @@ public class DeviceAblityController {
      * @throws Exception
      */
     @ApiOperation("查询功能列表")
-    @GetMapping(value = "/select")
+    @PostMapping(value = "/select")
     public ApiResponse<List<DeviceAblityVo>> selectList(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
         List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
         return new ApiResponse<>(deviceAblityVos);

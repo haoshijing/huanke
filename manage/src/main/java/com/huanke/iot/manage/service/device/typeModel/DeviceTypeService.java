@@ -221,6 +221,9 @@ public class DeviceTypeService {
             deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
             deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
             deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
+            deviceAblityVo.setReadStatus(deviceAblityPo.getReadStatus());
+            deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
+            deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
             return deviceAblityVo;
         }).collect(Collectors.toList());
 
