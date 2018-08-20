@@ -1,6 +1,5 @@
 package com.huanke.iot.manage.controller.device.ablity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
@@ -9,6 +8,7 @@ import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author caikun
@@ -37,6 +36,7 @@ public class DeviceAblityController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
+    @ApiOperation("添加新功能")
     @RequestMapping(value = "/createDeviceAblity",method = RequestMethod.POST)
     public ApiResponse<Boolean> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
@@ -54,6 +54,7 @@ public class DeviceAblityController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
+    @ApiOperation("修改新功能")
     @RequestMapping(value = "/updateDeviceAblity",method = RequestMethod.POST)
     public ApiResponse<Boolean> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
@@ -73,6 +74,7 @@ public class DeviceAblityController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
+    @ApiOperation("根据Id删除功能")
     @RequestMapping(value = "/delteAblity",method = RequestMethod.POST)
     public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(null==ablityRequest.getId()){
@@ -87,6 +89,7 @@ public class DeviceAblityController {
      * @return 返回功能项列表
      * @throws Exception
      */
+    @ApiOperation("查询功能列表")
     @RequestMapping(value = "/select")
     public ApiResponse<List<DeviceAblityVo>> selectList(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
         List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
