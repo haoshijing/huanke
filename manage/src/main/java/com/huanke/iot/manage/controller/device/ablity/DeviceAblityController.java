@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,7 +34,7 @@ public class DeviceAblityController {
      * @throws Exception
      */
     @ApiOperation("添加新功能")
-    @RequestMapping(value = "/createDeviceAblity",method = RequestMethod.POST)
+    @PostMapping(value = "/createDeviceAblity")
     public ApiResponse<Boolean> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
@@ -55,7 +52,7 @@ public class DeviceAblityController {
      * @throws Exception
      */
     @ApiOperation("修改新功能")
-    @RequestMapping(value = "/updateDeviceAblity",method = RequestMethod.POST)
+    @PutMapping(value = "/updateDeviceAblity")
     public ApiResponse<Boolean> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
@@ -70,16 +67,14 @@ public class DeviceAblityController {
     /**
      * 删除 该能力
      * 删除 能力表中的数据 并删除 选项表中 跟该能力相关的选项
-     * @param ablityRequest
+     * @param ablityId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @ApiOperation("根据Id删除功能")
-    @RequestMapping(value = "/delteAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
-        if(null==ablityRequest.getId()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能主键不能为空");        }
-        Boolean ret =  deviceAblityService.deleteAblity(ablityRequest);
+    @DeleteMapping(value = "/delteAblity/{id}")
+    public ApiResponse<Boolean> delteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
+        Boolean ret =  deviceAblityService.deleteAblity(ablityId);
         return new ApiResponse<>(ret);
     }
 
@@ -90,7 +85,7 @@ public class DeviceAblityController {
      * @throws Exception
      */
     @ApiOperation("查询功能列表")
-    @RequestMapping(value = "/select")
+    @GetMapping(value = "/select")
     public ApiResponse<List<DeviceAblityVo>> selectList(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
         List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
         return new ApiResponse<>(deviceAblityVos);
