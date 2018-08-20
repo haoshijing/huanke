@@ -22,4 +22,12 @@ public class DeviceAblityCreateOrUpdateRequest {
     private Integer configType;//配置方式
 
     private List<DeviceAblityOptionCreateOrUpdateRequest> deviceAblityOptionCreateOrUpdateRequests;
+
+    @Data
+    public class DeviceAblityOptionRequest {
+
+        private Integer id;
+        private String optionName;
+    }
+
 }

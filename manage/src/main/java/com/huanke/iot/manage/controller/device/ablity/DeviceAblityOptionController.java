@@ -29,24 +29,24 @@ public class DeviceAblityOptionController {
     private DeviceAblityOptionService deviceAblityOptionService;
 
 
-    /**
-     * 添加新选项
-     * @param optionRequest
-     * @return 成功返回true，失败返回false
-     * @throws Exception
-     */
-    @RequestMapping(value = "/createOption",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDeviceAblityOption(@RequestBody DeviceAblityOptionCreateOrUpdateRequest optionRequest) throws Exception{
-        if(StringUtils.isBlank(optionRequest.getOptionName()) ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"选项名称不能为空");
-        }
-        if(StringUtils.isBlank(optionRequest.getAblityId()) ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"没有关联的能力主键");
-        }
-        Boolean ret =  deviceAblityOptionService.createOrUpdate(optionRequest);
-        return new ApiResponse<>(ret);
-    }
-
+//    /**
+//     * 添加新选项
+//     * @param optionRequest
+//     * @return 成功返回true，失败返回false
+//     * @throws Exception
+//     */
+//    @RequestMapping(value = "/createOption",method = RequestMethod.POST)
+//    public ApiResponse<Boolean> createDeviceAblityOption(@RequestBody DeviceAblityOptionCreateOrUpdateRequest optionRequest) throws Exception{
+//        if(StringUtils.isBlank(optionRequest.getOptionName()) ){
+//            return new ApiResponse<>(RetCode.PARAM_ERROR,"选项名称不能为空");
+//        }
+//        if(StringUtils.isBlank(optionRequest.getAblityId()) ){
+//            return new ApiResponse<>(RetCode.PARAM_ERROR,"没有关联的能力主键");
+//        }
+//        Boolean ret =  deviceAblityOptionService.createOrUpdate(optionRequest);
+//        return new ApiResponse<>(ret);
+//    }
+//
 
     /**
      * 修改能力选项
