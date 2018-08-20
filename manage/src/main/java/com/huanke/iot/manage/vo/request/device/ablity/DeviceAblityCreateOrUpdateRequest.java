@@ -1,6 +1,9 @@
 package com.huanke.iot.manage.vo.request.device.ablity;
 
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author Caik
@@ -14,4 +17,7 @@ public class DeviceAblityCreateOrUpdateRequest {
     private String dirValue;
     private String remark;
     private Integer writeStatus; //可读写状态
+    private Integer writeType;//配置方式
+
+    private List<DeviceAblityOptionCreateOrUpdateRequest> deviceAblityOptionCreateOrUpdateRequests;
 }
