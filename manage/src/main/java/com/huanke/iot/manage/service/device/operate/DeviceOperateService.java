@@ -9,7 +9,7 @@ import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceListRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -31,9 +31,6 @@ public class DeviceOperateService {
 
     @Autowired
     private DeviceMapper deviceMapper;
-
-//    @Autowired
-//    private DeviceInfoMapper deviceInfoMapper;
 
     @Autowired
     private DeviceGroupItemMapper deviceGroupItemMapper;
@@ -80,21 +77,22 @@ public class DeviceOperateService {
 
     /**2018-08-15
      * sixiaojun
-     * @param
+     * 根据前台请求按页查询设备数据
+     * @param deviceListRequest
      * @return list
      */
-    public List<DeviceQueryRequest> queryDeviceByPage(int page){
+public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListRequest){
         //当期要查询的页
-        Integer currentPage = page;
+        Integer currentPage = deviceListRequest.getPage();
         //每页显示的数量
-        Integer limit= 20;
+        Integer limit= deviceListRequest.getLimit();
         //偏移量
         Integer offset = (currentPage - 1) * limit;
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         DevicePo queryPo=new DevicePo();
         List<DevicePo> devicePos=deviceMapper.selectList(queryPo,limit,offset);
-        List<DeviceQueryRequest> deviceQueryVos=devicePos.stream().map(devicePo -> {
-            DeviceQueryRequest deviceQueryVo=new DeviceQueryRequest();
+        List<DeviceListRequest> deviceQueryVos=devicePos.stream().map(devicePo -> {
+            DeviceListRequest deviceQueryVo=new DeviceListRequest();
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setMac(devicePo.getMac());
             deviceQueryVo.setDeviceTypeId(devicePo.getDeviceTypeId());
@@ -118,12 +116,12 @@ public class DeviceOperateService {
                 }
             }
             if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
-                deviceQueryVo.setGroup_id(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
-                deviceQueryVo.setGroup_name(deviceGroupMapper.selectById(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId()).getName());
+                deviceQueryVo.setGroupId(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
+                deviceQueryVo.setGroupName(deviceGroupMapper.selectById(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId()).getName());
             }
             else {
-                deviceQueryVo.setGroup_id(-1);
-                deviceQueryVo.setGroup_name("无");
+                deviceQueryVo.setGroupId(-1);
+                deviceQueryVo.setGroupName("无");
             }
             if(null !=devicePo.getWorkStatus()){
                 if(1 == devicePo.getWorkStatus()){
@@ -146,8 +144,10 @@ public class DeviceOperateService {
         return deviceQueryVos;
     }
 
+
     /**
      * 2018-08-18
+     * sixiaojun
      * 获取设备总数
      * @param
      * @return
@@ -157,6 +157,23 @@ public class DeviceOperateService {
         return deviceMapper.selectCount(queryDevicePo);
     }
 
+    /**
+     * 2018-08-20
+     * sixiaojun
+     * 根据mac地址查询设备表中是否存在相同mac地址的设备，如存在，返回DevicePo，新增失败
+     * @param deviceCreateOrUpdateRequests
+     * @return devicePo
+     */
+    public DevicePo isDeviceExist(List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests){
+        DevicePo devicePo=null;
+        for(DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest:deviceCreateOrUpdateRequests){
+            devicePo=deviceMapper.selectByMac(deviceCreateOrUpdateRequest.getMac());
+            if(null != devicePo){
+                return devicePo;
+            }
+        }
+        return devicePo;
+    }
 //    public Boolean updateDeviceId(String mac, Integer publicId, String productId) {
 //        DevicePo devicePo = deviceMapper.selectByMac(mac);
 //        if(devicePo == null){

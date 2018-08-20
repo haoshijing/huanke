@@ -8,7 +8,7 @@ import lombok.Data;
  * 查询设备列表返回类
  **/
 @Data
-public class DeviceQueryRequest {
+public class DeviceListRequest {
     /**
      *设备名
      */
@@ -24,7 +24,7 @@ public class DeviceQueryRequest {
     /**
      * 设备类型
      */
-    private Integer DeviceTypeId;
+    private Integer deviceTypeId;
     /**
      * 绑定状态
      */
@@ -36,11 +36,11 @@ public class DeviceQueryRequest {
     /**
      * 集群id
      */
-    private Integer group_id;
+    private Integer groupId;
     /**
      * 集群名称
      */
-    private String group_name;
+    private String groupName;
     /**
      * 工作状态
      */
@@ -52,9 +52,9 @@ public class DeviceQueryRequest {
     /**
      * 分页
      */
-    private Integer page = 1;
+    private Integer page;
     /**
      * 每页显示数量
      */
-    private Integer limit = 20;
+    private Integer limit;
 }

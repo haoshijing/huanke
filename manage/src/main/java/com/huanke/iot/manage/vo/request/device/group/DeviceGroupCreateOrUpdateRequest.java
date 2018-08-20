@@ -1,6 +1,9 @@
 package com.huanke.iot.manage.vo.request.device.group;
 
+import com.huanke.iot.base.po.device.DevicePo;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class DeviceGroupCreateOrUpdateRequest {
@@ -28,5 +31,7 @@ public class DeviceGroupCreateOrUpdateRequest {
      * 管理OpenId
      */
     private String manageOpenIds;
+
+    private List<DeviceGroupAddNewDeviceRequest> deviceGroupAddNewDeviceRequests;
 
 }

@@ -2,6 +2,8 @@ package com.huanke.iot.manage.vo.request.device.operate;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class DeviceCreateOrUpdateRequest {
     /**
@@ -24,5 +26,7 @@ public class DeviceCreateOrUpdateRequest {
      * 生产日期
      */
     private Long createTime;
+
+    List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests;
 
 }
