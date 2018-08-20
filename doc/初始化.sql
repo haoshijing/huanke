@@ -177,7 +177,7 @@ CREATE TABLE `t_device_ablity`  (
   `writeStatus` int(1) NULL DEFAULT NULL COMMENT '是否可写',
   `readStatus` int(1) NULL DEFAULT NULL COMMENT '是否可读',
   `runStatus` int(1) NULL DEFAULT NULL COMMENT '是否可执行',
-  `writeType` int(1) NULL DEFAULT NULL COMMENT '配置方式',
+  `configType` int(1) NULL DEFAULT NULL COMMENT '配置方式',
   `remark` varchar(300)  NULL DEFAULT NULL COMMENT '备注',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,

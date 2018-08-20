@@ -1,5 +1,7 @@
 package com.huanke.iot.manage.service.device.ablity;
 
+import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
@@ -32,20 +34,22 @@ public class DeviceAblityService {
      * @param ablityRequest
      * @return
      */
-    public Boolean createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) {
+    public ApiResponse<Integer> createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) {
 
         int effectCount = 0;
+        Boolean ret = false;
         DeviceAblityPo deviceAblityPo = new DeviceAblityPo();
         BeanUtils.copyProperties(ablityRequest, deviceAblityPo);
         //如果有id则为更新 否则为新增
         if (ablityRequest.getId() != null && ablityRequest.getId() > 0) {
             deviceAblityPo.setLastUpdateTime(System.currentTimeMillis());
-            effectCount = deviceAblityMapper.updateById(deviceAblityPo);
+            ret = deviceAblityMapper.updateById(deviceAblityPo)>0;
         } else {
             deviceAblityPo.setCreateTime(System.currentTimeMillis());
-            effectCount = deviceAblityMapper.insert(deviceAblityPo);
+            ret = deviceAblityMapper.insert(deviceAblityPo)>0;
         }
-        return effectCount > 0;
+        return new ApiResponse<>(deviceAblityPo.getId());
+
     }
 
     /**

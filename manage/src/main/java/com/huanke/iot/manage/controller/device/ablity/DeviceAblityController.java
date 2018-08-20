@@ -6,6 +6,7 @@ import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import io.swagger.annotations.ApiOperation;
@@ -35,13 +36,13 @@ public class DeviceAblityController {
      */
     @ApiOperation("添加新功能")
     @PostMapping(value = "/createDeviceAblity")
-    public ApiResponse<Boolean> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+    public ApiResponse<Integer> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
         }
-        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
-        return new ApiResponse<>(ret);
+        ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
+        return result;
     }
 
 
@@ -53,13 +54,13 @@ public class DeviceAblityController {
      */
     @ApiOperation("修改新功能")
     @PutMapping(value = "/updateDeviceAblity")
-    public ApiResponse<Boolean> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+    public ApiResponse<Integer> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
         }
-        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
-        return new ApiResponse<>(ret);
+        ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
+        return result;
     }
 
 
