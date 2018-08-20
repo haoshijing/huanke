@@ -69,8 +69,8 @@ CREATE TABLE `android_scene`  (
 DROP TABLE IF EXISTS `android_scene_img`;
 CREATE TABLE `android_scene_img`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `configId` int(11) NULL DEFAULT NULL,
-  `androidSceneId` int(11) NULL DEFAULT NULL COMMENT '配置表的Id',
+  `configId` int(11) NULL DEFAULT NULL COMMENT '配置表的Id',
+  `androidSceneId` int(11) NULL DEFAULT NULL COMMENT '场景表的Id',
   `customerId` int(11) NULL DEFAULT NULL COMMENT '客户主键',
   `name` varchar(100)  NULL DEFAULT NULL COMMENT '图片名称',
   `imgVideo` varchar(200)  NULL DEFAULT NULL COMMENT '图片或视频',
@@ -174,7 +174,8 @@ CREATE TABLE `t_device_ablity`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `ablityName` varchar(200)  NULL DEFAULT NULL COMMENT '能力名称',
   `dirValue` varchar(1024)  NULL DEFAULT NULL COMMENT '通讯对应指令',
-  `writeStatus` int(11) NULL DEFAULT NULL COMMENT '可读写状态',
+  `writeStatus` int(1) NULL DEFAULT NULL COMMENT '可读写状态/是否可配置',
+  `writeType` int(1) NULL DEFAULT NULL COMMENT '配置方式',
   `remark` varchar(300)  NULL DEFAULT NULL COMMENT '备注',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
