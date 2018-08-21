@@ -10,6 +10,8 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.*;
 import com.huanke.iot.base.dao.impl.device.data.DeviceInfoMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
@@ -18,8 +20,10 @@ import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.device.*;
+import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.Data;
@@ -381,24 +385,15 @@ public class DeviceDataService {
         if (devicePo != null) {
             deviceDetailVo.setDeviceName(devicePo.getName());
             deviceDetailVo.setDeviceId(devicePo.getDeviceId());
-            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getDeviceTypeId());
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getTypeId());
             if (deviceTypePo != null) {
                 deviceDetailVo.setDeviceTypeName(deviceTypePo.getName());
             }
-            String mode = devicePo.getMode();
-            if(StringUtils.isNotEmpty(mode)){
-                List<DeviceDetailVo.ModeItem> modeItems = Lists.newArrayList();
-                String modeArr[] = mode.split(",");
-                for(String modeStr:modeArr){
-                    modeItems.add(new DeviceDetailVo.ModeItem(Integer.valueOf(modeStr),modes[Integer.valueOf(modeStr)-1]));
-                }
-                deviceDetailVo.setModeItems(modeItems);
-            }
+
             deviceDetailVo.setIp(devicePo.getIp());
             deviceDetailVo.setMac(devicePo.getMac());
             deviceDetailVo.setDate(new DateTime().toString("yyyy年MM月dd日"));
-            deviceDetailVo.setIp(devicePo.getIp());
-            getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getDeviceTypeId());
+            getIndexData(deviceDetailVo, devicePo.getId(), devicePo.getTypeId());
             if(deviceDetailVo.getPm() == null || StringUtils.isEmpty(deviceDetailVo.getPm().getData()) ||  StringUtils.equals("0",deviceDetailVo.getPm().getData())){
                 deviceDetailVo.setAqi("0");
             }else{
@@ -588,6 +583,8 @@ public class DeviceDataService {
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(deviceTypeId);
         if (deviceTypePo != null) {
             String funcTypeList = deviceTypePo.getFuncList();
+            Integer abilitySetId = deviceTypeMapper.getabilitySetId(deviceTypePo.getId());
+            
             List<String> winds = getType(FuncTypeEnums.WIND1.getCode().substring(0, 2), funcTypeList);
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();

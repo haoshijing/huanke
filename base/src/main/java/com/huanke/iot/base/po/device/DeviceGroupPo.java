@@ -13,7 +13,7 @@ public class DeviceGroupPo {
      */
     private Integer id;
 
-    /**
+     /**
      * 编组名称
      */
     private String name;
