@@ -121,12 +121,12 @@
             <if test="name != null">
                 name = #{name},
             </if>
-            <if test="location != null">
-                location = #{location},
+            <if test="modelId != null">
+                modelId = #{modelId},
             </if>
         </set>
         where
-        deviceId = #{deviceId}
+        id = #{id}
     </update>
     <update id="updateStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
 

@@ -19,7 +19,7 @@ public class DeviceGroupAddNewDeviceRequest {
     /**
      * 设备类型id
      */
-    private Integer deviceTypeId;
+    private Integer typeId;
     /**
      * 设备mac地址
      */

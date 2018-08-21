@@ -10,7 +10,7 @@ public class DeviceAssignToCustomerRequest {
     private String customerName;
     private String appid;
     private String deviceType;
-    private String deviceTypeId;
+    private String typeId;
     private String remark;
     private List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests;
 }

@@ -3,6 +3,7 @@ package com.huanke.iot.manage.service.device.operate;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.dao.device.*;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
@@ -42,6 +43,9 @@ public class DeviceOperateService {
     private DeviceCustomerRelationMapper deviceCustomerRelationMapper;
 
     @Autowired
+    private DeviceModelMapper deviceModelMapper;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
 
@@ -79,7 +83,7 @@ public class DeviceOperateService {
      * @param deviceListRequest
      * @return list
      */
-public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListRequest){
+    public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListRequest){
         //当期要查询的页
         Integer currentPage = deviceListRequest.getPage();
         //每页显示的数量
@@ -142,6 +146,13 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
         return deviceQueryVos;
     }
 
+    /**
+     * 删除设备及与设备相关的信息
+     * 2018-08-21
+     * sixiaojun
+     * @param deviceCreateOrUpdateRequests
+     * @return
+     */
     public Integer deleteDevice(List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests){
         int count=0;
         for(DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest:deviceCreateOrUpdateRequests){
@@ -160,6 +171,13 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
         return count;
     }
 
+    /**
+     * 将设备列表中的设备分配给设备型号，并与当前客户关联
+     * 2018-08-21
+     * sixiaojun
+     * @param deviceAssignToCustomerRequest
+     * @return
+     */
     public Boolean assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest){
         //获取设备列表
         List<DeviceCreateOrUpdateRequest> deviceList=deviceAssignToCustomerRequest.getDeviceCreateOrUpdateRequests();
@@ -172,7 +190,12 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
                 deviceCustomerRelationPo.setLastUpdateTime(System.currentTimeMillis());
                 //新增设备和客户关系
                 deviceCustomerRelationMapper.insert(deviceCustomerRelationPo);
-                DeviceModelPo deviceModelPo=new DeviceModelPo();
+                //在设备表中更新deviceModelId字段，将设备与设备型号表关联
+                DevicePo devicePo=new DevicePo();
+                DeviceModelPo deviceModelPo=deviceModelMapper.selectByCustomerId(deviceAssignToCustomerRequest.getCustomerId());
+                devicePo.setId(deviceMapper.selectByMac(deviceCreateOrUpdateRequest.getMac()).getId());
+                devicePo.setModelId(deviceModelPo.getId());
+                deviceMapper.updateByDeviceId(devicePo);
             }
             return true;
         }
