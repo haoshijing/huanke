@@ -70,8 +70,8 @@ CREATE TABLE `android_scene`  (
 DROP TABLE IF EXISTS `android_scene_img`;
 CREATE TABLE `android_scene_img`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `configId` int(11) NULL DEFAULT NULL,
-  `androidSceneId` int(11) NULL DEFAULT NULL COMMENT '配置表的Id',
+  `configId` int(11) NULL DEFAULT NULL COMMENT '配置表的Id',
+  `androidSceneId` int(11) NULL DEFAULT NULL COMMENT '场景表的Id',
   `customerId` int(11) NULL DEFAULT NULL COMMENT '客户主键',
   `name` varchar(100)  NULL DEFAULT NULL COMMENT '图片名称',
   `imgVideo` varchar(200)  NULL DEFAULT NULL COMMENT '图片或视频',
@@ -153,6 +153,7 @@ CREATE TABLE `t_device`  (
   `imsi` varchar(200)  NULL DEFAULT NULL COMMENT 'imsi',
   `saNo` varchar(200)  NULL DEFAULT NULL COMMENT '序列号',
   `typeId` int(11) NULL DEFAULT NULL COMMENT '设备类型',
+  `modelId` int(11) NULL DEFAULT NULL COMMENT '设备型号',
   `productId` int(11) NULL DEFAULT NULL COMMENT '微信生成的设备类型的productid',
   `onlineStatus` int(1) NULL DEFAULT NULL COMMENT '在线状态',
   `bindStatus` int(1) NULL DEFAULT NULL COMMENT '绑定状态',
@@ -162,6 +163,7 @@ CREATE TABLE `t_device`  (
   `ip` varchar(200)  NULL DEFAULT NULL COMMENT '机器ip',
   `speedConfig` varchar(4096)  NULL DEFAULT NULL COMMENT '转速',
   `version` varchar(300)  NULL DEFAULT NULL COMMENT '版本',
+  `location` varchar(500) DEFAULT '' COMMENT '位置',
   `createTime` bigint(20) NULL DEFAULT NULL COMMENT '写入时间',
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -175,7 +177,11 @@ CREATE TABLE `t_device_ablity`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `ablityName` varchar(200)  NULL DEFAULT NULL COMMENT '能力名称',
   `dirValue` varchar(1024)  NULL DEFAULT NULL COMMENT '通讯对应指令',
-  `writeStatus` int(11) NULL DEFAULT NULL COMMENT '可读写状态',
+  `writeStatus` int(1) NULL DEFAULT NULL COMMENT '是否可写',
+  `readStatus` int(1) NULL DEFAULT NULL COMMENT '是否可读',
+  `runStatus` int(1) NULL DEFAULT NULL COMMENT '是否可执行',
+  `configType` int(1) NULL DEFAULT NULL COMMENT '配置方式',
+  `ablityType` int(1) NULL DEFAULT NULL COMMENT '能力类型',
   `remark` varchar(300)  NULL DEFAULT NULL COMMENT '备注',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
@@ -185,9 +191,6 @@ CREATE TABLE `t_device_ablity`  (
 -- ----------------------------
 -- Records of t_device_ablity
 -- ----------------------------
-INSERT INTO `t_device_ablity` VALUES (1, '能力1', 'dirValue', 2, 'remark1', 1534383598722, 1534390218261);
-INSERT INTO `t_device_ablity` VALUES (2, '能力2', 'dirValue', 1, 'remark', 1534389817771, NULL);
-INSERT INTO `t_device_ablity` VALUES (3, '能力3', 'dirValue', 1, 'remark', 1534389828397, NULL);
 
 -- ----------------------------
 -- Table structure for t_device_ablity_option
@@ -195,22 +198,14 @@ INSERT INTO `t_device_ablity` VALUES (3, '能力3', 'dirValue', 1, 'remark', 153
 DROP TABLE IF EXISTS `t_device_ablity_option`;
 CREATE TABLE `t_device_ablity_option`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `ablityId` varchar(11)  NULL DEFAULT NULL COMMENT '所在能力主键',
   `optionName` varchar(200)  NULL DEFAULT NULL COMMENT '能力选项名称',
-  `ablityId` varchar(11)  NULL DEFAULT NULL COMMENT '通讯对应指令',
+  `optionValue` varchar(11)  NULL DEFAULT NULL COMMENT '通讯对应指令/能力选项阈值',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '设备能力选项表' ;
 
--- ----------------------------
--- Records of t_device_ablity_option
--- ----------------------------
-INSERT INTO `t_device_ablity_option` VALUES (1, '选项1', '1', 1534400267429, 1534401684946);
-INSERT INTO `t_device_ablity_option` VALUES (2, '选项2', '1', 1534400280861, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (3, '选项3', '1', 1534400283858, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (4, '选项3', '2', 1534400621478, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (5, '选项33', '2', 1534400624917, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (6, '选项33', '2', 1534401695411, NULL);
 
 -- ----------------------------
 -- Table structure for t_device_ablity_set
@@ -393,6 +388,11 @@ CREATE TABLE `t_device_team`  (
   `manageUserIds` varchar(500)  NULL DEFAULT NULL COMMENT '组管理员',
   `status` int(11) NULL DEFAULT NULL COMMENT '状态',
   `createUser` varchar(100)  NULL DEFAULT NULL,
+  `memo` varchar(2048) DEFAULT NULL COMMENT '分组说明',
+  `videoCover` varchar(1024) DEFAULT NULL COMMENT '分组封面',
+  `videoUrl` varchar(1024) DEFAULT NULL COMMENT '分组视频链接',
+  `qrcode` varchar(1024)  NULL DEFAULT NULL COMMENT '二维码链接',
+  `adImages` varchar(1024)  NULL DEFAULT NULL COMMENT '广告图片',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
@@ -443,6 +443,8 @@ CREATE TABLE `t_device_type_ablity_set`  (
   `ablitySetId` int(11) NULL DEFAULT NULL COMMENT '能力集合主键',
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT = '设备类型对应的 功能集表 (1v1)' ;
+
+ALTER TABLE `t_device_type_ablity_set` ADD UNIQUE `uk_typeId` USING BTREE (`typeId`) comment '';
 
 -- ----------------------------
 -- Table structure for t_deviceid_pool

@@ -12,11 +12,11 @@ import java.util.List;
  **/
 @Data
 public class DeviceListVo {
-    public List<DeviceGroupData> groupDataList;
+    public List<DeviceTeamData> teamDataList;
     @Data
-    public static class DeviceGroupData{
-        private Integer groupId;
-        private String groupName;
+    public static class DeviceTeamData{
+        private Integer teamId;
+        private String teamName;
         private String icon;
         private String videoUrl;
         private String videoCover;
@@ -63,17 +63,17 @@ public class DeviceListVo {
 
     public static void main(String[] args) {
         DeviceListVo deviceListVo = new DeviceListVo();
-        DeviceGroupData deviceGroupData = new DeviceGroupData();
-        deviceGroupData.setGroupId(0);
-        deviceGroupData.setGroupName("默认组");
+        DeviceTeamData deviceTeamData = new DeviceTeamData();
+        deviceTeamData.setTeamId(0);
+        deviceTeamData.setTeamName("默认组");
         DeviceItemPo deviceItemPo  = new DeviceItemPo();
         deviceItemPo.setIcon("http:xxxxxx");
         deviceItemPo.setDeviceName("测试设备1");
         deviceItemPo.setDeviceId("xxxxxx");
         deviceItemPo.setOnlineStatus(1);
         deviceItemPo.setPm("20");
-        deviceGroupData.setDeviceItemPos(Lists.newArrayList(deviceItemPo));
-        deviceListVo.setGroupDataList(Lists.newArrayList(deviceGroupData));
+        deviceTeamData.setDeviceItemPos(Lists.newArrayList(deviceItemPo));
+        deviceListVo.setTeamDataList(Lists.newArrayList(deviceTeamData));
         System.out.println(JSON.toJSONString(deviceListVo));
     }
 }

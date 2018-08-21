@@ -11,5 +11,6 @@ public class DeviceAblityOptionCreateOrUpdateRequest {
 
     private Integer id;
     private String optionName;
-    private String ablityId;
+    private String optionValue;
+//    private String ablityId;
 }

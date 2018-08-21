@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.device.DeviceTeamMapper">
+
+    <sql id="tableName">
+        t_device_team
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        icon,
+        name,
+        remark,
+        masterUserId,
+        customerId,
+        manageUserIds,
+        status,
+        createUser,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES (
+        #{icon},
+        #{name},
+        #{remark},
+        #{masterUserId},
+        #{customerId},
+        #{manageUserIds},
+        #{status},
+        #{createUser},
+        #{createTime},
+        #{lastUpdateTime}
+        )
+    </insert>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <if test="param.customerId != null and param.customerId != 0">
+                AND userId = #{param.masterUserId}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+            <if test="param.name != null">
+                and groupName = #{param.name}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceTeamPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            <if test = "param.masterUserId != null and param.masterUserId != 0">
+                AND userId = #{param.masterUserId}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+            <if test = "param.name != null">
+                and name = #{param.name}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceTeamPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+            where id = #{id}
+        </set>
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceTeamPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+
+
+    <select id="queryByName" resultType="com.huanke.iot.base.po.device.DeviceTeamPo">
+        select * from  <include refid="tableName"/>
+        where name = #{name} and customerId = #{customerId}
+    </select>
+
+    <select id="queryTeamItems" parameterType="com.huanke.iot.base.po.device.DeviceTeamItemPo"
+            resultType="com.huanke.iot.base.po.device.DeviceTeamItemPo">
+        select * from t_device_team_item
+        where 1= 1
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="teamId != null">
+            AND teamId = #{teamId}
+        </if>
+        <if test="deviceId != null">
+            and deviceId = #{deviceId}
+        </if>
+    </select>
+
+</mapper>

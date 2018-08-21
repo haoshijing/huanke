@@ -93,7 +93,7 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
             DeviceListRequest deviceQueryVo=new DeviceListRequest();
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setMac(devicePo.getMac());
-            deviceQueryVo.setDeviceTypeId(devicePo.getDeviceTypeId());
+            deviceQueryVo.setDeviceTypeId(devicePo.getTypeId());
             if(null != devicePo.getBindStatus()){
                 if(3 == devicePo.getBindStatus()){
                     deviceQueryVo.setBindStatus("已解绑");
@@ -110,7 +110,7 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
                     deviceQueryVo.setEnableStatus("已启用");
                 }
                 if(0 == devicePo.getEnableStatus()){
-                    deviceQueryVo.setEnableStatus("已禁用用");
+                    deviceQueryVo.setEnableStatus("已禁用");
                 }
             }
             if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){

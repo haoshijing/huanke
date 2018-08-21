@@ -29,7 +29,6 @@ public class DeviceDetailVo {
     private List<OtherItem> windItems;
     private List<JSONArray> funcs;
     private List<OtherItem> timers;
-    private List<ModeItem> modeItems;
 
     private String outerPm= "";
     private String airQuality= "";

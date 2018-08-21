@@ -11,7 +11,7 @@ public class DeviceAblityOptionQueryRequest {
 
     private Integer id;
     private String optionName;
-    private String ablityId;
+    private Integer ablityId;
     private Integer page = 1;
     private Integer limit = 20;
 }

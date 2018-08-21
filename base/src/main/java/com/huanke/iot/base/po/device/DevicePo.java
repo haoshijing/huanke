@@ -28,7 +28,6 @@ public class DevicePo {
 
     //设备序列号
     private String sano;
-    private Integer deviceTypeId;
     private String imei;
     private String imsi;
     private String saNo;
@@ -45,6 +44,8 @@ public class DevicePo {
     private Integer enableStatus;
     //工作状态 或 租赁状态
     private Integer workStatus;
+    //设备位置
+    private String location;
 
 
     /**

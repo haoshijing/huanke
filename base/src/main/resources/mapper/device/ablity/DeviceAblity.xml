@@ -13,6 +13,10 @@
         ablityName,
         dirValue,
         writeStatus,
+        readStatus,
+        runStatus,
+        configType,
+        ablityType,
         remark,
         createTime
         )
@@ -20,6 +24,10 @@
         #{ablityName},
         #{dirValue},
         #{writeStatus},
+        #{readStatus},
+        #{runStatus},
+        #{configType},
+        #{ablityType},
         #{remark},
         #{createTime}
         )
@@ -47,6 +55,18 @@
             <if test="param.writeStatus != null">
                 AND writeStatus = #{param.writeStatus}
             </if>
+            <if test="param.readStatus != null">
+                AND readStatus = #{param.readStatus}
+            </if>
+            <if test="param.runStatus != null">
+                AND runStatus = #{param.runStatus}
+            </if>
+            <if test="param.configType != null">
+                AND configType = #{param.configType}
+            </if>
+            <if test="param.ablityType != null">
+                AND ablityType = #{param.ablityType}
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>
@@ -63,6 +83,18 @@
             </if>
             <if test="writeStatus != null">
                 writeStatus = #{writeStatus},
+            </if>
+            <if test="readStatus != null">
+                readStatus = #{readStatus},
+            </if>
+            <if test="runStatus != null">
+                runStatus = #{runStatus},
+            </if>
+            <if test="configType != null">
+                configType = #{configType},
+            </if>
+            <if test="ablityType != null">
+                ablityType = #{ablityType},
             </if>
             <if test="remark != null and remark != ''">
                 remark = #{remark},

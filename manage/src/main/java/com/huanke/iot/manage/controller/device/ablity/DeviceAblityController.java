@@ -1,22 +1,19 @@
 package com.huanke.iot.manage.controller.device.ablity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author caikun
@@ -37,14 +34,15 @@ public class DeviceAblityController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/createDeviceAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+    @ApiOperation("添加新功能")
+    @PostMapping(value = "/createDeviceAblity")
+    public ApiResponse<Integer> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
         }
-        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
-        return new ApiResponse<>(ret);
+        ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
+        return result;
     }
 
 
@@ -54,14 +52,15 @@ public class DeviceAblityController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/updateDeviceAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+    @ApiOperation("修改新功能")
+    @PutMapping(value = "/updateDeviceAblity")
+    public ApiResponse<Integer> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
         }
-        Boolean ret =  deviceAblityService.createOrUpdate(ablityRequest);
-        return new ApiResponse<>(ret);
+        ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
+        return result;
     }
 
 
@@ -69,15 +68,14 @@ public class DeviceAblityController {
     /**
      * 删除 该能力
      * 删除 能力表中的数据 并删除 选项表中 跟该能力相关的选项
-     * @param ablityRequest
+     * @param ablityId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/delteAblity",method = RequestMethod.POST)
-    public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
-        if(null==ablityRequest.getId()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能主键不能为空");        }
-        Boolean ret =  deviceAblityService.deleteAblity(ablityRequest);
+    @ApiOperation("根据Id删除功能")
+    @DeleteMapping(value = "/delteAblity/{id}")
+    public ApiResponse<Boolean> delteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
+        Boolean ret =  deviceAblityService.deleteAblity(ablityId);
         return new ApiResponse<>(ret);
     }
 
@@ -87,7 +85,8 @@ public class DeviceAblityController {
      * @return 返回功能项列表
      * @throws Exception
      */
-    @RequestMapping(value = "/select")
+    @ApiOperation("查询功能列表")
+    @PostMapping(value = "/select")
     public ApiResponse<List<DeviceAblityVo>> selectList(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
         List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
         return new ApiResponse<>(deviceAblityVos);
