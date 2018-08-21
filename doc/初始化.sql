@@ -14,7 +14,8 @@
  Date: 17/08/2018 13:24:22
 */
 
-
+CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+use iot;
 -- ----------------------------
 -- Table structure for android_bg_img
 -- ----------------------------

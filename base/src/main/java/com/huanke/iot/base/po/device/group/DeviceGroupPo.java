@@ -1,4 +1,4 @@
-package com.huanke.iot.base.po.device;
+package com.huanke.iot.base.po.device.group;
 
 import lombok.Data;
 
@@ -26,12 +26,12 @@ public class DeviceGroupPo {
     /**
      * 父openId
      */
-    private String masterOpenId;
+    private String masterUserId;
 
     /**
      * 管理OpenId
      */
-    private String manageOpenIds;
+    private String manageUserIds;
 
     /**
      *组的状态1-正常2-已删除

@@ -1,13 +1,10 @@
 package com.huanke.iot.manage.controller.device.group;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
-import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupAddNewDeviceRequest;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.group.DeviceGroupQueryRequest;
 import com.huanke.iot.manage.service.device.group.DeviceGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/deviceGroup")

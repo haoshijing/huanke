@@ -5,7 +5,7 @@ import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
 import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

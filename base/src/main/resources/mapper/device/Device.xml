@@ -134,7 +134,7 @@
         <include refid="tableName"/>
         <set>
             <if test="bindStatus != null">
-                name = #{bindStatus},bindTime = sysdate
+                bindStatus = #{bindStatus},bindTime = sysdate
             </if>
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
@@ -190,4 +190,11 @@
         select * from
         <include refid="tableName"/>
     </select>
+    <delete id="deleteDevice" parameterType="com.huanke.iot.base.po.device.DevicePo">
+        delete from
+        <include refid="tableName"/>
+        <where>
+            mac = #{mac}
+        </where>
+    </delete>
 </mapper>

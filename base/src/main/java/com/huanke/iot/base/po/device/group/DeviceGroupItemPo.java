@@ -1,4 +1,4 @@
-package com.huanke.iot.base.po.device;
+package com.huanke.iot.base.po.device.group;
 
 import lombok.Data;
 

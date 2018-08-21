@@ -20,4 +20,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
      */
     List<DevicePo> selectAll();
 
+    Integer deleteDevice(DevicePo devicePo);
+
 }

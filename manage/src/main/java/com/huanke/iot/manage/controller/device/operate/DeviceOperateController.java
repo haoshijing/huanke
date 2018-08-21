@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceUpgradePo;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceAssignToCustomerRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceListRequest;
 //2018-08-15
@@ -70,15 +71,6 @@ public class DeviceOperateController {
     @Value("${accessKeySecret}")
     private String accessKeySecret;
 
-//    @RequestMapping("/updateDeviceId")
-//    public ApiResponse<Boolean> updateDeviceId(String mac,Integer publicId,String productId){
-//        if(StringUtils.isEmpty(mac) || publicId == null || productId == null){
-//            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备名和mac地址不能为空");
-//        }
-//        Boolean ret =  deviceService.updateDeviceId(mac,publicId,productId);
-//        return new ApiResponse<>(ret);
-//    }
-
     /**
      * 添加新设备
      * @param deviceCreateOrUpdateRequests
@@ -112,11 +104,42 @@ public class DeviceOperateController {
         List<DeviceListRequest> deviceQueryVos=deviceService.queryDeviceByPage(deviceListRequest);
         return new ApiResponse<>(deviceQueryVos);
     }
+
+    /**
+     * 查询当前设备列表中的设备总数
+     * sixiaojun
+     * 2018-08-20
+     * @return
+     */
     @RequestMapping(value = "/queryCount",method = RequestMethod.GET)
     public ApiResponse<Integer> queryCount(){
         return new ApiResponse<>(deviceService.selectCount());
     }
 
+    /**
+     * 删除设备
+     * sixiaojun
+     * 2018-08-20
+     * @param deviceCreateOrUpdateRequest
+     * @return
+     */
+    @RequestMapping(value = "/deleteDevice",method = RequestMethod.POST)
+    public ApiResponse<Integer> deleteDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest){
+        List<DeviceCreateOrUpdateRequest> deviceList=deviceCreateOrUpdateRequest.getDeviceCreateOrUpdateRequests();
+        return new ApiResponse<>(deviceService.deleteDevice(deviceList));
+    }
+
+    @RequestMapping(value = "/assignDeviceToCustomer",method = RequestMethod.POST)
+    public ApiResponse<Boolean> assignDeviceToCustomer(@RequestBody DeviceAssignToCustomerRequest deviceAssignToCustomerRequest){
+        List<DeviceCreateOrUpdateRequest> deviceList=deviceAssignToCustomerRequest.getDeviceCreateOrUpdateRequests();
+        if(deviceService.isDeviceHasCustomer(deviceList)){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设别列表已有设备被分配");
+        }
+        else {
+            Boolean ret=deviceService.assignDeviceToCustomer(deviceAssignToCustomerRequest);
+            return new ApiResponse<>(ret);
+        }
+    }
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
 //        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);

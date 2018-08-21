@@ -1,12 +1,11 @@
 package com.huanke.iot.api.service.device.basic;
 
-import com.huanke.iot.api.util.IpUtils;
 import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import lombok.extern.slf4j.Slf4j;

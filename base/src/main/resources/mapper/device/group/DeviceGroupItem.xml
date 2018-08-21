@@ -8,7 +8,7 @@
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
+            parameterType="com.huanke.iot.base.po.device.group.DeviceGroupItemPo">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -27,11 +27,19 @@
         )
     </insert>
 
-    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceGroupItemPo">
+    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupItemPo">
         select
         *
         FROM
         <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
     </select>
+
+    <delete id="deleteDeviceById" parameterType="com.huanke.iot.base.po.device.group.DeviceGroupItemPo">
+        delete from
+        <include refid="tableName"/>
+        <where>
+            deviceId = #{deviceId}
+        </where>
+    </delete>
 </mapper>

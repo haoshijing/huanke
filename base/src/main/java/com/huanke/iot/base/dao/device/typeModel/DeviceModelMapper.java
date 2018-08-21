@@ -1,7 +1,6 @@
 package com.huanke.iot.base.dao.device.typeModel;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 
 import java.util.List;

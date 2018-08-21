@@ -48,8 +48,6 @@ public class CustomerService {
     @Autowired
     private DeviceModelAblityMapper deviceModelAblityMapper;
 
-    @Autowired
-    private CustomerMapper customerMapper;
 
     /**
      * 保存详情

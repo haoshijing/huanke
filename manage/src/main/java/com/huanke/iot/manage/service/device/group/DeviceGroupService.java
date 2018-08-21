@@ -4,8 +4,8 @@ import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupAddNewDeviceRequest;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupCreateOrUpdateRequest;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DeviceGroupService {
