@@ -12,5 +12,5 @@ public class DeviceAssignToCustomerRequest {
     private String deviceType;
     private String typeId;
     private String remark;
-    private List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests;
+    private DeviceQueryRequest deviceQueryRequest;
 }
