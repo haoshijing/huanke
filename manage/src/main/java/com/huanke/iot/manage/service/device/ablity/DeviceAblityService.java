@@ -56,6 +56,7 @@ public class DeviceAblityService {
             for (DeviceAblityOptionCreateOrUpdateRequest deviceAblityOptionRequest : ablityRequest.getDeviceAblityOptionCreateOrUpdateRequests()) {
                 DeviceAblityOptionPo deviceAblityOptionPo = new DeviceAblityOptionPo();
                 deviceAblityOptionPo.setOptionName(deviceAblityOptionRequest.getOptionName());
+                deviceAblityOptionPo.setOptionValue(deviceAblityOptionRequest.getOptionValue());
                 deviceAblityOptionPo.setAblityId(ablityRequest.getId());
                 //如果 该选项有id 则为更新 ，否则为新增
                 if(deviceAblityOptionRequest.getId()!=null&&deviceAblityOptionRequest.getId()>0){
@@ -87,6 +88,10 @@ public class DeviceAblityService {
         queryDeviceAblityPo.setAblityName(request.getAblityName());
         queryDeviceAblityPo.setDirValue(request.getDirValue());
         queryDeviceAblityPo.setWriteStatus(request.getWriteStatus());
+        queryDeviceAblityPo.setReadStatus(request.getReadStatus());
+        queryDeviceAblityPo.setRunStatus(request.getRunStatus());
+        queryDeviceAblityPo.setConfigType(request.getConfigType());
+        queryDeviceAblityPo.setAblityType(request.getAblityType());
 
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
@@ -100,6 +105,7 @@ public class DeviceAblityService {
             deviceAblityVo.setReadStatus(deviceAblityPo.getReadStatus());
             deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
             deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
+            deviceAblityVo.setAblityType(deviceAblityPo.getAblityType());
             deviceAblityVo.setId(deviceAblityPo.getId());
             return deviceAblityVo;
         }).collect(Collectors.toList());

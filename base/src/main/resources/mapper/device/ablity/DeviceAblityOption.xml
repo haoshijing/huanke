@@ -11,11 +11,13 @@
         INSERT INTO <include refid="tableName"/>
         (
         optionName,
+        optionValue,
         ablityId,
         createTime
         )
         VALUES (
         #{optionName},
+        #{optionValue},
         #{ablityId},
         #{createTime}
         )
@@ -61,6 +63,9 @@
         <set>
             <if test="optionName != null and optionName != ''">
                 optionName = #{optionName},
+            </if>
+            <if test="optionValue != null and optionValue != ''">
+                optionValue = #{optionValue},
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>

@@ -11,5 +11,6 @@ public class DeviceAblityOptionVo {
 
     private Integer id;
     private String optionName;
+    private String optionValue;
     private Integer ablityId;
 }
