@@ -22,6 +22,7 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     Integer deleteDevice(DevicePo devicePo);
 
+
     DevicePo selectByDeviceId(String deviceId);
 
 }

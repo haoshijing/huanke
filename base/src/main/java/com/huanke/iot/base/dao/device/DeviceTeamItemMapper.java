@@ -1,7 +1,7 @@
 package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.device.DeviceTeamItemPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 
 /**
  * @author sixiaojun

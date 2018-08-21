@@ -8,7 +8,7 @@
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.huanke.iot.base.po.device.DeviceTeamItemPo">
+            parameterType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -27,7 +27,7 @@
         )
     </insert>
 
-    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceTeamItemPo">
+    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
         *
         FROM
