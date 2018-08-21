@@ -9,6 +9,7 @@ import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityOptionCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -96,8 +97,9 @@ public class DeviceAblityService {
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 
+        //查询 功能列表
         List<DeviceAblityPo> deviceAblityPos = deviceAblityMapper.selectList(queryDeviceAblityPo, limit, offset);
-        return deviceAblityPos.stream().map(deviceAblityPo -> {
+        List<DeviceAblityVo> deviceAblityVos = deviceAblityPos.stream().map(deviceAblityPo -> {
             DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
             deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
             deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
@@ -106,9 +108,24 @@ public class DeviceAblityService {
             deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
             deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
             deviceAblityVo.setAblityType(deviceAblityPo.getAblityType());
+            deviceAblityVo.setRemark(deviceAblityPo.getRemark());
             deviceAblityVo.setId(deviceAblityPo.getId());
+
+            //根据功能主键 查询该功能下的 选项列表
+            List<DeviceAblityOptionPo> deviceAblityOptionpos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
+            List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionpos.stream().map(deviceAblityOptionPo -> {
+                DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
+                deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
+                deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
+                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
+                return deviceAblityOptionVo;
+            }).collect(Collectors.toList());
+
+            deviceAblityVo.setDeviceAblityOptionVos(deviceAblityOptionVos);
             return deviceAblityVo;
         }).collect(Collectors.toList());
+
+        return deviceAblityVos;
     }
 
 

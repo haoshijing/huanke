@@ -7,8 +7,10 @@
         t_device_ablity_option
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
-        INSERT INTO <include refid="tableName"/>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
+        INSERT INTO
+        <include refid="tableName"/>
         (
         optionName,
         optionValue,
@@ -23,7 +25,8 @@
         )
     </insert>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
+    <select id="selectById" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
         select
         *
         FROM
@@ -46,14 +49,13 @@
         limit #{offset},#{limit}
     </select>
 
-    <select id="selectOptionsByAblityId" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
+    <select id="selectOptionsByAblityId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo">
         select * from
         <include refid="tableName"/>
         <where>
             1 = 1
-            <if test="param.ablityId != null">
-                AND ablityId = #{param.ablityId}
-            </if>
+            AND ablityId = #{ablityId}
         </where>
     </select>
 
@@ -74,7 +76,8 @@
     </update>
 
     <delete id="deleteById">
-        delete from <include refid="tableName"/>
+        delete from
+        <include refid="tableName"/>
         where id = #{id}
     </delete>
 

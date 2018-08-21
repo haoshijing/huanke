@@ -60,7 +60,7 @@ public class DeviceAblityOptionService {
             DeviceAblityOptionVo DeviceAblityOptionVo = new DeviceAblityOptionVo();
             DeviceAblityOptionVo.setOptionName(deviceAblityOptinPo.getOptionName());
             DeviceAblityOptionVo.setOptionValue(deviceAblityOptinPo.getOptionValue());
-            DeviceAblityOptionVo.setAblityId(deviceAblityOptinPo.getAblityId());
+//            DeviceAblityOptionVo.setAblityId(deviceAblityOptinPo.getAblityId());
             DeviceAblityOptionVo.setId(deviceAblityOptinPo.getId());
             return DeviceAblityOptionVo;
         }).collect(Collectors.toList());
