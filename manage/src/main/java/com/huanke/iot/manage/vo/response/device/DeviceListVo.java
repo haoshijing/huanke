@@ -1,14 +1,9 @@
-package com.huanke.iot.manage.vo.request.device.operate;
+package com.huanke.iot.manage.vo.response.device;
 
 import lombok.Data;
 
-/**
- * @author sixiaojun
- * @version 2018-08-15
- * 查询设备列表返回类
- **/
 @Data
-public class DeviceListRequest {
+public class DeviceListVo {
     /**
      *设备名
      */
@@ -49,12 +44,4 @@ public class DeviceListRequest {
      * 在线状态
      */
     private String onlineStatus;
-    /**
-     * 分页
-     */
-    private Integer page;
-    /**
-     * 每页显示数量
-     */
-    private Integer limit;
 }
