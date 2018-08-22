@@ -17,6 +17,7 @@ public class DeviceAblityPo {
     private Integer readStatus; //可读状态
     private Integer runStatus; //可执行状态
     private Integer configType;//配置方式
+    private Integer ablityType;//能力类型
     private Long createTime;
     private Long lastUpdateTime;
 }

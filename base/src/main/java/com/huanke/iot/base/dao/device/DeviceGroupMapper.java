@@ -1,7 +1,7 @@
 package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -22,4 +22,5 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
     DeviceGroupPo queryByName(DeviceGroupPo deviceGroupPo);
 
     DeviceGroupPo selectById(Integer id);
+
 }

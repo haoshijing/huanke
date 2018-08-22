@@ -26,6 +26,8 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.*;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;

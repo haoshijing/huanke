@@ -6,13 +6,11 @@ import com.huanke.iot.manage.service.device.ablity.DeviceAblityOptionService;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityOptionCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityOptionQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,24 +27,24 @@ public class DeviceAblityOptionController {
     private DeviceAblityOptionService deviceAblityOptionService;
 
 
-    /**
-     * 添加新选项
-     * @param optionRequest
-     * @return 成功返回true，失败返回false
-     * @throws Exception
-     */
-    @RequestMapping(value = "/createOption",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDeviceAblityOption(@RequestBody DeviceAblityOptionCreateOrUpdateRequest optionRequest) throws Exception{
-        if(StringUtils.isBlank(optionRequest.getOptionName()) ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"选项名称不能为空");
-        }
-        if(StringUtils.isBlank(optionRequest.getAblityId()) ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"没有关联的能力主键");
-        }
-        Boolean ret =  deviceAblityOptionService.createOrUpdate(optionRequest);
-        return new ApiResponse<>(ret);
-    }
-
+//    /**
+//     * 添加新选项
+//     * @param optionRequest
+//     * @return 成功返回true，失败返回false
+//     * @throws Exception
+//     */
+//    @RequestMapping(value = "/createOption",method = RequestMethod.POST)
+//    public ApiResponse<Boolean> createDeviceAblityOption(@RequestBody DeviceAblityOptionCreateOrUpdateRequest optionRequest) throws Exception{
+//        if(StringUtils.isBlank(optionRequest.getOptionName()) ){
+//            return new ApiResponse<>(RetCode.PARAM_ERROR,"选项名称不能为空");
+//        }
+//        if(StringUtils.isBlank(optionRequest.getAblityId()) ){
+//            return new ApiResponse<>(RetCode.PARAM_ERROR,"没有关联的能力主键");
+//        }
+//        Boolean ret =  deviceAblityOptionService.createOrUpdate(optionRequest);
+//        return new ApiResponse<>(ret);
+//    }
+//
 
     /**
      * 修改能力选项
@@ -54,7 +52,8 @@ public class DeviceAblityOptionController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/updateOption",method = RequestMethod.POST)
+    @ApiOperation("修改选项")
+    @PutMapping(value = "/updateOption")
     public ApiResponse<Boolean> updateDeviceAblityOption(@RequestBody DeviceAblityOptionCreateOrUpdateRequest optionRequest) throws Exception{
         if(StringUtils.isBlank(optionRequest.getOptionName()) ){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"选项名称不能为空");
@@ -73,7 +72,8 @@ public class DeviceAblityOptionController {
      * @return 返回功能项列表
      * @throws Exception
      */
-    @RequestMapping(value = "/select")
+    @ApiOperation("查询选项列表")
+    @PostMapping(value = "/select")
     public ApiResponse<List<DeviceAblityOptionVo>> selectList(@RequestBody DeviceAblityOptionQueryRequest optionRequest) throws Exception{
         List<DeviceAblityOptionVo> deviceAblityOptionVos =  deviceAblityOptionService.selectList(optionRequest);
         return new ApiResponse<>(deviceAblityOptionVos);
@@ -86,7 +86,8 @@ public class DeviceAblityOptionController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/delteAblityOption",method = RequestMethod.POST)
+    @ApiOperation("查询选项列表")
+    @DeleteMapping(value = "/delteAblityOption")
     public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody DeviceAblityOptionQueryRequest optionRequest) throws Exception{
         if(null==optionRequest.getId()){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"选项主键不能为空");        }

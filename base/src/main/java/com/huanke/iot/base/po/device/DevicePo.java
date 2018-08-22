@@ -33,6 +33,7 @@ public class DevicePo {
     private String saNo;
 
     private Integer typeId;
+    private Integer modelId;
     private Integer productId;
 
     private Long bindTime;

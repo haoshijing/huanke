@@ -8,14 +8,14 @@
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
+            parameterType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
         INSERT INTO
         <include refid="tableName"/>
         (
         name,
         customerId,
-        masterOpenId,
-        manageOpenIds,
+        masterUserId,
+        manageUserIds,
         status,
         createTime,
         lastUpdateTime
@@ -23,8 +23,8 @@
         VALUES (
         #{name},
         #{customerId},
-        #{masterOpenId},
-        #{manageOpenIds},
+        #{masterUserId},
+        #{manageUserIds},
         #{status},
         #{createTime},
         #{lastUpdateTime}
@@ -48,7 +48,7 @@
         </where>
     </select>
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
         select * from
         <include refid="tableName"/>
         <where>
@@ -65,7 +65,7 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
         update
         <include refid="tableName"/>
         <set>
@@ -80,7 +80,7 @@
         </set>
     </update>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
         select
         *
         FROM
@@ -100,7 +100,7 @@
         set status = #{status} where customerId = #{customerId}
         and id = #{id}
     </update>
-    <select id="queryByName" resultType="com.huanke.iot.base.po.device.DeviceGroupPo">
+    <select id="queryByName" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
         select * from  <include refid="tableName"/>
         where name = #{name} and customerId = #{customerId}
     </select>

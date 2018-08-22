@@ -16,6 +16,7 @@
         readStatus,
         runStatus,
         configType,
+        ablityType,
         remark,
         createTime
         )
@@ -26,6 +27,7 @@
         #{readStatus},
         #{runStatus},
         #{configType},
+        #{ablityType},
         #{remark},
         #{createTime}
         )
@@ -62,6 +64,9 @@
             <if test="param.configType != null">
                 AND configType = #{param.configType}
             </if>
+            <if test="param.ablityType != null">
+                AND ablityType = #{param.ablityType}
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>
@@ -87,6 +92,9 @@
             </if>
             <if test="configType != null">
                 configType = #{configType},
+            </if>
+            <if test="ablityType != null">
+                ablityType = #{ablityType},
             </if>
             <if test="remark != null and remark != ''">
                 remark = #{remark},
@@ -120,7 +128,7 @@
 
         <where>
             <if test = "param.typeId != null ">
-                AND t_device_type_ablity_set.typeId = #{param.typeId}
+                AND t_device_type_ablity_set.typeId = #{typeId}
             </if>
         </where>
     </select>

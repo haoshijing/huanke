@@ -76,6 +76,13 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE customerId = #{customerId} limit 1
+    </select>
+
     <select id = "selectCount" resultType="java.lang.Integer">
         select count(1)
         from <include refid="tableName"/>

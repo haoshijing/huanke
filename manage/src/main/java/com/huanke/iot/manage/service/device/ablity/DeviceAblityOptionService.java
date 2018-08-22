@@ -59,7 +59,8 @@ public class DeviceAblityOptionService {
         return deviceAblityOptionPos.stream().map(deviceAblityOptinPo -> {
             DeviceAblityOptionVo DeviceAblityOptionVo = new DeviceAblityOptionVo();
             DeviceAblityOptionVo.setOptionName(deviceAblityOptinPo.getOptionName());
-            DeviceAblityOptionVo.setAblityId(deviceAblityOptinPo.getAblityId());
+            DeviceAblityOptionVo.setOptionValue(deviceAblityOptinPo.getOptionValue());
+//            DeviceAblityOptionVo.setAblityId(deviceAblityOptinPo.getAblityId());
             DeviceAblityOptionVo.setId(deviceAblityOptinPo.getId());
             return DeviceAblityOptionVo;
         }).collect(Collectors.toList());

@@ -18,6 +18,7 @@ import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetQuer
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -62,6 +63,7 @@ public class DeviceModelService {
 
     /**
      * 创建 或者更新 型号
+     *
      * @param modelRequest
      * @return
      */
@@ -70,20 +72,20 @@ public class DeviceModelService {
         //先保存 型号
         int effectCount = 0;
         DeviceModelPo deviceModelPo = new DeviceModelPo();
-        BeanUtils.copyProperties(modelRequest,deviceModelPo);
-        if(modelRequest.getId() != null && modelRequest.getId() > 0){
+        BeanUtils.copyProperties(modelRequest, deviceModelPo);
+        if (modelRequest.getId() != null && modelRequest.getId() > 0) {
             deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
             effectCount = deviceModelMapper.updateById(deviceModelPo);
-        }else{
+        } else {
             deviceModelPo.setCreateTime(System.currentTimeMillis());
-            effectCount =  deviceModelMapper.insert(deviceModelPo);
+            effectCount = deviceModelMapper.insert(deviceModelPo);
         }
 
         //随后取出 型号的 功能
         List<DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest> deviceModelAblityRequests = modelRequest.getDeviceModelAblityRequests();
-        if(deviceModelAblityRequests!=null&&deviceModelAblityRequests.size()>0){
+        if (deviceModelAblityRequests != null && deviceModelAblityRequests.size() > 0) {
             //遍历当前 型号的能力 b
-            for(int i=0;i<deviceModelAblityRequests.size();i++){
+            for (int i = 0; i < deviceModelAblityRequests.size(); i++) {
                 DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest deviceModelAblityRequest = deviceModelAblityRequests.get(i);
                 DeviceModelAblityPo deviceModelAblityPo = new DeviceModelAblityPo();
                 deviceModelAblityPo.setModelId(deviceModelPo.getId());
@@ -93,11 +95,11 @@ public class DeviceModelService {
 
                 //判断当前型号的功能 主键是否为空，不为空是更新，空是 保存
                 //todo 选项未保存
-                if(deviceModelAblityRequest.getId()!=null){
+                if (deviceModelAblityRequest.getId() != null) {
                     deviceModelAblityPo.setId(deviceModelAblityRequest.getId());
                     deviceModelAblityPo.setLastUpdateTime(System.currentTimeMillis());
                     deviceModelAblityMapper.updateById(deviceModelAblityPo);
-                }else{
+                } else {
                     deviceModelAblityPo.setCreateTime(System.currentTimeMillis());
                     deviceModelAblityMapper.insert(deviceModelAblityPo);
                 }
@@ -108,6 +110,7 @@ public class DeviceModelService {
 
     /**
      * 查询 型号的列表
+     *
      * @param request
      * @return
      */
@@ -120,10 +123,10 @@ public class DeviceModelService {
         queryDeviceModelPo.setTypeId(request.getTypeId());
         queryDeviceModelPo.setStatus(request.getStatus());
 
-        Integer offset = (request.getPage() - 1)*request.getLimit();
+        Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 
-        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectList(queryDeviceModelPo,limit,offset);
+        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectList(queryDeviceModelPo, limit, offset);
         return deviceModelPos.stream().map(deviceModelPo -> {
             DeviceModelVo deviceModelVo = new DeviceModelVo();
             deviceModelVo.setName(deviceModelPo.getName());
@@ -133,7 +136,7 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon("https://"+bucketUrl+"/"+deviceModelVo.getIcon());
+            deviceModelVo.setIcon("https://" + bucketUrl + "/" + deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
             return deviceModelVo;
         }).collect(Collectors.toList());
@@ -141,18 +144,15 @@ public class DeviceModelService {
 
     /**
      * 根据类型ID 查询型号列表
-     * @param request
+     *
+     * @param typeId
      * @return
      */
-    public List<DeviceModelVo> selectByTypeId(DeviceModelQueryRequest request) {
+    public List<DeviceModelVo> selectByTypeId(Integer typeId) {
 
         DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
-        queryDeviceModelPo.setTypeId(request.getTypeId());
 
-        Integer offset = (request.getPage() - 1)*request.getLimit();
-        Integer limit = request.getLimit();
-
-        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectList(queryDeviceModelPo,limit,offset);
+        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectByTypeId(typeId);
         return deviceModelPos.stream().map(deviceModelPo -> {
             DeviceModelVo deviceModelVo = new DeviceModelVo();
             deviceModelVo.setName(deviceModelPo.getName());
@@ -162,19 +162,23 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon("https://"+bucketUrl+"/"+deviceModelVo.getIcon());
+            deviceModelVo.setIcon("https://" + bucketUrl + "/" + deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
             return deviceModelVo;
         }).collect(Collectors.toList());
     }
 
 
-    public DeviceModelVo selectById(DeviceModelQueryRequest request) {
+    /**
+     * 根据型号主键查询 型号
+     *
+     * @param id
+     * @return
+     */
+    public DeviceModelVo selectById(Integer id) {
 
-        DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
-        queryDeviceModelPo.setId(request.getId());
 
-        DeviceModelPo deviceModelPo = deviceModelMapper.selectById(queryDeviceModelPo);
+        DeviceModelPo deviceModelPo = deviceModelMapper.selectById(id);
 
         DeviceModelVo deviceModelVo = new DeviceModelVo();
         deviceModelVo.setName(deviceModelPo.getName());
@@ -184,7 +188,7 @@ public class DeviceModelService {
         deviceModelVo.setRemark(deviceModelPo.getRemark());
         deviceModelVo.setStatus(deviceModelPo.getStatus());
         deviceModelVo.setVersion(deviceModelPo.getVersion());
-        deviceModelVo.setIcon("https://"+bucketUrl+"/"+deviceModelVo.getIcon());
+        deviceModelVo.setIcon("https://" + bucketUrl + "/" + deviceModelVo.getIcon());
         deviceModelVo.setId(deviceModelPo.getId());
 
         return deviceModelVo;
@@ -198,6 +202,7 @@ public class DeviceModelService {
 
     /**
      * 添加型号能力 以及能力的选项
+     *
      * @param modelAblityRequest
      * @return
      */
@@ -206,22 +211,22 @@ public class DeviceModelService {
         int effectCount = 0;
         Boolean ret = true;
 
-        if(null==modelAblityRequest.getAblityId()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能主键不能为空");
+        if (null == modelAblityRequest.getAblityId()) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "功能主键不能为空");
         }
-        if(null==modelAblityRequest.getModelId()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"型号主键不能为空");
+        if (null == modelAblityRequest.getModelId()) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "型号主键不能为空");
         }
 
         //先进行判断 该型号是否存在
         DeviceModelPo querydeviceModelPo = new DeviceModelPo();
         querydeviceModelPo = deviceModelMapper.selectById(modelAblityRequest.getModelId());
-        if(querydeviceModelPo==null){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"该型号不存在");
+        if (querydeviceModelPo == null) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该型号不存在");
         }
         //判断该型号的类型主键是否存在
-        if(querydeviceModelPo.getTypeId()==null){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"该型号的类型主键不存在");
+        if (querydeviceModelPo.getTypeId() == null) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该型号的类型主键不存在");
         }
 
         try {
@@ -263,17 +268,16 @@ public class DeviceModelService {
 //            } else {
 //                return new ApiResponse<>(RetCode.PARAM_ERROR, "该型号所在类型的功能集功能不存在");
 //            }
-        }catch (Exception e){
-            log.error("添加型号能力 以及能力的选项 错误",e);
+        } catch (Exception e) {
+            log.error("添加型号能力 以及能力的选项 错误", e);
         }
         return new ApiResponse<>(ret);
     }
 
 
-
-
     /**
      * 根据类型主键 查询 该型号的功能
+     *
      * @param modelId
      * @return
      */
@@ -293,5 +297,16 @@ public class DeviceModelService {
 
     }
 
+    /**
+     * 根据主键 删除 型号
+     * @param modelId
+     * @return
+     */
+    public Boolean deleteModelById(Integer modelId) {
+
+        Boolean ret = true;
+        ret = deviceModelMapper.deleteById(modelId) > 0;
+        return ret;
+    }
 
 }

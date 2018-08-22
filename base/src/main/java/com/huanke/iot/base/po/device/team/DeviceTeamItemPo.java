@@ -1,30 +1,30 @@
-package com.huanke.iot.base.po.device;
+package com.huanke.iot.base.po.device.team;
 
 import lombok.Data;
 
 /**
- * @author haoshijing
- * @version 2018年04月08日 10:24
+ * @author onlymark
+ * @version 2018年08月20日
  **/
 @Data
-public class DeviceGroupItemPo {
+public class DeviceTeamItemPo {
     /**
      * 设备编组id
      */
     private Integer id;
-    /**
-     * 用户id
-     */
-    private Integer userId;
+
     /**
      * 设备id
      */
-    private Integer deviceId;
+    private Integer deviceId;/**
+     * 用户id
+     */
+    private Integer userId;
 
     /**
-     * 编组id
+     * 设备组id
      */
-    private Integer groupId;
+    private Integer teamId;
 
     private Integer status;
 

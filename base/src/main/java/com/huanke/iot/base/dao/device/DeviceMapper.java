@@ -20,14 +20,16 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
      */
     List<DevicePo> selectAll();
 
+    Integer deleteDevice(DevicePo devicePo);
+
+
     DevicePo selectByDeviceId(String deviceId);
-
-    int updateByDeviceId(DevicePo devicePo);
-
     /**
      * 查设备客户Id
      * @param devicePo
      * @return
      */
     Integer getCustomerId(DevicePo devicePo);
+    Integer updateByDeviceId(DevicePo devicePo);
+
 }

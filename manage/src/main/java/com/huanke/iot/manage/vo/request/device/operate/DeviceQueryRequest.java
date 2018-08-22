@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class DeviceCreateOrUpdateRequest {
+public class DeviceQueryRequest {
 
     private List<DeviceList> deviceList;
 
@@ -23,9 +23,5 @@ public class DeviceCreateOrUpdateRequest {
          * 设备mac地址
          */
         private String mac;
-        /**
-         * 生产日期
-         */
-        private Long createTime;
     }
 }

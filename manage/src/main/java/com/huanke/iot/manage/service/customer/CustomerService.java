@@ -47,7 +47,6 @@ public class CustomerService {
 
     @Autowired
     private DeviceModelAblityMapper deviceModelAblityMapper;
-
     /**
      * 保存详情
      * @param customerVo

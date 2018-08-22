@@ -2,14 +2,17 @@ package com.huanke.iot.manage.service.device.operate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
-import com.huanke.iot.base.dao.device.DeviceGroupMapper;
-import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
-import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.*;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
+import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceAssignToCustomerRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceListRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceListQueryRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
+import com.huanke.iot.manage.vo.response.device.DeviceListVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -39,7 +42,10 @@ public class DeviceOperateService {
     private DeviceGroupMapper deviceGroupMapper;
 
     @Autowired
-    private DeviceIdPoolMapper deviceIdPoolMapper;
+    private DeviceCustomerRelationMapper deviceCustomerRelationMapper;
+
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -51,24 +57,22 @@ public class DeviceOperateService {
     /**2018-08-15
      * sixiaojun
      * 支持批量或单个添加
-     * @param deviceCreateOrUpdateRequests
+     * @param deviceLists
      * @return
      */
-    public Boolean createDevice(List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests) {
-
-        for (DeviceCreateOrUpdateRequest request:deviceCreateOrUpdateRequests
-             ) {
-            String mac=request.getMac();
+    public Boolean createDevice(List<DeviceCreateOrUpdateRequest.DeviceList> deviceLists) {
+        for (DeviceCreateOrUpdateRequest.DeviceList device:deviceLists) {
+            String mac=device.getMac();
             DevicePo devicePo=deviceMapper.selectByMac(mac);
             if(null != devicePo && StringUtils.isNotEmpty(devicePo.getDeviceId())){
                 return  false;
             }
             else {
                 DevicePo insertPo = new DevicePo();
-                insertPo.setName(request.getName());
-                insertPo.setTypeId(request.getDeviceTypeId());
-                insertPo.setMac(request.getMac());
-                insertPo.setCreateTime(request.getCreateTime());
+                insertPo.setName(device.getName());
+                insertPo.setTypeId(device.getTypeId());
+                insertPo.setMac(device.getMac());
+                insertPo.setCreateTime(device.getCreateTime());
                 deviceMapper.insert(insertPo);
             }
         }
@@ -78,24 +82,24 @@ public class DeviceOperateService {
     /**2018-08-15
      * sixiaojun
      * 根据前台请求按页查询设备数据
-     * @param deviceListRequest
+     * @param deviceListQueryRequest
      * @return list
      */
-public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListRequest){
+    public List<DeviceListVo> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest){
         //当期要查询的页
-        Integer currentPage = deviceListRequest.getPage();
+        Integer currentPage = deviceListQueryRequest.getPage();
         //每页显示的数量
-        Integer limit= deviceListRequest.getLimit();
+        Integer limit= deviceListQueryRequest.getLimit();
         //偏移量
         Integer offset = (currentPage - 1) * limit;
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         DevicePo queryPo=new DevicePo();
         List<DevicePo> devicePos=deviceMapper.selectList(queryPo,limit,offset);
-        List<DeviceListRequest> deviceQueryVos=devicePos.stream().map(devicePo -> {
-            DeviceListRequest deviceQueryVo=new DeviceListRequest();
+        List<DeviceListVo> deviceQueryVos=devicePos.stream().map(devicePo -> {
+            DeviceListVo deviceQueryVo=new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setMac(devicePo.getMac());
-            deviceQueryVo.setDeviceTypeId(devicePo.getDeviceTypeId());
+            deviceQueryVo.setDeviceTypeId(devicePo.getTypeId());
             if(null != devicePo.getBindStatus()){
                 if(3 == devicePo.getBindStatus()){
                     deviceQueryVo.setBindStatus("已解绑");
@@ -112,7 +116,7 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
                     deviceQueryVo.setEnableStatus("已启用");
                 }
                 if(0 == devicePo.getEnableStatus()){
-                    deviceQueryVo.setEnableStatus("已禁用用");
+                    deviceQueryVo.setEnableStatus("已禁用");
                 }
             }
             if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
@@ -144,7 +148,63 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
         return deviceQueryVos;
     }
 
+    /**
+     * 删除设备及与设备相关的信息
+     * 2018-08-21
+     * sixiaojun
+     * @param deviceLists
+     * @return
+     */
+    public Integer deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceList> deviceLists){
+        int count=0;
+        for(DeviceCreateOrUpdateRequest.DeviceList device:deviceLists){
+            //先从设备表中删除该mac地址的设备
+            DevicePo devicePo=deviceMapper.selectByMac(device.getMac());
+            if(deviceMapper.deleteDevice(devicePo)>0){
+                //如果当前设备存在集群
+                if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
+                    //删除成功后再从设备集群列表中删除该设备的集群相关信息
+                    deviceGroupItemMapper.deleteDeviceById(devicePo.getId());
+                }
+                count++;
+            }
+        }
+        //返回本次删除的设备总数
+        return count;
+    }
 
+    /**
+     * 将设备列表中的设备分配给设备型号，并与当前客户关联
+     * 2018-08-21
+     * sixiaojun
+     * @param deviceAssignToCustomerRequest
+     * @return
+     */
+    public Boolean assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest){
+        //获取设备列表
+        List<DeviceQueryRequest.DeviceList> deviceList=deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
+        if(null != deviceList) {
+            for (DeviceQueryRequest.DeviceList device : deviceList) {
+                DeviceCustomerRelationPo deviceCustomerRelationPo = new DeviceCustomerRelationPo();
+                deviceCustomerRelationPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
+                deviceCustomerRelationPo.setDeviceId(deviceMapper.selectByMac(device.getMac()).getId());
+                deviceCustomerRelationPo.setCreateTime(System.currentTimeMillis());
+                deviceCustomerRelationPo.setLastUpdateTime(System.currentTimeMillis());
+                //新增设备和客户关系
+                deviceCustomerRelationMapper.insert(deviceCustomerRelationPo);
+                //在设备表中更新deviceModelId字段，将设备与设备型号表关联
+                DevicePo devicePo=new DevicePo();
+                DeviceModelPo deviceModelPo=deviceModelMapper.selectByCustomerId(deviceAssignToCustomerRequest.getCustomerId());
+                devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
+                devicePo.setModelId(deviceModelPo.getId());
+                deviceMapper.updateByDeviceId(devicePo);
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     /**
      * 2018-08-18
      * sixiaojun
@@ -161,50 +221,43 @@ public List<DeviceListRequest> queryDeviceByPage(DeviceListRequest deviceListReq
      * 2018-08-20
      * sixiaojun
      * 根据mac地址查询设备表中是否存在相同mac地址的设备，如存在，返回DevicePo，新增失败
-     * @param deviceCreateOrUpdateRequests
+     * @param deviceList
      * @return devicePo
      */
-    public DevicePo isDeviceExist(List<DeviceCreateOrUpdateRequest> deviceCreateOrUpdateRequests){
+    public DevicePo isDeviceExist(List<DeviceCreateOrUpdateRequest.DeviceList> deviceList){
         DevicePo devicePo=null;
-        for(DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest:deviceCreateOrUpdateRequests){
-            devicePo=deviceMapper.selectByMac(deviceCreateOrUpdateRequest.getMac());
+        for(DeviceCreateOrUpdateRequest.DeviceList device:deviceList){
+            devicePo=deviceMapper.selectByMac(device.getMac());
             if(null != devicePo){
                 return devicePo;
             }
         }
         return devicePo;
     }
-//    public Boolean updateDeviceId(String mac, Integer publicId, String productId) {
-//        DevicePo devicePo = deviceMapper.selectByMac(mac);
-//        if(devicePo == null){
-//            return false;
-//        }
-//        PublicNumberPo publicNumberPo = publicNumberMapper.selectById(publicId);
-//        if(publicNumberPo != null){
-//            String appId = publicNumberPo.getAppId();
-//            String appSecret = publicNumberPo.getAppSecret();
-//            JSONObject jsonObject = obtainDeviceJson(appId, appSecret,publicId,productId);
-//            if(jsonObject != null){
-//                String deviceId = jsonObject.getString("deviceid");
-//                String devicelicence = jsonObject.getString("devicelicence");
-//
-//                DevicePo updatePo = new DevicePo();
-//                updatePo.setId(devicePo.getId());
-//                updatePo.setDeviceId(deviceId);
-//                int updateRet = deviceMapper.updateOnlyDeviceId(updatePo);
-//                log.info("updateRet = {}",updateRet);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+
+    /**
+     * 2018-08-20
+     * sixiaojun
+     * 根据设备列表中的设备mac查询某个设备是否已被分配
+     * @param deviceList
+     * @return
+     */
+    public Boolean isDeviceHasCustomer(List<DeviceQueryRequest.DeviceList> deviceList){
+        for(DeviceQueryRequest.DeviceList device:deviceList){
+            DevicePo devicePo=deviceMapper.selectByMac(device.getMac());
+            //如果当前设备已被分配则返回错误
+            if(null != deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId())){
+                return true;
+            }
+        }
+        return false;
+    }
 
 
-    public Boolean updateDevice(DeviceCreateOrUpdateRequest deviceUpdateRequest) {
-
+    public Boolean updateDevice(DeviceCreateOrUpdateRequest.DeviceList deviceList) {
         DevicePo updatePo = new DevicePo();
-        updatePo.setId(deviceUpdateRequest.getId());
-        updatePo.setName(deviceUpdateRequest.getName());
+        updatePo.setId(deviceMapper.selectByMac(deviceList.getMac()).getId());
+        updatePo.setName(deviceList.getName());
         return deviceMapper.updateById(updatePo) > 0;
     }
 

@@ -8,7 +8,7 @@
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.huanke.iot.base.po.device.DeviceGroupPo">
+            parameterType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -54,7 +54,7 @@
         </where>
     </select>
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceTeamPo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
         select * from
         <include refid="tableName"/>
         <where>
@@ -71,7 +71,7 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceTeamPo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
         update
         <include refid="tableName"/>
         <set>
@@ -86,7 +86,7 @@
         </set>
     </update>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceTeamPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
         select
         *
         FROM
@@ -96,13 +96,13 @@
 
 
 
-    <select id="queryByName" resultType="com.huanke.iot.base.po.device.DeviceTeamPo">
+    <select id="queryByName" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
         select * from  <include refid="tableName"/>
         where name = #{name} and customerId = #{customerId}
     </select>
 
-    <select id="queryTeamItems" parameterType="com.huanke.iot.base.po.device.DeviceTeamItemPo"
-            resultType="com.huanke.iot.base.po.device.DeviceTeamItemPo">
+    <select id="queryTeamItems" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select * from t_device_team_item
         where 1= 1
         <if test="status != null">

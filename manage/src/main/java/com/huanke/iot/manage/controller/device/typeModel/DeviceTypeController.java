@@ -10,13 +10,11 @@ import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdat
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,7 +39,8 @@ public class DeviceTypeController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/createDeviceType",method = RequestMethod.POST)
+    @ApiOperation("添加新类型")
+    @PostMapping(value = "/createDeviceType")
     public ApiResponse<Boolean> createDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
         if(StringUtils.isBlank(typeRrequest.getName())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
@@ -57,7 +56,8 @@ public class DeviceTypeController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/updateDeviceType",method = RequestMethod.POST)
+    @ApiOperation("修改类型")
+    @PutMapping(value = "/updateDeviceType")
     public ApiResponse<Boolean> updateDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeyRequest) throws Exception{
         if(typeyRequest.getId()==null||typeyRequest.getId()<=0){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键不存在");
@@ -71,15 +71,14 @@ public class DeviceTypeController {
 
     /**
      * 删除 类型
-     * @param typeyRequest
+     * @param typeId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/delteAblityType",method = RequestMethod.POST)
-    public ApiResponse<Boolean> delteDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeyRequest) throws Exception{
-        if(null==typeyRequest.getId()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键不能为空");        }
-        Boolean ret =  deviceTypeService.deleteDeviceType(typeyRequest);
+    @ApiOperation("删除类型")
+    @DeleteMapping(value = "/delteDeviceTypeById/{id}")
+    public ApiResponse<Boolean> delteDeviceType(@PathVariable("id") Integer typeId) throws Exception{
+        Boolean ret =  deviceTypeService.deleteDeviceType(typeId);
         return new ApiResponse<>(ret);
     }
 
@@ -90,7 +89,8 @@ public class DeviceTypeController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/createDeviceTypeAblitySet",method = RequestMethod.POST)
+    @ApiOperation("添加类型的功能集")
+    @PostMapping(value = "/createDeviceTypeAblitySet")
     public ApiResponse<Boolean> createDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
         ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
         return result;
@@ -102,7 +102,8 @@ public class DeviceTypeController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/updateDeviceTypeAblitySet",method = RequestMethod.POST)
+    @ApiOperation("修改类型的功能集")
+    @PutMapping(value = "/updateDeviceTypeAblitySet")
     public ApiResponse<Boolean> updateDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
         ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
         return result;
@@ -114,24 +115,22 @@ public class DeviceTypeController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/deleteDeviceTypeAblitySet",method = RequestMethod.POST)
+    @ApiOperation("删除类型的功能集")
+    @DeleteMapping(value = "/deleteDeviceTypeAblitySet/{id}")
     public ApiResponse<Boolean> deleteDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
         Boolean ret = false;
-        if(request.getId()!=null&&request.getId()>0){
             ret =  deviceTypeAblitySetService.deleteById(request.getId());
-        }else{
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"主键不能为空");
-        }
         return new ApiResponse<>(ret);
     }
 
     /**
      * 查询类型列表
      * @param typeRequest
-     * @return 返回功能项列表
+     * @return 返回类型列表
      * @throws Exception
      */
-    @RequestMapping(value = "/select")
+    @ApiOperation("查询类型列表")
+    @PostMapping(value = "/select")
     public ApiResponse<List<DeviceTypeVo>> selectList(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
         List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(typeRequest);
         return new ApiResponse<>(deviceTypeVos);
@@ -139,13 +138,14 @@ public class DeviceTypeController {
 
     /**
      * 根据id查询 类型
-     * @param typeRequest
+     * @param typeId
      * @return 返回类型
      * @throws Exception
      */
-    @RequestMapping(value = "/selectById")
-    public ApiResponse<DeviceTypeVo> selectById(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
-        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(typeRequest);
+    @ApiOperation("根据类型主键查询类型")
+    @GetMapping(value = "/selectById/{id}")
+    public ApiResponse<DeviceTypeVo> selectById(@PathVariable("id")Integer typeId) throws Exception{
+        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(typeId);
         return new ApiResponse<>(deviceTypeVo);
     }
 
@@ -154,8 +154,9 @@ public class DeviceTypeController {
      * @param typeId
      * @return
      */
-    @RequestMapping(value = "/selectAblitysByTypeId")
-    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(Integer typeId){
+    @ApiOperation("根据类型主键 查询该类型的功能集合")
+    @GetMapping(value = "/selectAblitysByTypeId/{typeId}")
+    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(@PathVariable("typeId")Integer typeId){
 
         List<DeviceAblityVo> deviceAblityVos = deviceTypeService.selectAblitysByTypeId(typeId);
         return new ApiResponse<>(deviceAblityVos);

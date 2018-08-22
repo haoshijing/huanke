@@ -1,23 +1,20 @@
 package com.huanke.iot.manage.controller.device.group;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
-import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.manage.vo.request.device.group.DeviceGroupAddNewDeviceRequest;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.manage.vo.request.device.group.DeviceGroupCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.group.DeviceGroupQueryRequest;
 import com.huanke.iot.manage.service.device.group.DeviceGroupService;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/deviceGroup")
@@ -34,37 +31,43 @@ public class DeviceGroupController {
      * @return
      * @throws Exception
      */
+    @ApiOperation("创建新集群并向其中添加设备，从设备列表进入，添加已经选中的设备")
     @RequestMapping(value = "/addNewGroupAndDevice",method = RequestMethod.POST)
     public  ApiResponse<Boolean> addNewGroupAndDevice(@RequestBody DeviceGroupCreateOrUpdateRequest deviceGroupCreateOrUpdateRequest) throws Exception{
-        //首先创建集群
-        Boolean ret =  deviceGroupService.createGroup(deviceGroupCreateOrUpdateRequest);
-        //集群创建成功后获取集群ID，向其中添加选中的设备
-        if(ret){
-            deviceGroupCreateOrUpdateRequest.setId(deviceGroupService.queryIdByName(deviceGroupCreateOrUpdateRequest).getId());
-            //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群
-            if(null != deviceGroupCreateOrUpdateRequest.getDeviceGroupAddNewDeviceRequests()) {
-                ret = deviceGroupService.addDeviceToGroup(deviceGroupCreateOrUpdateRequest);
-            }
+        //若集群列表中已存在当前名称集群，返回错误
+        if(null != deviceGroupService.queryIdByName(deviceGroupCreateOrUpdateRequest)){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"该集群已存在");
         }
-        return new ApiResponse<>(ret);
+        else {
+            //首先创建集群,并返回
+            DeviceGroupPo deviceGroupPo= deviceGroupService.createGroup(deviceGroupCreateOrUpdateRequest);
+            //集群创建成功后获取集群ID，向其中添加选中的设备
+
+            //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群
+            if(null != deviceGroupCreateOrUpdateRequest.getDeviceQueryRequest()) {
+                deviceGroupService.addDeviceToGroup(deviceGroupCreateOrUpdateRequest,deviceGroupPo);
+            }
+            return new ApiResponse<>(true);
+        }
     }
 
     /**
      *在设备列表中点击集群时，显示设备列表中已有集群的集群名称，若存在多个集群，则返回错误
-     * @param deviceGroupAddNewDeviceRequest
+     * @param deviceCreateOrUpdateRequest
      * @return
      * @throws Exception
      */
-    @RequestMapping("/queryGroupByDevice")
-    public  ApiResponse<DeviceGroupPo> queryGroupByDevice(@RequestBody DeviceGroupAddNewDeviceRequest deviceGroupAddNewDeviceRequest) throws Exception{
+    @ApiOperation("在设备列表中点击集群时，显示设备列表中已有集群的集群名称，若存在多个集群，则返回错误")
+    @RequestMapping(value = "/queryGroupByDevice",method = RequestMethod.POST)
+    public  ApiResponse<DeviceGroupPo> queryGroupByDevice(@RequestBody DeviceQueryRequest deviceQueryRequest) throws Exception{
         DeviceGroupPo deviceGroupPo=null;
-        List<DeviceGroupAddNewDeviceRequest> deviceList=deviceGroupAddNewDeviceRequest.getDeviceGroupAddNewDeviceRequests();
-        if(null != deviceList) {
-            if(deviceGroupService.isGroupConflict(deviceList)){
+        List<DeviceQueryRequest.DeviceList> deviceLists=deviceQueryRequest.getDeviceList();
+        if(null != deviceLists) {
+            if(deviceGroupService.isGroupConflict(deviceLists)){
                 return new ApiResponse<>(RetCode.ERROR,"设备列表中存在多个集群");
             }
             else {
-                deviceGroupPo=deviceGroupService.queryGroupName(deviceList);
+                deviceGroupPo=deviceGroupService.queryGroupName(deviceLists);
             }
         }
         return new ApiResponse(deviceGroupPo);
