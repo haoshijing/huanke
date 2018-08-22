@@ -1,22 +1,23 @@
 package com.huanke.iot.api.service.device.team;
 
 import com.alibaba.druid.util.StringUtils;
-import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
-import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
+import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
+import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
-import com.huanke.iot.base.po.device.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
 /**
- * @author haoshijing
- * @version 2018年04月08日 13:22
+ * @author onlymark
+ * @version 2018年08月22日
  **/
 @Repository
 @Slf4j
@@ -28,90 +29,91 @@ public class DeviceTeamService {
     @Autowired
     DeviceMapper deviceMapper;
 
-
-    public Integer createDeviceGroup(Integer userId, DeviceGroupNewRequest newRequest) {
-        String groupName = newRequest.getGroupName();
-        DeviceGroupPo queryPo = new DeviceGroupPo();
-        queryPo.setGroupName(groupName);
-        queryPo.setUserId(userId);
-        DeviceGroupPo queryGroupPo = deviceTeamMapper.queryByName(queryPo);
-        if (queryGroupPo != null && queryGroupPo.getStatus() == 1) {
+    @Transactional
+    public Integer createDeviceTeam(Integer userId, DeviceTeamNewRequest newRequest) {
+        String teamName = newRequest.getTeamName();
+        DeviceTeamPo queryPo = new DeviceTeamPo();
+        queryPo.setName(teamName);
+        queryPo.setMasterUserId(userId);
+        DeviceTeamPo queryTeamPo = deviceTeamMapper.queryByName(queryPo);
+        if (queryTeamPo != null && queryTeamPo.getStatus() == 1) {
             return 0;
         }
-        Integer groupId = 0;
-        if (queryGroupPo == null) {
-            DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
-            deviceGroupPo.setCreateTime(System.currentTimeMillis());
-            deviceGroupPo.setUserId(userId);
-            deviceGroupPo.setGroupName(groupName);
-            deviceGroupPo.setStatus(1);
-            deviceTeamMapper.insert(deviceGroupPo);
-            groupId = deviceGroupPo.getId();
+        Integer teamId = 0;
+        if (queryTeamPo == null) {
+            DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+            deviceTeamPo.setCreateTime(System.currentTimeMillis());
+            deviceTeamPo.setMasterUserId(userId);
+            deviceTeamPo.setName(teamName);
+            deviceTeamPo.setStatus(1);
+            deviceTeamMapper.insert(deviceTeamPo);
+            teamId = deviceTeamPo.getId();
         } else {
-            groupId = queryGroupPo.getId();
-            DeviceGroupPo updatePo = new DeviceGroupPo();
-            updatePo.setGroupName(newRequest.getGroupName());
+            teamId = queryTeamPo.getId();
+            DeviceTeamPo updatePo = new DeviceTeamPo();
+            updatePo.setName(newRequest.getTeamName());
             updatePo.setStatus(1);
-            updatePo.setId(groupId);
+            updatePo.setId(teamId);
+            updatePo.setLastUpdateTime(System.currentTimeMillis());
             int ret = deviceTeamMapper.updateById(updatePo);
             log.info("ret = {}",ret);
         }
         if (!CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
-            DeviceGroupRequest deviceGroupRequest = new DeviceGroupRequest();
-            deviceGroupRequest.setDeviceIds(newRequest.getDeviceIds());
-            deviceGroupRequest.setGroupId(groupId);
-            updateDeviceGroup(userId, deviceGroupRequest);
+            DeviceTeamRequest deviceTeamRequest = new DeviceTeamRequest();
+            deviceTeamRequest.setDeviceIds(newRequest.getDeviceIds());
+            deviceTeamRequest.setTeamId(teamId);
+            updateDeviceTeam(userId, deviceTeamRequest);
             return 1;
         }
         return 0;
     }
 
-    public Boolean deleteGroup(Integer userId, Integer groupId) {
-        DeviceGroupPo groupPo = deviceTeamMapper.selectById(groupId);
-        if (groupPo != null && StringUtils.equals(groupPo.getGroupName(), "默认组")) {
+    public Boolean deleteTeam(Integer userId, Integer teamId) {
+        DeviceTeamPo teamPo = deviceTeamMapper.selectById(teamId);
+        if (teamPo != null && StringUtils.equals(teamPo.getName(), "默认组")) {
             return false;
         }
-        Boolean updateRet = deviceTeamMapper.updateGroupStatus(userId, groupId, 2) > 0;
+        Boolean updateRet = deviceTeamMapper.updateTeamStatus(userId, teamId, 2) > 0;
         if (updateRet) {
-            DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
-            deviceGroupPo.setGroupName("默认组");
-            deviceGroupPo.setUserId(userId);
-            deviceGroupPo.setStatus(1);
-            List<DeviceGroupPo> deviceGroupPos = deviceTeamMapper.selectList(deviceGroupPo, 1, 0);
-            Integer defaultGroupId = 0;
+            DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+            deviceTeamPo.setName("默认组");
+            deviceTeamPo.setMasterUserId(userId);
+            deviceTeamPo.setStatus(1);
+            List<DeviceTeamPo> deviceTeamPos = deviceTeamMapper.selectList(deviceTeamPo, 1, 0);
+            Integer defaultTeamId = 0;
 
-            if (deviceGroupPos.size() > 0) {
-                defaultGroupId = deviceGroupPos.get(0).getId();
+            if (deviceTeamPos.size() > 0) {
+                defaultTeamId = deviceTeamPos.get(0).getId();
             }
-            deviceTeamMapper.updateDeviceGroupItem(userId, groupId, defaultGroupId);
+            deviceTeamMapper.updateDeviceTeamItem(userId, teamId, defaultTeamId);
         }
         return updateRet;
     }
 
-    public Boolean updateDeviceGroup(Integer userId, DeviceGroupRequest deviceGroupRequest) {
-        final Integer groupId = deviceGroupRequest.getGroupId();
-        deviceGroupRequest.getDeviceIds().forEach((deviceId) -> {
+    public Boolean updateDeviceTeam(Integer userId, DeviceTeamRequest deviceTeamRequest) {
+        final Integer teamId = deviceTeamRequest.getTeamId();
+        deviceTeamRequest.getDeviceIds().forEach((deviceId) -> {
                     DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
                     if (devicePo != null) {
                         Integer dId = devicePo.getId();
-                        deviceTeamMapper.updateDeviceGroupId(userId, groupId, dId);
+                        deviceTeamMapper.updateDeviceGroupId(userId, teamId, dId);
                     }
                 }
         );
         return true;
     }
 
-    public Boolean updateGroupName(Integer userId, Integer groupId, String groupName) {
-        DeviceGroupPo queryPo = new DeviceGroupPo();
-        queryPo.setGroupName(groupName);
-        queryPo.setUserId(userId);
-        DeviceGroupPo deviceGroupPo = deviceTeamMapper.queryByName(queryPo);
-        if (deviceGroupPo != null && deviceGroupPo.getStatus() == 1) {
+    public Boolean updateTeamName(Integer userId, Integer teamId, String teamName) {
+        DeviceTeamPo queryPo = new DeviceTeamPo();
+        queryPo.setName(teamName);
+        queryPo.setMasterUserId(userId);
+        DeviceTeamPo deviceTeamPo = deviceTeamMapper.queryByName(queryPo);
+        if (deviceTeamPo != null && deviceTeamPo.getStatus() == 1) {
             return false;
         }
-        DeviceGroupPo updatePo = new DeviceGroupPo();
-        updatePo.setId(groupId);
-        updatePo.setGroupName(groupName);
+        DeviceTeamPo updatePo = new DeviceTeamPo();
+        updatePo.setId(teamId);
+        updatePo.setName(teamName);
         updatePo.setStatus(1);
         updatePo.setLastUpdateTime(System.currentTimeMillis());
         int ret = deviceTeamMapper.updateById(updatePo);

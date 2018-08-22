@@ -1,8 +1,8 @@
 package com.huanke.iot.api.controller.h5;
 
-import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
-import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
-import com.huanke.iot.api.service.device.group.DeviceGroupService;
+import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
+import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
+import com.huanke.iot.api.service.device.team.DeviceTeamService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import org.apache.commons.lang3.StringUtils;
@@ -17,40 +17,42 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequestMapping("/h5/api")
-public class DeviceTeamController extends BaseController{
+public class DeviceTeamController extends BaseController {
 
     @Autowired
-    DeviceGroupService deviceGroupService;
-    @RequestMapping("/createGroup")
-    public ApiResponse<Integer> createDeviceGroup( @RequestBody DeviceGroupNewRequest deviceGroupNewRequest){
+    DeviceTeamService deviceTeamService;
+
+    @RequestMapping("/createTeam")
+    public ApiResponse<Integer> createDeviceTeam(@RequestBody DeviceTeamNewRequest deviceTeamNewRequest) {
         Integer userId = getCurrentUserId();
-        Integer groupId = deviceGroupService.createDeviceGroup(userId,deviceGroupNewRequest);
-        return new ApiResponse<>(groupId);
+        Integer teamId = deviceTeamService.createDeviceTeam(userId, deviceTeamNewRequest);
+        return new ApiResponse<>(teamId);
     }
 
-    @RequestMapping("/deleteGroup")
-    public ApiResponse<Boolean> delDeviceGroup(Integer groupId){
+    @RequestMapping("/deleteTeam")
+    public ApiResponse<Boolean> delDeviceTeam(Integer teamId) {
         Integer userId = getCurrentUserId();
-        Boolean ret  = deviceGroupService.deleteGroup(userId,groupId);
-        return new ApiResponse<>(ret);
-    }
-    @RequestMapping("/updateDeviceGroup")
-    public ApiResponse<Boolean> updateDeviceGroup(@RequestBody DeviceGroupRequest deviceGroupRequest){
-        Integer userId = getCurrentUserId();
-        Boolean ret = deviceGroupService.updateDeviceGroup(userId,deviceGroupRequest);
+        Boolean ret = deviceTeamService.deleteTeam(userId, teamId);
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/updateGroupName")
-    public ApiResponse<Boolean> updateGroupName(Integer groupId,String groupName){
+    @RequestMapping("/updateDeviceTeam")
+    public ApiResponse<Boolean> updateDeviceTeam(@RequestBody DeviceTeamRequest deviceTeamRequest) {
         Integer userId = getCurrentUserId();
-        if(groupId == null  || StringUtils.isEmpty(groupName)){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
+        Boolean ret = deviceTeamService.updateDeviceTeam(userId, deviceTeamRequest);
+        return new ApiResponse<>(ret);
+    }
+
+    @RequestMapping("/updateTeamName")
+    public ApiResponse<Boolean> updateTeamName(Integer teamId, String teamName) {
+        Integer userId = getCurrentUserId();
+        if (teamId == null || StringUtils.isEmpty(teamName)) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "参数错误");
         }
         ApiResponse apiResponse = new ApiResponse(true);
-        Boolean ret = deviceGroupService.updateGroupName(userId,groupId,groupName);
+        Boolean ret = deviceTeamService.updateTeamName(userId, teamId, teamName);
         apiResponse.setData(ret);
-        if(!ret){
+        if (!ret) {
             apiResponse.setMsg("该组名已存在");
         }
         return apiResponse;
