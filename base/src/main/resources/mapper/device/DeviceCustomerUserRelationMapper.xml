@@ -60,4 +60,29 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <if test="param.customerId != null and param.customerId != 0">
+                AND customerId = #{param.customerId}
+            </if>
+            <if test="param.openId != null">
+                AND openId = #{param.openId}
+            </if>
+            <if test="param.deviceId != null">
+                and deviceId = #{param.deviceId}
+            </if>
+        </where>
+    </select>
+
+    <select id="updateStatus"  parameterType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo" resultType="java.lang.Integer" >
+        update
+        <include refid="tableName"/>
+        set status = #{status} , lastUpdateTime = #{lastUpdateTime}
+        WHERE openId = #{openId} and deviceId = #{deviceId}
+    </select>
+
+
 </mapper>

@@ -15,4 +15,5 @@ public interface BaseMapper<T> {
 
     List<T> selectList(@Param("param") T queryBean,@Param("limit") int limit ,@Param("offset") int offset);
 
-    Integer selectCount(@Param("param") T queryBean)
+    Integer selectCount(@Param("param") T queryBean);
+}

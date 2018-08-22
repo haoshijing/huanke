@@ -16,6 +16,8 @@ public interface DeviceTeamMapper  extends BaseMapper<DeviceTeamPo> {
 
     List<DeviceTeamItemPo> queryTeamItems(DeviceTeamItemPo queryDeviceTeamItem);
 
+    Integer queryItemCount(DeviceTeamItemPo queryItemPo);
+
     DeviceTeamPo queryByName(DeviceTeamPo queryPo);
 
     int updateDeviceGroupId(@Param("userId") Integer userId,
@@ -27,4 +29,6 @@ public interface DeviceTeamMapper  extends BaseMapper<DeviceTeamPo> {
     int updateDeviceTeamItem(@Param("userId") Integer userId,
                               @Param("currentTeamId") Integer currentTeamId,
                               @Param("newTeamId") int newTeamId);
+
+    Integer queryTeamCount(@Param("userId") Integer userId, @Param("teamName") String teamName);
 }

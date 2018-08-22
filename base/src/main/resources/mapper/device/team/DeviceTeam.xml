@@ -149,4 +149,20 @@
         #{currentTeamId}
     </update>
 
+    <select id="queryTeamCount" resultType="java.lang.Integer">
+        select count(1) FROM
+        <include refid="tableName"/>
+        where userId = #{userId}
+        and name = #{teamName}
+    </select>
+
+    <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceTeamItemPo"
+            resultType="java.lang.Integer">
+        select count(1) from t_device_team_item
+        where userId = #{userId} and deviceId = #{deviceId}
+        <if test="status != null">
+            and status = #{status}
+        </if>
+    </select>
+
 </mapper>
