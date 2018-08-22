@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.customer;
 
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
@@ -47,11 +48,12 @@ public class CustomerService {
 
     @Autowired
     private DeviceModelAblityMapper deviceModelAblityMapper;
+
     /**
      * 保存详情
      * @param customerVo
      */
-    public void saveDetail(CustomerVo customerVo) {
+    public ApiResponse<Integer> saveDetail(CustomerVo customerVo) {
 
         //客户信息
         CustomerPo customerPo = new CustomerPo();
@@ -63,9 +65,17 @@ public class CustomerService {
         customerPo.setAppid(customerVo.getAppid());
         customerPo.setAppsecret(customerVo.getAppsecret());
         customerPo.setSLD(customerVo.getSLD());
-        customerPo.setCreateTime(System.currentTimeMillis());
-        customerPo.setLastUpdateTime(System.currentTimeMillis());
-        this.customerMapper.insert(customerPo);
+        //如果有客户主键信息 为更新，否则为新增
+        if(customerPo.getId()!=null&&customerPo.getId()>0){
+            customerPo.setLastUpdateTime(System.currentTimeMillis());
+            this.customerMapper.updateById(customerPo);
+
+
+        }else{
+            customerPo.setCreateTime(System.currentTimeMillis());
+            this.customerMapper.insert(customerPo);
+
+        }
 
         List<CustomerVo.DeviceModel> deviceModelList = customerVo.getDeviceModelList();
         List<DeviceModelAblityPo> toAddAbilityPoList = new ArrayList<>();
@@ -166,6 +176,8 @@ public class CustomerService {
         backendConfigPo.setCreateTime(System.currentTimeMillis());
         backendConfigPo.setLastUpdateTime(System.currentTimeMillis());
         this.backendConfigMapper.insert(backendConfigPo);
+
+        return new ApiResponse<>(customerPo.getId());
     }
 
 

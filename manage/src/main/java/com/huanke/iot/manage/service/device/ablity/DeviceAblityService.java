@@ -58,7 +58,7 @@ public class DeviceAblityService {
                 DeviceAblityOptionPo deviceAblityOptionPo = new DeviceAblityOptionPo();
                 deviceAblityOptionPo.setOptionName(deviceAblityOptionRequest.getOptionName());
                 deviceAblityOptionPo.setOptionValue(deviceAblityOptionRequest.getOptionValue());
-                deviceAblityOptionPo.setAblityId(ablityRequest.getId());
+                deviceAblityOptionPo.setAblityId(deviceAblityPo.getId());
                 //如果 该选项有id 则为更新 ，否则为新增
                 if(deviceAblityOptionRequest.getId()!=null&&deviceAblityOptionRequest.getId()>0){
                     deviceAblityOptionPo.setId(deviceAblityOptionRequest.getId());

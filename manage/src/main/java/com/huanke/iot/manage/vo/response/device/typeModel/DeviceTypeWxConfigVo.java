@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.response.device.typeModel;
 
+import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * @date 2018/8/14 19:19
  */
 @Data
-public class DeviceTypeVo {
+public class DeviceTypeWxConfigVo {
 
     private Integer id;
     private String name;
@@ -21,5 +22,6 @@ public class DeviceTypeVo {
     private String source;
 
     private List<DeviceTypeAblitysVo> DeviceTypeAblitys;
+    private WxConfigPo wxConfigPo;
 
 }
