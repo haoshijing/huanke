@@ -161,6 +161,19 @@ public class DeviceTypeController {
         return new ApiResponse<>(deviceTypeVo);
     }
 
+    /**
+     * 查询所有设备类型 包含微信h5端配置信息
+     * @param typeRequest
+     * @return 返回类型列表
+     * @throws Exception
+     */
+    @ApiOperation("查询所有设备类型 包含微信h5端配置信息")
+    @PostMapping(value = "/selectAllTypes")
+    public ApiResponse<List<DeviceTypeVo>> selectAllTypes(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
+        List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(typeRequest);
+        return new ApiResponse<>(deviceTypeVos);
+    }
+
 //    /**
 //     * 根据 类型主键查询 该类型的能力集
 //     * @param typeId
