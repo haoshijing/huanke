@@ -81,30 +81,43 @@ public class DeviceModelController {
 
     /**
      * 查询类型Id 查询型号列表
-     * @param modelRequest
+     * @param typeId
      * @return 返回型号项列表
      * @throws Exception
      */
     @ApiOperation("根据类型Id 查询型号列表")
-    @GetMapping(value = "/selectByTypeId")
-    public ApiResponse<List<DeviceModelVo>> selectByTypeId(@RequestBody DeviceModelQueryRequest modelRequest) throws Exception{
-        List<DeviceModelVo> deviceModelVos =  deviceModelService.selectByTypeId(modelRequest);
+    @GetMapping(value = "/selectByTypeId/{typeId}")
+    public ApiResponse<List<DeviceModelVo>> selectByTypeId(@PathVariable("typeId")Integer typeId) throws Exception{
+        List<DeviceModelVo> deviceModelVos =  deviceModelService.selectByTypeId(typeId);
         return new ApiResponse<>(deviceModelVos);
     }
 
     /**
      * 根据id查询型号
-     * @param modelRequest
+     * @param id
      * @return 返回型号项列表
      * @throws Exception
      */
     @ApiOperation("根据主键查询设备型号")
-    @RequestMapping(value = "/selectById")
-    public ApiResponse<DeviceModelVo> selectById(@RequestBody DeviceModelQueryRequest modelRequest) throws Exception{
-        DeviceModelVo deviceModelVo =  deviceModelService.selectById(modelRequest);
+    @GetMapping(value = "/selectById/{id}")
+    public ApiResponse<DeviceModelVo> selectById(@PathVariable("id")Integer id) throws Exception{
+        DeviceModelVo deviceModelVo =  deviceModelService.selectById(id);
         return new ApiResponse<>(deviceModelVo);
     }
 
+
+    /**
+     * 根据id 删除 型号
+     * @param modelId
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @ApiOperation("根据id 删除 型号")
+    @DeleteMapping(value = "/deleteModelById/{id}")
+    public ApiResponse<Boolean> deleteModelById(@PathVariable("id") Integer modelId) throws Exception{
+        Boolean ret =  deviceModelService.deleteModelById(modelId);
+        return new ApiResponse<>(ret);
+    }
 
 //
 //    /**

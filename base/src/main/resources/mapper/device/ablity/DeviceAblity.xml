@@ -128,7 +128,7 @@
 
         <where>
             <if test = "param.typeId != null ">
-                AND t_device_type_ablity_set.typeId = #{param.typeId}
+                AND t_device_type_ablity_set.typeId = #{typeId}
             </if>
         </where>
     </select>

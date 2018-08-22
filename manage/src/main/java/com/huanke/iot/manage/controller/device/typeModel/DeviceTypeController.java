@@ -39,7 +39,7 @@ public class DeviceTypeController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @ApiOperation("查询类型列表")
+    @ApiOperation("添加新类型")
     @PostMapping(value = "/createDeviceType")
     public ApiResponse<Boolean> createDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
         if(StringUtils.isBlank(typeRrequest.getName())){
@@ -71,16 +71,14 @@ public class DeviceTypeController {
 
     /**
      * 删除 类型
-     * @param typeyRequest
+     * @param typeId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @ApiOperation("删除类型")
-    @DeleteMapping(value = "/delteAblityType")
-    public ApiResponse<Boolean> delteDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeyRequest) throws Exception{
-        if(null==typeyRequest.getId()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键不能为空");        }
-        Boolean ret =  deviceTypeService.deleteDeviceType(typeyRequest);
+    @DeleteMapping(value = "/delteDeviceTypeById/{id}")
+    public ApiResponse<Boolean> delteDeviceType(@PathVariable("id") Integer typeId) throws Exception{
+        Boolean ret =  deviceTypeService.deleteDeviceType(typeId);
         return new ApiResponse<>(ret);
     }
 
@@ -118,14 +116,10 @@ public class DeviceTypeController {
      * @throws Exception
      */
     @ApiOperation("删除类型的功能集")
-    @DeleteMapping(value = "/deleteDeviceTypeAblitySet")
+    @DeleteMapping(value = "/deleteDeviceTypeAblitySet/{id}")
     public ApiResponse<Boolean> deleteDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
         Boolean ret = false;
-        if(request.getId()!=null&&request.getId()>0){
             ret =  deviceTypeAblitySetService.deleteById(request.getId());
-        }else{
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"主键不能为空");
-        }
         return new ApiResponse<>(ret);
     }
 
@@ -144,14 +138,14 @@ public class DeviceTypeController {
 
     /**
      * 根据id查询 类型
-     * @param typeRequest
+     * @param typeId
      * @return 返回类型
      * @throws Exception
      */
     @ApiOperation("根据类型主键查询类型")
-    @GetMapping(value = "/selectById")
-    public ApiResponse<DeviceTypeVo> selectById(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
-        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(typeRequest);
+    @GetMapping(value = "/selectById/{id}")
+    public ApiResponse<DeviceTypeVo> selectById(@PathVariable("id")Integer typeId) throws Exception{
+        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(typeId);
         return new ApiResponse<>(deviceTypeVo);
     }
 
@@ -161,8 +155,8 @@ public class DeviceTypeController {
      * @return
      */
     @ApiOperation("根据类型主键 查询该类型的功能集合")
-    @GetMapping(value = "/selectAblitysByTypeId")
-    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(Integer typeId){
+    @GetMapping(value = "/selectAblitysByTypeId/{typeId}")
+    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(@PathVariable("typeId")Integer typeId){
 
         List<DeviceAblityVo> deviceAblityVos = deviceTypeService.selectAblitysByTypeId(typeId);
         return new ApiResponse<>(deviceAblityVos);
