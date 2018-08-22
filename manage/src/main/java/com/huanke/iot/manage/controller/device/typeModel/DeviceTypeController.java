@@ -73,53 +73,67 @@ public class DeviceTypeController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @ApiOperation("删除类型")
-    @DeleteMapping(value = "/delteDeviceTypeById/{id}")
-    public ApiResponse<Boolean> delteDeviceType(@PathVariable("id") Integer typeId) throws Exception{
+    @ApiOperation("删除类型-逻辑删除")
+    @DeleteMapping(value = "/deleteDeviceTypeById/{id}")
+    public ApiResponse<Boolean> deleteDeviceTypeById(@PathVariable("id") Integer typeId) throws Exception{
         Boolean ret =  deviceTypeService.deleteDeviceType(typeId);
         return new ApiResponse<>(ret);
     }
 
 
     /**
-     * 添加 类型的功能集
-     * @param request
+     * 删除 类型
+     * @param typeId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @ApiOperation("添加类型的功能集")
-    @PostMapping(value = "/createDeviceTypeAblitySet")
-    public ApiResponse<Boolean> createDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
-        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
-        return result;
-    }
-
-    /**
-     * 修改 类型的功能集
-     * @param request
-     * @return 成功返回true，失败返回false
-     * @throws Exception
-     */
-    @ApiOperation("修改类型的功能集")
-    @PutMapping(value = "/updateDeviceTypeAblitySet")
-    public ApiResponse<Boolean> updateDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
-        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
-        return result;
-    }
-
-    /**
-     * 删除 类型的功能集
-     * @param request
-     * @return 成功返回true，失败返回false
-     * @throws Exception
-     */
-    @ApiOperation("删除类型的功能集")
-    @DeleteMapping(value = "/deleteDeviceTypeAblitySet/{id}")
-    public ApiResponse<Boolean> deleteDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
-        Boolean ret = false;
-            ret =  deviceTypeAblitySetService.deleteById(request.getId());
+    @ApiOperation("删除类型-物理删除")
+    @DeleteMapping(value = "/destoryDeviceType/{id}")
+    public ApiResponse<Boolean> destoryDeviceType(@PathVariable("id") Integer typeId) throws Exception{
+        Boolean ret =  deviceTypeService.destoryDeviceType(typeId);
         return new ApiResponse<>(ret);
     }
+
+
+//    /**
+//     * 添加 类型的功能集
+//     * @param request
+//     * @return 成功返回true，失败返回false
+//     * @throws Exception
+//     */
+//    @ApiOperation("添加类型的功能集")
+//    @PostMapping(value = "/createDeviceTypeAblitySet")
+//    public ApiResponse<Boolean> createDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
+//        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
+//        return result;
+//    }
+//
+//    /**
+//     * 修改 类型的功能集
+//     * @param request
+//     * @return 成功返回true，失败返回false
+//     * @throws Exception
+//     */
+//    @ApiOperation("修改类型的功能集")
+//    @PutMapping(value = "/updateDeviceTypeAblitySet")
+//    public ApiResponse<Boolean> updateDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
+//        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
+//        return result;
+//    }
+//
+//    /**
+//     * 删除 类型的功能集
+//     * @param request
+//     * @return 成功返回true，失败返回false
+//     * @throws Exception
+//     */
+//    @ApiOperation("删除类型的功能集")
+//    @DeleteMapping(value = "/deleteDeviceTypeAblitySet/{id}")
+//    public ApiResponse<Boolean> deleteDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
+//        Boolean ret = false;
+//            ret =  deviceTypeAblitySetService.deleteById(request.getId());
+//        return new ApiResponse<>(ret);
+//    }
 
     /**
      * 查询类型列表
@@ -147,16 +161,16 @@ public class DeviceTypeController {
         return new ApiResponse<>(deviceTypeVo);
     }
 
-    /**
-     * 根据 类型主键查询 该类型的能力集
-     * @param typeId
-     * @return
-     */
-    @ApiOperation("根据类型主键 查询该类型的功能集合")
-    @GetMapping(value = "/selectAblitysByTypeId/{typeId}")
-    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(@PathVariable("typeId")Integer typeId){
-
-        List<DeviceAblityVo> deviceAblityVos = deviceTypeService.selectAblitysByTypeId(typeId);
-        return new ApiResponse<>(deviceAblityVos);
-    }
+//    /**
+//     * 根据 类型主键查询 该类型的能力集
+//     * @param typeId
+//     * @return
+//     */
+//    @ApiOperation("根据类型主键 查询该类型的功能集合")
+//    @GetMapping(value = "/selectAblitysByTypeId/{typeId}")
+//    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(@PathVariable("typeId")Integer typeId){
+//
+//        List<DeviceAblityVo> deviceAblityVos = deviceTypeService.selectAblitysByTypeId(typeId);
+//        return new ApiResponse<>(deviceAblityVos);
+//    }
 }

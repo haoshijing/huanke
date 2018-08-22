@@ -1,18 +1,24 @@
 package com.huanke.iot.manage.service.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetMapper;
+import com.huanke.iot.base.dao.device.ablity.DeviceTypeAblitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblitySetPo;
+import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
-import com.huanke.iot.manage.vo.request.device.typeModel.*;
+import com.huanke.iot.manage.vo.request.device.ablity.DeviceTypeAblitysCreateRequest;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +28,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+//import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetMapper;
 
 /**
  * 设备类型 service
@@ -34,13 +42,16 @@ public class DeviceTypeService {
     private DeviceTypeMapper deviceTypeMapper;
 
     @Autowired
-    private DeviceAblitySetMapper deviceAblitySetMapper;
-
-    @Autowired
     private DeviceTypeAblitySetMapper deviceTypeAblitySetMapper;
 
     @Autowired
+    private DeviceTypeAblitysMapper deviceTypeAblitysMapper;
+
+    @Autowired
     private DeviceAblityMapper deviceAblityMapper;
+
+    @Autowired
+    private DeviceAblitySetMapper deviceAblitySetMapper;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -63,29 +74,55 @@ public class DeviceTypeService {
      */
     public ApiResponse<Integer> createOrUpdate(DeviceTypeCreateOrUpdateRequest typeRequest) {
 
-        int effectCount = 0;
+        //先保存 类型基本信息
         DeviceTypePo deviceTypePo = new DeviceTypePo();
         BeanUtils.copyProperties(typeRequest, deviceTypePo);
+        deviceTypePo.setStatus(CommonConstant.STATUS_YES);
         if (typeRequest.getId() != null && typeRequest.getId() > 0) {
             deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
-            effectCount = deviceTypeMapper.updateById(deviceTypePo);
+            deviceTypeMapper.updateById(deviceTypePo);
         } else {
             deviceTypePo.setCreateTime(System.currentTimeMillis());
-            effectCount = deviceTypeMapper.insert(deviceTypePo);
+            deviceTypeMapper.insert(deviceTypePo);
         }
-        return  new ApiResponse<>(deviceTypePo.getId());
+
+        //再保存 类型的功能集
+        List<DeviceTypeAblitysCreateRequest> deviceTypeAblitysCreateRequests = typeRequest.getDeviceTypeAblitys();
+        if (deviceTypeAblitysCreateRequests != null && deviceTypeAblitysCreateRequests.size() > 0) {
+            //遍历功能集
+            deviceTypeAblitysCreateRequests.stream().forEach(deviceTypeAblitysCreateRequest -> {
+                DeviceTypeAblitysPo deviceTypeAblitysPo = new DeviceTypeAblitysPo();
+                deviceTypeAblitysPo.setAblityId(deviceTypeAblitysCreateRequest.getAblityId());
+                deviceTypeAblitysPo.setTypeId(deviceTypePo.getId());
+
+                //如果该功能id不为空 则是更新 否则为新增
+                if (deviceTypeAblitysCreateRequest.getId() != null && deviceTypeAblitysCreateRequest.getId() > 0) {
+                    deviceTypeAblitysPo.setId(deviceTypeAblitysCreateRequest.getId());
+                    deviceTypeAblitysPo.setLastUpdateTime(System.currentTimeMillis());
+                    deviceTypeAblitysMapper.updateById(deviceTypeAblitysPo);
+                } else {
+                    deviceTypeAblitysPo.setCreateTime(System.currentTimeMillis());
+                    deviceTypeAblitysMapper.insert(deviceTypeAblitysPo);
+                }
+
+            });
+
+        }
+        return new ApiResponse<>(deviceTypePo.getId());
 
     }
 
 
     /**
-     * 删除 类型  该类型下的型号如何操作？？？？？？？？？？？？？？
+     * 删除 类型（物理删除）  该类型下的型号如何操作？？？？？？？？？？？？？？
      *
      * @param typeId
      * @return
      */
-    public Boolean deleteDeviceType(Integer typeId) {
+    public Boolean destoryDeviceType(Integer typeId) {
 
+        DeviceTypePo deviceTypePo = new DeviceTypePo();
+        deviceTypePo.setId(typeId);
         Boolean ret = false;
         //判断当 类型id不为空时
         //先删除 该 功能
@@ -93,6 +130,18 @@ public class DeviceTypeService {
         return ret;
     }
 
+    /**
+     * 删除 类型（逻辑删除）  该类型下的型号如何操作？？？？？？？？？？？？？？
+     *
+     * @param typeId
+     * @return
+     */
+    public Boolean deleteDeviceType(Integer typeId) {
+
+        Boolean ret = false;
+        ret = deviceTypeMapper.updateStatusById(typeId,CommonConstant.STATUS_DEL) > 0;
+        return ret;
+    }
 
     /**
      * 创建 或修改 类型的功能集
@@ -165,14 +214,25 @@ public class DeviceTypeService {
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 
+
+        //查询 类型列表
         List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectList(queryDeviceTypePo, limit, offset);
         return deviceTypePos.stream().map(deviceTypePo -> {
             DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
-            deviceTypeVo.setName(deviceTypePo.getName());
-            deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
-            deviceTypeVo.setIcon("https://" + bucketUrl + "/" + deviceTypeVo.getIcon());
-            deviceTypeVo.setRemark(deviceTypePo.getRemark());
-            deviceTypeVo.setId(deviceTypePo.getId());
+            if(deviceTypePo!=null){
+                deviceTypeVo.setName(deviceTypePo.getName());
+                deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
+                deviceTypeVo.setIcon(deviceTypePo.getIcon());
+                deviceTypeVo.setStopWatch(deviceTypePo.getStopWatch());
+                deviceTypeVo.setSource(deviceTypePo.getSource());
+                deviceTypeVo.setRemark(deviceTypePo.getRemark());
+                deviceTypeVo.setId(deviceTypePo.getId());
+            }
+
+            //查询该 类型的 功能集合
+            List<DeviceTypeAblitysVo> deviceTypeAblitysVos = selectAblitysByTypeId(deviceTypePo.getId());
+
+            deviceTypeVo.setDeviceTypeAblitys(deviceTypeAblitysVos);
             return deviceTypeVo;
         }).collect(Collectors.toList());
     }
@@ -189,12 +249,17 @@ public class DeviceTypeService {
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
 
         DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
-        deviceTypeVo.setName(deviceTypePo.getName());
-        deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
-        deviceTypeVo.setIcon("https://" + bucketUrl + "/" + deviceTypeVo.getIcon());
-        deviceTypeVo.setRemark(deviceTypePo.getRemark());
-        deviceTypeVo.setId(deviceTypePo.getId());
-
+        if(deviceTypePo!=null){
+            deviceTypeVo.setName(deviceTypePo.getName());
+            deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
+            deviceTypeVo.setIcon(deviceTypePo.getIcon());
+            deviceTypeVo.setStopWatch(deviceTypePo.getStopWatch());
+            deviceTypeVo.setSource(deviceTypePo.getSource());
+            deviceTypeVo.setRemark(deviceTypePo.getRemark());
+            deviceTypeVo.setId(deviceTypePo.getId());
+            List<DeviceTypeAblitysVo> deviceTypeAblitysVos = selectAblitysByTypeId(deviceTypePo.getId());
+            deviceTypeVo.setDeviceTypeAblitys(deviceTypeAblitysVos);
+        }
         return deviceTypeVo;
     }
 
@@ -206,22 +271,25 @@ public class DeviceTypeService {
      * @return
      */
 
-    public List<DeviceAblityVo> selectAblitysByTypeId(Integer typeId) {
+    public List<DeviceTypeAblitysVo> selectAblitysByTypeId(Integer typeId) {
 
 
-        List<DeviceAblityPo> deviceAblityPos = deviceAblityMapper.selectAblityListByTypeId(typeId);
+        List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceAblityMapper.selectAblityListByTypeId(typeId);
+        List<DeviceTypeAblitysVo> deviceTypeAblitysVos = deviceTypeAblitysPos.stream().map(deviceTypeAblitysPo -> {
 
-        return deviceAblityPos.stream().map(deviceAblityPo -> {
-            DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
-            deviceAblityVo.setId(deviceAblityPo.getId());
-            deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
-            deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
-            deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
-            deviceAblityVo.setReadStatus(deviceAblityPo.getReadStatus());
-            deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
-            deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
-            return deviceAblityVo;
+            DeviceTypeAblitysVo deviceTypeAblitysVo = new DeviceTypeAblitysVo();
+            if(deviceTypeAblitysPo!=null){
+                deviceTypeAblitysVo.setAblityId(deviceTypeAblitysPo.getAblityId());
+                deviceTypeAblitysVo.setAblityName(deviceTypeAblitysPo.getAblityName());
+                deviceTypeAblitysVo.setId(deviceTypeAblitysPo.getId());
+                deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
+            }
+
+            return deviceTypeAblitysVo;
         }).collect(Collectors.toList());
+
+
+        return deviceTypeAblitysVos;
 
     }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {

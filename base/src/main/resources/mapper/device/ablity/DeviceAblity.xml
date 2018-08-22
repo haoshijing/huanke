@@ -115,21 +115,34 @@
         where ablityId = #{ablityId}
     </delete>
 
-    <select id="selectAblityListByTypeId" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityPo">
+    <!--<select id="selectAblityListByTypeId" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityPo">-->
+        <!--SELECT-->
+        <!--t_device_ablity.*-->
+        <!--FROM-->
+        <!--t_device_type_ablity_set,-->
+        <!--t_device_ablity_set_relation,-->
+        <!--t_device_ablity-->
+        <!--WHERE-->
+        <!--t_device_type_ablity_set.ablitySetId = t_device_ablity_set_relation.ablitySetId-->
+        <!--AND t_device_ablity.id = t_device_ablity_set_relation.ablityId-->
+
+        <!--<where>-->
+            <!--<if test = "typeId != null ">-->
+                <!--AND t_device_type_ablity_set.typeId = #{typeId}-->
+            <!--</if>-->
+        <!--</where>-->
+    <!--</select>-->
+
+    <select id="selectAblityListByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo">
         SELECT
-        t_device_ablity.*
+        t_device_ablity.ablityName,t_device_type_ablitys.*
         FROM
-        t_device_type_ablity_set,
-        t_device_ablity_set_relation,
+        t_device_type_ablitys,
+        t_device_type,
         t_device_ablity
         WHERE
-        t_device_type_ablity_set.ablitySetId = t_device_ablity_set_relation.ablitySetId
-        AND t_device_ablity.id = t_device_ablity_set_relation.ablityId
-
-        <where>
-            <if test = "param.typeId != null ">
-                AND t_device_type_ablity_set.typeId = #{typeId}
-            </if>
-        </where>
+        t_device_type.id = t_device_type_ablitys.typeId
+        AND t_device_ablity.id = t_device_type_ablitys.ablityId
+        AND t_device_type.id = #{typeId}
     </select>
 </mapper>
