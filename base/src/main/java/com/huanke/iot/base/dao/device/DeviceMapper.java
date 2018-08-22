@@ -22,4 +22,12 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     DevicePo selectByDeviceId(String deviceId);
 
+    int updateByDeviceId(DevicePo devicePo);
+
+    /**
+     * 查设备客户Id
+     * @param devicePo
+     * @return
+     */
+    Integer getCustomerId(DevicePo devicePo);
 }

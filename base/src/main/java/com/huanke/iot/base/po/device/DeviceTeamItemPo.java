@@ -16,7 +16,10 @@ public class DeviceTeamItemPo {
     /**
      * 设备id
      */
-    private Integer deviceId;
+    private Integer deviceId;/**
+     * 用户id
+     */
+    private Integer userId;
 
     /**
      * 设备组id
