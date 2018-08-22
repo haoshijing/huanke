@@ -211,6 +211,8 @@ public class DeviceTypeService {
         queryDeviceTypePo.setName(request.getName());
         queryDeviceTypePo.setTypeNo(request.getTypeNo());
 
+        queryDeviceTypePo.setStatus(CommonConstant.STATUS_YES);
+
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 

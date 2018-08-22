@@ -97,6 +97,9 @@
             <if test = "param.typeNo != null and param.typeNo != ''">
                 and typeNo = #{param.typeNo}
             </if>
+            <if test = "param.status != null and param.status != ''">
+                and status = #{param.status}
+            </if>
         </where>
     </select>
 
@@ -110,6 +113,9 @@
             </if>
             <if test = "param.typeNo != null and param.typeNo != ''">
                 and typeNo = #{param.typeNo}
+            </if>
+            <if test = "param.status != null and param.status != ''">
+                and status = #{param.status}
             </if>
         </where>
         limit #{limit} offset #{offset}
