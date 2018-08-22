@@ -13,6 +13,7 @@ public class DeviceTypeVo {
     private String name;
     private String typeNo;
     private String icon;
+    private String stopWatch;
     private String remark;
 
 }

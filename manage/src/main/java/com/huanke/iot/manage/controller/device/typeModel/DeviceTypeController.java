@@ -41,32 +41,30 @@ public class DeviceTypeController {
      */
     @ApiOperation("添加新类型")
     @PostMapping(value = "/createDeviceType")
-    public ApiResponse<Boolean> createDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
+    public ApiResponse<Integer> createDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
         if(StringUtils.isBlank(typeRrequest.getName())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
         }
-        Boolean ret =  deviceTypeService.createOrUpdate(typeRrequest);
-        return new ApiResponse<>(ret);
+        return   deviceTypeService.createOrUpdate(typeRrequest);
     }
 
 
     /**
      * 修改 类型
-     * @param typeyRequest
+     * @param typeRrequest
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @ApiOperation("修改类型")
     @PutMapping(value = "/updateDeviceType")
-    public ApiResponse<Boolean> updateDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeyRequest) throws Exception{
-        if(typeyRequest.getId()==null||typeyRequest.getId()<=0){
+    public ApiResponse<Integer> updateDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
+        if(typeRrequest.getId()==null||typeRrequest.getId()<=0){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键不存在");
         }
-        if(StringUtils.isBlank(typeyRequest.getName())){
+        if(StringUtils.isBlank(typeRrequest.getName())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
         }
-        Boolean ret =  deviceTypeService.createOrUpdate(typeyRequest);
-        return new ApiResponse<>(ret);
+        return   deviceTypeService.createOrUpdate(typeRrequest);
     }
 
     /**

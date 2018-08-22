@@ -14,6 +14,7 @@ public class DeviceTypeCreateOrUpdateRequest {
     private Integer id;
     private String name;
     private String typeNo;
+    private String stopWatch;
     private String icon;
     private String remark;
 

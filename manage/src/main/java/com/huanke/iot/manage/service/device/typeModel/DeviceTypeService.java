@@ -61,7 +61,7 @@ public class DeviceTypeService {
      * @param typeRequest
      * @return
      */
-    public Boolean createOrUpdate(DeviceTypeCreateOrUpdateRequest typeRequest) {
+    public ApiResponse<Integer> createOrUpdate(DeviceTypeCreateOrUpdateRequest typeRequest) {
 
         int effectCount = 0;
         DeviceTypePo deviceTypePo = new DeviceTypePo();
@@ -73,7 +73,8 @@ public class DeviceTypeService {
             deviceTypePo.setCreateTime(System.currentTimeMillis());
             effectCount = deviceTypeMapper.insert(deviceTypePo);
         }
-        return effectCount > 0;
+        return  new ApiResponse<>(deviceTypePo.getId());
+
     }
 
 

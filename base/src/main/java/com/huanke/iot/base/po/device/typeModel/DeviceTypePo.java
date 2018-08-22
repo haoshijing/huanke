@@ -16,6 +16,8 @@ public class DeviceTypePo {
     private String name;
     private String typeNo;
     private String icon;
+    private String stopWatch;
+
     private String remark;
     private Long createTime;
     private Long lastUpdateTime;
