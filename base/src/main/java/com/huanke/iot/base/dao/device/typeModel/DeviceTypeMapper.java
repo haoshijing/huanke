@@ -9,4 +9,5 @@ import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
  */
 public interface DeviceTypeMapper extends BaseMapper<DeviceTypePo> {
 
+    Integer getabilitySetId(Integer typeId);
 }

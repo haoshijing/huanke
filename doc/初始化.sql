@@ -270,6 +270,8 @@ CREATE TABLE `t_device_customer_user_relation`  (
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT = '设备 和终端用户关系表' ;
 
+ALTER TABLE `newiot`.`t_device_customer_user_relation` CHANGE COLUMN `deviceId` `deviceId` int(11) DEFAULT NULL COMMENT '设备id';
+
 -- ----------------------------
 -- Table structure for t_device_group
 -- ----------------------------
@@ -299,6 +301,8 @@ CREATE TABLE `t_device_group_item`  (
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT = '设备群 和设备关系表' ;
+
+ALTER TABLE `newiot`.`t_device_group_item` ADD COLUMN `userId` int(11) COMMENT '用户id' AFTER `id`;
 
 -- ----------------------------
 -- Table structure for t_device_model
@@ -412,6 +416,8 @@ CREATE TABLE `t_device_team_item`  (
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT = '设备组和设备关系表' ;
 
+ALTER TABLE `newiot`.`t_device_team_item` ADD COLUMN `userId` int(11) COMMENT '用户id' AFTER `id`;
+
 -- ----------------------------
 -- Table structure for t_device_type
 -- ----------------------------
@@ -460,6 +466,8 @@ CREATE TABLE `t_deviceid_pool`  (
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT = '设备id池表' ;
+
+ALTER TABLE `newiot`.`t_deviceid_pool` CHANGE COLUMN `deviceId` `deviceId` varchar(255) DEFAULT NULL COMMENT '设备的deviceId';
 
 -- ----------------------------
 -- Table structure for t_product

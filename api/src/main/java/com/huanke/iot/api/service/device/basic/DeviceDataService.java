@@ -10,7 +10,10 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
-import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.device.*;
+import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.*;
 import com.huanke.iot.base.dao.impl.device.data.DeviceInfoMapper;
@@ -19,12 +22,14 @@ import com.huanke.iot.base.dao.impl.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.impl.user.AppUserMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.*;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.user.AppUserPo;
 import com.huanke.iot.base.util.LocationUtils;
@@ -37,6 +42,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -64,6 +70,9 @@ public class DeviceDataService {
     private DeviceGroupMapper deviceGroupMapper;
 
     @Autowired
+    private DeviceGroupItemMapper deviceGroupItemMapper;
+
+    @Autowired
     private AppUserMapper appUserMapper;
 
     @Autowired
@@ -74,6 +83,24 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceIdPoolMapper deviceIdPoolMapper;
+
+    @Autowired
+    private DeviceAblityMapper deviceAblityMapper;
+
+    @Autowired
+    private DeviceTypeAblitySetMapper deviceTypeAblitySetMapper;
+    
+    @Autowired
+    private CustomerUserMapper customerUserMapper;
+
+    @Autowired
+    private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
+
+    @Autowired
+    private DeviceTeamItemMapper deviceTeamItemMapper;
+
+    @Autowired
+    private DeviceTeamMapper deviceTeamMapper;
 
     @Autowired
     private LocationUtils locationUtils;
@@ -99,30 +126,32 @@ public class DeviceDataService {
             return false;
         }
         Integer deviceId = devicePo.getId();
-        AppUserPo appUserPo = appUserMapper.selectByOpenId(master);
-        if (appUserPo == null) {
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(master);
+        if (customerUserPo == null) {
             return false;
         }
         String storeToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + deviceIdStr);
         if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
             // return false;
         }
-        if (appUserPo.getId().equals(toId)) {
+        if (customerUserPo.getId().equals(toId)) {
             return false;
         }
         //TODO检查deviceId和用户是不是可以对应上的
-        DeviceGroupItemPo queryGroupItemPo = new DeviceGroupItemPo();
-        queryGroupItemPo.setDeviceId(deviceId);
-        queryGroupItemPo.setUserId(appUserPo.getId());
-        Integer itemCount = deviceGroupMapper.queryItemCount(queryGroupItemPo);
-        if (itemCount == 0) {
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+        deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
+        int count = deviceCustomerUserRelationPos.size();
+        if (count == 0) {
             return false;
         }
-        DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
-        deviceGroupPo.setGroupName("默认组");
-        deviceGroupPo.setUserId(toId);
-        Integer defaultGroupId = 0;
-        Integer defaultGroupCount = deviceGroupMapper.queryGroupCount(toId, "默认组");
+
+        DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+        deviceTeamPo.setName("默认组");
+        deviceTeamPo.setMasterUserId(toId);
+        Integer defaultTeamId = 0;
+        Integer defaultTeamCount = deviceGroupMapper.queryGroupCount(toId, "默认组");
         if (defaultGroupCount == 0) {
             DeviceGroupPo defaultGroup = new DeviceGroupPo();
             defaultGroup.setGroupName("默认组");
@@ -318,54 +347,34 @@ public class DeviceDataService {
 
         Integer iDeviceId = devicePo.getId();
 
-        DeviceGroupItemPo queryGroupItemPo = new DeviceGroupItemPo();
-        queryGroupItemPo.setUserId(userId);
-        queryGroupItemPo.setDeviceId(iDeviceId);
-        List<DeviceGroupItemPo> groupItemPos = deviceGroupMapper.queryGroupItems(queryGroupItemPo);
-        if(groupItemPos.isEmpty()){
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+        deviceCustomerUserRelationPo.setDeviceId(iDeviceId);
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
+        if (deviceCustomerUserRelationPos.isEmpty()) {
             return false;
         }
-
-        DeviceGroupItemPo queryItemPo = groupItemPos.get(0);
-        Integer sf = queryItemPo.getIsMaster();
-        if(sf ==  SLAVE) {
-            ret = deviceGroupMapper.deleteDeviceGroupItem(iDeviceId, userId) > 0;
-            ret = ret && deviceRelationMapper.deleteRelationForJoinId(devicePo.getId(), userId) > 0;
+        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemMapper.getByDeviceId(iDeviceId);
+        DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(deviceTeamItemPo.getTeamId());
+        if(deviceTeamPo.getMasterUserId() !=  userId) {
+            ret = deviceCustomerUserRelationMapper.deleteRelationByJoinId(customerUserPo.getOpenId(), iDeviceId) > 0;
+            ret = ret && deviceTeamItemMapper.deleteByJoinId(iDeviceId, userId) > 0;
+            deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
         }else{
             //回收到池子中
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
-            deviceIdPoolPo.setPublicId(devicePo.getPublicId());
             deviceIdPoolPo.setDeviceId(devicePo.getDeviceId());
             deviceIdPoolPo.setWxProductId(devicePo.getWxProductId());
             deviceIdPoolPo.setDevicelicence(devicePo.getDevicelicence());
             deviceIdPoolPo.setCreateTime(System.currentTimeMillis());
             deviceIdPoolMapper.insert(deviceIdPoolPo);
-            ret = deviceRelationMapper.deleteByDeviceId(iDeviceId) > 0;
-            ret = ret && deviceGroupMapper.deleteGroupItemByDeviceId(iDeviceId) > 0;
+            ret = ret && deviceTeamItemMapper.deleteByJoinId(iDeviceId, userId) > 0;
+            deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
         }
         return ret;
     }
 
-    public Boolean updateMode(Integer userId, String deviceId, String mode) {
-        if(StringUtils.isEmpty(deviceId)){
-            return false;
-        }
-        DevicePo devicePo  = deviceMapper.selectByDeviceId(deviceId);
-        if(devicePo == null ){
-            return false;
-        }
-        DeviceGroupItemPo itemPo = new DeviceGroupItemPo();
-        itemPo.setUserId(userId);
-        itemPo.setDeviceId(devicePo.getId());
-        Integer count = deviceGroupMapper.queryItemCount(itemPo);
-        if(count > 0){
-            DevicePo updatePo = new DevicePo();
-            updatePo.setId(devicePo.getId());
-            updatePo.setMode(mode);
-            return  deviceMapper.updateById(updatePo) > 0;
-        }
-        return false;
-    }
 
     @Data
     public static class FuncItemMessage {
@@ -584,10 +593,12 @@ public class DeviceDataService {
 
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(deviceTypeId);
         if (deviceTypePo != null) {
-            String funcTypeList = deviceTypePo.getFuncList();
-            Integer abilitySetId = deviceTypeMapper.getabilitySetId(deviceTypePo.getId());
-            
-            List<String> winds = getType(FuncTypeEnums.WIND1.getCode().substring(0, 2), funcTypeList);
+            DeviceTypeAblitySetPo deviceTypeAblitySetPo = deviceTypeAblitySetMapper.selectByTypeId(deviceTypePo.getId());
+            List<DeviceAblityPo> deviceAblityPos = new ArrayList<>();
+            if(deviceTypeAblitySetPo != null){
+                deviceAblityPos = deviceAblityMapper.selectAblityListByTypeId(deviceTypeAblitySetPo.getAblitySetId());
+            }
+            List<String> winds = getType(FuncTypeEnums.WIND1.getCode().substring(0, 2), deviceAblityPos);
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
                 dataItem.setType(wind);
@@ -610,7 +621,7 @@ public class DeviceDataService {
             }).collect(Collectors.toList());
             deviceDetailVo.setWindItems(dataItems);
             List<JSONArray> jsonArrays = Lists.newArrayList();
-            List<String> uvList = getType(FuncTypeEnums.UV.getCode().substring(0, 2), funcTypeList);
+            List<String> uvList = getType(FuncTypeEnums.UV.getCode().substring(0, 2), deviceAblityPos);
             if (uvList.size() > 0) {
                 List<DeviceDetailVo.OtherItem> uvItems = uvList.stream().map(uv -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -624,7 +635,7 @@ public class DeviceDataService {
                 jsonArrays.add(uv);
             }
 
-            List<String> screens = getType(FuncTypeEnums.TIMER_SCREEN.getCode().substring(0, 2), funcTypeList);
+            List<String> screens = getType(FuncTypeEnums.TIMER_SCREEN.getCode().substring(0, 2), deviceAblityPos);
             if (screens.size() > 0) {
                 List<DeviceDetailVo.DataItem> screentItems = screens.stream().map(screenStr -> {
                     DeviceDetailVo.DataItem screen1 = new DeviceDetailVo.DataItem();
@@ -636,7 +647,7 @@ public class DeviceDataService {
                 deviceDetailVo.setScreens(screentItems);
             }
 
-            List<String> anoins = getType(FuncTypeEnums.ANION.getCode().substring(0, 2), funcTypeList);
+            List<String> anoins = getType(FuncTypeEnums.ANION.getCode().substring(0, 2), deviceAblityPos);
             if (anoins.size() > 0) {
                 List<DeviceDetailVo.OtherItem> anoinsItems = anoins.stream().map(anoin -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -650,7 +661,7 @@ public class DeviceDataService {
                 jsonArrays.add(array);
             }
 
-            List<String> warms = getType(FuncTypeEnums.WARM.getCode().substring(0, 2), funcTypeList);
+            List<String> warms = getType(FuncTypeEnums.WARM.getCode().substring(0, 2), deviceAblityPos);
             if (warms.size() > 0) {
                 List<DeviceDetailVo.OtherItem> warmItems = warms.stream().map(warm -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -664,7 +675,7 @@ public class DeviceDataService {
                 jsonArrays.add(array);
             }
 
-            List<String> humList = getType(FuncTypeEnums.HUMIDIFER.getCode().substring(0, 2), funcTypeList);
+            List<String> humList = getType(FuncTypeEnums.HUMIDIFER.getCode().substring(0, 2), deviceAblityPos);
             if (humList.size() > 0) {
                 List<DeviceDetailVo.OtherItem> humItems = humList.stream().map(humStr -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -678,7 +689,7 @@ public class DeviceDataService {
                 jsonArrays.add(array);
             }
 
-            List<String> deHumList = getType(FuncTypeEnums.DEHUMIDIFER.getCode().substring(0, 2), funcTypeList);
+            List<String> deHumList = getType(FuncTypeEnums.DEHUMIDIFER.getCode().substring(0, 2), deviceAblityPos);
             if (deHumList.size() > 0) {
                 List<DeviceDetailVo.OtherItem> dehumItems = deHumList.stream().map(dehum -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -692,7 +703,7 @@ public class DeviceDataService {
                 jsonArrays.add(array);
             }
 
-            List<String> valves = getType(FuncTypeEnums.VALVE1.getCode().substring(0, 2), funcTypeList);
+            List<String> valves = getType(FuncTypeEnums.VALVE1.getCode().substring(0, 2), deviceAblityPos);
             if (valves.size() > 0) {
                 List<DeviceDetailVo.OtherItem> valvesItems = valves.stream().map(valve -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -710,7 +721,7 @@ public class DeviceDataService {
                 jsonArrays.add(array);
             }
 
-            List<String> frankList = getType(FuncTypeEnums.FRANKLINISM.getCode().substring(0, 2), funcTypeList);
+            List<String> frankList = getType(FuncTypeEnums.FRANKLINISM.getCode().substring(0, 2), deviceAblityPos);
             if (frankList.size() > 0) {
                 List<DeviceDetailVo.OtherItem> frankItems = frankList.stream().map(frank -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -724,7 +735,7 @@ public class DeviceDataService {
                 jsonArrays.add(array);
             }
 
-            List<String> heatList = getType(FuncTypeEnums.HEAT.getCode().substring(0, 2), funcTypeList);
+            List<String> heatList = getType(FuncTypeEnums.HEAT.getCode().substring(0, 2), deviceAblityPos);
             if (heatList.size() > 0) {
                 List<DeviceDetailVo.OtherItem> heatItems = heatList.stream().map(heat -> {
                     DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -743,7 +754,7 @@ public class DeviceDataService {
             deviceDetailVo.setTimers(timers);
             deviceDetailVo.setFuncs(jsonArrays);
 
-            List<String> openList = getType(FuncTypeEnums.TIMER_OEPN.getCode().substring(0, 2), funcTypeList);
+            List<String> openList = getType(FuncTypeEnums.TIMER_OEPN.getCode().substring(0, 2), deviceAblityPos);
             if (openList.size() > 0) {
                 String open = openList.get(0);
                 DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -758,7 +769,7 @@ public class DeviceDataService {
                 timers.add(otherItem);
             }
 
-            List<String> closeList = getType(FuncTypeEnums.TIMER_CLOSE.getCode().substring(0, 2), funcTypeList);
+            List<String> closeList = getType(FuncTypeEnums.TIMER_CLOSE.getCode().substring(0, 2), deviceAblityPos);
             if (closeList.size() > 0) {
                 String close = closeList.get(0);
                 DeviceDetailVo.OtherItem otherItem = new DeviceDetailVo.OtherItem();
@@ -780,12 +791,11 @@ public class DeviceDataService {
         deviceDetailVo.setChildItem(childItem);
     }
 
-    private List<String> getType(String smallType, String source) {
-        String[] datas = source.split(",");
+    private List<String> getType(String smallType, List<DeviceAblityPo> deviceAblityPos) {
         List<String> retList = Lists.newArrayList();
-        for (String data : datas) {
-            if (data.startsWith(smallType)) {
-                retList.add(data);
+        for (DeviceAblityPo deviceAblityPo : deviceAblityPos) {
+            if (deviceAblityPo.getDirValue().startsWith(smallType)) {
+                retList.add(deviceAblityPo.getDirValue());
             }
         }
         return retList;

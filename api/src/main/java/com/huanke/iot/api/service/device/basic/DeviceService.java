@@ -9,13 +9,16 @@ import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceSpeedConfigVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
 import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
-import com.huanke.iot.base.po.device.DeviceGroupItemPo;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
@@ -55,6 +58,12 @@ public class DeviceService {
 
     @Autowired
     private DeviceRelationMapper deviceRelationMapper;
+
+    @Autowired
+    private CustomerUserMapper customerUserMapper;
+
+    @Autowired
+    private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -195,12 +204,13 @@ public class DeviceService {
         if (devicePo == null) {
             return false;
         }
-        DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
-        deviceGroupItemPo.setUserId(userId);
-        deviceGroupItemPo.setStatus(1);
-        deviceGroupItemPo.setDeviceId(devicePo.getId());
-        Integer count = deviceGroupMapper.queryItemCount(deviceGroupItemPo);
-        if (count == null || count == 0) {
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+        deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
+        int count = deviceCustomerUserRelationPos.size();
+        if (count == 0) {
             return false;
         }
         DevicePo updatePo = new DevicePo();
@@ -299,6 +309,10 @@ public class DeviceService {
         devicePo.setDeviceId(deviceId);
         devicePo.setLocation(location);
         return deviceMapper.updateByDeviceId(devicePo) > 0;
+    }
+
+    public Integer getCustomerId(DevicePo devicePo){
+        return deviceMapper.getCustomerId(devicePo);
     }
 
 }

@@ -83,15 +83,6 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(token);
     }
 
-    @RequestMapping("/updateMode")
-    public ApiResponse<Boolean> updateMode(String deviceId,String mode){
-        Integer userId = getCurrentUserId();
-        if(StringUtils.isEmpty(mode) || StringUtils.isEmpty(deviceId)){
-            return ApiResponse.PARAM_ERROR;
-        }
-        Boolean updateRet = deviceDataService.updateMode(userId, deviceId, mode);
-        return new ApiResponse<>(updateRet);
-    }
     @RequestMapping("/share")
     public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
         Integer userId = getCurrentUserId();

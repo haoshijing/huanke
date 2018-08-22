@@ -5,9 +5,10 @@ import lombok.Data;
 @Data
 public class DeviceIdPoolPo {
     private Integer id;
+    private Integer customerId;
     private String deviceId;
-    private Integer publicId;
-    private String devicelicence;
+    private String deviceLicence;
+    private Integer status;
     private Long createTime;
-    private String wxProductId;
+    private Long lastUpdateTime;
 }

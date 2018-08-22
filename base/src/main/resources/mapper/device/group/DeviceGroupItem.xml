@@ -42,4 +42,10 @@
             deviceId = #{deviceId}
         </where>
     </delete>
+
+    <delete id="deleteByJoinId">
+        delete from <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        AND userId = #{userId}
+    </delete>
 </mapper>

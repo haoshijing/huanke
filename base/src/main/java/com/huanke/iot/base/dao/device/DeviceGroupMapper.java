@@ -1,8 +1,11 @@
 package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.device.group.DeviceGroupPo;
+import com.huanke.iot.base.po.device.DeviceGroupItemPo;
+import com.huanke.iot.base.po.device.DeviceGroupPo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author haoshijing
