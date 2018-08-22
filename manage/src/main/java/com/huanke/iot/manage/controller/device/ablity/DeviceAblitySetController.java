@@ -11,13 +11,11 @@ import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblitySetQueryReques
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblitySetVo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +42,8 @@ public class DeviceAblitySetController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/createDeviceAblitySet",method = RequestMethod.POST)
+    @ApiOperation("添加新功能集")
+    @PostMapping(value = "/createDeviceAblitySet")
     public ApiResponse<Boolean> createDeviceAblitySet(@RequestBody String body) throws Exception{
 
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
@@ -59,6 +58,7 @@ public class DeviceAblitySetController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
+    @ApiOperation("修改功能集")
     @RequestMapping(value = "/updateDeviceAblitySet",method = RequestMethod.POST)
     public ApiResponse<Boolean> updateDeviceAblitySet(@RequestBody String body) throws Exception{
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
@@ -75,7 +75,8 @@ public class DeviceAblitySetController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/delteAblitySet",method = RequestMethod.POST)
+    @ApiOperation("删除功能集")
+    @DeleteMapping(value = "/delteAblitySet")
     public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody String body) throws Exception{
 
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
@@ -90,6 +91,7 @@ public class DeviceAblitySetController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
+    @ApiOperation("添加功能集中的功能")
     @RequestMapping(value = "/createDeviceAblitySetItem",method = RequestMethod.POST)
     public ApiResponse<Boolean> createDeviceAblitySetRelation(@RequestBody String body) throws Exception{
 
@@ -106,7 +108,8 @@ public class DeviceAblitySetController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @RequestMapping(value = "/delteAblitySetItemByAblityId",method = RequestMethod.POST)
+    @ApiOperation("根据功能主键，删除功能集中的功能")
+    @DeleteMapping(value = "/delteAblitySetItemByAblityId")
     public ApiResponse<Boolean> delteDeviceAblitySetItemByAblityId(@RequestBody String body) throws Exception{
 
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
@@ -122,7 +125,8 @@ public class DeviceAblitySetController {
      * @return 返回能力集列表
      * @throws Exception
      */
-    @RequestMapping(value = "/select")
+    @ApiOperation("查询功能集列表")
+    @PostMapping(value = "/select")
     public ApiResponse<List<DeviceAblitySetVo>> selectList(@RequestBody DeviceAblitySetQueryRequest request) throws Exception{
         List<DeviceAblitySetVo> deviceAblitySetVos =  deviceAblitySetService.selectList(request);
         return new ApiResponse<>(deviceAblitySetVos);
@@ -134,7 +138,8 @@ public class DeviceAblitySetController {
      * @return 返回能力集对象
      * @throws Exception
      */
-    @RequestMapping(value = "/selectById")
+    @ApiOperation("根据功能集主键 查询功能集")
+    @GetMapping(value = "/selectById")
     public ApiResponse<DeviceAblitySetVo> selectById(@RequestBody DeviceAblitySetQueryRequest request) throws Exception{
         DeviceAblitySetVo deviceAblitySetVo =  deviceAblitySetService.selectById(request);
         return new ApiResponse<>(deviceAblitySetVo);
