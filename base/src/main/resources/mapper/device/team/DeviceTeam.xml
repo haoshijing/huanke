@@ -114,6 +114,9 @@
         <if test="deviceId != null">
             and deviceId = #{deviceId}
         </if>
+        <if test="userId != null">
+            and userId = #{userId}
+        </if>
     </select>
 
 </mapper>

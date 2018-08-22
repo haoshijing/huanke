@@ -43,4 +43,21 @@
         AND deviceId = #{deviceId}
     </delete>
 
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            <if test = "param.customerId != null and param.customerId != 0">
+                AND customerId = #{param.customerId}
+            </if>
+            <if test="param.openId != null">
+                AND openId = #{param.openId}
+            </if>
+            <if test = "param.deviceId != null">
+                and deviceId = #{param.deviceId}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
+
 </mapper>
