@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.service.device.ablity;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
@@ -52,19 +53,25 @@ public class DeviceAblityService {
             ret = deviceAblityMapper.insert(deviceAblityPo) > 0;
         }
         //判断 该功能里的选项是否为空，若不为空则进行保存
-        if (ablityRequest.getDeviceAblityOptionCreateOrUpdateRequests() != null && ablityRequest.getDeviceAblityOptionCreateOrUpdateRequests().size() > 0) {
+        if (ablityRequest.getDeviceAblityOptions() != null && ablityRequest.getDeviceAblityOptions().size() > 0) {
 
-            for (DeviceAblityOptionCreateOrUpdateRequest deviceAblityOptionRequest : ablityRequest.getDeviceAblityOptionCreateOrUpdateRequests()) {
+            for (DeviceAblityOptionCreateOrUpdateRequest deviceAblityOptionRequest : ablityRequest.getDeviceAblityOptions()) {
                 DeviceAblityOptionPo deviceAblityOptionPo = new DeviceAblityOptionPo();
                 deviceAblityOptionPo.setOptionName(deviceAblityOptionRequest.getOptionName());
                 deviceAblityOptionPo.setOptionValue(deviceAblityOptionRequest.getOptionValue());
                 deviceAblityOptionPo.setAblityId(deviceAblityPo.getId());
+                deviceAblityOptionPo.setStatus(CommonConstant.STATUS_YES);
                 //如果 该选项有id 则为更新 ，否则为新增
                 if(deviceAblityOptionRequest.getId()!=null&&deviceAblityOptionRequest.getId()>0){
                     deviceAblityOptionPo.setId(deviceAblityOptionRequest.getId());
                     deviceAblityOptionPo.setLastUpdateTime(System.currentTimeMillis());
+
+                    if(CommonConstant.STATUS_DEL.equals(deviceAblityOptionRequest.getStatus())){
+                        deviceAblityOptionPo.setStatus(CommonConstant.STATUS_DEL);
+                    }
                     deviceAblityOptionMapper.updateById(deviceAblityOptionPo);
                 }else{
+
                     deviceAblityOptionPo.setCreateTime(System.currentTimeMillis());
                     deviceAblityOptionMapper.insert(deviceAblityOptionPo);
                 }
@@ -74,7 +81,6 @@ public class DeviceAblityService {
         }
 
         return new ApiResponse<>(deviceAblityPo.getId());
-
     }
 
     /**
@@ -118,10 +124,11 @@ public class DeviceAblityService {
                 deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
                 deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
                 deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
+                deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
                 return deviceAblityOptionVo;
             }).collect(Collectors.toList());
 
-            deviceAblityVo.setDeviceAblityOptionVos(deviceAblityOptionVos);
+            deviceAblityVo.setDeviceAblityOptions(deviceAblityOptionVos);
             return deviceAblityVo;
         }).collect(Collectors.toList());
 
@@ -129,6 +136,43 @@ public class DeviceAblityService {
     }
 
 
+    /**
+     * 根据主键查询 功能
+     *
+     * @param typeId
+     * @return
+     */
+    public DeviceAblityVo selectById(Integer typeId) {
+
+        DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(typeId);
+
+        DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
+        if(deviceAblityPo!=null){
+            deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
+            deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
+            deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
+            deviceAblityVo.setReadStatus(deviceAblityPo.getReadStatus());
+            deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
+            deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
+            deviceAblityVo.setAblityType(deviceAblityPo.getAblityType());
+            deviceAblityVo.setRemark(deviceAblityPo.getRemark());
+            deviceAblityVo.setId(deviceAblityPo.getId());
+
+            //根据功能主键 查询该功能下的 选项列表
+            List<DeviceAblityOptionPo> deviceAblityOptionpos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
+            List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionpos.stream().map(deviceAblityOptionPo -> {
+                DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
+                deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
+                deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
+                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
+                deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
+                return deviceAblityOptionVo;
+            }).collect(Collectors.toList());
+
+            deviceAblityVo.setDeviceAblityOptions(deviceAblityOptionVos);
+        }
+        return deviceAblityVo;
+    }
     /**
      * 删除 该功能
      * 并同时删除该功能下 所有的选项

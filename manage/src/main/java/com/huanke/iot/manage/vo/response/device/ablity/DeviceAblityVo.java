@@ -22,7 +22,7 @@ public class DeviceAblityVo {
     private Integer configType;//配置方式
     private Integer ablityType;//能力类型
 
-    private List<DeviceAblityOptionVo> deviceAblityOptionVos;
+    private List<DeviceAblityOptionVo> deviceAblityOptions;
 
 
 

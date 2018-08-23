@@ -18,6 +18,8 @@ public class CustomerPo {
     private String appid;
     private String appsecret;
     private String SLD;
+    private String typeIds;
+    private String modelIds;
     private String creatUser;
     private Long createTime;
     private Long lastUpdateTime;

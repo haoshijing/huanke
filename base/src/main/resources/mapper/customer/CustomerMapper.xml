@@ -11,7 +11,7 @@
         INSERT INTO <include refid="tableName"/>
         (
         name,
-        loginname,
+        loginName,
         userType,
         remark,
         publicName,
@@ -19,9 +19,10 @@
         appid,
         appsecret,
         SLD,
+        typeIds,
+        modelIds,
         status,
         createTime,
-        lastUpdateTime,
         creatUser
         )
         VALUES (
@@ -34,24 +35,82 @@
         #{appid},
         #{appsecret},
         #{SLD},
+        #{typeIds},
+        #{modelIds},
         #{status},
         #{createTime},
-        #{lastUpdateTime},
         #{creatUser}
         )
     </insert>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="loginName != null  and loginName != ''">
+                loginName = #{loginName},
+            </if>
+            <if test="userType != null">
+                userType = #{userType},
+            </if>
+            <if test="remark != null  and remark != '' ">
+                remark = #{remark},
+            </if>
+            <if test="publicName != null  and publicName != '' ">
+                publicName = #{publicName},
+            </if>
+            <if test="publicId != null">
+                publicId = #{publicId},
+            </if>
+            <if test="appid != null and appid != ''">
+                appid = #{appid},
+            </if>
+            <if test="appsecret != null and appsecret != ''">
+                appsecret = #{appsecret},
+            </if>
+            <if test="SLD != null and SLD != ''">
+                SLD = #{SLD},
+            </if>
+            <if test="typeIds != null and typeIds != ''">
+                typeIds = #{typeIds},
+            </if>
+            <if test="modelIds != null and modelIds != ''">
+                modelIds = #{modelIds},
+            </if>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
 
     <select id="selectList">
         select tc.name,
         tc.userType,
         tc.publicName,
-        tc.loginname,
+        tc.loginName,
         tc.remark
         from <include refid="tableName"/>
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
 
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
 
 
 </mapper>

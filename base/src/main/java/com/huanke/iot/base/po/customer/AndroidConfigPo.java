@@ -14,6 +14,7 @@ public class AndroidConfigPo {
     private String logo;    //logo图标
     private String qrcode;  //二维码图标
     private String version; //版本
+    private Integer status;   //
     private Long createTime;
     private Long lastUpdateTime;
     private String deviceChangePassword;    //设备切换时的密码

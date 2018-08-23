@@ -15,6 +15,7 @@
         logo,
         qrcode,
         version,
+        status,
         createTime,
         lastUpdateTime,
         deviceChangePassword
@@ -25,6 +26,7 @@
         #{logo},
         #{qrcode},
         #{version},
+        #{status},
         #{createTime},
         #{lastUpdateTime},
         #{version},
@@ -33,5 +35,51 @@
     </insert>
 
 
+    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.AndroidConfigPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="customerId != null ">
+                customerId = #{customerId},
+            </if>
+            <if test="name != null  and name != ''">
+                name = #{name},
+            </if>
+            <if test="logo != null  and logo != '' ">
+                logo = #{logo},
+            </if>
+            <if test="qrcode != null  and qrcode != '' ">
+                qrcode = #{qrcode},
+            </if>
+            <if test="version != null  and version != '' ">
+                version = #{version},
+            </if>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <select id="selectConfigByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.AndroidConfigPo">
+        SELECT * FROM
+        <include refid="tableName"/>
+        WHERE customerId = #{customerId} limit 1
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.AndroidConfigPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
 
 </mapper>

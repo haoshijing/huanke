@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.customer;
 
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.Data;
 
 import java.util.List;
@@ -13,24 +14,33 @@ public class CustomerVo {
     private Integer id;
     private String name;
     private String publicName;
+    private Integer publicId;
     private String appid;
     private String appsecret;
     private Integer userType;
     private String loginName;
     private String SLD;
     private String remark;  //备注
-    private List<DeviceModel> deviceModelList;  //设备型号列表
+    private String  typeIds;  //设备类型id 集合
+    private String  modelIds;  //设备型号id 集合
     private H5Config h5Config;  //H5配置
     private AndroidConfig androidConfig;    //安卓配置
     private BackendConfig backendConfig;    //管理后台配置
 
+    /**
+     * 设备类型主键
+     */
+    @Data
+    public static class DeviceType{
+        private Integer typeId;
+    }
     /**
      * 后台配置
      */
     @Data
     public static class BackendConfig {
         private Boolean enableStatus;
-        private String logoKey;
+        private String logo;
         private String name;
         private Integer type;
     }
@@ -42,24 +52,11 @@ public class CustomerVo {
     public static class H5Config {
         private String password;
         private String defaultTeamName;
-        private String backgroundImgKey;
+        private String backgroundImg;
         private Integer htmlTypeId;
         private String themeName;
-        private String logoKey;
+        private String logo;
         private String version;
-    }
-
-    /**
-     * 设备型号
-     */
-    @Data
-    public static class DeviceModel {
-        private String name;
-        private Integer typeId;
-        private Integer productId;
-        private String iconKey;
-        private List<DeviceModelAbility> deviceModelAbilityList;    //功能列表
-        private String remark;  //备注
     }
 
     @Data
@@ -73,9 +70,9 @@ public class CustomerVo {
      */
     @Data
     public static class AndroidConfig {
-        private String qrcodeKey;   //二维码
+        private String qrcode;   //二维码
         private String name;
-        private String logoKey;
+        private String logo;
         private String version;
         private String deviceChangePassword;    //设备切换密码
         private List<AndroidScene> androidSceneList;  //场景列表
@@ -87,7 +84,7 @@ public class CustomerVo {
     @Data
     public static class AndroidScene {
         private String name;
-        private String imgsCoverKey;    //图册封面
+        private String imgsCover;    //图册封面
         private String describe;
         private List<AndroidSceneImg> androidSceneImgList;  //图片列表
     }
@@ -98,7 +95,7 @@ public class CustomerVo {
     @Data
     public static class AndroidSceneImg {
         private String name;
-        private String imgVideoKey;    //图片或视频
+        private String imgVideo;    //图片或视频
         private String describe;
     }
 }

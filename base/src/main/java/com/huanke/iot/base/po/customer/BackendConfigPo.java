@@ -13,6 +13,7 @@ public class BackendConfigPo {
     private String logo;    //管理后台的logo
     private Integer type;   //类型
     private Boolean enableStatus;   //后台是否可用
+    private Integer status;   //
     private Integer customerId;
     private Long createTime;
     private Long lastUpdateTime;

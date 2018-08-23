@@ -28,7 +28,7 @@ public class CustomerController {
      * @return
      */
     @ApiOperation("添加客户信息")
-    @PostMapping(value = "")
+    @PostMapping(value = "saveDetail")
     public ApiResponse<Integer> saveDetail(@RequestBody CustomerVo customerVo) {
         if (StringUtils.isBlank(customerVo.getName())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"客户名称不能为空");
@@ -40,8 +40,8 @@ public class CustomerController {
      * 修改客户信息
      * @return
      */
-    @ApiOperation("添加客户信息")
-    @PutMapping(value = "")
+    @ApiOperation("修改客户信息")
+    @PutMapping(value = "updateDetail")
     public ApiResponse<Boolean> updateDetail(@RequestBody CustomerVo customerVo) {
         if (StringUtils.isBlank(customerVo.getName())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"客户名称不能为空");
