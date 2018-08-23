@@ -1,12 +1,17 @@
 package com.huanke.iot.api.requestcontext;
 
 
-import com.huanke.iot.base.innercache.PublicNumberCacheVo;
 import lombok.Data;
 
 @Data
 public class UserRequestContext {
 
-    private PublicNumberCacheVo cacheVo;
     private Integer currentId;
+    private CustomerVo customerVo;
+
+    @Data
+    public static class CustomerVo{
+        private Integer customerId;
+        private String appId;
+    }
 }
