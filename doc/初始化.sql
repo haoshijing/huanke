@@ -204,6 +204,7 @@ CREATE TABLE `t_device_ablity_option`  (
   `ablityId` varchar(11)   COMMENT '所在能力主键',
   `optionName` varchar(200)   COMMENT '能力选项名称',
   `optionValue` varchar(11)   COMMENT '通讯对应指令/能力选项阈值',
+    `status` int(1) NULL DEFAULT NULL COMMENT '状态 1-正常；0-删除',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
