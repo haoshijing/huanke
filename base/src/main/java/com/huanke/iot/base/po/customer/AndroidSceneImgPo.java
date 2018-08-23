@@ -14,7 +14,7 @@ public class AndroidSceneImgPo {
     private Integer customerId; //客户主键
     private String name;    //图片名称
     private String imgVideo;    //图片或视频
-    private String describe;    //描述介绍
+    private String description;    //描述介绍
     private Long createTime;
     private Long lastUpdateTime;
 

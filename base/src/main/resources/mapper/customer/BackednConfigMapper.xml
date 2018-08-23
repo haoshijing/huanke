@@ -10,6 +10,7 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.BackendConfigPo">
         INSERT INTO <include refid="tableName"/>
         (
+        name,
         customerId,
         logo,
         type,
@@ -18,6 +19,7 @@
         createTime
         )
         VALUES (
+        #{name},
         #{customerId},
         #{logo},
         #{type},

@@ -17,7 +17,6 @@
         version,
         status,
         createTime,
-        lastUpdateTime,
         deviceChangePassword
         )
         VALUES (
@@ -28,8 +27,6 @@
         #{version},
         #{status},
         #{createTime},
-        #{lastUpdateTime},
-        #{version},
         #{deviceChangePassword}
         )
     </insert>

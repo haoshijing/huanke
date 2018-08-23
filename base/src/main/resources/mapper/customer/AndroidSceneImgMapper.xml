@@ -15,9 +15,8 @@
         customerId,
         name,
         imgVideo,
-        describe,
-        createTime,
-        lastUpdateTime
+        description,
+        createTime
         )
         VALUES (
         #{configId},
@@ -25,9 +24,8 @@
         #{customerId},
         #{name},
         #{imgVideo},
-        #{describe},
-        #{createTime},
-        #{lastUpdateTime}
+        #{description},
+        #{createTime}
         )
     </insert>
 
@@ -40,7 +38,7 @@
         customerId,
         name,
         imgVideo,
-        describe,
+        description,
         createTime,
         lastUpdateTime
         )
@@ -52,7 +50,7 @@
             #{item.customerId},
             #{item.name},
             #{item.imgVideo},
-            #{item.describe},
+            #{item.description},
             #{item.createTime},
             #{item.lastUpdateTime}
             )

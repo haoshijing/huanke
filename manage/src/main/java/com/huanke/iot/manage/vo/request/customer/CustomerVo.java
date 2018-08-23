@@ -39,6 +39,7 @@ public class CustomerVo {
      */
     @Data
     public static class BackendConfig {
+        private Integer id;
         private Boolean enableStatus;
         private String logo;
         private String name;
@@ -50,6 +51,7 @@ public class CustomerVo {
      */
     @Data
     public static class H5Config {
+//        private  Integer id;
         private String password;
         private String defaultTeamName;
         private String backgroundImg;
@@ -70,6 +72,7 @@ public class CustomerVo {
      */
     @Data
     public static class AndroidConfig {
+//        private Integer id;
         private String qrcode;   //二维码
         private String name;
         private String logo;
@@ -83,9 +86,10 @@ public class CustomerVo {
      */
     @Data
     public static class AndroidScene {
+        private Integer id;
         private String name;
         private String imgsCover;    //图册封面
-        private String describe;
+        private String description;
         private List<AndroidSceneImg> androidSceneImgList;  //图片列表
     }
 
@@ -94,8 +98,9 @@ public class CustomerVo {
      */
     @Data
     public static class AndroidSceneImg {
+        private Integer id;
         private String name;
         private String imgVideo;    //图片或视频
-        private String describe;
+        private String description;
     }
 }

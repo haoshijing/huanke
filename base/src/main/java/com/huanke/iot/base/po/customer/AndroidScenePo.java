@@ -13,7 +13,7 @@ public class AndroidScenePo {
     private Integer customerId; //客户ID
     private String name;    //场景名称，如：白天，晚上等。
     private String imgsCover;   //图册封面
-    private String describe;    //描述
+    private String description;    //描述
     private Long createTime;
     private Long lastUpdateTime;    //最后更新时间
 }

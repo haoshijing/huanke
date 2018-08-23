@@ -10,6 +10,7 @@ import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -83,13 +84,13 @@ public class CustomerService {
             this.customerMapper.insert(customerPo);
         }
 
-        //H5配置信息
+        /*H5配置信息*/
         CustomerVo.H5Config h5Config = customerVo.getH5Config();
         // 先查询 该客户 有没有相关的配置
         WxConfigPo wxConfigPo = wxConfigMapper.selectConfigByCustomerId(customerVo.getId());
 
 
-        //若 存在 该配置 则进行更新，否则为新增。
+        //若 存在 该h5配置 则进行更新，否则为新增。
         if(wxConfigPo!=null){
             BeanUtils.copyProperties(h5Config,wxConfigPo);
 
@@ -98,66 +99,102 @@ public class CustomerService {
         }else{
             wxConfigPo = new WxConfigPo();
             BeanUtils.copyProperties(h5Config,wxConfigPo);
-
             wxConfigPo.setCustomerId(customerPo.getId());
             wxConfigPo.setCreateTime(System.currentTimeMillis());
             this.wxConfigMapper.insert(wxConfigPo);
         }
 
-//        //安卓配置信息
-//        CustomerVo.AndroidConfig androidConfig = customerVo.getAndroidConfig();
-//        List<CustomerVo.AndroidScene> androidSceneList = androidConfig.getAndroidSceneList();
-//
-//        AndroidConfigPo androidConfigPo = new AndroidConfigPo();
-//        androidConfigPo.setCustomerId(customerPo.getId());
-//        androidConfigPo.setName(androidConfig.getName());
-//        androidConfigPo.setLogo(androidConfig.getLogo());
-//        androidConfigPo.setQrcode(androidConfig.getQrcode());
-//        androidConfigPo.setVersion(androidConfig.getVersion());
-//        androidConfigPo.setCreateTime(System.currentTimeMillis());
-//        androidConfigPo.setLastUpdateTime(System.currentTimeMillis());
-//        androidConfigPo.setDeviceChangePassword(androidConfig.getDeviceChangePassword());
-//        this.androidConfigMapper.insert(androidConfigPo);
-//
-//        List<AndroidSceneImgPo> toAddAndroidSceneImgPoList = new ArrayList<>();
-//        for (CustomerVo.AndroidScene androidScene : androidSceneList) {
-//            AndroidScenePo androidScenePo = new AndroidScenePo();
-//            androidScenePo.setConfigId(androidConfigPo.getId());
-//            androidScenePo.setCustomerId(customerPo.getId());
-//            androidScenePo.setName(androidScene.getName());
-//            androidScenePo.setImgsCover(androidScene.getImgsCover());
-//            androidScenePo.setDescribe(androidScene.getDescribe());
-//            androidScenePo.setCreateTime(System.currentTimeMillis());
-//            androidScenePo.setLastUpdateTime(System.currentTimeMillis());
-//            this.androidSceneMapper.insert(androidScenePo);
-//
-//            List<CustomerVo.AndroidSceneImg> androidSceneImgList = androidScene.getAndroidSceneImgList();
-//            for (CustomerVo.AndroidSceneImg androidSceneImg : androidSceneImgList) {
-//                AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
-//                androidSceneImgPo.setConfigId(androidConfigPo.getId());
-//                androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
-//                androidSceneImgPo.setCustomerId(customerPo.getId());
-//                androidSceneImgPo.setName(androidSceneImg.getName());
-//                androidSceneImgPo.setImgVideo(androidSceneImg.getImgVideo());
-//                androidSceneImgPo.setDescribe(androidSceneImg.getDescribe());
-//                androidSceneImgPo.setCreateTime(System.currentTimeMillis());
-//                androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
-//                toAddAndroidSceneImgPoList.add(androidSceneImgPo);
-//            }
-//        }
+        /*安卓配置信息*/
+        CustomerVo.AndroidConfig androidConfig = customerVo.getAndroidConfig();
+        //先查询 是否存在 安卓配置
+        AndroidConfigPo androidConfigPo = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
+        //如果存在该安卓配置，则进行更新 否则进行新增
+        if(androidConfigPo!=null){
+            BeanUtils.copyProperties(androidConfig,androidConfigPo);
+            androidConfigPo.setLastUpdateTime(System.currentTimeMillis());
+            androidConfigMapper.updateById(androidConfigPo);
+        }else{
+            androidConfigPo = new AndroidConfigPo();
+            BeanUtils.copyProperties(androidConfig,androidConfigPo);
+            androidConfigPo.setCreateTime(System.currentTimeMillis());
+            androidConfigPo.setCustomerId(customerPo.getId());
+            androidConfigMapper.insert(androidConfigPo);
+        }
+        /*安卓场景列表*/
+        //遍历保存安卓场景列表
+        List<CustomerVo.AndroidScene> androidSceneList = androidConfig.getAndroidSceneList();
+        if(androidSceneList!=null&&androidSceneList.size()>0){
+            for (CustomerVo.AndroidScene androidScene : androidSceneList) {
+
+                AndroidScenePo androidScenePo = new AndroidScenePo();
+                //如果场景不为空,且主键不为空 则是更新，否则新增
+                if(androidScene!=null&&androidScene.getId()!=null&&androidScene.getId()>0){
+                    BeanUtils.copyProperties(androidScene,androidScenePo);
+                    androidScenePo.setLastUpdateTime(System.currentTimeMillis());
+                    androidSceneMapper.updateById(androidScenePo);
+                }else{
+                    androidScenePo = new AndroidScenePo();
+                    BeanUtils.copyProperties(androidScene,androidScenePo);
+                    androidScenePo.setCustomerId(customerPo.getId());
+                    androidScenePo.setConfigId(androidConfigPo.getId());
+                    androidConfigPo.setCreateTime(System.currentTimeMillis());
+                    androidSceneMapper.insert(androidScenePo);
+                }
+
+                /*安卓场景-图册*/
+//                List<AndroidSceneImgPo> toAddAndroidSceneImgPoList = new ArrayList<>();
+                //遍历保存场景图册
+                List<CustomerVo.AndroidSceneImg> androidSceneImgList = androidScene.getAndroidSceneImgList();
+                if(androidSceneImgList!=null&&androidSceneImgList.size()>0){
+                    for (CustomerVo.AndroidSceneImg androidSceneImg : androidSceneImgList) {
+                        AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                        if(androidSceneImg!=null&&androidSceneImg.getId()!=null&&androidSceneImg.getId()>0){
+                            BeanUtils.copyProperties(androidSceneImg,androidSceneImgPo);
+                            //客户id
+                            androidSceneImgPo.setCustomerId(customerPo.getId());
+                            //安卓配置id
+                            androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                            //场景id
+                            androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                            androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
+                            androidSceneImgMapper.updateById(androidSceneImgPo);
+                        }else{
+                            BeanUtils.copyProperties(androidSceneImg,androidSceneImgPo);
+                            //客户id
+                            androidSceneImgPo.setCustomerId(customerPo.getId());
+                            //安卓配置id
+                            androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                            //场景id
+                            androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                            androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                            androidSceneImgMapper.insert(androidSceneImgPo);
+                        }
+
+//                        toAddAndroidSceneImgPoList.add(androidSceneImgPo);
+                    }
+                }
+
+            }
+        }
+
 //        this.androidSceneImgMapper.insertBatch(toAddAndroidSceneImgPoList);
-//
-//        //管理后台配置信息
-//        CustomerVo.BackendConfig backendConfig = customerVo.getBackendConfig();
-//        BackendConfigPo backendConfigPo = new BackendConfigPo();
-//        backendConfigPo.setName(backendConfig.getName());
-//        backendConfigPo.setLogo(backendConfig.getLogo());
-//        backendConfigPo.setType(backendConfig.getType());
-//        backendConfigPo.setEnableStatus(backendConfig.getEnableStatus());
-//        backendConfigPo.setCustomerId(customerPo.getId());
-//        backendConfigPo.setCreateTime(System.currentTimeMillis());
-//        backendConfigPo.setLastUpdateTime(System.currentTimeMillis());
-//        this.backendConfigMapper.insert(backendConfigPo);
+
+        //管理后台配置信息
+        CustomerVo.BackendConfig backendConfig = customerVo.getBackendConfig();
+        //查询是否存在该 管理后台配置
+        BackendConfigPo backendConfigPo = backendConfigMapper.selectConfigByCustomerId(customerPo.getId());
+        //若不为空 说明存在 管理后台配置
+        if(backendConfigPo!=null){
+            BeanUtils.copyProperties(backendConfig,backendConfigPo);
+            backendConfigPo.setLastUpdateTime(System.currentTimeMillis());
+            backendConfigMapper.updateById(backendConfigPo);
+        }else{
+            backendConfigPo = new BackendConfigPo();
+            BeanUtils.copyProperties(backendConfig,backendConfigPo);
+            backendConfigPo.setCustomerId(customerPo.getId());
+            backendConfigPo.setCreateTime(System.currentTimeMillis());
+            backendConfigMapper.insert(backendConfigPo);
+        }
 
         return new ApiResponse<>(customerPo.getId());
     }

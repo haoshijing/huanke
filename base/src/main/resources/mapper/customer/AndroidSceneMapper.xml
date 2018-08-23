@@ -14,18 +14,16 @@
         customerId,
         name,
         imgsCover,
-        describe,
-        createTime,
-        lastUpdateTime
+        description,
+        createTime
         )
         VALUES (
         #{configId},
         #{customerId},
         #{name},
         #{imgsCover},
-        #{describe},
-        #{createTime},
-        #{lastUpdateTime}
+        #{description},
+        #{createTime}
         )
     </insert>
 
@@ -37,7 +35,7 @@
         customerId,
         name,
         imgsCover,
-        describe,
+        description,
         createTime,
         lastUpdateTime
         )
@@ -48,7 +46,7 @@
             #{customerId},
             #{name},
             #{imgsCover},
-            #{describe},
+            #{description},
             #{createTime},
             #{lastUpdateTime}
             )
