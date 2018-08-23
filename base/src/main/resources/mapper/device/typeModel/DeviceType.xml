@@ -12,21 +12,15 @@
         (
         name,
         icon,
-        stopWatch,
-        source,
         typeNo,
         remark,
-        status,
         createTime
         )
         VALUES (
         #{name},
         #{icon},
-        #{stopWatch},
-        #{source},
         #{typeNo},
         #{remark},
-        #{status},
         #{createTime}
         )
     </insert>
@@ -39,30 +33,13 @@
             <if test = "icon != null and icon != ''">
                 icon = #{icon},
             </if>
-            <if test = "stopWatch != null and stopWatch != ''">
-                stopWatch = #{stopWatch},
-            </if>
-            <if test = "source != null and source != ''">
-                source = #{source},
-            </if>
             <if test = "typeNo != null and typeNo != ''">
                 typeNo = #{typeNo},
             </if>
             <if test = "remark != null and remark != ''">
                 remark = #{remark},
             </if>
-            <if test = "status != null ">
-                status = #{status},
-            </if>
             lastUpdateTime = #{lastUpdateTime}
-        </set>
-        where id = #{id}
-    </update>
-
-    <update id="updateStatusById" >
-        update <include refid="tableName"/>
-        <set>
-            status = #{status}
         </set>
         where id = #{id}
     </update>
@@ -71,7 +48,6 @@
         delete from <include refid="tableName"/>
         where id = #{id}
     </delete>
-
 
     <select id="selectTypeAblitySetByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         select
@@ -97,9 +73,6 @@
             <if test = "param.typeNo != null and param.typeNo != ''">
                 and typeNo = #{param.typeNo}
             </if>
-            <if test = "param.status != null and param.status != ''">
-                and status = #{param.status}
-            </if>
         </where>
     </select>
 
@@ -113,9 +86,6 @@
             </if>
             <if test = "param.typeNo != null and param.typeNo != ''">
                 and typeNo = #{param.typeNo}
-            </if>
-            <if test = "param.status != null and param.status != ''">
-                and status = #{param.status}
             </if>
         </where>
         limit #{limit} offset #{offset}

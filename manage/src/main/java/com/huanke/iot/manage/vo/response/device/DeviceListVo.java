@@ -16,10 +16,9 @@ public class DeviceListVo {
      * 归属
      */
     private String owner;
-    /**
-     * 设备类型
-     */
-    private Integer deviceTypeId;
+
+    private Integer typeId;
+    private String deviceType;
     /**
      * 绑定状态
      */
@@ -44,4 +43,23 @@ public class DeviceListVo {
      * 在线状态
      */
     private String onlineStatus;
+
+    private Integer deviceId;
+
+    private Integer modelId;
+
+    /**
+     * 设备型号
+     */
+    private String modelName;
+
+    private Long createTime;
+
+    private Long lastUpdateTime;
+
+    private String bindCustomer;
+
+    private String location;
+
+
 }

@@ -8,6 +8,4 @@ import com.huanke.iot.base.po.customer.WxConfigPo;
  */
 public interface WxConfigMapper extends BaseMapper<WxConfigPo> {
 
-    WxConfigPo selectConfigByCustomerId(Integer customerId);
-
 }

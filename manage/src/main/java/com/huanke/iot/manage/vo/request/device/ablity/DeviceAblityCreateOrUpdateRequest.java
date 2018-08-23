@@ -22,7 +22,7 @@ public class DeviceAblityCreateOrUpdateRequest {
     private Integer configType;//配置方式
     private Integer ablityType;//能力类型
 
-    private List<DeviceAblityOptionCreateOrUpdateRequest> deviceAblityOptions;
+    private List<DeviceAblityOptionCreateOrUpdateRequest> deviceAblityOptionCreateOrUpdateRequests;
 
     @Data
     public class DeviceAblityOptionRequest {

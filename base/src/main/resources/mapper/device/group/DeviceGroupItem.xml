@@ -35,17 +35,11 @@
         WHERE deviceId = #{deviceId}
     </select>
 
-    <delete id="deleteDeviceById" parameterType="com.huanke.iot.base.po.device.group.DeviceGroupItemPo">
+    <delete id="deleteDeviceById" parameterType="java.lang.Integer">
         delete from
         <include refid="tableName"/>
         <where>
             deviceId = #{deviceId}
         </where>
-    </delete>
-
-    <delete id="deleteByJoinId">
-        delete from <include refid="tableName"/>
-        WHERE deviceId = #{deviceId}
-        AND userId = #{userId}
     </delete>
 </mapper>

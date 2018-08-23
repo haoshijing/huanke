@@ -23,7 +23,6 @@
 
     <!-- 根据信息筛选返回数据 -->
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ProductPo">
-        SELECT
         *
         FROM <include refid="tableName"/>
         WHERE id = #{id}

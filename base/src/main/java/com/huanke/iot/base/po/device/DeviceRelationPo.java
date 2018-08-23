@@ -3,16 +3,15 @@ package com.huanke.iot.base.po.device;
 import lombok.Data;
 
 /**
- * @author onlymark
- * @version 2018年08月21日
+ * @author haoshijing
+ * @version 2018年04月23日 15:04
  **/
 @Data
-public class DeviceCustomerUserRelationPo {
+public class DeviceRelationPo {
     private Integer id;
-    private Integer customerId;
-    private String openId;
-    private String parentOpenId;
     private Integer deviceId;
+    private Integer masterUserId;
+    private Integer joinUserId;
     private Integer status;
     private Long createTime;
     private Long lastUpdateTime;

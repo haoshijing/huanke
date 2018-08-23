@@ -2,7 +2,6 @@ package com.huanke.iot.base.dao.device.ablity;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
-import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface DeviceAblityMapper extends BaseMapper<DeviceAblityPo> {
 
     Integer deleteOptionByOptionId(Integer OptionId);
 
-    List<DeviceTypeAblitysPo> selectAblityListByTypeId(Integer typeId);
+    List<DeviceAblityPo> selectAblityListByTypeId(Integer typeId);
 
 
 }

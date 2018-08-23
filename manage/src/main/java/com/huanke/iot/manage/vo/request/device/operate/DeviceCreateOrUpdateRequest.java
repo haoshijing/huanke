@@ -7,10 +7,10 @@ import java.util.List;
 @Data
 public class DeviceCreateOrUpdateRequest {
 
-    private List<DeviceList> deviceList;
+    private List<DeviceUpdateList> deviceList;
 
     @Data
-    public static class DeviceList {
+    public static class DeviceUpdateList {
         /**
          * 设备名称
          */
@@ -26,6 +26,9 @@ public class DeviceCreateOrUpdateRequest {
         /**
          * 生产日期
          */
-        private Long createTime;
+        private Long birthTime;
+
+        private  String hardVersion;
+
     }
 }

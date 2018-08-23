@@ -2,7 +2,6 @@ package com.huanke.iot.base.dao.device.typeModel;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * @author Caik
@@ -10,7 +9,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface DeviceTypeMapper extends BaseMapper<DeviceTypePo> {
 
-    Integer getabilitySetId(Integer typeId);
+    DeviceTypePo selectById(Integer id);
 
-    Integer updateStatusById(@Param("id")Integer id, @Param("status")Integer status);
 }

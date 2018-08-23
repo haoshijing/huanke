@@ -14,7 +14,6 @@ public class WxConfigPo {
     private String themeName;
     private String logo;
     private String version;
-    private Integer status;
     private Long createTime;
     private Long lastUpdateTime;
 }

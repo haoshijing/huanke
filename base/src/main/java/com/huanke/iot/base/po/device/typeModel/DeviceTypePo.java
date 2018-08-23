@@ -16,12 +16,10 @@ public class DeviceTypePo {
     private String name;
     private String typeNo;
     private String icon;
-    private String stopWatch;
-    private String source;
-    private Integer status;
-
     private String remark;
     private Long createTime;
     private Long lastUpdateTime;
+
+    private List<DeviceAblityPo> deviceAblityPoList;
 
 }

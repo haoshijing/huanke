@@ -10,20 +10,29 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
         INSERT INTO <include refid="tableName"/>
         (
-        customerId,
         deviceId,
+        publicId,
+        wxProductId,
         devicelicence,
-        status,
         createTime
         )
         VALUES (
-        #{customerId},
         #{deviceId},
+        #{publicId},
+        #{ wxProductId},
         #{devicelicence},
-        #{status},
         #{createTime}
         )
     </insert>
 
+    <delete id="deleteByd" parameterType="java.lang.Integer">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
+    <select id="selectByPublicIdAndPid"  resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        select * from <include refid="tableName"/>
+        where publicId = #{publicId}  and wxProductId = #{wxProductId} limit 1
+    </select>
 
 </mapper>

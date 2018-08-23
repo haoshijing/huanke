@@ -5,10 +5,12 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
-import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -24,25 +26,11 @@ public class CustomerController {
     private CustomerService customerService;
 
     /**
-     * 添加客户信息
+     * 保存客户信息
      * @return
      */
-    @ApiOperation("添加客户信息")
-    @PostMapping(value = "saveDetail")
-    public ApiResponse<Integer> saveDetail(@RequestBody CustomerVo customerVo) {
-        if (StringUtils.isBlank(customerVo.getName())) {
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"客户名称不能为空");
-        }
-        return this.customerService.saveDetail(customerVo);
-    }
-
-    /**
-     * 修改客户信息
-     * @return
-     */
-    @ApiOperation("修改客户信息")
-    @PutMapping(value = "updateDetail")
-    public ApiResponse<Boolean> updateDetail(@RequestBody CustomerVo customerVo) {
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ApiResponse<Boolean> saveDetail(@RequestBody CustomerVo customerVo) {
         if (StringUtils.isBlank(customerVo.getName())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"客户名称不能为空");
         }

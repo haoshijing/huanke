@@ -1,11 +1,7 @@
 package com.huanke.iot.manage.vo.request.device.typeModel;
 
 
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceTypeAblitysCreateRequest;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author caikun
@@ -18,11 +14,8 @@ public class DeviceTypeCreateOrUpdateRequest {
     private Integer id;
     private String name;
     private String typeNo;
-    private String stopWatch;
     private String icon;
-    private String source;
     private String remark;
 
-    private List<DeviceTypeAblitysCreateRequest> deviceTypeAblitys;
 
 }

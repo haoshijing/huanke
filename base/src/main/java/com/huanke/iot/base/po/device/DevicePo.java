@@ -27,6 +27,7 @@ public class DevicePo {
     private String devicelicence;
 
     //设备序列号
+    private String sano;
     private String imei;
     private String imsi;
     private String saNo;
@@ -54,6 +55,11 @@ public class DevicePo {
     private String ip;
     private String speedConfig;
     private String version;
+    private int status;
+    private String hardVersion;
+    private String communicationVersion;
+    private String softVersion;
+    private Long birthTime;
     private Long createTime;
     private Long lastUpdateTime;
 

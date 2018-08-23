@@ -13,7 +13,6 @@ public class DeviceAblityOptionPo {
     private String optionName;
     private String optionValue;
     private Integer ablityId;
-    private Integer status;
     private Long createTime;
     private Long lastUpdateTime;
 }

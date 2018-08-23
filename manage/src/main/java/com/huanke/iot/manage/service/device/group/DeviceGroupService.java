@@ -84,7 +84,7 @@ public class DeviceGroupService {
             return false;
         }
         else {
-            for (DeviceQueryRequest.DeviceList deviceList : deviceGroupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList()) {
+            for (DeviceQueryRequest.DeviceQueryList deviceList : deviceGroupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList()) {
                 DevicePo devicePo = deviceMapper.selectByMac(deviceList.getMac());
                 DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
                 deviceGroupItemPo.setGroupId(deviceGroupPo.getId());
@@ -103,9 +103,9 @@ public class DeviceGroupService {
      * @param deviceLists
      * @return
      */
-    public DeviceGroupPo queryGroupName(List<DeviceQueryRequest.DeviceList> deviceLists){
+    public DeviceGroupPo queryGroupName(List<DeviceQueryRequest.DeviceQueryList> deviceLists){
         DeviceGroupPo deviceGroupPo=null;
-        for (DeviceQueryRequest.DeviceList deviceList : deviceLists) {
+        for (DeviceQueryRequest.DeviceQueryList deviceList : deviceLists) {
             DevicePo devicePo = deviceMapper.selectByMac(deviceList.getMac());
             //若查询到有设备存在集群中，返回该集群的相关信息
             if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
@@ -138,10 +138,10 @@ public class DeviceGroupService {
      * @param deviceLists
      * @return
      */
-    public Boolean isGroupConflict(List<DeviceQueryRequest.DeviceList> deviceLists){
+    public Boolean isGroupConflict(List<DeviceQueryRequest.DeviceQueryList> deviceLists){
         //获取设备列表中第一个不为空的设备的集群ID
         int compareGroupId=-1;
-        for(DeviceQueryRequest.DeviceList device:deviceLists){
+        for(DeviceQueryRequest.DeviceQueryList device:deviceLists){
             DevicePo devicePo=deviceMapper.selectByMac(device.getMac());
             if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
                 compareGroupId=deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId();
@@ -149,7 +149,7 @@ public class DeviceGroupService {
         }
         //存在有集群的设备才进行比较
         if(-1 != compareGroupId) {
-            for (DeviceQueryRequest.DeviceList device: deviceLists) {
+            for (DeviceQueryRequest.DeviceQueryList device: deviceLists) {
                 DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
                 if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
                     Integer currentGroupId = deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId();

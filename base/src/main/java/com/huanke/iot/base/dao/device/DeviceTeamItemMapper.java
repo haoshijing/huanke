@@ -2,17 +2,18 @@ package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
-import org.apache.ibatis.annotations.Param;
 
 /**
- * onlymark
- *
- * 2018/8/20
- */
+ * @author sixiaojun
+ * @version 2018-08-15
+ **/
 public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
-
-    DeviceTeamItemPo getByDeviceId(Integer deviceId);
-
-    int deleteByJoinId(@Param("deviceId") Integer iDeviceId, @Param("deviceId") Integer userId);
+//    /**
+//     * 根据设备ID查询设备群关系
+//     *sixiaojun
+//     * @param deviceId
+//     * @returnDeviceGroupItemPo
+//     */
+//    DeviceGroupItemPo selectByDeviceId(Integer deviceId);
 }

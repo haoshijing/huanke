@@ -12,10 +12,7 @@ public class DeviceGroupItemPo {
      * 设备编组id
      */
     private Integer id;
-    /**
-     * 用户id
-     */
-    private Integer userId;
+
     /**
      * 设备id
      */

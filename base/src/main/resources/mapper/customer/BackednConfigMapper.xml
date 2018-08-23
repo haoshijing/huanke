@@ -10,66 +10,24 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.BackendConfigPo">
         INSERT INTO <include refid="tableName"/>
         (
-        customerId,
+        name,
         logo,
         type,
         enableStatus,
-        status,
-        createTime
+        customerId,
+        createTime,
+        lastUpdateTime
         )
         VALUES (
-        #{customerId},
         #{logo},
         #{type},
         #{enableStatus},
-        #{status},
-        #{createTime}
+        #{customerId},
+        #{createTime},
+        #{lastUpdateTime}
         )
     </insert>
-    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.BackendConfigPo">
-        update
-        <include refid="tableName"/>
-        <set>
-            <if test="customerId != null ">
-                customerId = #{customerId},
-            </if>
-            <if test="name != null  and name != ''">
-                name = #{name},
-            </if>
-            <if test="logo != null  and logo != '' ">
-                logo = #{logo},
-            </if>
-            <if test="version != null  and version != '' ">
-                version = #{version},
-            </if>
-            <if test="enableStatus != null ">
-                enableStatus = #{enableStatus},
-            </if>
-            <if test="status != null ">
-                status = #{status},
-            </if>
-            lastUpdateTime = #{lastUpdateTime}
-        </set>
-        where
-        id = #{id}
-    </update>
-    <select id="selectConfigByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.BackendConfigPo">
-        SELECT * FROM
-        <include refid="tableName"/>
-        WHERE customerId = #{customerId} limit 1
-    </select>
 
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.BackendConfigPo">
-        select
-        *
-        FROM
-        <include refid="tableName"/>
-        WHERE id = #{id} limit 1
-    </select>
 
-    <delete id="deleteById">
-        delete from <include refid="tableName"/>
-        where id = #{id}
-    </delete>
 </mapper>

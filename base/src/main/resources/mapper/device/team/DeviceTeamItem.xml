@@ -12,17 +12,15 @@
         INSERT INTO
         <include refid="tableName"/>
         (
-        userId,
         deviceId,
-        teamId,
+        groupId,
         status,
         createTime,
         lastUpdateTime
         )
         VALUES (
-        #{userId},
         #{deviceId},
-        #{teamId},
+        #{groupId},
         #{status},
         #{createTime},
         #{lastUpdateTime}
@@ -36,10 +34,4 @@
         <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
     </select>
-
-    <delete id="deleteByJoinId">
-        delete from <include refid="tableName"/>
-        WHERE deviceId = #{deviceId}
-        AND userId = #{userId}
-    </delete>
 </mapper>
