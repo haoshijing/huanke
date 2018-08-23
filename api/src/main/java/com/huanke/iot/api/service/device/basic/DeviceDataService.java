@@ -1,7 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
@@ -14,9 +13,9 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
@@ -24,9 +23,9 @@ import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.Data;
@@ -39,7 +38,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -86,6 +84,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceTeamMapper deviceTeamMapper;
+
+    @Autowired
+    private DeviceSensorStatMapper deviceSensorStatMapper;
 
     @Autowired
     private LocationUtils locationUtils;
@@ -228,15 +229,10 @@ public class DeviceDataService {
             return null;
         }
         Integer deviceTypeId = devicePo.getTypeId();
-        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(deviceTypeId);
-        if (devicePo == null) {
-            return null;
-        }
-        String sensorList = deviceTypePo.getSensorList();
-        String[] sensorTypes = sensorList.split(",");
+        List<String> dirValues = deviceAblityMapper.getDirValuesByDeviceTypeId(deviceTypeId);
 
         List<DeviceSensorStatPo> deviceSensorPos = deviceSensorStatMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
-        for (String sensorType : sensorTypes) {
+        for (String sensorType : dirValues) {
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
             sensorDataVo.setName(sensorTypeEnums.getMark());
@@ -493,7 +489,7 @@ public class DeviceDataService {
 
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
-        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
+        /*Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
 
         DeviceDetailVo.PmDataItem pm = new DeviceDetailVo.PmDataItem();
@@ -776,7 +772,7 @@ public class DeviceDataService {
         childItem.setType(FuncTypeEnums.CHILD_LOCK.getCode());
         childItem.setChoice("0:未开,1:已开");
         childItem.setValue(getData(controlDatas, FuncTypeEnums.CHILD_LOCK.getCode()));
-        deviceDetailVo.setChildItem(childItem);
+        deviceDetailVo.setChildItem(childItem);*/
     }
 
     private List<String> getType(String smallType, List<DeviceAblityPo> deviceAblityPos) {

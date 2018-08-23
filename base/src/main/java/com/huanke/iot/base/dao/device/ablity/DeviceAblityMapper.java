@@ -19,4 +19,5 @@ public interface DeviceAblityMapper extends BaseMapper<DeviceAblityPo> {
     List<DeviceTypeAblitysPo> selectAblityListByTypeId(Integer typeId);
 
 
+    List<String> getDirValuesByDeviceTypeId(Integer deviceTypeId);
 }
