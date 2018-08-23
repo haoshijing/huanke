@@ -14,8 +14,6 @@ import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
-import com.huanke.iot.base.dao.impl.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
@@ -26,6 +24,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,7 @@ import java.util.stream.Collectors;
  * 2018/8/20
  */
 @Repository
+@Slf4j
 public class DeviceService {
 
     @Autowired
@@ -51,13 +51,8 @@ public class DeviceService {
     DeviceMapper deviceMapper;
 
     @Autowired
-    DeviceSensorDataMapper deviceSensorDataMapper;
-
-    @Autowired
     private DeviceTypeMapper deviceTypeMapper;
 
-    @Autowired
-    private DeviceRelationMapper deviceRelationMapper;
 
     @Autowired
     private CustomerUserMapper customerUserMapper;
@@ -79,6 +74,12 @@ public class DeviceService {
 
     @Value("${speed}")
     private int speed;
+
+    public static void main(String[] args) {
+        DeviceService deviceService = new DeviceService();
+        DeviceListVo deviceListVo = deviceService.obtainMyDevice(1);
+        System.out.println("123");
+    }
 
     public DeviceListVo obtainMyDevice(Integer userId) {
         DeviceListVo deviceListVo = new DeviceListVo();
@@ -202,6 +203,7 @@ public class DeviceService {
     public boolean editDevice(Integer userId, String deviceId, String deviceName) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
         if (devicePo == null) {
+            log.error("找不到设备，deviceId={}", deviceId);
             return false;
         }
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
@@ -211,6 +213,7 @@ public class DeviceService {
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
         int count = deviceCustomerUserRelationPos.size();
         if (count == 0) {
+            log.error("找不到设备用户对应关系，deviceId={}，openId={}", deviceId, customerUserPo.getOpenId());
             return false;
         }
         DevicePo updatePo = new DevicePo();
@@ -222,10 +225,12 @@ public class DeviceService {
     public Boolean setSpeedConfig(SpeedConfigRequest request) {
         String deviceIdStr = request.getDeviceId();
         if (StringUtils.isEmpty(deviceIdStr)) {
+            log.error("参数错误");
             return false;
         }
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
+            log.error("找不到设备，deviceIdStr={}", deviceIdStr);
             return false;
         }
         Integer deviceId = devicePo.getId();
@@ -254,6 +259,7 @@ public class DeviceService {
     public DeviceSpeedConfigVo getSpeed(String deviceId) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
         if (devicePo == null) {
+            log.error("找不到设备，deviceId={}", deviceId);
             return null;
         }
         DeviceSpeedConfigVo deviceSpeedConfigVo = new DeviceSpeedConfigVo();

@@ -1,6 +1,7 @@
 package com.huanke.iot.api.service.device.basic;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
@@ -16,6 +17,7 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
@@ -29,6 +31,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.joda.time.DateTime;
@@ -44,6 +47,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
+@Slf4j
 public class DeviceDataService {
 
     @Autowired
@@ -109,18 +113,22 @@ public class DeviceDataService {
     public Boolean shareDevice(String master, Integer customerId, Integer toId, String deviceIdStr, String token) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
+            log.error("找不到设备，deviceIdStr={}", deviceIdStr);
             return false;
         }
         Integer deviceId = devicePo.getId();
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(master);
         if (customerUserPo == null) {
+            log.error("找不到用户，openId={}", master);
             return false;
         }
         String storeToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + deviceIdStr);
         if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
+            log.error("找不到Token，deviceIdStr={}", deviceIdStr);
             // return false;
         }
         if (customerUserPo.getId().equals(toId)) {
+            log.error("无法给自己分享设备");
             return false;
         }
         //TODO检查deviceId和用户是不是可以对应上的
@@ -129,6 +137,7 @@ public class DeviceDataService {
         queryTeamItemPo.setUserId(customerUserPo.getId());
         Integer itemCount = deviceTeamMapper.queryItemCount(queryTeamItemPo);
         if (itemCount == 0) {
+            log.error("用户组下无设备");
             return false;
         }
 
@@ -190,12 +199,12 @@ public class DeviceDataService {
     public Boolean clearRelation(String joinOpenId, Integer userId, String deviceIdStr) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
+            log.error("找不到设备，deviceIdStr={}", deviceIdStr);
             return false;
         }
         Integer deviceId = devicePo.getId();
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(joinOpenId);
         if (customerUserPo == null) {
-
             return false;
         }
         if (customerUserPo.getId().equals(userId)) {
@@ -382,7 +391,7 @@ public class DeviceDataService {
 
         if (devicePo != null) {
             deviceDetailVo.setDeviceName(devicePo.getName());
-            deviceDetailVo.setDeviceId(devicePo.getDeviceId());
+            deviceDetailVo.setDeviceId(deviceId);
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getTypeId());
             if (deviceTypePo != null) {
                 deviceDetailVo.setDeviceTypeName(deviceTypePo.getName());
@@ -489,7 +498,7 @@ public class DeviceDataService {
 
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
-        /*Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
+        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
 
         DeviceDetailVo.PmDataItem pm = new DeviceDetailVo.PmDataItem();
@@ -577,11 +586,8 @@ public class DeviceDataService {
 
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(deviceTypeId);
         if (deviceTypePo != null) {
-            DeviceTypeAblitySetPo deviceTypeAblitySetPo = deviceTypeAblitySetMapper.selectByTypeId(deviceTypePo.getId());
-            List<DeviceAblityPo> deviceAblityPos = new ArrayList<>();
-            if (deviceTypeAblitySetPo != null) {
-                deviceAblityPos = deviceAblityMapper.selectAblityListByTypeId(deviceTypeAblitySetPo.getAblitySetId());
-            }
+            //typeId 》abilityId
+            List<DeviceAblityPo> deviceAblityPos = deviceAblityMapper.selectDeviceAblitysByTypeId(deviceTypeId);
             List<String> winds = getType(FuncTypeEnums.WIND1.getCode().substring(0, 2), deviceAblityPos);
             List<DeviceDetailVo.OtherItem> dataItems = winds.stream().map(wind -> {
                 DeviceDetailVo.OtherItem dataItem = new DeviceDetailVo.OtherItem();
@@ -772,7 +778,7 @@ public class DeviceDataService {
         childItem.setType(FuncTypeEnums.CHILD_LOCK.getCode());
         childItem.setChoice("0:未开,1:已开");
         childItem.setValue(getData(controlDatas, FuncTypeEnums.CHILD_LOCK.getCode()));
-        deviceDetailVo.setChildItem(childItem);*/
+        deviceDetailVo.setChildItem(childItem);
     }
 
     private List<String> getType(String smallType, List<DeviceAblityPo> deviceAblityPos) {

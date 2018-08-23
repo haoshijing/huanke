@@ -2,10 +2,8 @@ package com.huanke.iot.api.service.user;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.wechat.WechartUtil;
-import com.huanke.iot.base.dao.impl.device.DeviceMacMapper;
-import com.huanke.iot.base.dao.impl.user.AppUserMapper;
+import com.huanke.iot.base.dao.device.DeviceMacMapper;
 import com.huanke.iot.base.po.device.DeviceMacPo;
-import com.huanke.iot.base.po.user.AppUserPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +17,13 @@ public class UserService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
     @Autowired
     private AppUserMapper appUserMapper;
 
     @Autowired
     private DeviceMacMapper deviceMacMapper;
+
     @Autowired
     private WechartUtil wechartUtil;
 

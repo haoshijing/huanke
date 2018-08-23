@@ -154,4 +154,11 @@
         WHERE typeId = #{deviceTypeId}
         )
     </select>
+
+    <select id="selectDeviceAblitysByTypeId" resultType="com.huanke.iot.base.po.device.alibity.DeviceAblityPo">
+        select t1.* from t_device_ablity t1
+        LEFT join t_device_type_ablitys t2
+        on t1.id = t2.ablityId
+        where t2.typeId = #{typeId}
+    </select>
 </mapper>
