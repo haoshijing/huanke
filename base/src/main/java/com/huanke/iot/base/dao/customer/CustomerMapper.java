@@ -11,4 +11,6 @@ public interface CustomerMapper extends BaseMapper<CustomerPo>{
 
      CustomerPo selectBySLD(String SLD);
 
+     Integer updateStatusById(CustomerPo customerPo);
+
 }

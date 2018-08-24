@@ -2,6 +2,7 @@ package com.huanke.iot.manage.service.customer;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
@@ -44,10 +45,7 @@ public class CustomerService {
     private AndroidSceneMapper androidSceneMapper;
 
     @Autowired
-    private DeviceModelMapper deviceModelMapper;
-
-    @Autowired
-    private DeviceModelAblityMapper deviceModelAblityMapper;
+    private AndroidBgImgMapper androidBgImgMapper;
 
     /**
      * 保存详情
@@ -70,8 +68,16 @@ public class CustomerService {
         customerPo.setSLD(customerVo.getSLD());
         customerPo.setTypeIds(customerVo.getTypeIds());
         customerPo.setModelIds(customerVo.getModelIds());
-
         customerPo.setStatus(CommonConstant.STATUS_YES);
+
+        //先验证二级域名是否重复 如果重复 不允许添加
+        if (customerVo.getSLD() != null && !"".equals(customerVo.getSLD())) {
+            CustomerPo queryCustomer = customerMapper.selectBySLD(customerVo.getSLD());
+            if (queryCustomer != null) {
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在该二级域名");
+            }
+        }
+
         // 先保存 客户信息
         //如果有客户主键信息 为更新，否则为新增
         if (customerVo.getId() != null && customerVo.getId() > 0) {
@@ -80,6 +86,7 @@ public class CustomerService {
             this.customerMapper.updateById(customerPo);
 
         } else {
+            customerPo.setStatus(CommonConstant.STATUS_YES);
             customerPo.setCreateTime(System.currentTimeMillis());
             this.customerMapper.insert(customerPo);
         }
@@ -91,15 +98,16 @@ public class CustomerService {
 
 
         //若 存在 该h5配置 则进行更新，否则为新增。
-        if(wxConfigPo!=null){
-            BeanUtils.copyProperties(h5Config,wxConfigPo);
+        if (wxConfigPo != null) {
+            BeanUtils.copyProperties(h5Config, wxConfigPo);
 
             wxConfigPo.setLastUpdateTime(System.currentTimeMillis());
             this.wxConfigMapper.updateById(wxConfigPo);
-        }else{
+        } else {
             wxConfigPo = new WxConfigPo();
-            BeanUtils.copyProperties(h5Config,wxConfigPo);
+            BeanUtils.copyProperties(h5Config, wxConfigPo);
             wxConfigPo.setCustomerId(customerPo.getId());
+            wxConfigPo.setStatus(CommonConstant.STATUS_YES);
             wxConfigPo.setCreateTime(System.currentTimeMillis());
             this.wxConfigMapper.insert(wxConfigPo);
         }
@@ -109,35 +117,64 @@ public class CustomerService {
         //先查询 是否存在 安卓配置
         AndroidConfigPo androidConfigPo = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
         //如果存在该安卓配置，则进行更新 否则进行新增
-        if(androidConfigPo!=null){
-            BeanUtils.copyProperties(androidConfig,androidConfigPo);
+        if (androidConfigPo != null) {
+            BeanUtils.copyProperties(androidConfig, androidConfigPo);
             androidConfigPo.setLastUpdateTime(System.currentTimeMillis());
             androidConfigMapper.updateById(androidConfigPo);
-        }else{
+        } else {
             androidConfigPo = new AndroidConfigPo();
-            BeanUtils.copyProperties(androidConfig,androidConfigPo);
+            BeanUtils.copyProperties(androidConfig, androidConfigPo);
             androidConfigPo.setCreateTime(System.currentTimeMillis());
             androidConfigPo.setCustomerId(customerPo.getId());
+            androidConfigPo.setStatus(CommonConstant.STATUS_YES);
             androidConfigMapper.insert(androidConfigPo);
         }
+
+//        /*安卓背景图片*/
+//        List<CustomerVo.AndroidBgImg> androidBgImgList = androidConfig.getAndroidBgImgList();
+//        if(androidBgImgList!=null&&androidBgImgList.size()>0){
+//            for (CustomerVo.AndroidBgImg androidBgImg : androidBgImgList) {
+//
+//                AndroidBgImgPo androidBgImgPo = new AndroidBgImgPo();
+//                //如果场景不为空,且主键不为空 则是更新，否则新增
+//                if(androidBgImg!=null&&androidBgImg.getId()!=null&&androidBgImg.getId()>0){
+//                    BeanUtils.copyProperties(androidBgImg,androidBgImgPo);
+//                    androidBgImgPo.setLastUpdateTime(System.currentTimeMillis());
+//                    androidBgImgMapper.updateById(androidBgImgPo);
+//                }else{
+//                    androidBgImgPo = new AndroidBgImgPo();
+//                    BeanUtils.copyProperties(androidBgImg,androidBgImgPo);
+//                    androidBgImgPo.setCustomerId(customerPo.getId());
+//                    androidBgImgPo.setConfigId(androidConfigPo.getId());
+//                    androidBgImgPo.setCreateTime(System.currentTimeMillis());
+//                    androidBgImgPo.setStatus(CommonConstant.STATUS_YES);
+//                    androidBgImgMapper.insert(androidBgImgPo);
+//                }
+//
+//
+//
+//            }
+//        }
+
         /*安卓场景列表*/
         //遍历保存安卓场景列表
         List<CustomerVo.AndroidScene> androidSceneList = androidConfig.getAndroidSceneList();
-        if(androidSceneList!=null&&androidSceneList.size()>0){
+        if (androidSceneList != null && androidSceneList.size() > 0) {
             for (CustomerVo.AndroidScene androidScene : androidSceneList) {
 
                 AndroidScenePo androidScenePo = new AndroidScenePo();
                 //如果场景不为空,且主键不为空 则是更新，否则新增
-                if(androidScene!=null&&androidScene.getId()!=null&&androidScene.getId()>0){
-                    BeanUtils.copyProperties(androidScene,androidScenePo);
+                if (androidScene != null && androidScene.getId() != null && androidScene.getId() > 0) {
+                    BeanUtils.copyProperties(androidScene, androidScenePo);
                     androidScenePo.setLastUpdateTime(System.currentTimeMillis());
                     androidSceneMapper.updateById(androidScenePo);
-                }else{
+                } else {
                     androidScenePo = new AndroidScenePo();
-                    BeanUtils.copyProperties(androidScene,androidScenePo);
+                    BeanUtils.copyProperties(androidScene, androidScenePo);
                     androidScenePo.setCustomerId(customerPo.getId());
                     androidScenePo.setConfigId(androidConfigPo.getId());
-                    androidConfigPo.setCreateTime(System.currentTimeMillis());
+                    androidScenePo.setCreateTime(System.currentTimeMillis());
+                    androidScenePo.setStatus(CommonConstant.STATUS_YES);
                     androidSceneMapper.insert(androidScenePo);
                 }
 
@@ -145,11 +182,11 @@ public class CustomerService {
 //                List<AndroidSceneImgPo> toAddAndroidSceneImgPoList = new ArrayList<>();
                 //遍历保存场景图册
                 List<CustomerVo.AndroidSceneImg> androidSceneImgList = androidScene.getAndroidSceneImgList();
-                if(androidSceneImgList!=null&&androidSceneImgList.size()>0){
+                if (androidSceneImgList != null && androidSceneImgList.size() > 0) {
                     for (CustomerVo.AndroidSceneImg androidSceneImg : androidSceneImgList) {
                         AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
-                        if(androidSceneImg!=null&&androidSceneImg.getId()!=null&&androidSceneImg.getId()>0){
-                            BeanUtils.copyProperties(androidSceneImg,androidSceneImgPo);
+                        if (androidSceneImg != null && androidSceneImg.getId() != null && androidSceneImg.getId() > 0) {
+                            BeanUtils.copyProperties(androidSceneImg, androidSceneImgPo);
                             //客户id
                             androidSceneImgPo.setCustomerId(customerPo.getId());
                             //安卓配置id
@@ -158,8 +195,8 @@ public class CustomerService {
                             androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
                             androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
                             androidSceneImgMapper.updateById(androidSceneImgPo);
-                        }else{
-                            BeanUtils.copyProperties(androidSceneImg,androidSceneImgPo);
+                        } else {
+                            BeanUtils.copyProperties(androidSceneImg, androidSceneImgPo);
                             //客户id
                             androidSceneImgPo.setCustomerId(customerPo.getId());
                             //安卓配置id
@@ -167,6 +204,7 @@ public class CustomerService {
                             //场景id
                             androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
                             androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                            androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
                             androidSceneImgMapper.insert(androidSceneImgPo);
                         }
 
@@ -184,15 +222,16 @@ public class CustomerService {
         //查询是否存在该 管理后台配置
         BackendConfigPo backendConfigPo = backendConfigMapper.selectConfigByCustomerId(customerPo.getId());
         //若不为空 说明存在 管理后台配置
-        if(backendConfigPo!=null){
-            BeanUtils.copyProperties(backendConfig,backendConfigPo);
+        if (backendConfigPo != null) {
+            BeanUtils.copyProperties(backendConfig, backendConfigPo);
             backendConfigPo.setLastUpdateTime(System.currentTimeMillis());
             backendConfigMapper.updateById(backendConfigPo);
-        }else{
+        } else {
             backendConfigPo = new BackendConfigPo();
-            BeanUtils.copyProperties(backendConfig,backendConfigPo);
+            BeanUtils.copyProperties(backendConfig, backendConfigPo);
             backendConfigPo.setCustomerId(customerPo.getId());
             backendConfigPo.setCreateTime(System.currentTimeMillis());
+            backendConfigPo.setStatus(CommonConstant.STATUS_YES);
             backendConfigMapper.insert(backendConfigPo);
         }
 
@@ -209,17 +248,21 @@ public class CustomerService {
     public List<CustomerVo> selectList(CustomerQueryRequest request) {
 
         CustomerPo queryCustomerPo = new CustomerPo();
-        BeanUtils.copyProperties(request,queryCustomerPo);
+        BeanUtils.copyProperties(request, queryCustomerPo);
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
-        List<CustomerPo> customerPos = customerMapper.selectList(queryCustomerPo,limit,offset);
+        //如果 没有指定状态，则默认查出 非删除的数据
+        if (queryCustomerPo.getStatus() == null) {
+            queryCustomerPo.setStatus(CommonConstant.STATUS_YES);
+        }
+        List<CustomerPo> customerPos = customerMapper.selectList(queryCustomerPo, limit, offset);
         List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
             CustomerVo customerVo = new CustomerVo();
-            BeanUtils.copyProperties(customerPo,customerVo);
+            BeanUtils.copyProperties(customerPo, customerVo);
             return customerVo;
         }).collect(Collectors.toList());
 
-        return  customerVos;
+        return customerVos;
     }
 
     /**
@@ -230,8 +273,80 @@ public class CustomerService {
      */
     public CustomerVo selectById(Integer customerId) {
         CustomerVo customerVo = new CustomerVo();
+        //先查询客户
         CustomerPo customerPo = customerMapper.selectById(customerId);
-        BeanUtils.copyProperties(customerPo,customerVo);
+        BeanUtils.copyProperties(customerPo, customerVo);
+        //如果存在 此客户 则进行 查询相关配置项
+        if (customerPo != null && customerPo.getId() > 0) {
+            /*H5配置信息*/
+            CustomerVo.H5Config h5ConfigVo = new CustomerVo.H5Config();
+            WxConfigPo resultWxConfigPo = wxConfigMapper.selectConfigByCustomerId(customerVo.getId());
+            if (resultWxConfigPo != null) {
+                BeanUtils.copyProperties(resultWxConfigPo, h5ConfigVo);
+            }
+            customerVo.setH5Config(h5ConfigVo);
+
+            /*安卓配置信息*/
+            CustomerVo.AndroidConfig androidConfigVo = new CustomerVo.AndroidConfig();
+            AndroidConfigPo resultAndroidConfigPo = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
+            if (resultAndroidConfigPo != null) {
+                BeanUtils.copyProperties(resultAndroidConfigPo, androidConfigVo);
+                //查询 安卓场景
+                AndroidScenePo queryAndroidScenePo = new AndroidScenePo();
+                queryAndroidScenePo.setConfigId(resultAndroidConfigPo.getId());
+                //默认查询有效
+                queryAndroidScenePo.setStatus(CommonConstant.STATUS_YES);
+                List<AndroidScenePo> resultAndroidScenePos = androidSceneMapper.selectListByConfigId(queryAndroidScenePo);
+
+                //当场景列表 不为空的时候 遍历改场景列表，并去查询场景的图片等。
+                if (resultAndroidScenePos != null && resultAndroidScenePos.size() > 0) {
+                    List<CustomerVo.AndroidScene> androidSceneVoList = resultAndroidScenePos.stream().map(resultAndroidScenePo -> {
+                        CustomerVo.AndroidScene androidSceneVo = new CustomerVo.AndroidScene();
+
+                        BeanUtils.copyProperties(resultAndroidScenePo, androidSceneVo);
+
+                        AndroidSceneImgPo queryAndroidSceneImgPo = new AndroidSceneImgPo();
+                        //场景id
+                        queryAndroidSceneImgPo.setAndroidSceneId(resultAndroidScenePo.getId());
+                        //默认查询 有效
+                        queryAndroidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
+                        List<AndroidSceneImgPo> androidSceneImgPoList = androidSceneImgMapper.selectListBySceneId(queryAndroidSceneImgPo);
+                        //如果长场景图片列表不为空，则遍历。
+                        if (androidSceneImgPoList != null && androidSceneImgPoList.size() > 0) {
+                            List<CustomerVo.AndroidSceneImg> androidSceneImgVoList = androidSceneImgPoList.stream().map(androidSceneImgPo ->
+                            {
+                                CustomerVo.AndroidSceneImg androidSceneImgVo = new  CustomerVo.AndroidSceneImg();
+
+                                BeanUtils.copyProperties(androidSceneImgPo,androidSceneImgVo);
+                                return androidSceneImgVo;
+                            }).collect(Collectors.toList());
+                            //设置 场景图片列表
+                            androidSceneVo.setAndroidSceneImgList(androidSceneImgVoList);
+                        }
+
+                        return androidSceneVo;
+                    }).collect(Collectors.toList());
+                    //设置查询到的 场景列表
+                    androidConfigVo.setAndroidSceneList(androidSceneVoList);
+                }else{
+                    androidConfigVo.setAndroidSceneList(null);
+                }
+                customerVo.setAndroidConfig(androidConfigVo);
+            }else{
+                customerVo.setAndroidConfig(null);
+            }
+
+            /*管理后台配置信息*/
+            CustomerVo.BackendConfig backendConfigVo = new  CustomerVo.BackendConfig();
+            BackendConfigPo backendConfigPo = backendConfigMapper.selectConfigByCustomerId(customerPo.getId());
+            if(backendConfigPo!=null){
+                BeanUtils.copyProperties(backendConfigPo,backendConfigVo);
+                customerVo.setBackendConfig(backendConfigVo);
+            }else{
+                customerVo.setBackendConfig(null);
+            }
+
+        }
         return customerVo;
     }
 
@@ -244,7 +359,19 @@ public class CustomerService {
     public CustomerVo selectById(String sld) {
         CustomerVo customerVo = new CustomerVo();
         CustomerPo customerPo = customerMapper.selectBySLD(sld);
-        BeanUtils.copyProperties(customerPo,customerVo);
+        BeanUtils.copyProperties(customerPo, customerVo);
         return customerVo;
+    }
+
+
+    public Boolean deleteCustomerById(Integer customerId) {
+
+        Boolean ret = false;
+        //先删除 该 功能
+        CustomerPo delCustomerPo = new CustomerPo();
+        delCustomerPo.setStatus(CommonConstant.STATUS_DEL);
+        delCustomerPo.setId(customerId);
+        ret = customerMapper.updateStatusById(delCustomerPo) > 0;
+        return ret;
     }
 }

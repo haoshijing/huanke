@@ -51,6 +51,9 @@
             <if test="version != null  and version != '' ">
                 version = #{version},
             </if>
+            <if test="deviceChangePassword != null  and deviceChangePassword != '' ">
+                deviceChangePassword = #{deviceChangePassword},
+            </if>
             <if test="status != null ">
                 status = #{status},
             </if>

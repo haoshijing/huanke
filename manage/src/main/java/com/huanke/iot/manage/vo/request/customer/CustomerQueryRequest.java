@@ -19,6 +19,7 @@ public class CustomerQueryRequest {
     private Integer userType;
     private String loginName;
     private String SLD;
+    private Integer status;
 
     private Integer page = 1;
     private Integer limit = 20;

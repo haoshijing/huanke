@@ -39,11 +39,12 @@ public class CustomerVo {
      */
     @Data
     public static class BackendConfig {
-        private Integer id;
-        private Boolean enableStatus;
+//        private Integer id;
+        private Integer enableStatus;
         private String logo;
         private String name;
         private Integer type;
+        private Integer status;
     }
 
     /**
@@ -59,6 +60,7 @@ public class CustomerVo {
         private String themeName;
         private String logo;
         private String version;
+        private Integer status;
     }
 
     @Data
@@ -78,9 +80,22 @@ public class CustomerVo {
         private String logo;
         private String version;
         private String deviceChangePassword;    //设备切换密码
+        private Integer status;
+//        private List<AndroidBgImg> androidBgImgList;  //背景列表
         private List<AndroidScene> androidSceneList;  //场景列表
     }
 
+    /**
+     * 安卓背景
+     */
+    @Data
+    public static class AndroidBgImg{
+        private Integer id;
+        private String name;    //图片名称
+        private String bgImg;    //图片或视频
+        private String description;    //描述介绍
+        private Integer status;
+    }
     /**
      * 安卓场景
      */
@@ -90,6 +105,7 @@ public class CustomerVo {
         private String name;
         private String imgsCover;    //图册封面
         private String description;
+        private Integer status;
         private List<AndroidSceneImg> androidSceneImgList;  //图片列表
     }
 
@@ -102,5 +118,6 @@ public class CustomerVo {
         private String name;
         private String imgVideo;    //图片或视频
         private String description;
+        private Integer status;
     }
 }

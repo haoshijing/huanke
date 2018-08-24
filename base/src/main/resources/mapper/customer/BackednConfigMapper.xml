@@ -41,14 +41,14 @@
             <if test="logo != null  and logo != '' ">
                 logo = #{logo},
             </if>
-            <if test="version != null  and version != '' ">
-                version = #{version},
-            </if>
             <if test="enableStatus != null ">
                 enableStatus = #{enableStatus},
             </if>
             <if test="status != null ">
                 status = #{status},
+            </if>
+            <if test="type != null ">
+                type = #{type},
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>

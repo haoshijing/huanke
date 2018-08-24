@@ -16,6 +16,7 @@
         name,
         imgVideo,
         description,
+        status,
         createTime
         )
         VALUES (
@@ -25,9 +26,33 @@
         #{name},
         #{imgVideo},
         #{description},
+        #{status},
         #{createTime}
         )
     </insert>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.AndroidSceneImgPo">
+        update
+        <include refid="tableName"/>
+        <set>
+
+            <if test="name != null  and name != ''">
+                name = #{name},
+            </if>
+            <if test="imgVideo != null  and imgVideo != '' ">
+                imgVideo = #{imgVideo},
+            </if>
+            <if test="description != null  and description != '' ">
+                description = #{description},
+            </if>
+            <if test="status != null  ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
 
     <!-- 插入一条记录 -->
     <insert id="insertBatch" parameterType="java.util.List">
@@ -58,5 +83,13 @@
     </insert>
 
 
-
+    <select id="selectListBySceneId"  resultType="com.huanke.iot.base.po.customer.AndroidSceneImgPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE androidSceneId = #{androidSceneId}
+        <if test="status != null  ">
+            AND status = #{status}
+        </if>
+    </select>
 </mapper>

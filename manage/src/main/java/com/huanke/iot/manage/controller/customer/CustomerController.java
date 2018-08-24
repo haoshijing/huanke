@@ -78,4 +78,11 @@ public class CustomerController {
         CustomerVo customerVo =  customerService.selectById(id);
         return new ApiResponse<>(customerVo);
     }
+
+    @ApiOperation("根据Id删除功能")
+    @DeleteMapping(value = "/deleteCustomerById/{id}")
+    public ApiResponse<Boolean> deleteCustomerById(@PathVariable("id") Integer customerId) throws Exception{
+        Boolean ret =  customerService.deleteCustomerById(customerId);
+        return new ApiResponse<>(ret);
+    }
 }

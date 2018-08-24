@@ -12,4 +12,6 @@ public interface AndroidSceneMapper extends BaseMapper<AndroidScenePo> {
 
     void insertBatch(List<AndroidScenePo> androidScenePoList);
 
+    List<AndroidScenePo> selectListByConfigId(AndroidScenePo androidScenePo);
+
 }

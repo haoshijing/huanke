@@ -7,8 +7,10 @@
         t_customer
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
-        INSERT INTO <include refid="tableName"/>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.customer.CustomerPo">
+        INSERT INTO
+        <include refid="tableName"/>
         (
         name,
         loginName,
@@ -89,8 +91,9 @@
         id = #{id}
     </update>
 
-    <select id="selectList">
-        select * from <include refid="tableName"/>
+    <select id="selectList" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select * from
+        <include refid="tableName"/>
         <where>
             1 = 1
             <if test="param.name != null and param.name != ''">
@@ -107,6 +110,9 @@
             </if>
             <if test="param.SLD != null and param.SLD != '' ">
                 AND SLD = #{param.SLD}
+            </if>
+            <if test="param.status != null  ">
+                AND status = #{param.status}
             </if>
         </where>
         limit #{limit} offset #{offset}
@@ -129,9 +135,20 @@
     </select>
 
     <delete id="deleteById">
-        delete from <include refid="tableName"/>
+        delete from
+        <include refid="tableName"/>
         where id = #{id}
     </delete>
 
+    <update id="updateStatusById" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 
 </mapper>

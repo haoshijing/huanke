@@ -11,4 +11,7 @@ import java.util.List;
 public interface AndroidSceneImgMapper extends BaseMapper<AndroidSceneImgPo> {
 
     void insertBatch(List<AndroidSceneImgPo> androidSceneImgPoList);
+
+    List<AndroidSceneImgPo> selectListBySceneId(AndroidSceneImgPo androidSceneImgPo);
+
 }

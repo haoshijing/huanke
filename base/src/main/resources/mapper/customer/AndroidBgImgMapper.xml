@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.customer.AndroidSceneMapper">
+<mapper namespace="com.huanke.iot.base.dao.customer.AndroidBgImgMapper">
 
     <sql id="tableName">
-        android_scene
+        android_bg_img
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.AndroidScenePo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.AndroidBgImgPo">
         INSERT INTO <include refid="tableName"/>
         (
         configId,
@@ -15,6 +15,7 @@
         name,
         imgsCover,
         description,
+        status,
         createTime
         )
         VALUES (
@@ -23,11 +24,12 @@
         #{name},
         #{imgsCover},
         #{description},
+        #{status},
         #{createTime}
         )
     </insert>
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.AndroidScenePo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.AndroidBgImgPo">
         update
         <include refid="tableName"/>
         <set>
@@ -40,6 +42,9 @@
             </if>
             <if test="description != null  and description != '' ">
                 description = #{description},
+            </if>
+            <if test="status != null  ">
+                status = #{status},
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>
@@ -73,14 +78,6 @@
         </foreach>
     </insert>
 
-    <select id="selectListByConfigId"  resultType="com.huanke.iot.base.po.customer.AndroidScenePo">
-        select
-        *
-        FROM <include refid="tableName"/>
-        WHERE configId = #{configId}
-        <if test="status != null  ">
-            AND status = #{status}
-        </if>
-    </select>
+
 
 </mapper>
