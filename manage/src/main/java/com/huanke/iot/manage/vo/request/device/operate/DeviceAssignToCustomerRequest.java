@@ -7,10 +7,10 @@ import java.util.List;
 @Data
 public class DeviceAssignToCustomerRequest {
     private Integer customerId;
-    private String customerName;
     private String appid;
-    private String deviceType;
-    private String typeId;
-    private String remark;
+
+    private Integer modelId;
+    private Integer productId;
+
     private DeviceQueryRequest deviceQueryRequest;
 }

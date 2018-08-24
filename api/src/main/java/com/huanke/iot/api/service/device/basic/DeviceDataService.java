@@ -89,7 +89,7 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceTypeAblitySetMapper deviceTypeAblitySetMapper;
-    
+
     @Autowired
     private CustomerUserMapper customerUserMapper;
 
@@ -809,8 +809,8 @@ public class DeviceDataService {
     }
 
     private static  int getAqi(Integer pm2_5){
-         float [] tbl_aqi ={0f,50f,100f,150f,200f,300f,400f,500f};
-         float[] tbl_pm2_5={0f,35f,75f,115f,150f,250f,350f,500f};
+        float [] tbl_aqi ={0f,50f,100f,150f,200f,300f,400f,500f};
+        float[] tbl_pm2_5={0f,35f,75f,115f,150f,250f,350f,500f};
         int i;
         if(pm2_5>tbl_pm2_5[7]) {
             return (int) tbl_aqi[7];

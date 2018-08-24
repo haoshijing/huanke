@@ -7,10 +7,10 @@ import java.util.List;
 @Data
 public class DeviceQueryRequest {
 
-    private List<DeviceList> deviceList;
+    private List<DeviceQueryList> deviceList;
 
     @Data
-    public static class DeviceList {
+    public static class DeviceQueryList {
         /**
          * 设备名称
          */

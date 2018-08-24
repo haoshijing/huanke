@@ -30,4 +30,12 @@
         <include refid="tableName"/>
         WHERE deviceId = #{deviceId} limit 1
     </select>
+
+    <delete id="deleteDeviceById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tableName"/>
+        <where>
+            deviceId = #{deviceId}
+        </where>
+    </delete>
 </mapper>

@@ -79,10 +79,20 @@ public class DeviceOperateController {
     @ApiOperation("添加新设备")
     @RequestMapping(value = "/createDevice",method = RequestMethod.POST)
     public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests) throws Exception{
-        List<DeviceCreateOrUpdateRequest.DeviceList> deviceList=deviceCreateOrUpdateRequests.getDeviceList();
-        DevicePo devicePo=deviceService.isDeviceExist(deviceList);
+        List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList=deviceCreateOrUpdateRequests.getDeviceList();
+        DevicePo devicePo;
+        if(null == deviceList){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不可为空");
+        }
+        //查询设备列表中是否存在相同mac地址的设备
+        devicePo=deviceService.queryDeviceByMac(deviceList);
         if(null != devicePo){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址"+devicePo.getMac()+"已存在");
+        }
+        //查询设备列表中是否存在相同名称的设备
+        devicePo=deviceService.queryDeviceByName(deviceList);
+        if(null != devicePo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中设备名称"+devicePo.getName()+"已存在");
         }
         else {
             Boolean ret = deviceService.createDevice(deviceList);
@@ -101,7 +111,12 @@ public class DeviceOperateController {
     @RequestMapping(value = "/queryDevice",method = RequestMethod.POST)
     public ApiResponse<List<DeviceListVo>> queryAllDevice(@RequestBody DeviceListQueryRequest deviceListQueryRequest) throws Exception{
         List<DeviceListVo> deviceQueryVos=deviceService.queryDeviceByPage(deviceListQueryRequest);
-        return new ApiResponse<>(deviceQueryVos);
+        if(0 == deviceQueryVos.size()){
+            return new ApiResponse<>(RetCode.OK,"设备列表中无设备");
+        }
+        else {
+            return new ApiResponse<>(deviceQueryVos);
+        }
     }
 
     /**
@@ -126,8 +141,10 @@ public class DeviceOperateController {
     @ApiOperation("删除选中设备")
     @RequestMapping(value = "/deleteDevice",method = RequestMethod.POST)
     public ApiResponse<Integer> deleteDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest){
-
-        List<DeviceCreateOrUpdateRequest.DeviceList> deviceList=deviceCreateOrUpdateRequest.getDeviceList();;
+        List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList=deviceCreateOrUpdateRequest.getDeviceList();
+        if(null == deviceList){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请先选中设备再删除");
+        }
         return new ApiResponse<>(deviceService.deleteDevice(deviceList));
     }
 
@@ -141,8 +158,14 @@ public class DeviceOperateController {
     @ApiOperation("将选中设备分配给客户")
     @RequestMapping(value = "/assignDeviceToCustomer",method = RequestMethod.POST)
     public ApiResponse<Boolean> assignDeviceToCustomer(@RequestBody DeviceAssignToCustomerRequest deviceAssignToCustomerRequest){
-        List<DeviceQueryRequest.DeviceList> deviceList=deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
-        if(deviceService.isDeviceHasCustomer(deviceList)){
+        List<DeviceQueryRequest.DeviceQueryList> deviceList=deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
+        if(0 == deviceList.size()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请选中设备");
+        }
+        else if(null == deviceAssignToCustomerRequest.getCustomerId()||0 == deviceAssignToCustomerRequest.getCustomerId()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请选择客户");
+        }
+        else if(deviceService.isDeviceHasCustomer(deviceList)){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设别列表已有设备被分配");
         }
         else {
@@ -191,7 +214,6 @@ public class DeviceOperateController {
         String data = JSON.toJSONString(otaDeviceVo);
         log.info("data={},topic = {}",data,topic);
         mqttSendService.sendMessage(topic, data);
-
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId("800");
         deviceOperLogPo.setOperUserId(0);
@@ -201,7 +223,6 @@ public class DeviceOperateController {
         deviceOperLogPo.setRequestId(otaDeviceVo.getRequestId());
         deviceOperLogPo.setCreateTime(System.currentTimeMillis());
         deviceOperLogMapper.insert(deviceOperLogPo);
-
         return new ApiResponse<>(true);
     }
     */
