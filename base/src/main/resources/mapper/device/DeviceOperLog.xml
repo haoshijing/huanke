@@ -44,4 +44,10 @@
           ,retMsg = #{retMsg}
         WHERE requestId = #{requestId}
     </select>
+
+    <select id="queryByRequestId"  parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" >
+        select *
+        from <include refid="tableName"/>
+        WHERE requestId = #{requestId}
+    </select>
 </mapper>

@@ -616,3 +616,22 @@ CREATE TABLE `wx_html_type`  (
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT = '微信h5端版型表';
+
+-- ----------------------------
+-- Table structure for t_device_sensor_stat
+-- ----------------------------
+CREATE TABLE `t_device_sensor_stat` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `deviceId` int(11) DEFAULT NULL COMMENT '设备Id',
+  `co2` int(11) DEFAULT NULL COMMENT '平均co2',
+  `hcho` int(11) DEFAULT NULL COMMENT '平均hcho',
+  `pm` int(11) DEFAULT NULL COMMENT '平均pm',
+  `hum` int(11) DEFAULT NULL COMMENT '平均hum',
+  `tvoc` int(11) DEFAULT NULL COMMENT '平均tvoc',
+  `tem` int(11) DEFAULT NULL COMMENT '平均温度',
+  `startTime` bigint(20) DEFAULT NULL COMMENT '开始时间',
+  `endTime` bigint(20) DEFAULT NULL COMMENT '结束时间',
+  `insertTime` bigint(20) DEFAULT NULL COMMENT '写入时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_did` (`deviceId`)
+) COMMENT = '传感器历史数据表';

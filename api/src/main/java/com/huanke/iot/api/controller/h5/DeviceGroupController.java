@@ -1,8 +1,8 @@
 package com.huanke.iot.api.controller.h5;
 
-import com.huanke.iot.api.controller.h5.group.DeviceGroupNewRequest;
-import com.huanke.iot.api.controller.h5.group.DeviceGroupRequest;
-import com.huanke.iot.api.service.device.group.DeviceGroupService;
+import com.huanke.iot.api.controller.h5.team.DeviceGroupNewRequest;
+import com.huanke.iot.api.controller.h5.team.DeviceGroupRequest;
+import com.huanke.iot.api.service.device.team.DeviceGroupService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import org.apache.commons.lang3.StringUtils;
@@ -11,16 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
- * @author haoshijing
- * @version 2018年04月10日 10:16
+ * @author onlymark
+ * @version 2018年08月24日 10:16
  **/
 @RestController
 @RequestMapping("/h5/api")
 public class DeviceGroupController extends BaseController{
-
     @Autowired
     DeviceGroupService deviceGroupService;
     @RequestMapping("/createGroup")

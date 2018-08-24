@@ -1,12 +1,12 @@
-package com.huanke.iot.api.controller.h5.group;
+package com.huanke.iot.api.controller.h5.team;
 
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * @author haoshijing
- * @version 2018年04月08日 13:18
+ * @author onlymark
+ * @version 2018年08月24日
  **/
 @Data
 public class DeviceGroupRequest {

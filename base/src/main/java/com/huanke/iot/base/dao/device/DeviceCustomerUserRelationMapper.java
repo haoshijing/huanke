@@ -15,4 +15,6 @@ public interface DeviceCustomerUserRelationMapper extends BaseMapper<DeviceCusto
     List<DeviceCustomerUserRelationPo> findAllByDeviceCustomerUserRelationPo(DeviceCustomerUserRelationPo deviceCustomerUserRelationPo);
 
     int deleteRelationByJoinId(@Param("openId") String openId, @Param("deviceId") Integer deviceId);
+
+    void updateStatus(DeviceCustomerUserRelationPo updatePo);
 }

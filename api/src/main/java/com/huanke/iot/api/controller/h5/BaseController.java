@@ -5,8 +5,6 @@ import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class BaseController {
 
     @Autowired
@@ -21,4 +19,8 @@ public class BaseController {
         return  requestContext.getCurrentId();
     }
 
+    protected String getCurrentCustomerAppId(){
+        UserRequestContext requestContext = UserRequestContextHolder.get();
+        return  requestContext.getCustomerVo().getAppId();
+    }
 }

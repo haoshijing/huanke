@@ -96,9 +96,18 @@
 
 
 
-    <select id="queryByName" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
+    <select id="queryByName" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamPo" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
         select * from  <include refid="tableName"/>
-        where name = #{name} and customerId = #{customerId}
+        where 1=1
+        <if test="name != null">
+            and name = #{name}
+        </if>
+        <if test="masterUserId != null">
+            and masterUserId = #{masterUserId}
+        </if>
+        <if test="customerId != null">
+            and customerId = #{customerId}
+        </if>
     </select>
 
     <select id="queryTeamItems" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo"
@@ -113,6 +122,46 @@
         </if>
         <if test="deviceId != null">
             and deviceId = #{deviceId}
+        </if>
+        <if test="userId != null">
+            and userId = #{userId}
+        </if>
+    </select>
+
+    <update id="updateDeviceGroupId">
+        update t_device_team_item
+        set teamId = #{newTeamId}
+        where userId = #{userId} and deviceId =
+        #{deviceId}
+    </update>
+
+    <update id="updateGroupStatus">
+        update
+        <include refid="tableName"/>
+        set status = #{status} where userId = #{userId}
+        and id = #{teamId}
+    </update>
+
+    <update id="updateDeviceTeamItem">
+        update t_device_team_item
+        set teamId = #{newTeamId}
+        where userId = #{userId} and teamId =
+        #{currentTeamId}
+    </update>
+
+    <select id="queryTeamCount" resultType="java.lang.Integer">
+        select count(1) FROM
+        <include refid="tableName"/>
+        where userId = #{userId}
+        and name = #{teamName}
+    </select>
+
+    <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.DeviceTeamItemPo"
+            resultType="java.lang.Integer">
+        select count(1) from t_device_team_item
+        where userId = #{userId} and deviceId = #{deviceId}
+        <if test="status != null">
+            and status = #{status}
         </if>
     </select>
 

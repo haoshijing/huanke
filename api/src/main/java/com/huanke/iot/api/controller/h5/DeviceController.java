@@ -8,7 +8,7 @@ import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.dao.impl.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,9 +84,9 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/share")
-    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
+    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, Integer customerId, String masterOpenId, String deviceId, String token) {
         Integer userId = getCurrentUserId();
-        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, userId, deviceId, token);
+        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, customerId, userId, deviceId, token);
         return new ApiResponse<>(shareOk);
     }
 
