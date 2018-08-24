@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2018年08月22日
  **/
 @RestController
-@RequestMapping("/h5/api")
+@RequestMapping("/h5/api/team")
 public class DeviceTeamController extends BaseController {
 
     @Autowired
