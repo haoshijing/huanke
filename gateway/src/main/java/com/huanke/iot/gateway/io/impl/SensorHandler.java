@@ -1,13 +1,9 @@
 package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper;
-import com.huanke.iot.base.po.device.data.DeviceAlarmPo;
-import com.huanke.iot.base.po.device.data.DeviceSensorPo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,8 +15,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SensorHandler  extends AbstractHandler {
 
-    @Autowired
-    private DeviceSensorDataMapper deviceSensorDataMapper;
+//    @Autowired
+//    private DeviceSensorDataMapper deviceSensorDataMapper;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -48,17 +44,17 @@ public class SensorHandler  extends AbstractHandler {
 
         sensorListMessage.getDatas().forEach(sensorMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
-            DeviceSensorPo deviceSensorPo = new DeviceSensorPo();
-            deviceSensorPo.setSensorType(sensorMessage.getType());
-            deviceSensorPo.setSensorValue(sensorMessage.getValue());
-            deviceSensorPo.setCreateTime(System.currentTimeMillis());
-            deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
-            try {
-                deviceSensorDataMapper.insert(deviceSensorPo);
+//            DeviceSensorPo deviceSensorPo = new DeviceSensorPo();
+//            deviceSensorPo.setSensorType(sensorMessage.getType());
+//            deviceSensorPo.setSensorValue(sensorMessage.getValue());
+//            deviceSensorPo.setCreateTime(System.currentTimeMillis());
+//            deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
+//            try {
+//                deviceSensorDataMapper.insert(deviceSensorPo);
                 stringRedisTemplate.opsForHash().put("sensor." + deviceId, sensorMessage.getType(), String.valueOf(sensorMessage.getValue()));
-            }catch (Exception e){
-                log.error("",e);
-            }
+//            }catch (Exception e){
+//                log.error("",e);
+//            }
         });
     }
 
