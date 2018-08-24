@@ -4,7 +4,9 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,24 +53,29 @@ public class CustomerController {
     }
 
     /**
-     * 查询客户详情
-     * @param id
-     * @return
+     * 查询客户列表
+     * @param customerQueryRequest
+     * @return 返回客户列表
+     * @throws Exception
      */
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public ApiResponse<CustomerVo> queryDetail(Integer id) {
-        CustomerVo customerVo = new CustomerVo();
-
-
-        return new ApiResponse<>(customerVo);
+    @ApiOperation("查询客户列表")
+    @PostMapping(value = "/select")
+    public ApiResponse<List<CustomerVo>> selectList(@RequestBody CustomerQueryRequest customerQueryRequest) throws Exception{
+        List<CustomerVo> customerVos =  customerService.selectList(customerQueryRequest);
+        return new ApiResponse<>(customerVos);
     }
 
+
     /**
-     * 查询客户列表
+     * 根据客户主键查询客户详情
+     * @param id
      * @return
+     * @throws Exception
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ApiResponse<List<CustomerPo>> queryList(Integer page, Integer limit) {
-        return new ApiResponse<>(this.customerService.queryList(page, limit));
+    @ApiOperation("根据客户主键查询客户详情")
+    @GetMapping(value = "/selectById/{id}")
+    public ApiResponse<CustomerVo> selectById(@PathVariable("id")Integer id) throws Exception{
+        CustomerVo customerVo =  customerService.selectById(id);
+        return new ApiResponse<>(customerVo);
     }
 }

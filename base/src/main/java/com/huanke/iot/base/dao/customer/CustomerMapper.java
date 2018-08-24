@@ -10,4 +10,5 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 public interface CustomerMapper extends BaseMapper<CustomerPo>{
 
      CustomerPo selectBySLD(String SLD);
+
 }

@@ -6,15 +6,15 @@ import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.po.customer.*;
+import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 客户
@@ -203,12 +203,48 @@ public class CustomerService {
     /**
      * 查询客户列表
      *
-     * @param currentPage
-     * @param limit
+     * @param request
      * @return
      */
-    public List<CustomerPo> queryList(Integer currentPage, Integer limit) {
-        Integer offset = (currentPage - 1) * limit;
-        return this.customerMapper.selectList(null, currentPage, offset);
+    public List<CustomerVo> selectList(CustomerQueryRequest request) {
+
+        CustomerPo queryCustomerPo = new CustomerPo();
+        BeanUtils.copyProperties(request,queryCustomerPo);
+        Integer offset = (request.getPage() - 1) * request.getLimit();
+        Integer limit = request.getLimit();
+        List<CustomerPo> customerPos = customerMapper.selectList(queryCustomerPo,limit,offset);
+        List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
+            CustomerVo customerVo = new CustomerVo();
+            BeanUtils.copyProperties(customerPo,customerVo);
+            return customerVo;
+        }).collect(Collectors.toList());
+
+        return  customerVos;
+    }
+
+    /**
+     * 根据主键查询 客户
+     *
+     * @param customerId
+     * @return
+     */
+    public CustomerVo selectById(Integer customerId) {
+        CustomerVo customerVo = new CustomerVo();
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        BeanUtils.copyProperties(customerPo,customerVo);
+        return customerVo;
+    }
+
+    /**
+     * 根据二级域名查询 客户
+     *
+     * @param sld
+     * @return
+     */
+    public CustomerVo selectById(String sld) {
+        CustomerVo customerVo = new CustomerVo();
+        CustomerPo customerPo = customerMapper.selectBySLD(sld);
+        BeanUtils.copyProperties(customerPo,customerVo);
+        return customerVo;
     }
 }

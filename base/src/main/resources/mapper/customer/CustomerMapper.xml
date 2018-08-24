@@ -90,12 +90,25 @@
     </update>
 
     <select id="selectList">
-        select tc.name,
-        tc.userType,
-        tc.publicName,
-        tc.loginName,
-        tc.remark
-        from <include refid="tableName"/>
+        select * from <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.name != null and param.name != ''">
+                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.publicName != null and param.publicName != ''">
+                AND publicName = #{param.publicName}
+            </if>
+            <if test="param.userType != null">
+                AND userType = #{param.userType}
+            </if>
+            <if test="param.loginName != null and param.loginName != '' ">
+                AND loginName = #{param.loginName}
+            </if>
+            <if test="param.SLD != null and param.SLD != '' ">
+                AND SLD = #{param.SLD}
+            </if>
+        </where>
         limit #{limit} offset #{offset}
     </select>
 
@@ -105,6 +118,14 @@
         FROM
         <include refid="tableName"/>
         WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE SLD = #{SLD} limit 1
     </select>
 
     <delete id="deleteById">
