@@ -15,7 +15,6 @@ import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
@@ -63,9 +62,6 @@ public class DeviceDataService {
     private DeviceTypeMapper deviceTypeMapper;
 
     @Autowired
-    private DeviceGroupMapper deviceGroupMapper;
-
-    @Autowired
     private DeviceGroupItemMapper deviceGroupItemMapper;
 
     @Autowired
@@ -73,9 +69,6 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceAblityMapper deviceAblityMapper;
-
-    @Autowired
-    private DeviceTypeAblitySetMapper deviceTypeAblitySetMapper;
 
     @Autowired
     private CustomerUserMapper customerUserMapper;

@@ -37,15 +37,10 @@
         WHERE deviceId = #{deviceId}
     </select>
 
-    <delete id="deleteByJoinId">
-        delete from <include refid="tableName"/>
-        WHERE deviceId = #{deviceId}
-        AND userId = #{userId}
-    </delete>
-
     <update id="updateStatus">
         update <include refid="tableName"/>
-        set status = #{status} where userId = #{userId}
+        set status = #{status}
+        where userId = #{userId}
         and deviceId = #{deviceId}
     </update>
 </mapper>

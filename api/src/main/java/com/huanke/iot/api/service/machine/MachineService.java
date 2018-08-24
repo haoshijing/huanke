@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.machine.response.MachineDeviceVo;
 import com.huanke.iot.api.wechat.WechartUtil;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceMapper;
 import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -31,7 +32,7 @@ import java.net.URI;
 public class MachineService {
 
     @Autowired
-    private DeviceMapper deviceMapper;
+    private CustomerUserMapper customerUserMapper;
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
