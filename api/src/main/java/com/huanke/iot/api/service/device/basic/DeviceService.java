@@ -79,7 +79,7 @@ public class DeviceService {
         DeviceListVo deviceListVo = new DeviceListVo();
 
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
-        queryDevicePo.setCustomerId(userId);
+        queryDevicePo.setMasterUserId(userId);
         List<DeviceTeamPo> deviceTeamPos = deviceTeamMapper.selectList(queryDevicePo, 100000, 0);
 
         List<DeviceListVo.DeviceTeamData> groupDatas = deviceTeamPos.stream().map(
