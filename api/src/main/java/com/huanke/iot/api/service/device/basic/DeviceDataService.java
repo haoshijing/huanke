@@ -103,13 +103,15 @@ public class DeviceDataService {
 
     private static final String TOKEN_PREFIX = "token.";
 
-    public Boolean shareDevice(String master, Integer customerId, Integer toId, String deviceIdStr, String token) {
+    public Boolean shareDevice(String master, Integer toId, String deviceIdStr, String token) {
         DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
         if (devicePo == null) {
             log.error("找不到设备，deviceIdStr={}", deviceIdStr);
             return false;
         }
         Integer deviceId = devicePo.getId();
+        //通过设备查customerId
+        Integer customerId = deviceMapper.getCustomerId(devicePo);
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(master);
         if (customerUserPo == null) {
             log.error("找不到用户，openId={}", master);
