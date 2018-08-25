@@ -51,6 +51,13 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectBySLD" parameterType="java.lang.String">
+        select *
+        from <include refid="tableName"/>
+        where SLD = #{SLD}
+        limit 1
+    </select>
+
 
 
 
