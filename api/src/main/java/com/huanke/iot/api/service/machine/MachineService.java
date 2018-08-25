@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.machine.response.MachineDeviceVo;
 import com.huanke.iot.api.wechat.WechartUtil;
-import com.huanke.iot.base.dao.customer.CustomerUserMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceTypeMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.device.DeviceTypePo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -32,10 +31,11 @@ import java.net.URI;
 public class MachineService {
 
     @Autowired
-    private CustomerUserMapper customerUserMapper;
+    private DeviceMapper deviceMapper;
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
     @Autowired
     private WechartUtil wechartUtil;
 
@@ -86,7 +86,7 @@ public class MachineService {
             String devicelicence = jsonObject.getString("devicelicence");
             devicePo.setMac(mac);
             devicePo.setDeviceId(deviceId);
-            devicePo.setDeviceTypeId(typeId);
+            devicePo.setTypeId(typeId);
             devicePo.setDevicelicence(devicelicence);
             devicePo.setCreateTime(System.currentTimeMillis());
             devicePo.setName(deviceTypePo.getName());
@@ -118,17 +118,22 @@ public class MachineService {
         HttpGet httpGet = new HttpGet();
         try {
             httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd;
+            StringBuilder result;
+            String line;
+            JSONObject jsonObject;
+            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+            }
 
-            StringBuilder result = new StringBuilder();
-            String line = "";
+            result = new StringBuilder();
+            line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("result = {}", result);
-            JSONObject jsonObject = JSON.parseObject(result.toString());
+            jsonObject = JSON.parseObject(result.toString());
             if (jsonObject != null) {
                 JSONObject resultObject = jsonObject.getJSONObject("base_resp");
                 if(resultObject != null && resultObject.containsKey("errcode")){

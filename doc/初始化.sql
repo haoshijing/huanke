@@ -635,3 +635,17 @@ CREATE TABLE `t_device_sensor_stat` (
   PRIMARY KEY (`id`),
   KEY `idx_did` (`deviceId`)
 ) COMMENT = '传感器历史数据表';
+
+CREATE TABLE `t_device_timer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `deviceId` int(11) DEFAULT NULL COMMENT '设备id',
+  `userId` int(11) DEFAULT NULL COMMENT '用户id',
+  `name` varchar(255) DEFAULT NULL COMMENT '定时器设备',
+  `timerType` int(11) DEFAULT NULL COMMENT '类型',
+  `executeTime` bigint(20) DEFAULT NULL COMMENT '执行时间',
+  `status` int(11) DEFAULT NULL COMMENT '1-正常,2-已取消,3-已失效',
+  `executeRet` int(11) DEFAULT NULL COMMENT '执行结果',
+  `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
+  `lastUpdateTime` bigint(20) DEFAULT NULL COMMENT '最后修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8
