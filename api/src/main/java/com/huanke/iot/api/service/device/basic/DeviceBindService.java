@@ -34,9 +34,6 @@ public class DeviceBindService {
     @Autowired
     private DeviceTeamItemMapper deviceTeamItemMapper;
 
-    @Autowired(required = false)
-    private DeviceGroupMapper deviceGroupMapper;
-
     @Autowired
     private DeviceDataService deviceDataService;
 

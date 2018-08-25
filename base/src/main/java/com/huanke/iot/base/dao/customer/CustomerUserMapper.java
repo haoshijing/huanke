@@ -11,4 +11,5 @@ public interface CustomerUserMapper extends BaseMapper<CustomerUserPo>{
 
      CustomerUserPo selectByOpenId(String openId);
      int updatevisitTimeByOpenId(String openId);
+
 }

@@ -7,6 +7,8 @@ import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,20 @@ public class AuthController {
     private WechartUtil wechartUtil;
 
     @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
     private UserService userService;
+
 
 
     @RequestMapping("/user/auth")
     public ApiResponse<String> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String code = request.getParameter("code");
         UserRequestContext userRequestContext = UserRequestContextHolder.get();
-        String appId = userRequestContext.getCacheVo().getAppId();
+        Integer customerId = userRequestContext.getCurrentId();
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        String appId = customerPo.getAppid();
         if(StringUtils.isEmpty(code)){
             String redirect_uri = request.getRequestURL()+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
