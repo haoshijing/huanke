@@ -45,7 +45,7 @@ public class CustomerService {
     private AndroidSceneMapper androidSceneMapper;
 
     @Autowired
-    private AndroidBgImgMapper androidBgImgMapper;
+    private WxBgImgMapper wxBgImgMapper;
 
     /**
      * 保存详情
@@ -112,6 +112,30 @@ public class CustomerService {
             this.wxConfigMapper.insert(wxConfigPo);
         }
 
+        /*H5背景图片*/
+        List<CustomerVo.H5BgImg> h5BgImgList = h5Config.getH5BgImgList();
+        if(h5BgImgList!=null&&h5BgImgList.size()>0){
+            for (CustomerVo.H5BgImg h5BgImg : h5BgImgList) {
+
+                WxBgImgPo h5BgImgPo = new WxBgImgPo();
+                //如果场景不为空,且主键不为空 则是更新，否则新增
+                if(h5BgImg!=null&&h5BgImg.getId()!=null&&h5BgImg.getId()>0){
+                    BeanUtils.copyProperties(h5BgImg,h5BgImgPo);
+                    h5BgImgPo.setLastUpdateTime(System.currentTimeMillis());
+                    wxBgImgMapper.updateById(h5BgImgPo);
+                }else{
+                    h5BgImgPo = new WxBgImgPo();
+                    BeanUtils.copyProperties(h5BgImg,h5BgImgPo);
+                    h5BgImgPo.setCustomerId(customerPo.getId());
+                    h5BgImgPo.setConfigId(wxConfigPo.getId());
+                    h5BgImgPo.setCreateTime(System.currentTimeMillis());
+                    h5BgImgPo.setStatus(CommonConstant.STATUS_YES);
+                    wxBgImgMapper.insert(h5BgImgPo);
+                }
+
+            }
+        }
+
         /*安卓配置信息*/
         CustomerVo.AndroidConfig androidConfig = customerVo.getAndroidConfig();
         //先查询 是否存在 安卓配置
@@ -129,33 +153,6 @@ public class CustomerService {
             androidConfigPo.setStatus(CommonConstant.STATUS_YES);
             androidConfigMapper.insert(androidConfigPo);
         }
-
-//        /*安卓背景图片*/
-//        List<CustomerVo.AndroidBgImg> androidBgImgList = androidConfig.getAndroidBgImgList();
-//        if(androidBgImgList!=null&&androidBgImgList.size()>0){
-//            for (CustomerVo.AndroidBgImg androidBgImg : androidBgImgList) {
-//
-//                AndroidBgImgPo androidBgImgPo = new AndroidBgImgPo();
-//                //如果场景不为空,且主键不为空 则是更新，否则新增
-//                if(androidBgImg!=null&&androidBgImg.getId()!=null&&androidBgImg.getId()>0){
-//                    BeanUtils.copyProperties(androidBgImg,androidBgImgPo);
-//                    androidBgImgPo.setLastUpdateTime(System.currentTimeMillis());
-//                    androidBgImgMapper.updateById(androidBgImgPo);
-//                }else{
-//                    androidBgImgPo = new AndroidBgImgPo();
-//                    BeanUtils.copyProperties(androidBgImg,androidBgImgPo);
-//                    androidBgImgPo.setCustomerId(customerPo.getId());
-//                    androidBgImgPo.setConfigId(androidConfigPo.getId());
-//                    androidBgImgPo.setCreateTime(System.currentTimeMillis());
-//                    androidBgImgPo.setStatus(CommonConstant.STATUS_YES);
-//                    androidBgImgMapper.insert(androidBgImgPo);
-//                }
-//
-//
-//
-//            }
-//        }
-
         /*安卓场景列表*/
         //遍历保存安卓场景列表
         List<CustomerVo.AndroidScene> androidSceneList = androidConfig.getAndroidSceneList();
@@ -283,6 +280,27 @@ public class CustomerService {
             WxConfigPo resultWxConfigPo = wxConfigMapper.selectConfigByCustomerId(customerVo.getId());
             if (resultWxConfigPo != null) {
                 BeanUtils.copyProperties(resultWxConfigPo, h5ConfigVo);
+
+                WxBgImgPo queryWxBgImgPo = new WxBgImgPo();
+                queryWxBgImgPo.setConfigId(resultWxConfigPo.getId());
+                //默认查询有效
+                queryWxBgImgPo.setStatus(CommonConstant.STATUS_YES);
+                List<WxBgImgPo> resultWxBgImgPoList = wxBgImgMapper.selectListByConfigId(queryWxBgImgPo);
+
+                //当图片列表不为空 遍历 h5端图片列表
+                if(resultWxBgImgPoList!=null&&resultWxBgImgPoList.size()>0){
+                    List<CustomerVo.H5BgImg> h5BgImgList = resultWxBgImgPoList.stream().map(resultWxBgImgPo -> {
+                        CustomerVo.H5BgImg h5BgImgVo = new CustomerVo.H5BgImg();
+
+                        BeanUtils.copyProperties(resultWxBgImgPo,h5BgImgVo);
+                        return h5BgImgVo;
+
+                    }).collect(Collectors.toList());
+
+                    h5ConfigVo.setH5BgImgList(h5BgImgList);
+                }else{
+                    h5ConfigVo.setH5BgImgList(null);
+                }
             }
             customerVo.setH5Config(h5ConfigVo);
 

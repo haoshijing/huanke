@@ -6,7 +6,7 @@ import lombok.Data;
  * 安卓背景表
  */
 @Data
-public class AndroidBgImgPo {
+public class WxBgImgPo {
 
     private Integer id;
     private Integer configId;   //安卓配置ID

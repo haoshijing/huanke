@@ -13,16 +13,16 @@ import java.util.List;
 public class DeviceModelCreateOrUpdateRequest {
 
     private Integer id;
-    private String name;
+    private String name; //名称
     private Integer typeId; //类型id
     private Integer customerId;
     private Integer productId;
-    private String icon;
+    private String icon; //缩略图
     private String version;
     private Integer status;
     private String remark;
 
-    private List<DeviceModelAblityRequest> deviceModelAblityRequests;
+    private List<DeviceModelAblityRequest> deviceModelAblitys;
 
     /**
      * 型号的功能
@@ -31,12 +31,12 @@ public class DeviceModelCreateOrUpdateRequest {
     public static class DeviceModelAblityRequest {
 
         private Integer id;
-        private Integer modelId;
+//        private Integer modelId;
         private Integer ablityId;
         private String definedName;
         private Integer status;
-        private Long createTime;
-        private Long lastUpdateTime;
+//        private Long createTime;
+//        private Long lastUpdateTime;
 
 //        private Integer modelAblityId;
 //        private String definedName;
