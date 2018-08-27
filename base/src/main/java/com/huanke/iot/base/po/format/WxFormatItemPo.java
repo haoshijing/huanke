@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class WxFormatItemPo {
     private Integer id;
+    private Integer formatId;
     private String name;
     private Integer status;
     private Long createTime;
