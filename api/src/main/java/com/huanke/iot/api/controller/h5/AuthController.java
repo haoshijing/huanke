@@ -1,8 +1,6 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huanke.iot.api.requestcontext.UserRequestContext;
-import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
@@ -33,15 +31,21 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    private static final String Customer = "Customer";
+
 
 
     @RequestMapping("/user/auth")
     public ApiResponse<String> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String code = request.getParameter("code");
-        UserRequestContext userRequestContext = UserRequestContextHolder.get();
-        Integer customerId = userRequestContext.getCurrentId();
-        CustomerPo customerPo = customerMapper.selectById(customerId);
+        //Integer customerId = Integer.valueOf(request.getHeader(Customer));
+        Integer customerId =12;
+                CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
+        String s = request.getRequestURL().toString();
+        System.out.println(s);
+        String encode = URLEncoder.encode(request.getRequestURL().toString(), "UTF-8");
+        System.out.println(encode);
         if(StringUtils.isEmpty(code)){
             String redirect_uri = request.getRequestURL()+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="

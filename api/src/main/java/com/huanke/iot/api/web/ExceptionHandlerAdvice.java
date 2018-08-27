@@ -18,7 +18,7 @@ public class ExceptionHandlerAdvice {
     @ResponseBody
     @ExceptionHandler
     public ApiResponse processException(Exception e){
-        log.error("{}",e);
+        log.error("{123}",e);
         ApiResponse apiResponse = ApiResponse.responseError(e);
         return apiResponse;
     }

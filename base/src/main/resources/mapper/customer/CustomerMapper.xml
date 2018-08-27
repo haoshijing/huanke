@@ -51,11 +51,18 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="selectBySLD" parameterType="java.lang.String">
+    <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select *
         from <include refid="tableName"/>
         where SLD = #{SLD}
         limit 1
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE id = #{id} limit 1
     </select>
 
 
