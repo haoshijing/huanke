@@ -88,7 +88,7 @@ public class WechartUtil {
     }
     public JSONObject obtainAuthAccessToken(String code){
         UserRequestContext context = UserRequestContextHolder.get();
-        Integer customerId = context.getCurrentId();
+        Integer customerId = context.getCustomerVo().getCustomerId();
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         String appSecret = customerPo.getAppsecret();

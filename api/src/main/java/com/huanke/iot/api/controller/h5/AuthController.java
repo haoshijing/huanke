@@ -1,6 +1,8 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.requestcontext.UserRequestContext;
+import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
@@ -38,9 +40,17 @@ public class AuthController {
     @RequestMapping("/user/auth")
     public ApiResponse<String> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String code = request.getParameter("code");
-        //Integer customerId = Integer.valueOf(request.getHeader(Customer));
-        Integer customerId =12;
-                CustomerPo customerPo = customerMapper.selectById(customerId);
+        Integer customerId = Integer.valueOf(request.getParameter("customerId"));
+        if(customerId == null){
+            log.error("customerId is null, customerId={}", customerId);
+        }
+        //保存threadlocal
+        UserRequestContext requestContext = UserRequestContextHolder.get();
+        UserRequestContext.CustomerVo customerVo = new UserRequestContext.CustomerVo();
+        customerVo.setCustomerId(customerId);
+        requestContext.setCustomerVo(customerVo);
+
+        CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         String s = request.getRequestURL().toString();
         System.out.println(s);
