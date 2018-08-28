@@ -24,6 +24,6 @@ public class DeviceFormatController {
     @RequestMapping("/obtainByDeviceId")
     public ApiResponse<DeviceListVo> obtainMyDevice(String deviceId) {
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
-        return new ApiResponse<>(deviceListVo);
+        return new ApiResponse<>();
     }
 }
