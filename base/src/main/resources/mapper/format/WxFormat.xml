@@ -70,6 +70,51 @@
         limit #{offset},#{limit}
     </select>
 
+    <select id="selectList" resultType="com.huanke.iot.base.po.format.WxFormatPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.name != null and param.name != ''">
+                AND  name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.type != null ">
+                AND type = #{param.type}
+            </if>
+            <if test="param.owerType != null">
+                AND owerType = #{param.owerType}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="selectFormatsByCustomerId" resultType="com.huanke.iot.base.po.format.WxFormatPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.customerIds != null and param.customerIds != ''">
+                AND  ( customerIds like CONCAT(#{param.customerIds},',%')
+                or  customerIds like CONCAT('%,',#{param.customerIds})
+                or  customerIds like CONCAT('%,',CONCAT(#{param.customerIds},',%'))
+                or customerIds = #{param.customerIds}
+                )
+            </if>
+            <if test="param.type != null ">
+                AND type = #{param.type}
+            </if>
+            <if test="param.owerType != null">
+                AND owerType = #{param.owerType}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.format.WxFormatPo">
         update

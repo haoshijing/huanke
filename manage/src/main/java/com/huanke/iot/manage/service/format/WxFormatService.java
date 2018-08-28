@@ -102,9 +102,9 @@ public class WxFormatService {
             queryWxFormatPo.setName(request.getName());
             queryWxFormatPo.setOwerType(request.getOwerType());
             queryWxFormatPo.setType(request.getType());
-            if(request.getStatus().equals(CommonConstant.STATUS_DEL)){
+            if (request.getStatus().equals(CommonConstant.STATUS_DEL)) {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_DEL);
-            }else{
+            } else {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
 
             }
@@ -177,6 +177,48 @@ public class WxFormatService {
         }
         return wxFormatVo;
     }
+
+//    /**
+//     * 查询客户可使用的版式列表
+//     *
+//     * @param customerId
+//     * @return
+//     */
+//    public List<WxFormatVo> selectFormatsByCustomerId(Integer customerId) {
+//
+//        WxFormatPo queryWxFormatPo = new WxFormatPo();
+//
+//        if (request.getStatus().equals(CommonConstant.STATUS_DEL)) {
+//            queryWxFormatPo.setStatus(CommonConstant.STATUS_DEL);
+//        } else {
+//            queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
+//
+//        }
+//
+//        //查询 版式列表
+//        List<WxFormatPo> wxformatPoList = wxFormatMapper.selectList(queryWxFormatPo, limit, offset);
+//        List<WxFormatVo> wxFormatVoList = wxformatPoList.stream().map(wxFormatPo -> {
+//            WxFormatVo wxFormatVo = new WxFormatVo();
+//            BeanUtils.copyProperties(wxFormatPo, wxFormatVo);
+//
+//            //根据版式主键 查询该版式下的 配置项
+//            List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByFormatId(wxFormatPo.getId());
+//
+//            List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
+//                WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
+//                wxFormatItemVo.setName(wxFormatItemPo.getName());
+//                wxFormatItemVo.setId(wxFormatItemPo.getId());
+//                wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
+//                return wxFormatItemVo;
+//            }).collect(Collectors.toList());
+//
+//            wxFormatVo.setWxFormatItemVos(wxFormatItemVos);
+//
+//            return wxFormatVo;
+//        }).collect(Collectors.toList());
+//
+//        return wxFormatVoList;
+//    }
 
     /**
      * 删除 该版式
