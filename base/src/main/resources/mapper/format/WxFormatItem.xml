@@ -40,6 +40,7 @@
         FROM
         <include refid="tableName"/>
         WHERE formatId = #{formatId}
+        and status = 1
     </select>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.format.WxFormatItemPo">
@@ -57,6 +58,20 @@
         </set>
         where
         id = #{id}
+    </update>
+
+    <update id="updateStatusByFormId" parameterType="com.huanke.iot.base.po.format.WxFormatItemPo">
+
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        formatId = #{formatId}
     </update>
 
 </mapper>

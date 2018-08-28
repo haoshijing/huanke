@@ -4,6 +4,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
 import com.huanke.iot.manage.service.format.WxFormatService;
+import com.huanke.iot.manage.vo.request.WxFormatQueryRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
@@ -66,4 +67,44 @@ public class WxFormatController {
     }
 
 
+
+    /**
+     * 查询版式列表
+     * @param wxFormatQueryRequest
+     * @return 返回功能项列表
+     * @throws Exception
+     */
+    @ApiOperation("查询功能列表")
+    @PostMapping(value = "/select")
+    public ApiResponse<List<WxFormatVo>> selectList(@RequestBody WxFormatQueryRequest wxFormatQueryRequest) throws Exception{
+        List<WxFormatVo> wxFormatVos =  wxFormatService.selectList(wxFormatQueryRequest);
+        return new ApiResponse<>(wxFormatVos);
+    }
+
+    /**
+     * 根据版式主键查询版式
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation("根据版式主键查询版式")
+    @GetMapping(value = "/selectById/{id}")
+    public ApiResponse<WxFormatVo> selectById(@PathVariable("id")Integer id) throws Exception{
+        WxFormatVo wxFormatVo =  wxFormatService.selectById(id);
+        return new ApiResponse<>(wxFormatVo);
+    }
+
+    /**
+     * 删除 该能力
+     * 删除 能力表中的数据 并删除 选项表中 跟该能力相关的选项
+     * @param ablityId
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @ApiOperation("根据Id删除功能")
+    @DeleteMapping(value = "/delteById/{id}")
+    public ApiResponse<Boolean> delteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
+        ApiResponse<Boolean> result =  wxFormatService.delteById(ablityId);
+        return result;
+    }
 }

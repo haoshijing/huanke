@@ -24,9 +24,9 @@ public class WxFormatVo {
     private List<WxFormatItemVo> wxFormatItemVos;
 
     @Data
-    public class WxFormatItemVo{
+    public static class WxFormatItemVo{
         private Integer id;
-        private Integer formatId;
+//        private Integer formatId;
         private String name;
         private Integer status;
     }

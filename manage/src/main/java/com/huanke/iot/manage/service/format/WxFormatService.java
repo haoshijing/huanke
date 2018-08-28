@@ -2,6 +2,7 @@ package com.huanke.iot.manage.service.format;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
@@ -73,6 +74,7 @@ public class WxFormatService {
                     wxFormatItemPo.setLastUpdateTime(System.currentTimeMillis());
                     wxFormatItemMapper.updateById(wxFormatItemPo);
                 } else {
+                    wxFormatItemPo.setFormatId(wxFormatPo.getId());
                     wxFormatItemPo.setCreateTime(System.currentTimeMillis());
                     wxFormatItemPo.setStatus(CommonConstant.STATUS_YES);
                     wxFormatItemMapper.insert(wxFormatItemPo);
@@ -100,7 +102,12 @@ public class WxFormatService {
             queryWxFormatPo.setName(request.getName());
             queryWxFormatPo.setOwerType(request.getOwerType());
             queryWxFormatPo.setType(request.getType());
-            queryWxFormatPo.setStatus(request.getStatus());
+            if(request.getStatus().equals(CommonConstant.STATUS_DEL)){
+                queryWxFormatPo.setStatus(CommonConstant.STATUS_DEL);
+            }else{
+                queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
+
+            }
         }
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
@@ -111,7 +118,18 @@ public class WxFormatService {
             WxFormatVo wxFormatVo = new WxFormatVo();
             BeanUtils.copyProperties(wxFormatPo, wxFormatVo);
 
+            //根据版式主键 查询该版式下的 配置项
+            List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByFormatId(wxFormatPo.getId());
 
+            List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
+                WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
+                wxFormatItemVo.setName(wxFormatItemPo.getName());
+                wxFormatItemVo.setId(wxFormatItemPo.getId());
+                wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
+                return wxFormatItemVo;
+            }).collect(Collectors.toList());
+
+            wxFormatVo.setWxFormatItemVos(wxFormatItemVos);
 
             return wxFormatVo;
         }).collect(Collectors.toList());
@@ -119,61 +137,75 @@ public class WxFormatService {
         return wxFormatVoList;
     }
 
-//
-//    /**
-//     * 根据主键查询 功能
-//     *
-//     * @param typeId
-//     * @return
-//     */
-//    public DeviceAblityVo selectById(Integer typeId) {
-//
-//        DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(typeId);
-//
-//        DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
-//        if (deviceAblityPo != null) {
-//            deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
-//            deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
-//            deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
-//            deviceAblityVo.setReadStatus(deviceAblityPo.getReadStatus());
-//            deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
-//            deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
-//            deviceAblityVo.setAblityType(deviceAblityPo.getAblityType());
-//            deviceAblityVo.setRemark(deviceAblityPo.getRemark());
-//            deviceAblityVo.setId(deviceAblityPo.getId());
-//
-//            //根据功能主键 查询该功能下的 选项列表
-//            List<DeviceAblityOptionPo> deviceAblityOptionpos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
-//            List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionpos.stream().map(deviceAblityOptionPo -> {
-//                DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
-//                deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
-//                deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
-//                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
-//                deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
-//                return deviceAblityOptionVo;
-//            }).collect(Collectors.toList());
-//
-//            deviceAblityVo.setDeviceAblityOptions(deviceAblityOptionVos);
-//        }
-//        return deviceAblityVo;
-//    }
-//
-//    /**
-//     * 删除 该功能
-//     * 并同时删除该功能下 所有的选项
-//     *
-//     * @param ablityId
-//     * @return
-//     */
-//    public Boolean deleteAblity(Integer ablityId) {
-//
-//        Boolean ret = false;
-//        //先删除 该 功能
-//        ret = deviceAblityMapper.deleteById(ablityId) > 0;
-//        //再删除 选项表中 的选项
-//        ret = ret && deviceAblityMapper.deleteOptionByAblityId(ablityId) > 0;
-//        return ret;
-//    }
+
+    /**
+     * 根据主键查询 版式
+     *
+     * @param formatId
+     * @return
+     */
+    public WxFormatVo selectById(Integer formatId) {
+
+        WxFormatPo wxFormatPo = wxFormatMapper.selectById(formatId);
+
+        WxFormatVo wxFormatVo = new WxFormatVo();
+        if (wxFormatPo != null) {
+            wxFormatVo.setId(wxFormatPo.getId());
+            wxFormatVo.setName(wxFormatPo.getName());
+            wxFormatVo.setHtmlUrl(wxFormatPo.getHtmlUrl());
+            wxFormatVo.setIcon(wxFormatPo.getIcon());
+            wxFormatVo.setOwerType(wxFormatPo.getOwerType());
+            wxFormatVo.setPreviewImg(wxFormatPo.getPreviewImg());
+            wxFormatVo.setTypeIds(wxFormatPo.getTypeIds());
+            wxFormatVo.setCustomerIds(wxFormatPo.getCustomerIds());
+            wxFormatVo.setType(wxFormatPo.getType());
+            wxFormatVo.setVersion(wxFormatPo.getVersion());
+            wxFormatVo.setStatus(wxFormatPo.getStatus());
+
+            //根据版式主键 查询该版式下的 配置项
+            List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByFormatId(wxFormatPo.getId());
+
+            List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
+                WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
+                wxFormatItemVo.setName(wxFormatItemPo.getName());
+                wxFormatItemVo.setId(wxFormatItemPo.getId());
+                wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
+                return wxFormatItemVo;
+            }).collect(Collectors.toList());
+
+            wxFormatVo.setWxFormatItemVos(wxFormatItemVos);
+        }
+        return wxFormatVo;
+    }
+
+    /**
+     * 删除 该版式
+     * 并同时删除该版式下 所有的配置项
+     *
+     * @param formatId
+     * @return
+     */
+    public ApiResponse<Boolean> delteById(Integer formatId) {
+
+        Boolean ret = true;
+        //先删除(逻辑删除) 该 版式
+        WxFormatPo wxFormatPo = wxFormatMapper.selectById(formatId);
+        if (wxFormatPo != null) {
+            wxFormatPo.setStatus(CommonConstant.STATUS_DEL);
+            wxFormatPo.setLastUpdateTime(System.currentTimeMillis());
+            wxFormatMapper.updateById(wxFormatPo);
+            //再删除 版式表中 的配置项
+
+            WxFormatItemPo wxFormatItemPo = new WxFormatItemPo();
+            wxFormatItemPo.setFormatId(formatId);
+            wxFormatItemPo.setStatus(CommonConstant.STATUS_DEL);
+            wxFormatItemPo.setLastUpdateTime(System.currentTimeMillis());
+            ret = ret && wxFormatItemMapper.updateStatusByFormId(wxFormatItemPo) > 0;
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该版式不存在");
+        }
+        return new ApiResponse<>(ret);
+    }
 
 
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {
