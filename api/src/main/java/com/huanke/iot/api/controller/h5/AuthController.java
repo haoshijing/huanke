@@ -47,9 +47,9 @@ public class AuthController {
         String encode = URLEncoder.encode(request.getRequestURL().toString(), "UTF-8");
         System.out.println(encode);
         if(StringUtils.isEmpty(code)){
-            String redirect_uri = request.getRequestURL()+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+            String redirect_uri = request.getRequestURL().toString();
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
-                    + URLEncoder.encode(redirect_uri, "UTF-8");
+                    + URLEncoder.encode(redirect_uri, "UTF-8")+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 
             response.sendRedirect(fullRedirectUrl);
             return null;
