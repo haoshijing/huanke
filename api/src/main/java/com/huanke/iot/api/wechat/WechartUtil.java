@@ -97,29 +97,24 @@ public class WechartUtil {
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            BufferedReader rd;
-            StringBuilder result;
-            String line;
-            JSONObject jsonObject;
-            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
-                rd = new BufferedReader(
-                        new InputStreamReader(response.getEntity().getContent()));
-            }
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-            result = new StringBuilder();
-            line = "";
+            StringBuilder result = new StringBuilder();
+            String line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("result = {}", result);
-            jsonObject = JSON.parseObject(result.toString());
+            JSONObject jsonObject = JSON.parseObject(result.toString());
             if(jsonObject != null){
                 if(jsonObject.containsKey("access_token")){
                     return jsonObject;
                 }
-           }
+            }
         }catch (Exception e){
-            log.error("",e);
+
         }
         return null;
     }
