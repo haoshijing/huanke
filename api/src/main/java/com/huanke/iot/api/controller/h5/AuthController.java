@@ -33,8 +33,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    private static final String Customer = "Customer";
-
 
 
     @RequestMapping("/user/auth")
@@ -44,15 +42,11 @@ public class AuthController {
         UserRequestContext requestContext = UserRequestContextHolder.get();
         UserRequestContext.CustomerVo customerVo = new UserRequestContext.CustomerVo();
         Integer customerId = customerVo.getCustomerId();
-        System.out.println("customerId->" + customerId);
         if(customerId == null){
             customerId = Integer.valueOf(request.getParameter("customerId"));
             customerVo.setCustomerId(customerId);
             requestContext.setCustomerVo(customerVo);
-            System.out.println("customerId--get->" + customerId);
         }
-        StringBuffer requestURL = request.getRequestURL();
-        System.out.println("requestURL->" + requestURL);
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         if(StringUtils.isEmpty(code)){
