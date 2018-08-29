@@ -44,18 +44,22 @@ public class AuthController {
         UserRequestContext requestContext = UserRequestContextHolder.get();
         UserRequestContext.CustomerVo customerVo = new UserRequestContext.CustomerVo();
         Integer customerId = customerVo.getCustomerId();
+        System.out.println("customerId->" + customerId);
         if(customerId == null){
             customerId = Integer.valueOf(request.getParameter("customerId"));
             customerVo.setCustomerId(customerId);
             requestContext.setCustomerVo(customerVo);
+            System.out.println("customerId--get->" + customerId);
         }
+        StringBuffer requestURL = request.getRequestURL();
+        System.out.println("requestURL->" + requestURL);
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         if(StringUtils.isEmpty(code)){
             String redirect_uri = request.getRequestURL().toString();
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
-                    + URLEncoder.encode(redirect_uri, "UTF-8")+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-
+                    + URLEncoder.encode(redirect_uri, "UTF-8")+ "?customerId=" + customerId +"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+            System.out.println("fullredirectUrl->" + fullRedirectUrl);
             response.sendRedirect(fullRedirectUrl);
             return null;
         }
