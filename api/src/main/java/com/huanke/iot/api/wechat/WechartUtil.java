@@ -39,7 +39,7 @@ public class WechartUtil {
 
     public String getAccessToken(boolean getFromSever) {
         UserRequestContext context =  UserRequestContextHolder.get();
-        Integer customerId = context.getCurrentId();
+        Integer customerId = context.getCustomerVo().getCustomerId();
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         String appSecret = customerPo.getAppsecret();
@@ -57,22 +57,17 @@ public class WechartUtil {
             try {
                 HttpGet httpGet = new HttpGet();
                 httpGet.setURI(new URI(url));
-                BufferedReader rd;
-                StringBuilder result;
-                String line;
-                JSONObject json;
-                try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
-                    rd = new BufferedReader(
-                            new InputStreamReader(response.getEntity().getContent()));
-                }
+                CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+                BufferedReader rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
 
-                result = new StringBuilder();
-                line = "";
+                StringBuilder result = new StringBuilder();
+                String line = "";
                 while ((line = rd.readLine()) != null) {
                     result.append(line);
                 }
                 log.info("result = {}", result);
-                json = JSONObject.parseObject(result.toString());
+                JSONObject json = JSONObject.parseObject(result.toString());
                 if (json.containsKey("access_token")) {
                     String queryAccessToken = json.getString("access_token");
                     if (StringUtils.isNotEmpty(queryAccessToken)) {
@@ -81,7 +76,7 @@ public class WechartUtil {
                     }
                 }
             } catch (Exception e) {
-                log.error("",e);
+                e.printStackTrace();
             }
         }
         return "";
@@ -211,22 +206,17 @@ public class WechartUtil {
             log.info("url = {}",url);
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            BufferedReader rd;
-            StringBuilder result;
-            String line;
-            JSONObject jsonObject;
-            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
-                rd = new BufferedReader(
-                        new InputStreamReader(response.getEntity().getContent()));
-            }
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-            result = new StringBuilder();
-            line = "";
+            StringBuilder result = new StringBuilder();
+            String line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("result = {}",result);
-            jsonObject = JSON.parseObject(result.toString());
+            JSONObject jsonObject = JSON.parseObject(result.toString());
             if(jsonObject != null){
                 int errcode = jsonObject.getInteger("errcode");
                 return errcode == 0;
@@ -242,54 +232,43 @@ public class WechartUtil {
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            BufferedReader rd;
-            StringBuilder result;
-            String line;
-            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
-                rd = new BufferedReader(
-                        new InputStreamReader(response.getEntity().getContent()));
-            }
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-            result = new StringBuilder();
-            line = "";
+            StringBuilder result = new StringBuilder();
+            String line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             return result.toString();
         } catch (Exception e) {
-            log.error("",e);
             return "";
         }
     }
 
     public JSONObject getByRefreshToken(String refresh_token) {
         UserRequestContext context =  UserRequestContextHolder.get();
-        Integer customerId = context.getCurrentId();
+        Integer customerId = context.getCustomerVo().getCustomerId();
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+appId+"&grant_type=refresh_token&refresh_token="+refresh_token;
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            BufferedReader rd;
-            StringBuilder result;
-            String line;
-            JSONObject jsonObject;
-            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
-                rd = new BufferedReader(
-                        new InputStreamReader(response.getEntity().getContent()));
-            }
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-            result = new StringBuilder();
-            line = "";
+            StringBuilder result = new StringBuilder();
+            String line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("getByRefreshToken result = {}",result.toString());
-            jsonObject = JSON.parseObject(result.toString());
+            JSONObject jsonObject = JSON.parseObject(result.toString());
             return  jsonObject;
         } catch (Exception e) {
-            log.error("",e);
             return null;
         }
     }
