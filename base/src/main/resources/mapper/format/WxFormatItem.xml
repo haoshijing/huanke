@@ -34,12 +34,12 @@
         WHERE id = #{id} limit 1
     </select>
 
-    <select id="selectByFormatId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.format.WxFormatItemPo">
+    <select id="selectByPageId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.format.WxFormatItemPo">
         select
         *
         FROM
         <include refid="tableName"/>
-        WHERE formatId = #{formatId}
+        WHERE pageId = #{pageId}
         and status = 1
     </select>
 
@@ -60,7 +60,7 @@
         id = #{id}
     </update>
 
-    <update id="updateStatusByFormId" parameterType="com.huanke.iot.base.po.format.WxFormatItemPo">
+    <update id="updateStatusByPageId" parameterType="com.huanke.iot.base.po.format.WxFormatItemPo">
 
         update
         <include refid="tableName"/>
@@ -71,7 +71,7 @@
             lastUpdateTime = #{lastUpdateTime}
         </set>
         where
-        formatId = #{formatId}
+        pageId = #{pageId}
     </update>
 
 </mapper>

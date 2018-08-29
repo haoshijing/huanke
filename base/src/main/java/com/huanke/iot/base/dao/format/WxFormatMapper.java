@@ -8,4 +8,5 @@ import com.huanke.iot.base.po.format.WxFormatPo;
  * @date 2018/8/27 13:35
  */
 public interface WxFormatMapper extends BaseMapper<WxFormatPo> {
+
 }

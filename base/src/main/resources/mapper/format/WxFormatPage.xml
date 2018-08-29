@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.format.WxFormatPageMapper">
+
+    <sql id="tableName">
+        wx_format_page
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        formatId
+        name,
+        pageNo,
+        showImg,
+        status,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES (
+        #{formatId},
+        #{name},
+        #{pageNo},
+        #{showImg},
+        #{status},
+        #{createTime},
+        #{lastUpdateTime}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectByFormatId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE pageId = #{pageId}
+        and status = 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.name != null and param.name != ''">
+                AND  name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.pageNo != null  and param.pageNo!='' ">
+                AND pageNo = #{param.pageNo}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="selectPagesByFormatId" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+                AND formatId = #{formatId}
+                AND status = 1
+        </where>
+    </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="name != null and name !='' ">
+                name = #{name},
+            </if>
+            <if test="pageNo != null  ">
+                pageNo = #{pageNo},
+            </if>
+            <if test="showImg != null and showImg != '' ">
+                showImg = #{showImg},
+            </if>
+
+            <if test="status != null">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        <where>
+            1= 1
+            <if test="id != null">and id = #{id}</if>
+        </where>
+    </update>
+
+
+    <update id="updateStatusByFormatId" parameterType="com.huanke.iot.base.po.format.WxFormatPagePo">
+
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        formatId = #{formatId}
+    </update>
+
+</mapper>

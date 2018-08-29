@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface WxFormatItemMapper  extends BaseMapper<WxFormatItemPo> {
 
-    List<WxFormatItemPo> selectByFormatId(Integer formatId);
+    List<WxFormatItemPo> selectByPageId(Integer pageId);
 
-    Integer updateStatusByFormId(WxFormatItemPo wxFormatItemPo);
+    Integer updateStatusByPageId(WxFormatItemPo wxFormatItemPo);
 }

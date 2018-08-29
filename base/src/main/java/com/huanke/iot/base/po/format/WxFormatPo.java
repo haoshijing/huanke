@@ -19,6 +19,7 @@ public class WxFormatPo {
     private Integer type;
     private Integer owerType;
     private Integer status;
+    private String description;
     private Long createTime;
     private Long lastUpdateTime;
 }
