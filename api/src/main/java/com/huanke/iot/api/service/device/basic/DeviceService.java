@@ -311,8 +311,5 @@ public class DeviceService {
         return deviceMapper.updateByDeviceId(devicePo) > 0;
     }
 
-    public Integer getCustomerId(DevicePo devicePo){
-        return deviceMapper.getCustomerId(devicePo);
-    }
 
 }
