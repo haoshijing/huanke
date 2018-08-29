@@ -28,6 +28,7 @@
         )
     </insert>
 
+
     <select id="findAllByDeviceCustomerUserRelationPo" parameterType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
         select
         *
