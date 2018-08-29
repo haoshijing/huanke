@@ -2,12 +2,8 @@ package com.huanke.iot.manage.controller.format;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
 import com.huanke.iot.manage.service.format.WxFormatService;
-import com.huanke.iot.manage.vo.request.WxFormatQueryRequest;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
-import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
+import com.huanke.iot.manage.vo.request.format.WxFormatQueryRequest;
 import com.huanke.iot.manage.vo.response.format.WxFormatVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

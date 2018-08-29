@@ -3,22 +3,13 @@ package com.huanke.iot.manage.service.format;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
-import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatPageMapper;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.format.WxFormatPo;
-import com.huanke.iot.manage.vo.request.WxFormatQueryRequest;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityOptionCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import com.huanke.iot.manage.vo.request.format.WxFormatQueryRequest;
 import com.huanke.iot.manage.vo.response.format.WxFormatVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -136,7 +127,7 @@ public class WxFormatService {
             queryWxFormatPo.setName(request.getName());
             queryWxFormatPo.setOwerType(request.getOwerType());
             queryWxFormatPo.setType(request.getType());
-            if (request.getStatus().equals(CommonConstant.STATUS_DEL)) {
+            if (request.getStatus()!=null&&request.getStatus().equals(CommonConstant.STATUS_DEL)) {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_DEL);
             } else {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);

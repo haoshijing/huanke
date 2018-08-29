@@ -12,13 +12,12 @@
         INSERT INTO
         <include refid="tableName"/>
         (
-        formatId
+        formatId,
         name,
         pageNo,
         showImg,
         status,
-        createTime,
-        lastUpdateTime
+        createTime
         )
         VALUES (
         #{formatId},
@@ -26,8 +25,7 @@
         #{pageNo},
         #{showImg},
         #{status},
-        #{createTime},
-        #{lastUpdateTime}
+        #{createTime}
         )
     </insert>
 
@@ -44,7 +42,7 @@
         *
         FROM
         <include refid="tableName"/>
-        WHERE pageId = #{pageId}
+        WHERE formatId = #{formatId}
         and status = 1
     </select>
 

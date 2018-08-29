@@ -1,4 +1,4 @@
-package com.huanke.iot.manage.vo.request;
+package com.huanke.iot.manage.vo.request.format;
 
 import lombok.Data;
 
