@@ -944,3 +944,23 @@ CREATE TABLE `t_device_timer` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8
 
+##0829
+CREATE TABLE `t_device_data_sensor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `deviceId` int(11) DEFAULT NULL COMMENT '设备id',
+  `sensorType` varchar(20) DEFAULT NULL COMMENT '传感器数据类型',
+  `sensorValue` int(11) DEFAULT NULL COMMENT '传感器数值',
+  `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idxDeviceId` (`deviceId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+##0829
+CREATE TABLE `t_device_data_control` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `deviceId` int(11) DEFAULT NULL COMMENT '设备id',
+  `funcId` varchar(20) DEFAULT NULL COMMENT '功能id',
+  `funcValue` int(11) DEFAULT NULL COMMENT '功能当前值',
+  `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
