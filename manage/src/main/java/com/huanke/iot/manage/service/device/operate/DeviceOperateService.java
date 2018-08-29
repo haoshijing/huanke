@@ -241,38 +241,38 @@ public class DeviceOperateService {
         DeviceIdPoolPo deviceIdPoolPo=new DeviceIdPoolPo();
         Integer devicePoolCount=deviceIdPoolMapper.selectCount(deviceIdPoolPo);
         //若当前设备池中的数量不够，则向微信公众号请求200个新的设备证书
-//        if(deviceList.size()>devicePoolCount) {
-//            isPoolAdequate=false;
-//            CustomerPo customerPo = customerMapper.selectById(deviceAssignToCustomerRequest.getCustomerId());
-//            //获取数据
-//            JSONObject devicePoolInfo = obtainDeviceJson(customerPo.getAppid(), customerPo.getAppsecret(), customerPo.getPublicId(), deviceAssignToCustomerRequest.getProductId());
-//            if (null == devicePoolInfo) {
-//                return false;
-//            }
-//            else {
-//                //这边有待修改，由于目前不知道后台微信的回复方式
-//                Object jsonArray = devicePoolInfo.get("devicePoolInfo");
-//                //将jsonArray转换为list
-//                List<DeviceIdPoolPo> deviceIdPoolPoList = JSON.parseArray(jsonArray + "", DeviceIdPoolPo.class);
-//                List<DeviceIdPoolPo> insertPos = deviceIdPoolPoList.stream().map(deviceIdPoolPo1 -> {
-//                    DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
-//                    BeanUtils.copyProperties(deviceIdPoolPo1, insertPo);
-//                    insertPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
-//                    insertPo.setStatus(1);
-//                    insertPo.setCreateTime(System.currentTimeMillis());
-//                    insertPo.setLastUpdateTime(System.currentTimeMillis());
-//                    return insertPo;
-//                }).collect(Collectors.toList());
-//                //执行批量插入
-//                Boolean ret=deviceIdPoolMapper.insertBatch(insertPos)>0;
-//                if(ret){
-//                    isPoolAdequate=true;
-//                }
-//                else {
-//                    return false;
-//                }
-//            }
-//        }
+        if(deviceList.size()>devicePoolCount) {
+            isPoolAdequate=false;
+            CustomerPo customerPo = customerMapper.selectById(deviceAssignToCustomerRequest.getCustomerId());
+            //获取数据
+            JSONObject devicePoolInfo = obtainDeviceJson(customerPo.getAppid(), customerPo.getAppsecret(), customerPo.getPublicId(), deviceAssignToCustomerRequest.getProductId());
+            if (null == devicePoolInfo) {
+                return false;
+            }
+            else {
+                //这边有待修改，由于目前不知道后台微信的回复方式
+                Object jsonArray = devicePoolInfo.get("devicePoolInfo");
+                //将jsonArray转换为list
+                List<DeviceIdPoolPo> deviceIdPoolPoList = JSON.parseArray(jsonArray + "", DeviceIdPoolPo.class);
+                List<DeviceIdPoolPo> insertPos = deviceIdPoolPoList.stream().map(deviceIdPoolPo1 -> {
+                    DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
+                    BeanUtils.copyProperties(deviceIdPoolPo1, insertPo);
+                    insertPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
+                    insertPo.setStatus(1);
+                    insertPo.setCreateTime(System.currentTimeMillis());
+                    insertPo.setLastUpdateTime(System.currentTimeMillis());
+                    return insertPo;
+                }).collect(Collectors.toList());
+                //执行批量插入
+                Boolean ret=deviceIdPoolMapper.insertBatch(insertPos)>0;
+                if(ret){
+                    isPoolAdequate=true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
         //当pool中的证书数量充足时进行分配
         if(isPoolAdequate) {
             Integer offset=0;
@@ -288,17 +288,17 @@ public class DeviceOperateService {
                 //记录本次添加所有客户与添加设备的关系
                 deviceCustomerRelationPoList.add(deviceCustomerRelationPo);
                 //从pool中获取设备id和证书
-//                DeviceIdPoolPo queryPoolPo=new DeviceIdPoolPo();
-//                DeviceIdPoolPo resultPo=deviceIdPoolMapper.selectList(queryPoolPo,1,offset).get(0);
+                DeviceIdPoolPo queryPoolPo=new DeviceIdPoolPo();
+                DeviceIdPoolPo resultPo=deviceIdPoolMapper.selectList(queryPoolPo,1,offset).get(0);
                 //记录本次使用的pool
-//                deviceIdPoolPoList.add(resultPo);
+                deviceIdPoolPoList.add(resultPo);
                 //在设备表中更新deviceModelId字段，将设备与设备型号表关联
                 DevicePo devicePo = new DevicePo();
                 devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
                 devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
                 devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
-//                devicePo.setDeviceId(resultPo.getDeviceId());
-//                devicePo.setDevicelicence(resultPo.getDeviceLicense());
+                devicePo.setDeviceId(resultPo.getDeviceId());
+                devicePo.setDevicelicence(resultPo.getDeviceLicense());
                 //刷新最新更新时间
                 devicePo.setLastUpdateTime(System.currentTimeMillis());
                 //记录本次需要更新的设备
@@ -400,13 +400,6 @@ public class DeviceOperateService {
             }
         }
         return null;
-    }
-
-    public Boolean updateDevice(DeviceCreateOrUpdateRequest.DeviceUpdateList deviceList) {
-        DevicePo updatePo = new DevicePo();
-        updatePo.setId(deviceMapper.selectByMac(deviceList.getMac()).getId());
-        updatePo.setName(deviceList.getName());
-        return deviceMapper.updateById(updatePo) > 0;
     }
 
     private JSONObject obtainDeviceJson(String appId,String appSecret,Integer publicId,Integer productId) {

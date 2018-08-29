@@ -579,10 +579,10 @@ CREATE TABLE `t_device_team_item`  (
 -- ----------------------------
 -- Table structure for android_scene_img
 -- ----------------------------
-DROP TABLE IF EXISTS `t_team_scene_detail`;
-CREATE TABLE `t_team_scene`  (
+DROP TABLE IF EXISTS `t_device_team_scene`;
+CREATE TABLE `t_device_team_scene`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `teamSceneId` int(11) NULL DEFAULT NULL COMMENT '组场景表的Id',
+  `teamId` int(11) NULL DEFAULT NULL COMMENT '组场景表的Id',
   `imgVideo` varchar(200)  NULL DEFAULT NULL COMMENT '图片或视频',
   `createTime` bigint(20) NULL DEFAULT NULL,
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,

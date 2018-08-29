@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class DeviceGroupCreateOrUpdateRequest {
+public class GroupCreateOrUpdateRequest {
     /**
      * 编组名称
      */

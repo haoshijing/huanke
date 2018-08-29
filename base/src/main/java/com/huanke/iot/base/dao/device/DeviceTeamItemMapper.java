@@ -4,6 +4,8 @@ import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * onlymark
  *
@@ -11,6 +13,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
+    Integer insertBatch(List<DeviceTeamItemPo> deviceTeamItemPoList);
 
     DeviceTeamItemPo getByDeviceId(Integer deviceId);
 
