@@ -12,18 +12,89 @@
         (
         customerId,
         deviceId,
-        devicelicence,
+        deviceLicense,
         status,
         createTime
         )
         VALUES (
         #{customerId},
         #{deviceId},
-        #{devicelicence},
+        #{deviceLicense},
         #{status},
         #{createTime}
         )
     </insert>
 
+    <!-- 批量插入数条记录 -->
+    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        customerId,
+        deviceId,
+        deviceLicense,
+        status,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES
+        <foreach collection="list" item="deviceIdpool" separator=",">
+            (
+            #{deviceIdpool.customerId},
+            #{deviceIdpool.deviceId},
+            #{deviceIdpool.deviceLicense},
+            #{deviceIdpool.status},
+            #{deviceIdpool.createTime},
+            #{deviceIdpool.lastUpdateTime}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        <where>
+            <if test="param.customerId != null and param.customerId != ''">
+                AND customerId = #{param.customerId}
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND deviceId = #{param.deviceId}
+            </if>
+            <if test="param.deviceLicense != null  and param.deviceLicense != ''  ">
+                AND deviceLicense = #{param.deviceLicense}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.customerId != null and param.customerId != ''">
+                AND customerId = #{param.customerId}
+
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND deviceId = #{param.deviceId}
+            </if>
+            <if test="param.deviceLicense != null  and param.deviceLicense != ''  ">
+                AND deviceLicense = #{param.deviceLicense}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tableName"/>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
 
 </mapper>

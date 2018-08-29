@@ -44,7 +44,7 @@ public class DeviceListVo {
      */
     private String onlineStatus;
 
-    private Integer deviceId;
+    private Integer id;
 
     private Integer modelId;
 

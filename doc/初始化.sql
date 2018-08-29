@@ -13,7 +13,8 @@
 
  Date: 27/08/2018 19:55:46
 */
-
+CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+use iot;
 
 
 -- ----------------------------
@@ -573,6 +574,21 @@ CREATE TABLE `t_device_team_item`  (
   `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 )  AUTO_INCREMENT = 1  COMMENT = '设备组和设备关系表' ;
+
+
+-- ----------------------------
+-- Table structure for android_scene_img
+-- ----------------------------
+DROP TABLE IF EXISTS `t_team_scene_detail`;
+CREATE TABLE `t_team_scene`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `teamSceneId` int(11) NULL DEFAULT NULL COMMENT '组场景表的Id',
+  `imgVideo` varchar(200)  NULL DEFAULT NULL COMMENT '图片或视频',
+  `createTime` bigint(20) NULL DEFAULT NULL,
+  `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
+  `status` int(1) NULL DEFAULT NULL COMMENT '状态',
+  PRIMARY KEY (`id`) USING BTREE
+)  AUTO_INCREMENT = 1  COMMENT = '组场景图册表' ;
 
 -- ----------------------------
 -- Table structure for t_device_timer
