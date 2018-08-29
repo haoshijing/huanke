@@ -40,22 +40,17 @@ public class AuthController {
     @RequestMapping("/user/auth")
     public ApiResponse<String> userAuth(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String code = request.getParameter("code");
-        Integer customerId = Integer.valueOf(request.getParameter("customerId"));
-        if(customerId == null){
-            log.error("customerId is null, customerId={}", customerId);
-        }
         //保存threadlocal
         UserRequestContext requestContext = UserRequestContextHolder.get();
         UserRequestContext.CustomerVo customerVo = new UserRequestContext.CustomerVo();
-        customerVo.setCustomerId(customerId);
-        requestContext.setCustomerVo(customerVo);
-
+        Integer customerId = customerVo.getCustomerId();
+        if(customerId == null){
+            customerId = Integer.valueOf(request.getParameter("customerId"));
+            customerVo.setCustomerId(customerId);
+            requestContext.setCustomerVo(customerVo);
+        }
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
-        String s = request.getRequestURL().toString();
-        System.out.println(s);
-        String encode = URLEncoder.encode(request.getRequestURL().toString(), "UTF-8");
-        System.out.println(encode);
         if(StringUtils.isEmpty(code)){
             String redirect_uri = request.getRequestURL().toString();
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
