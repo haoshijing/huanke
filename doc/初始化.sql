@@ -895,6 +895,7 @@ CREATE TABLE `wx_format`  (
 DROP TABLE IF EXISTS `wx_format_items`;
 CREATE TABLE `wx_format_items`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `formatId` int(11) NOT NULL COMMENT '版式主键',
   `name` varchar(200)  NULL DEFAULT NULL COMMENT '中文名',
   `status` int(1) NULL DEFAULT NULL,
   `createTime` bigint(20) NULL DEFAULT NULL,

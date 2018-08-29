@@ -64,8 +64,11 @@ public class DeviceAblityService {
                     deviceAblityOptionPo.setId(deviceAblityOptionRequest.getId());
                     deviceAblityOptionPo.setLastUpdateTime(System.currentTimeMillis());
 
+                    //只有当前台传的状态完全等于 删除的时候，才会更新状态为删除。否则仍然为正常状态
                     if(CommonConstant.STATUS_DEL.equals(deviceAblityOptionRequest.getStatus())){
                         deviceAblityOptionPo.setStatus(CommonConstant.STATUS_DEL);
+                    }else{
+                        deviceAblityOptionPo.setStatus(CommonConstant.STATUS_YES);
                     }
                     deviceAblityOptionMapper.updateById(deviceAblityOptionPo);
                 }else{
