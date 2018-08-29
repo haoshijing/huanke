@@ -85,5 +85,21 @@
         WHERE openId = #{openId} and deviceId = #{deviceId}
     </select>
 
+    <select id="queryRelationCount" parameterType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo" resultType="java.lang.Integer">
+        select count(1) FROM
+        <include refid="tableName"/>
+        where 1=1
+        and
+        <if test="customerId != null and customerId != 0">
+            AND customerId = #{customerId}
+        </if>
+        <if test="openId != null">
+            AND openId = #{openId}
+        </if>
+        <if test="deviceId != null">
+            and deviceId = #{deviceId}
+        </if>
+    </select>
+
 
 </mapper>

@@ -75,17 +75,11 @@ public class DeviceService {
     @Value("${speed}")
     private int speed;
 
-    public static void main(String[] args) {
-        DeviceService deviceService = new DeviceService();
-        DeviceListVo deviceListVo = deviceService.obtainMyDevice(1);
-        System.out.println("123");
-    }
-
     public DeviceListVo obtainMyDevice(Integer userId) {
         DeviceListVo deviceListVo = new DeviceListVo();
 
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
-        queryDevicePo.setCustomerId(userId);
+        queryDevicePo.setMasterUserId(userId);
         List<DeviceTeamPo> deviceTeamPos = deviceTeamMapper.selectList(queryDevicePo, 100000, 0);
 
         List<DeviceListVo.DeviceTeamData> groupDatas = deviceTeamPos.stream().map(

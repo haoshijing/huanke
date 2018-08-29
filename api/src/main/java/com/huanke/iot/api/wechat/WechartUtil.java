@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -30,12 +32,17 @@ public class WechartUtil {
     private static final String TICKET_PREFIX = "ticketKey.";
 
     @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     public String getAccessToken(boolean getFromSever) {
         UserRequestContext context =  UserRequestContextHolder.get();
-        String appId = context.getCacheVo().getAppId();
-        String appSecret = context.getCacheVo().getAppSecret();
+        Integer customerId = context.getCurrentId();
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        String appId = customerPo.getAppid();
+        String appSecret = customerPo.getAppsecret();
         String accessTokenKey = ACCESSS_TOKEN_PREIX+getCurrentPublicId();
         boolean needFromServer = getFromSever;
         if (!needFromServer) {
@@ -50,17 +57,22 @@ public class WechartUtil {
             try {
                 HttpGet httpGet = new HttpGet();
                 httpGet.setURI(new URI(url));
-                CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-                BufferedReader rd = new BufferedReader(
-                        new InputStreamReader(response.getEntity().getContent()));
+                BufferedReader rd;
+                StringBuilder result;
+                String line;
+                JSONObject json;
+                try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                    rd = new BufferedReader(
+                            new InputStreamReader(response.getEntity().getContent()));
+                }
 
-                StringBuilder result = new StringBuilder();
-                String line = "";
+                result = new StringBuilder();
+                line = "";
                 while ((line = rd.readLine()) != null) {
                     result.append(line);
                 }
                 log.info("result = {}", result);
-                JSONObject json = JSONObject.parseObject(result.toString());
+                json = JSONObject.parseObject(result.toString());
                 if (json.containsKey("access_token")) {
                     String queryAccessToken = json.getString("access_token");
                     if (StringUtils.isNotEmpty(queryAccessToken)) {
@@ -75,26 +87,33 @@ public class WechartUtil {
         return "";
     }
     public JSONObject obtainAuthAccessToken(String code){
-        UserRequestContext context =  UserRequestContextHolder.get();
-        String appId = context.getCacheVo().getAppId();
-        String appSecret = context.getCacheVo().getAppSecret();
+        UserRequestContext context = UserRequestContextHolder.get();
+        Integer customerId = context.getCurrentId();
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        String appId = customerPo.getAppid();
+        String appSecret = customerPo.getAppsecret();
         String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+appSecret+"&code="+code+"&grant_type=authorization_code";
         log.info("obtainAuthAccessToken url = {}",url);
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd;
+            StringBuilder result;
+            String line;
+            JSONObject jsonObject;
+            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+            }
 
-            StringBuilder result = new StringBuilder();
-            String line = "";
+            result = new StringBuilder();
+            line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("result = {}", result);
-           JSONObject jsonObject = JSON.parseObject(result.toString());
-           if(jsonObject != null){
+            jsonObject = JSON.parseObject(result.toString());
+            if(jsonObject != null){
                 if(jsonObject.containsKey("access_token")){
                     return jsonObject;
                 }
@@ -138,12 +157,16 @@ public class WechartUtil {
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd;
+            StringBuilder result;
+            String line;
+            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+            }
 
-            StringBuilder result = new StringBuilder();
-            String line = "";
+            result = new StringBuilder();
+            line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
@@ -159,17 +182,22 @@ public class WechartUtil {
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd;
+            StringBuilder result;
+            String line;
+            JSONObject jsonObject;
+            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+            }
 
-            StringBuilder result = new StringBuilder();
-            String line = "";
+            result = new StringBuilder();
+            line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("result = {}",result);
-            JSONObject jsonObject = JSON.parseObject(result.toString());
+            jsonObject = JSON.parseObject(result.toString());
             if(jsonObject != null){
                 if(!jsonObject.containsKey("errcode")){
                     return jsonObject;
@@ -188,17 +216,22 @@ public class WechartUtil {
             log.info("url = {}",url);
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd;
+            StringBuilder result;
+            String line;
+            JSONObject jsonObject;
+            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+            }
 
-            StringBuilder result = new StringBuilder();
-            String line = "";
+            result = new StringBuilder();
+            line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("result = {}",result);
-            JSONObject jsonObject = JSON.parseObject(result.toString());
+            jsonObject = JSON.parseObject(result.toString());
             if(jsonObject != null){
                 int errcode = jsonObject.getInteger("errcode");
                 return errcode == 0;
@@ -214,12 +247,16 @@ public class WechartUtil {
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd;
+            StringBuilder result;
+            String line;
+            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+            }
 
-            StringBuilder result = new StringBuilder();
-            String line = "";
+            result = new StringBuilder();
+            line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
@@ -232,22 +269,29 @@ public class WechartUtil {
 
     public JSONObject getByRefreshToken(String refresh_token) {
         UserRequestContext context =  UserRequestContextHolder.get();
-        String appId = context.getCacheVo().getAppId();
+        Integer customerId = context.getCurrentId();
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        String appId = customerPo.getAppid();
         String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+appId+"&grant_type=refresh_token&refresh_token="+refresh_token;
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd;
+            StringBuilder result;
+            String line;
+            JSONObject jsonObject;
+            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
+                rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()));
+            }
 
-            StringBuilder result = new StringBuilder();
-            String line = "";
+            result = new StringBuilder();
+            line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             log.info("getByRefreshToken result = {}",result.toString());
-            JSONObject jsonObject = JSON.parseObject(result.toString());
+            jsonObject = JSON.parseObject(result.toString());
             return  jsonObject;
         } catch (Exception e) {
             log.error("",e);
@@ -257,7 +301,9 @@ public class WechartUtil {
 
     private Integer getCurrentPublicId(){
         UserRequestContext context =  UserRequestContextHolder.get();
-        Integer publicId = context.getCacheVo().getPublicId();
+        Integer customerId = context.getCurrentId();
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        Integer publicId = customerPo.getPublicId();
         return publicId;
     }
 }

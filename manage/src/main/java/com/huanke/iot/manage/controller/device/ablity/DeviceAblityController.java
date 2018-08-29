@@ -92,17 +92,4 @@ public class DeviceAblityController {
         return new ApiResponse<>(deviceAblityVos);
     }
 
-
-    /**
-     * 根据功能项主键查询功能项
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    @ApiOperation("根据功能项主键查询功能项")
-    @GetMapping(value = "/selectById/{id}")
-    public ApiResponse<DeviceAblityVo> selectById(@PathVariable("id")Integer id) throws Exception{
-        DeviceAblityVo deviceAblityVo =  deviceAblityService.selectById(id);
-        return new ApiResponse<>(deviceAblityVo);
-    }
 }

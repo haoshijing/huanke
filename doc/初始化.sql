@@ -910,3 +910,37 @@ INSERT INTO `wx_format_items` VALUES (1, NULL, NULL, NULL, NULL);
 INSERT INTO `wx_format_items` VALUES (2, NULL, NULL, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- ----------------------------
+-- Table structure for t_device_sensor_stat
+-- ----------------------------
+CREATE TABLE `t_device_sensor_stat` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `deviceId` int(11) DEFAULT NULL COMMENT '设备Id',
+  `co2` int(11) DEFAULT NULL COMMENT '平均co2',
+  `hcho` int(11) DEFAULT NULL COMMENT '平均hcho',
+  `pm` int(11) DEFAULT NULL COMMENT '平均pm',
+  `hum` int(11) DEFAULT NULL COMMENT '平均hum',
+  `tvoc` int(11) DEFAULT NULL COMMENT '平均tvoc',
+  `tem` int(11) DEFAULT NULL COMMENT '平均温度',
+  `startTime` bigint(20) DEFAULT NULL COMMENT '开始时间',
+  `endTime` bigint(20) DEFAULT NULL COMMENT '结束时间',
+  `insertTime` bigint(20) DEFAULT NULL COMMENT '写入时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_did` (`deviceId`)
+) COMMENT = '传感器历史数据表';
+
+CREATE TABLE `t_device_timer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `deviceId` int(11) DEFAULT NULL COMMENT '设备id',
+  `userId` int(11) DEFAULT NULL COMMENT '用户id',
+  `name` varchar(255) DEFAULT NULL COMMENT '定时器设备',
+  `timerType` int(11) DEFAULT NULL COMMENT '类型',
+  `executeTime` bigint(20) DEFAULT NULL COMMENT '执行时间',
+  `status` int(11) DEFAULT NULL COMMENT '1-正常,2-已取消,3-已失效',
+  `executeRet` int(11) DEFAULT NULL COMMENT '执行结果',
+  `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
+  `lastUpdateTime` bigint(20) DEFAULT NULL COMMENT '最后修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8
+

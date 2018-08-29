@@ -15,14 +15,12 @@
         optionName,
         optionValue,
         ablityId,
-        status,
         createTime
         )
         VALUES (
         #{optionName},
         #{optionValue},
         #{ablityId},
-        #{status},
         #{createTime}
         )
     </insert>
@@ -47,9 +45,6 @@
             <if test="param.ablityId != null">
                 AND ablityId = #{param.ablityId}
             </if>
-            <if test="param.status != null">
-                AND status = #{param.status}
-            </if>
         </where>
         limit #{offset},#{limit}
     </select>
@@ -61,7 +56,6 @@
         <where>
             1 = 1
             AND ablityId = #{ablityId}
-            AND status = 1
         </where>
     </select>
 
@@ -74,9 +68,6 @@
             </if>
             <if test="optionValue != null and optionValue != ''">
                 optionValue = #{optionValue},
-            </if>
-            <if test="status != null ">
-                status = #{status},
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>

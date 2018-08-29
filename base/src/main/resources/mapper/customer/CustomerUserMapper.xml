@@ -19,7 +19,8 @@
         city,
         createTime,
         lastUpdateTime,
-        creatUser
+        creatUser,
+        mac
         )
         VALUES (
         #{openId},
@@ -31,7 +32,8 @@
         #{city},
         #{createTime},
         #{lastUpdateTime},
-        #{creatUser}
+        #{creatUser},
+        #{mac}
         )
     </insert>
 
@@ -42,5 +44,39 @@
         where openId = #{openId}
         limit 1
     </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="openId != null">
+                openId = #{openId},
+            </if>
+            <if test="nickname != null ">
+                nickname = #{nickname},
+            </if>
+            <if test="unionid != null ">
+                unionid = #{unionid},
+            </if>
+            <if test="headimgurl != null ">
+                headimgurl = #{headimgurl},
+            </if>
+            <if test="sex != null ">
+                sex = #{sex},
+            </if>
+            <if test="province != null ">
+                province = #{province},
+            </if>
+            <if test="city != null ">
+                city = #{city},
+            </if>
+            <if test="mac != null ">
+                mac = #{mac},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
 
 </mapper>

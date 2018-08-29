@@ -16,5 +16,5 @@ public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
     int deleteByJoinId(@Param("deviceId") Integer iDeviceId, @Param("deviceId") Integer userId);
 
-    void updateStatus(@Param("deviceId") Integer deviceId, @Param("userId") Integer toId, @Param("status")Integer status);
+    void updateStatus(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId, @Param("status")Integer status);
 }
