@@ -953,7 +953,7 @@ CREATE TABLE `t_device_data_sensor` (
   `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idxDeviceId` (`deviceId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT = '传感器数据表' ;
 
 ##0829
 CREATE TABLE `t_device_data_control` (
@@ -963,4 +963,17 @@ CREATE TABLE `t_device_data_control` (
   `funcValue` int(11) DEFAULT NULL COMMENT '功能当前值',
   `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT = '控制器数据表' ;
+
+##0829
+CREATE TABLE `t_device_data_alarm` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `deviceId` int(11) DEFAULT NULL COMMENT '设备id',
+  `indexVal` int(11) DEFAULT NULL COMMENT '设备下标',
+  `type` int(11) DEFAULT NULL COMMENT '报警类型',
+  `value` int(11) DEFAULT NULL COMMENT '报警值',
+  `dealStatus` int(11) DEFAULT NULL COMMENT '处理状态',
+  `dealTime` int(11) DEFAULT NULL COMMENT '处理时间',
+  `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT = '报警数据表' ;
