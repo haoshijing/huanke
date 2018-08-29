@@ -1,6 +1,8 @@
 package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Repository;
 public class InfoHandler extends AbstractHandler {
 
     @Autowired
-    private DeviceInfoMapper deviceInfoMapper;
+    private DeviceMapper deviceMapper;
 
     @Data
     private static class InfoItem {
@@ -52,7 +54,6 @@ public class InfoHandler extends AbstractHandler {
         String message = new String(payloads);
         InfoItem infoItem = JSON.parseObject(message, InfoItem.class);
         if (infoItem != null) {
-            DeviceInfoPo deviceInfoPo = new DeviceInfoPo();
             String devId = "";
             if (infoItem.getInfo() != null &&
                     StringUtils.isNotEmpty(infoItem.getInfo().getWx_info().getDev_id())) {
@@ -63,20 +64,17 @@ public class InfoHandler extends AbstractHandler {
                 return;
             }
             try {
-                DeviceInfoPo queryDeviceInfo = deviceInfoMapper.selectByMac(infoItem.getInfo().getMac());
-                if (queryDeviceInfo != null) {
-                    DeviceInfoPo updatePo = new DeviceInfoPo();
-                    updatePo.setId(queryDeviceInfo.getId());
-                    updatePo.setVersion(JSON.toJSONString(infoItem.getInfo().getVersion()));
-                    updatePo.setLastUpdateTime(System.currentTimeMillis());
-                    deviceInfoMapper.updateById(updatePo);
+                DevicePo devicePo = deviceMapper.selectByDeviceId(devId);
+                if (devicePo == null) {
+                    log.warn("devId {} :is not belong a exist device ", devId);
+                    return;
                 } else {
-                    deviceInfoPo.setImei(infoItem.getInfo().getImei());
-                    deviceInfoPo.setImsi(infoItem.getInfo().getImsi());
-                    deviceInfoPo.setMac(infoItem.getInfo().getMac());
-                    deviceInfoPo.setCreateTime(System.currentTimeMillis());
-                    deviceInfoPo.setVersion(JSON.toJSONString(infoItem.getInfo().getVersion()));
-                    deviceInfoMapper.insert(deviceInfoPo);
+                    devicePo.setImei(infoItem.getInfo().getImei());
+                    devicePo.setImsi(infoItem.getInfo().getImsi());
+                    devicePo.setMac(infoItem.getInfo().getMac());
+                    devicePo.setLastUpdateTime(System.currentTimeMillis());
+                    devicePo.setVersion(JSON.toJSONString(infoItem.getInfo().getVersion()));
+                    deviceMapper.updateById(devicePo);
                 }
             } catch (Exception e) {
                 log.error("", e);
