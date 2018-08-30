@@ -19,6 +19,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private Integer productId;
     private String icon; //缩略图
     private String version;
+    private String description;
     private Integer status;
     private String remark;
 

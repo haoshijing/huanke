@@ -90,18 +90,18 @@ public class WxFormatController {
         return new ApiResponse<>(wxFormatVo);
     }
 
-//    /**
-//     * 查询客户 可使用的版式列表
-//     * @param customerId
-//     * @return 返回版式列表
-//     * @throws Exception
-//     */
-//    @ApiOperation("查询客户可使用的版式列表")
-//    @PostMapping(value = "/selectFormatsByCustomerId")
-//    public ApiResponse<List<WxFormatVo>> selectFormatsByCustomerId(@PathVariable("customerId")Integer customerId) throws Exception{
-//        List<WxFormatVo> wxFormatVos =  wxFormatService.selectFormatsByCustomerId(customerId);
-//        return new ApiResponse<>(wxFormatVos);
-//    }
+    /**
+     * 查询客户 可使用的版式列表
+     * @param customerId
+     * @return 返回版式列表
+     * @throws Exception
+     */
+    @ApiOperation("查询客户可使用的版式列表")
+    @GetMapping(value = "/selectFormatsByCustomerId/{customerId}")
+    public ApiResponse<List<WxFormatVo>> selectFormatsByCustomerId(@PathVariable("customerId")Integer customerId) throws Exception{
+        ApiResponse<List<WxFormatVo>> result  =  wxFormatService.selectFormatsByCustomerId(customerId);
+        return result;
+    }
 
     /**
      * 删除 该能力

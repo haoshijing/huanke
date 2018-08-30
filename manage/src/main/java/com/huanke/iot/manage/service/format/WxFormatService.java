@@ -3,9 +3,11 @@ package com.huanke.iot.manage.service.format;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatPageMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.format.WxFormatPo;
@@ -16,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,9 @@ public class WxFormatService {
     @Autowired
     private WxFormatPageMapper wxFormatPageMapper;
 
+    @Autowired
+    private CustomerMapper customerMapper;
+
     /**
      * 新增 版式以及版式的 配置项
      *
@@ -47,9 +53,15 @@ public class WxFormatService {
         //如果有id则为更新 否则为新增
         if (wxFormatVo.getId() != null && wxFormatVo.getId() > 0) {
             wxFormatPo.setLastUpdateTime(System.currentTimeMillis());
+            if (wxFormatVo.getStatus() != null && wxFormatVo.getStatus().equals(CommonConstant.STATUS_DEL)) {
+                wxFormatPo.setStatus(CommonConstant.STATUS_DEL);
+            } else {
+                wxFormatPo.setStatus(CommonConstant.STATUS_YES);
+            }
             ret = wxFormatMapper.updateById(wxFormatPo) > 0;
         } else {
             wxFormatPo.setCreateTime(System.currentTimeMillis());
+            wxFormatPo.setStatus(CommonConstant.STATUS_YES);
             ret = wxFormatMapper.insert(wxFormatPo) > 0;
         }
 
@@ -104,7 +116,6 @@ public class WxFormatService {
 
                 }
 
-
             });
 
         }
@@ -127,7 +138,7 @@ public class WxFormatService {
             queryWxFormatPo.setName(request.getName());
             queryWxFormatPo.setOwerType(request.getOwerType());
             queryWxFormatPo.setType(request.getType());
-            if (request.getStatus()!=null&&request.getStatus().equals(CommonConstant.STATUS_DEL)) {
+            if (request.getStatus() != null && request.getStatus().equals(CommonConstant.STATUS_DEL)) {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_DEL);
             } else {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
@@ -234,47 +245,68 @@ public class WxFormatService {
         return wxFormatVo;
     }
 
-//    /**
-//     * 查询客户可使用的版式列表
-//     *
-//     * @param customerId
-//     * @return
-//     */
-//    public List<WxFormatVo> selectFormatsByCustomerId(Integer customerId) {
-//
-//        WxFormatPo queryWxFormatPo = new WxFormatPo();
-//
-//        if (request.getStatus().equals(CommonConstant.STATUS_DEL)) {
-//            queryWxFormatPo.setStatus(CommonConstant.STATUS_DEL);
-//        } else {
-//            queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
-//
-//        }
-//
-//        //查询 版式列表
-//        List<WxFormatPo> wxformatPoList = wxFormatMapper.selectList(queryWxFormatPo, limit, offset);
-//        List<WxFormatVo> wxFormatVoList = wxformatPoList.stream().map(wxFormatPo -> {
-//            WxFormatVo wxFormatVo = new WxFormatVo();
-//            BeanUtils.copyProperties(wxFormatPo, wxFormatVo);
-//
-//            //根据版式主键 查询该版式下的 配置项
-//            List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByFormatId(wxFormatPo.getId());
-//
-//            List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
-//                WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
-//                wxFormatItemVo.setName(wxFormatItemPo.getName());
-//                wxFormatItemVo.setId(wxFormatItemPo.getId());
-//                wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
-//                return wxFormatItemVo;
-//            }).collect(Collectors.toList());
-//
-//            wxFormatVo.setWxFormatItemVos(wxFormatItemVos);
-//
-//            return wxFormatVo;
-//        }).collect(Collectors.toList());
-//
-//        return wxFormatVoList;
-//    }
+    /**
+     * 查询客户可使用的版式列表
+     *
+     * @param customerId
+     * @return
+     */
+    public ApiResponse<List<WxFormatVo>> selectFormatsByCustomerId(Integer customerId) {
+
+        WxFormatPo queryWxFormatPo = new WxFormatPo();
+
+        //先查询该客户id是否存在
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+
+        if(customerPo!=null){
+            //查询 版式列表
+
+            queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
+            queryWxFormatPo.setCustomerIds(customerId.toString());
+            List<WxFormatPo> wxformatPoList = wxFormatMapper.selectFormatsByCustomerId(queryWxFormatPo);
+            List<WxFormatVo> wxFormatVoList = wxformatPoList.stream().map(wxFormatPo -> {
+                WxFormatVo wxFormatVo = new WxFormatVo();
+                BeanUtils.copyProperties(wxFormatPo, wxFormatVo);
+
+                //根据版式主键 查询该版式下的 页面
+                List<WxFormatPagePo> wxFormatPagePos = wxFormatPageMapper.selectByFormatId(wxFormatPo.getId());
+
+                List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = wxFormatPagePos.stream().map(wxFormatPagePo -> {
+                    WxFormatVo.WxFormatPageVo wxFormatPageVo = new WxFormatVo.WxFormatPageVo();
+                    wxFormatPageVo.setId(wxFormatPagePo.getId());
+                    wxFormatPageVo.setName(wxFormatPagePo.getName());
+                    wxFormatPageVo.setPageNo(wxFormatPagePo.getPageNo());
+                    wxFormatPageVo.setShowImg(wxFormatPagePo.getShowImg());
+                    wxFormatPageVo.setStatus(wxFormatPagePo.getStatus());
+
+                    //根据版式主键 查询该版式下的 配置项
+                    List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByPageId(wxFormatPagePo.getId());
+
+                    List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
+                        WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
+                        wxFormatItemVo.setName(wxFormatItemPo.getName());
+                        wxFormatItemVo.setId(wxFormatItemPo.getId());
+                        wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
+                        return wxFormatItemVo;
+                    }).collect(Collectors.toList());
+
+                    wxFormatPageVo.setWxFormatItemVos(wxFormatItemVos);
+                    return wxFormatPageVo;
+                }).collect(Collectors.toList());
+
+                wxFormatVo.setWxFormatPageVos(wxFormatPageVos);
+                return wxFormatVo;
+            }).collect(Collectors.toList());
+
+            return new ApiResponse<>(wxFormatVoList) ;
+
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
+
+        }
+
+
+    }
 
     /**
      * 删除 该版式
