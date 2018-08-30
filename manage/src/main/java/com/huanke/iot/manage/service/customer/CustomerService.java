@@ -4,8 +4,6 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.*;
-import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.po.customer.*;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;

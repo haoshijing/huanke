@@ -15,7 +15,6 @@
         logo,
         qrcode,
         version,
-        status,
         createTime,
         deviceChangePassword
         )
@@ -25,7 +24,6 @@
         #{logo},
         #{qrcode},
         #{version},
-        #{status},
         #{createTime},
         #{deviceChangePassword}
         )
@@ -81,5 +79,6 @@
         delete from <include refid="tableName"/>
         where id = #{id}
     </delete>
+
 
 </mapper>

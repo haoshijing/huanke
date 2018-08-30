@@ -1,6 +1,5 @@
 package com.huanke.iot.manage.vo.request.device.ablity;
 
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
 import lombok.Data;
 
 import java.util.List;

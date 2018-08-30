@@ -18,6 +18,8 @@ public class DeviceTeamItemPo {
      */
     private Integer deviceId;
 
+    private Integer userId;
+
     /**
      * 设备组id
      */

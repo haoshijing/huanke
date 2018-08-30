@@ -2,10 +2,9 @@ package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.wechat.WechartUtil;
-import com.huanke.iot.base.dao.impl.device.DeviceMacMapper;
-import com.huanke.iot.base.dao.impl.user.AppUserMapper;
-import com.huanke.iot.base.po.device.DeviceMacPo;
-import com.huanke.iot.base.po.user.AppUserPo;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.device.DeviceMacMapper;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class BindController {
     private WechartUtil wechartUtil;
 
     @Autowired
-    private AppUserMapper appUserMapper;
+    private CustomerUserMapper customerUserMapper;
 
     @Autowired
     private DeviceMacMapper deviceMacMapper;
@@ -69,33 +68,18 @@ public class BindController {
         if (StringUtils.isEmpty(openId)) {
             return "fail";
         }
-        AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
-        if(appUserPo == null){
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
+        if(customerUserPo == null){
             return "fail";
         }
-        DeviceMacPo deviceMacPo = deviceMacMapper.selectByMac(imei);
-        if (deviceMacPo == null) {
 
-            DeviceMacPo newPo = new DeviceMacPo();
-            newPo.setAppUserId(appUserPo.getId());
-            newPo.setMac(imei);
-            int ret = deviceMacMapper.insert(newPo);
-            if (ret == 0) {
-                return "fail";
-            }
-        }else{
-            if(StringUtils.equals(openId,appUserPo.getOpenId())){
-                return "succ";
-            }
-            //先把当前的绑定人给解绑,在绑定自己
-            DeviceMacPo updatePo = new DeviceMacPo();
-            updatePo.setId(deviceMacPo.getId());
-            updatePo.setAppUserId(appUserPo.getId());
-            int ret = deviceMacMapper.updateById(updatePo);
-            if (ret == 0) {
-                return "fail";
-            }
+        customerUserPo.setMac(imei);
+        customerUserPo.setLastUpdateTime(System.currentTimeMillis());
+        int ret = customerUserMapper.updateById(customerUserPo);
+        if (ret == 0) {
+            return "fail";
         }
+
         return "succ";
     }
 

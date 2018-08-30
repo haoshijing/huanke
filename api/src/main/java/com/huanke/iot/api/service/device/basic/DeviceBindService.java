@@ -1,13 +1,12 @@
 package com.huanke.iot.api.service.device.basic;
 
-import com.huanke.iot.base.dao.impl.device.DeviceGroupMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceRelationMapper;
-import com.huanke.iot.base.dao.impl.user.AppUserMapper;
-import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
-import com.huanke.iot.base.po.device.group.DeviceGroupPo;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.device.*;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.user.AppUserPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +22,23 @@ import java.util.Map;
 @Repository
 @Slf4j
 public class DeviceBindService {
-
     @Autowired
-    private AppUserMapper appUserMapper;
+    private CustomerUserMapper customerUserMapper;
 
     @Autowired
     private DeviceMapper deviceMapper;
 
-    @Autowired(required = false)
-    private DeviceGroupMapper deviceGroupMapper;
+    @Autowired
+    private DeviceTeamMapper deviceTeamMapper;
+
+    @Autowired
+    private DeviceTeamItemMapper deviceTeamItemMapper;
 
     @Autowired
     private DeviceDataService deviceDataService;
+
+    @Autowired
+    private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
 
     // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6, Con
     // tent=, CreateTime=1523200569, Event=unbind, ToUserName=gh_7f3ba47c70a3, FromUserName=okOTjwpDwxJR666hVWnj_L_jp87w, MsgType=device_event, SessionID=0, OpenID=okOTjwpDwxJR666hVWnj_L_jp87w}
@@ -47,16 +51,15 @@ public class DeviceBindService {
             return;
         }
         Integer userId = null;
-        AppUserPo appUserPo = appUserMapper.selectByOpenId(openId);
-        if(appUserPo != null){
-            userId = appUserPo.getId();
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
+        if(customerUserPo != null){
+            userId = customerUserPo.getId();
         }else{
-            AppUserPo newUserPo = new AppUserPo();
-            newUserPo.setCreateTime(System.currentTimeMillis());
-            newUserPo.setOpenId(openId);
-            newUserPo.setPublicId(devicePo.getPublicId());
-            appUserMapper.insert(newUserPo);
-            userId = newUserPo.getId();
+            CustomerUserPo newCustomerUserPo = new CustomerUserPo();
+            newCustomerUserPo.setCreateTime(System.currentTimeMillis());
+            newCustomerUserPo.setOpenId(openId);
+            customerUserMapper.insert(newCustomerUserPo);
+            userId = newCustomerUserPo.getId();
         }
 
         if (StringUtils.equals("bind", event)) {
@@ -65,45 +68,67 @@ public class DeviceBindService {
             updateDevicePo.setId(devicePo.getId());
             updateDevicePo.setBindStatus(2);
             deviceMapper.updateById(updateDevicePo);
-            DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
-            deviceGroupPo.setGroupName("默认组");
-            deviceGroupPo.setUserId(userId);
-            Integer defaultGroupId = 0;
-            Integer defaultGroupCount = deviceGroupMapper.queryGroupCount(userId, "默认组");
-            if (defaultGroupCount == 0) {
-                DeviceGroupPo defaultGroup = new DeviceGroupPo();
-                defaultGroup.setGroupName("默认组");
-                defaultGroup.setUserId(userId);
-                defaultGroup.setCreateTime(System.currentTimeMillis());
-                deviceGroupMapper.insert(defaultGroup);
-                defaultGroupId = defaultGroup.getId();
+            DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+            deviceTeamPo.setName("默认组");
+            Integer defaultTeamCount = deviceTeamMapper.queryTeamCount(userId, "默认组");
+            Integer defaultTeamId = 0;
+
+            if (defaultTeamCount == 0) {
+                DeviceTeamPo defaultTeam = new DeviceTeamPo();
+                defaultTeam.setName("默认组");
+                defaultTeam.setMasterUserId(userId);
+                defaultTeam.setCreateTime(System.currentTimeMillis());
+                deviceTeamMapper.insert(defaultTeam);
+                defaultTeamId = defaultTeam.getId();
             }else{
-                defaultGroupId = deviceGroupMapper.selectList(deviceGroupPo,1,0).get(0).getId();
+                defaultTeamId = deviceTeamMapper.selectList(deviceTeamPo, 1, 0).get(0).getId();
             }
-            DeviceGroupItemPo queryItemPo = new DeviceGroupItemPo();
-            queryItemPo.setDeviceId(devicePo.getId());
-            queryItemPo.setUserId(userId);
-            Integer count = deviceGroupMapper.queryItemCount(queryItemPo);
+            //通过设备查customerId
+            Integer customerId = deviceMapper.getCustomerId(devicePo);
+            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+            deviceCustomerUserRelationPo.setOpenId(openId);
+            deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+            deviceCustomerUserRelationPo.setCustomerId(customerId);
+            Integer count = deviceCustomerUserRelationMapper.queryRelationCount(deviceCustomerUserRelationPo);
             if (count == 0) {
-                DeviceGroupItemPo insertDeviceGroupItemPo = queryItemPo;
-                insertDeviceGroupItemPo.setGroupId(defaultGroupId);
-                insertDeviceGroupItemPo.setStatus(1);
-                insertDeviceGroupItemPo.setUserId(userId);
-                insertDeviceGroupItemPo.setIsMaster(1);
-                insertDeviceGroupItemPo.setCreateTime(System.currentTimeMillis());
-                deviceGroupMapper.insertGroupItem(insertDeviceGroupItemPo);
+                DeviceCustomerUserRelationPo newDeviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+                newDeviceCustomerUserRelationPo.setCustomerId(customerId);
+                newDeviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+                newDeviceCustomerUserRelationPo.setOpenId(openId);
+                deviceCustomerUserRelationMapper.insert(newDeviceCustomerUserRelationPo);
             }else{
-                deviceGroupMapper.updateGroupItemStatus(devicePo.getId(),userId,1);
+                deviceCustomerUserRelationPo.setStatus(1);
+                deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
+                deviceCustomerUserRelationMapper.updateStatus(deviceCustomerUserRelationPo);
+            }
+
+
+            DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
+
+            queryItemPo.setDeviceId(devicePo.getId());
+            queryItemPo.setTeamId(defaultTeamId);
+            Integer itemCount = deviceTeamMapper.queryItemCount(queryItemPo);
+            if (itemCount == 0) {
+                DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
+                deviceTeamItemPo.setUserId(userId);
+                deviceTeamItemPo.setDeviceId(devicePo.getId());
+                deviceTeamItemPo.setTeamId(defaultTeamId);
+                deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
+                deviceTeamItemPo.setStatus(1);
+
+                deviceTeamItemMapper.insert(deviceTeamItemPo);
+            }else{
+                deviceTeamItemMapper.updateStatus(devicePo.getId(), userId, 1);
             }
         } else if (StringUtils.equals("unbind", event)) {
-            if (appUserPo == null) {
+            if (customerUserPo == null) {
                 return;
             }
             DevicePo updatePo = new DevicePo();
             updatePo.setBindStatus(3);
             updatePo.setId(devicePo.getId());
             deviceMapper.updateById(updatePo);
-            userId = appUserPo.getId();
+            userId = customerUserPo.getId();
             //删除对应的设备
             deviceDataService.deleteDevice(userId,deviceId);
         }

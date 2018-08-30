@@ -7,7 +7,5 @@ import com.huanke.iot.base.po.customer.WxConfigPo;
  * h5配置信息
  */
 public interface WxConfigMapper extends BaseMapper<WxConfigPo> {
-
     WxConfigPo selectConfigByCustomerId(Integer customerId);
-
 }

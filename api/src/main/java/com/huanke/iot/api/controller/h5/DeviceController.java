@@ -84,9 +84,9 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/share")
-    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, Integer customerId, String masterOpenId, String deviceId, String token) {
+    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
         Integer userId = getCurrentUserId();
-        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, customerId, userId, deviceId, token);
+        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, userId, deviceId, token);
         return new ApiResponse<>(shareOk);
     }
 

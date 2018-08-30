@@ -43,7 +43,7 @@
         <include refid="tableName"/>
         <where>
             <if test="param.customerId != null and param.customerId != 0">
-                AND userId = #{param.masterUserId}
+                AND masterUserId = #{param.masterUserId}
             </if>
             <if test="param.status != null">
                 AND status = #{param.status}
@@ -59,7 +59,7 @@
         <include refid="tableName"/>
         <where>
             <if test = "param.masterUserId != null and param.masterUserId != 0">
-                AND userId = #{param.masterUserId}
+                AND masterUserId = #{param.masterUserId}
             </if>
             <if test="param.status != null">
                 AND status = #{param.status}
@@ -124,41 +124,42 @@
             and deviceId = #{deviceId}
         </if>
         <if test="userId != null">
-            and userId = #{userId}
+            and masterUserId = #{userId}
         </if>
     </select>
 
     <update id="updateDeviceGroupId">
         update t_device_team_item
         set teamId = #{newTeamId}
-        where userId = #{userId} and deviceId =
+        where masterUserId = #{userId} and deviceId =
         #{deviceId}
     </update>
 
-    <update id="updateGroupStatus">
+    <update id="updateTeamStatus">
         update
         <include refid="tableName"/>
-        set status = #{status} where userId = #{userId}
+        set status = #{status} where masterUserId = #{userId}
         and id = #{teamId}
     </update>
 
     <update id="updateDeviceTeamItem">
         update t_device_team_item
         set teamId = #{newTeamId}
-        where userId = #{userId} and teamId =
+        where masterUserId = #{userId} and teamId =
         #{currentTeamId}
     </update>
 
     <select id="queryTeamCount" resultType="java.lang.Integer">
         select count(1) FROM
         <include refid="tableName"/>
-        where userId = #{userId}
+        where masterUserId = #{userId}
         and name = #{teamName}
     </select>
+
     <select id="queryItemCount" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo"
             resultType="java.lang.Integer">
         select count(1) from t_device_team_item
-        where userId = #{userId} and deviceId = #{deviceId}
+        where teamId = #{teamId} and deviceId = #{deviceId}
         <if test="status != null">
             and status = #{status}
         </if>

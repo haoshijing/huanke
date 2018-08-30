@@ -9,5 +9,4 @@ import com.huanke.iot.base.po.customer.AndroidConfigPo;
 public interface AndroidConfigMapper extends BaseMapper<AndroidConfigPo> {
 
     AndroidConfigPo selectConfigByCustomerId(Integer customerId);
-
 }

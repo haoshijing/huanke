@@ -13,7 +13,7 @@
         <include refid="tableName"/>
         (
         name,
-        loginName,
+        loginname,
         userType,
         remark,
         publicName,
@@ -21,10 +21,9 @@
         appid,
         appsecret,
         SLD,
-        typeIds,
-        modelIds,
         status,
         createTime,
+        lastUpdateTime,
         creatUser
         )
         VALUES (
@@ -37,13 +36,13 @@
         #{appid},
         #{appsecret},
         #{SLD},
-        #{typeIds},
-        #{modelIds},
         #{status},
         #{createTime},
+        #{lastUpdateTime},
         #{creatUser}
         )
     </insert>
+
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
         update
@@ -118,13 +117,30 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectList">
+        select tc.name,
+        tc.userType,
+        tc.publicName,
+        tc.loginname,
+        tc.remark
+        from <include refid="tableName"/>
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select *
+        from <include refid="tableName"/>
+        where SLD = #{SLD}
+        limit 1
+    </select>
+
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
         *
-        FROM
-        <include refid="tableName"/>
+        FROM <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
+
 
     <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
@@ -139,6 +155,7 @@
         <include refid="tableName"/>
         where id = #{id}
     </delete>
+
 
     <update id="updateStatusById" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
         update

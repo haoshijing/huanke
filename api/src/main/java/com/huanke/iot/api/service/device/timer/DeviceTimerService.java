@@ -2,8 +2,8 @@ package com.huanke.iot.api.service.device.timer;
 
 import com.huanke.iot.api.controller.h5.req.DeviceTimerRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceTimerVo;
-import com.huanke.iot.base.dao.impl.device.DeviceMapper;
-import com.huanke.iot.base.dao.impl.device.DeviceTimerMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceTimerMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTimerPo;
 import org.assertj.core.util.Lists;

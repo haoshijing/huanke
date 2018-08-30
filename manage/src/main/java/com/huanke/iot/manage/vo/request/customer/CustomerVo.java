@@ -1,6 +1,5 @@
 package com.huanke.iot.manage.vo.request.customer;
 
-import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.Data;
 
 import java.util.List;
@@ -40,6 +39,7 @@ public class CustomerVo {
      */
     @Data
     public static class BackendConfig {
+
         //        private Integer id;
         private Integer enableStatus;
         private String logo;
@@ -56,10 +56,10 @@ public class CustomerVo {
         //        private  Integer id;
         private String password;
         private String defaultTeamName;
-        private String backgroundImg;
+        private String backgroundImgKey;
         private Integer htmlTypeId;
         private String themeName;
-        private String logo;
+        private String logoKey;
         private String version;
         private Integer status;
         private List<H5BgImg> h5BgImgList;  //背景列表
@@ -94,7 +94,7 @@ public class CustomerVo {
         //        private Integer id;
         private String qrcode;   //二维码
         private String name;
-        private String logo;
+        private String logoKey;
         private String version;
         private String deviceChangePassword;    //设备切换密码
         private Integer status;
