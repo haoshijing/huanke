@@ -13,6 +13,7 @@
         (
         formatId,
         name,
+        ablityType,
         status,
         createTime,
         lastUpdateTime
@@ -20,6 +21,7 @@
         VALUES (
         #{formatId},
         #{name},
+        #{ablityType},
         #{status},
         #{createTime},
         #{lastUpdateTime}

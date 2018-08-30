@@ -17,11 +17,11 @@ public class WxFormatVo {
     private String name;
     private String htmlUrl;
 
-    @ApiModelProperty(value="缩略图",name="icon")
+    @ApiModelProperty(value = "缩略图", name = "icon")
     private String icon;
     private String previewImg;
 
-    @ApiModelProperty(value="状态",name="state",required=true)
+    @ApiModelProperty(value = "状态", name = "state", required = true)
     private String typeIds;
     private String customerIds;
     private String version;
@@ -47,6 +47,7 @@ public class WxFormatVo {
         private Integer id;
         //        private Integer formatId;
         private String name;
+        private Integer ablityType;
         private Integer status;
     }
 }

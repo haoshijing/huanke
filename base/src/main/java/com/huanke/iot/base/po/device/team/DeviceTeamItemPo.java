@@ -25,8 +25,6 @@ public class DeviceTeamItemPo {
      */
     private Integer teamId;
 
-    private Integer userId;
-
     private Integer status;
 
     private Long createTime;

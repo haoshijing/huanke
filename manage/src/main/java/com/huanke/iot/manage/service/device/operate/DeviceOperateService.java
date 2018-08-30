@@ -298,7 +298,7 @@ public class DeviceOperateService {
                 devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
                 devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
                 devicePo.setDeviceId(resultPo.getDeviceId());
-                devicePo.setDevicelicence(resultPo.getDeviceLicense());
+                devicePo.setDevicelicence(resultPo.getDeviceLicence());
                 //刷新最新更新时间
                 devicePo.setLastUpdateTime(System.currentTimeMillis());
                 //记录本次需要更新的设备

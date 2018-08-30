@@ -11,6 +11,7 @@ public class WxFormatItemPo {
     private Integer id;
     private Integer formatId;
     private String name;
+    private Integer ablityType;
     private Integer status;
     private Long createTime;
     private Long lastUpdateTime;

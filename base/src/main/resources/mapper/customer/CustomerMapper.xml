@@ -117,7 +117,7 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="selectList">
+    <select id="selectCustomerList">
         select tc.name,
         tc.userType,
         tc.publicName,
@@ -127,12 +127,6 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
-        select *
-        from <include refid="tableName"/>
-        where SLD = #{SLD}
-        limit 1
-    </select>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
@@ -149,12 +143,6 @@
         <include refid="tableName"/>
         WHERE SLD = #{SLD} limit 1
     </select>
-
-    <delete id="deleteById">
-        delete from
-        <include refid="tableName"/>
-        where id = #{id}
-    </delete>
 
 
     <update id="updateStatusById" parameterType="com.huanke.iot.base.po.customer.CustomerPo">
