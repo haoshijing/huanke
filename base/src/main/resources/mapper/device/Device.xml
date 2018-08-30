@@ -284,6 +284,13 @@
         update
         <include refid="tableName"/>
         <trim prefix="set" suffixOverrides=",">
+            <trim prefix="name =case" suffix="end,">
+                <foreach collection="list" item="device" index="index">
+                    <if test="device.name !=null">
+                        when id=#{device.id} then #{device.name}
+                    </if>
+                </foreach>
+            </trim>
             <trim prefix="modelId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
                     <if test="device.modelId !=null">

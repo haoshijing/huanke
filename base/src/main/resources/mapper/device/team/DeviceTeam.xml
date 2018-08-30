@@ -19,7 +19,10 @@
         customerId,
         manageUserIds,
         status,
-        createUser,
+        memo,
+        videoCover,
+        videoUrl,
+        qrcode,
         createTime,
         lastUpdateTime
         )
@@ -31,7 +34,10 @@
         #{customerId},
         #{manageUserIds},
         #{status},
-        #{createUser},
+        #{memo},
+        #{videoCover},
+        #{videoUrl},
+        #{qrcode},
         #{createTime},
         #{lastUpdateTime}
         )

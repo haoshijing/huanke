@@ -15,7 +15,7 @@ public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
     Integer insertBatch(List<DeviceTeamItemPo> deviceTeamItemPoList);
 
-    DeviceTeamItemPo getByDeviceId(Integer deviceId);
+    DeviceTeamItemPo selectByDeviceId(Integer deviceId);
 
     int deleteByJoinId(@Param("deviceId") Integer iDeviceId, @Param("deviceId") Integer userId);
 

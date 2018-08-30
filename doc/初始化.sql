@@ -14,8 +14,8 @@
  Date: 30/08/2018 10:52:12
 */
 
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
+CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+use iot;
 
 -- ----------------------------
 -- Table structure for android_config
@@ -569,11 +569,10 @@ CREATE TABLE `t_device_team` (
   `icon` varchar(100) DEFAULT NULL COMMENT '图标、缩略图',
   `name` varchar(100) DEFAULT NULL COMMENT '组名',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注、描述',
-  `masterUserId` varchar(100) DEFAULT NULL COMMENT '组控制人',
+  `masterUserId` int(11) DEFAULT NULL COMMENT '组控制人',
   `customerId` int(11) DEFAULT NULL COMMENT '客户id',
-  `manageUserIds` varchar(500) DEFAULT NULL COMMENT '组管理员',
+  `manageUserIds` int(11) DEFAULT NULL COMMENT '组管理员',
   `status` int(11) DEFAULT NULL COMMENT '状态',
-  `createUser` varchar(100) DEFAULT NULL,
   `memo` varchar(2048) DEFAULT NULL COMMENT '分组说明',
   `videoCover` varchar(1024) DEFAULT NULL COMMENT '分组封面',
   `videoUrl` varchar(1024) DEFAULT NULL COMMENT '分组视频链接',
@@ -583,6 +582,21 @@ CREATE TABLE `t_device_team` (
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 )   COMMENT='设备组';
+
+-- ----------------------------
+-- Table structure for t_device_team_scene
+-- ----------------------------
+DROP TABLE IF EXISTS `t_device_team_scene`;
+CREATE TABLE `t_device_team_scene` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `teamId` int(11) DEFAULT NULL COMMENT '所在组id',
+  `imgVideo` varchar(1024) DEFAULT NULL COMMENT '视频或图片链接',
+  `status` int(1) DEFAULT NULL COMMENT '状态',
+  `createTIme` bigint(20) DEFAULT NULL,
+  `lastUpdateTime` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+)   COMMENT='设备组和组场景关系表';
+
 
 -- ----------------------------
 -- Table structure for t_device_team_item

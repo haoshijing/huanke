@@ -4,7 +4,7 @@
 <mapper namespace="com.huanke.iot.base.dao.device.DeviceTeamSceneMapper">
 
     <sql id="tableName">
-        t_device_team_item
+        t_device_team_scene
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
