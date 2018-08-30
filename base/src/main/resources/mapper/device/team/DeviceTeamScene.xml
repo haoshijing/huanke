@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.device.DeviceTeamSceneMapper">
+
+    <sql id="tableName">
+        t_device_team_item
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.team.DeviceTeamScenePo">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        id,
+        teamId,
+        imgVideo,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES (
+        #{id},
+        #{teamId},
+        #{imgVideo},
+        #{createTime},
+        #{lastUpdateTime}
+        )
+    </insert>
+
+    <!-- 批量插入数条记录 -->
+    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        id,
+        teamId,
+        imgVideo,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES
+        <foreach collection="list" item="teamScene" separator=",">
+            (
+            #{teamScene.id},
+            #{teamScene.teamId},
+            #{teamScene.imgVideo},
+            #{teamScene.createTime},
+            #{teamScene.lastUpdateTime}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamScenePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE teamId = #{teamId}
+    </select>
+
+</mapper>

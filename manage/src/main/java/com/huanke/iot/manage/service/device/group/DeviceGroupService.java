@@ -7,8 +7,7 @@ import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.manage.vo.request.device.group.DeviceGroupCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +52,7 @@ public class DeviceGroupService {
      * @param deviceGroupCreateOrUpdate
      * @return
      */
-    public DeviceGroupPo createGroup(DeviceGroupCreateOrUpdateRequest deviceGroupCreateOrUpdate){
+    public DeviceGroupPo createGroup(GroupCreateOrUpdateRequest deviceGroupCreateOrUpdate){
         DeviceGroupPo queryPo=new DeviceGroupPo();
         queryPo.setName(deviceGroupCreateOrUpdate.getName());
         queryPo.setCustomerId(deviceGroupCreateOrUpdate.getCustomerId());
@@ -75,16 +74,16 @@ public class DeviceGroupService {
 
     /**
      * 向集群中添加选中的设备
-     * @param deviceGroupCreateOrUpdateRequest
+     * @param groupCreateOrUpdateRequest
      * @return
      */
-    public Boolean addDeviceToGroup(DeviceGroupCreateOrUpdateRequest deviceGroupCreateOrUpdateRequest,DeviceGroupPo deviceGroupPo){
+    public Boolean addDeviceToGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest, DeviceGroupPo deviceGroupPo){
         //判断当前设备列表中是否存在集群冲突
-        if(isGroupConflict(deviceGroupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList())){
+        if(isGroupConflict(groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList())){
             return false;
         }
         else {
-            for (DeviceQueryRequest.DeviceQueryList deviceList : deviceGroupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList()) {
+            for (DeviceQueryRequest.DeviceQueryList deviceList : groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList()) {
                 DevicePo devicePo = deviceMapper.selectByMac(deviceList.getMac());
                 DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
                 deviceGroupItemPo.setGroupId(deviceGroupPo.getId());
@@ -117,13 +116,13 @@ public class DeviceGroupService {
     }
     /**
      * 通过集群名查询集群ID
-     * @param deviceGroupCreateOrUpdateRequest
+     * @param groupCreateOrUpdateRequest
      * @return
      */
-    public DeviceGroupPo queryIdByName(DeviceGroupCreateOrUpdateRequest deviceGroupCreateOrUpdateRequest){
+    public DeviceGroupPo queryIdByName(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest){
         DeviceGroupPo queryPo=new DeviceGroupPo();
-        queryPo.setName(deviceGroupCreateOrUpdateRequest.getName());
-        queryPo.setCustomerId(deviceGroupCreateOrUpdateRequest.getCustomerId());
+        queryPo.setName(groupCreateOrUpdateRequest.getName());
+        queryPo.setCustomerId(groupCreateOrUpdateRequest.getCustomerId());
         DeviceGroupPo deviceGroupPo=deviceGroupMapper.queryByName(queryPo);
         if(null != deviceGroupPo){
             return deviceGroupPo;
@@ -209,12 +208,6 @@ public class DeviceGroupService {
 //        }).collect(Collectors.toList());
 //    }
 //
-//    public Integer selectCount(DeviceGroupQueryRequest request) {
-//        DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
-//        deviceGroupPo.setGroupName(request.getName());
-//        deviceGroupPo.setStatus(1);
-//        return deviceGroupMapper.selectCount(deviceGroupPo);
-//    }
 //
 //    public void updateGroup(DeviceGroupPo deviceGroupPo) {
 //        deviceGroupMapper.updateById(deviceGroupPo);
