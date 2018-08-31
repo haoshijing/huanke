@@ -125,4 +125,18 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="getByJoinId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+        select * from <include refid="tableName"/>
+        <where>
+
+            <if test = "modelId != null">
+                and modelId = #{modelId}
+            </if>
+            <if test = "ablityId != null">
+                and ablityId = #{ablityId}
+            </if>
+            and status = 1
+        </where>
+    </select>
+
 </mapper>

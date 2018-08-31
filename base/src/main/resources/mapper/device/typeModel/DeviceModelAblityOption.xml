@@ -4,20 +4,21 @@
 <mapper namespace="com.huanke.iot.base.dao.device.typeModel.DeviceModelOptionMapper">
 
     <sql id="tableName">
-        t_device_model
+        t_device_model_ablity_option
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
         INSERT INTO <include refid="tableName"/>
         (
         modelAblityId,
+        ablityOptionId,
         definedName,
         status,
         createTime
         )
         VALUES (
-        #{modelId},
-        #{ablityId},
+        #{modelAblityId},
+        #{ablityOptionId},
         #{definedName},
         #{status},
         #{createTime}
@@ -84,6 +85,21 @@
             </if>
         </where>
         limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getByJoinId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo">
+        select * from <include refid="tableName"/>
+        <where>
+
+            <if test = "modelAblityId != null">
+                and modelAblityId = #{modelAblityId}
+            </if>
+            <if test = "ablityOptionId != null">
+                and ablityOptionId = #{ablityOptionId}
+            </if>
+
+        </where>
+        limit 1
     </select>
 
 </mapper>
