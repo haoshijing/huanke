@@ -10,6 +10,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 public interface CustomerUserMapper extends BaseMapper<CustomerUserPo>{
 
      CustomerUserPo selectByOpenId(String openId);
+     CustomerUserPo selectByUserId(Integer userId);
      int updatevisitTimeByOpenId(String openId);
 
 }

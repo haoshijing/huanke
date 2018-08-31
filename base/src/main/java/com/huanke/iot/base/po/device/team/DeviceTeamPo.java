@@ -29,6 +29,11 @@ public class DeviceTeamPo {
     private String remark;
 
     /**
+     * 创建人
+     */
+    private Integer createUserId;
+
+    /**
      * 组控制人
      */
     private Integer masterUserId;
@@ -61,7 +66,7 @@ public class DeviceTeamPo {
     /**
      * '分组说明'
      */
-    private String memo;
+    private String sceneDescription;
 
     /**
      * '分组封面'

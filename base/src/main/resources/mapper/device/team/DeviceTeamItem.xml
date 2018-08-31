@@ -62,6 +62,30 @@
         WHERE deviceId = #{deviceId}
     </select>
 
+    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE teamId = #{teamId}
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        <where>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND deviceId = #{param.deviceId}
+            </if>
+            <if test="param.teamId != null and param.teamId != ''">
+                AND teamId = #{param.teamId}
+            </if>
+            <if test="param.userId != null  and param.userId != ''  ">
+                AND userId = #{param.userId}
+            </if>
+        </where>
+    </select>
+
     <update id="updateStatus">
         update <include refid="tableName"/>
         set status = #{status}

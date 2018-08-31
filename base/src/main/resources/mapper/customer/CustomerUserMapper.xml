@@ -45,6 +45,14 @@
         limit 1
     </select>
 
+    <!--查询列白哦-->
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        select *
+        from <include refid="tableName"/>
+        where id = #{id}
+        limit 1
+    </select>
+
     <update id="updateById" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
         update
         <include refid="tableName"/>

@@ -14,7 +14,8 @@
  Date: 31/08/2018 11:21:49
 */
 
-
+CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+use iot;
 -- ----------------------------
 -- Table structure for android_config
 -- ----------------------------
@@ -564,11 +565,12 @@ CREATE TABLE `t_device_team` (
   `icon` varchar(100) DEFAULT NULL COMMENT '图标、缩略图',
   `name` varchar(100) DEFAULT NULL COMMENT '组名',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注、描述',
+  `createUserId` int(11) DEFAULT NULL COMMENT '创建人',
   `masterUserId` int(11) DEFAULT NULL COMMENT '组控制人',
   `customerId` int(11) DEFAULT NULL COMMENT '客户id',
   `manageUserIds` varchar(500) DEFAULT NULL COMMENT '组管理员',
   `status` int(11) DEFAULT NULL COMMENT '状态',
-  `memo` varchar(2048) DEFAULT NULL COMMENT '分组说明',
+  `sceneDescription` varchar(2048) DEFAULT NULL COMMENT '分组场景说明',
   `videoCover` varchar(1024) DEFAULT NULL COMMENT '分组封面',
   `videoUrl` varchar(1024) DEFAULT NULL COMMENT '分组视频链接',
   `qrcode` varchar(1024) DEFAULT NULL COMMENT '二维码链接',
