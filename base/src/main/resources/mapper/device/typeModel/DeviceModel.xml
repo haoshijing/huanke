@@ -137,7 +137,7 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="getFormatIdById" parameterType="java.lang.Integer" resultType="java.long.Integer">
+    <select id="getFormatIdById" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select formatId from <include refid="tableName"/>
         WHERE id = #{modelId}
         limit 1
