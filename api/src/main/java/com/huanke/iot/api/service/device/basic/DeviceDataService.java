@@ -344,7 +344,7 @@ public class DeviceDataService {
         if (deviceCustomerUserRelationPos.isEmpty()) {
             return false;
         }
-        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemMapper.getByDeviceId(iDeviceId);
+        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemMapper.selectByDeviceId(iDeviceId);
         DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(deviceTeamItemPo.getTeamId());
         if (deviceTeamPo.getMasterUserId() != userId) {
             ret = deviceCustomerUserRelationMapper.deleteRelationByJoinId(customerUserPo.getOpenId(), iDeviceId) > 0;
