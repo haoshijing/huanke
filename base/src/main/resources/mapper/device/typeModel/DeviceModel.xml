@@ -11,6 +11,7 @@
         INSERT INTO <include refid="tableName"/>
         (
         name,
+        modelNo,
         typeId,
         customerId,
         productId,
@@ -23,6 +24,7 @@
         )
         VALUES (
         #{name},
+        #{modelNo},
         #{typeId},
         #{customerId},
         #{productId},
@@ -39,6 +41,9 @@
         <set>
             <if test = "name != null and name != ''">
                 name = #{name},
+            </if>
+            <if test = "modelNo != null and modelNo != ''">
+                modelNo = #{modelNo},
             </if>
             <if test = "typeId != null ">
                 typeId = #{typeId},
@@ -117,6 +122,9 @@
 
             <if test = "param.name != null and param.name != ''">
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test = "param.modelNo != null and param.modelNo != ''">
+                AND modelNo = #{modelNo})
             </if>
             <if test = "param.typeId != null">
                 and typeId = #{param.typeId}
