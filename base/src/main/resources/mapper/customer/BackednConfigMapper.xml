@@ -10,27 +10,22 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.BackendConfigPo">
         INSERT INTO <include refid="tableName"/>
         (
-        name,
         customerId,
         logo,
         type,
         enableStatus,
-        customerId,
-        createTime,
-        lastUpdateTime
+        status,
+        createTime
         )
         VALUES (
-        #{name},
         #{customerId},
         #{logo},
         #{type},
         #{enableStatus},
-        #{customerId},
-        #{createTime},
-        #{lastUpdateTime}
+        #{status},
+        #{createTime}
         )
     </insert>
-
     <update id="updateById" parameterType="com.huanke.iot.base.po.customer.BackendConfigPo">
         update
         <include refid="tableName"/>
@@ -44,14 +39,14 @@
             <if test="logo != null  and logo != '' ">
                 logo = #{logo},
             </if>
+            <if test="version != null  and version != '' ">
+                version = #{version},
+            </if>
             <if test="enableStatus != null ">
                 enableStatus = #{enableStatus},
             </if>
             <if test="status != null ">
                 status = #{status},
-            </if>
-            <if test="type != null ">
-                type = #{type},
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>
@@ -65,6 +60,16 @@
     </select>
 
 
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.BackendConfigPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
 
-
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
 </mapper>
