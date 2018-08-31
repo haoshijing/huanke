@@ -7,8 +7,10 @@
         t_device_type
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
-        INSERT INTO <include refid="tableName"/>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
+        INSERT INTO
+        <include refid="tableName"/>
         (
         name,
         icon,
@@ -31,27 +33,28 @@
         )
     </insert>
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
-        update <include refid="tableName"/>
+        update
+        <include refid="tableName"/>
         <set>
-            <if test = "name != null and name != ''">
+            <if test="name != null and name != ''">
                 name = #{name},
             </if>
-            <if test = "icon != null and icon != ''">
+            <if test="icon != null and icon != ''">
                 icon = #{icon},
             </if>
-            <if test = "stopWatch != null and stopWatch != ''">
+            <if test="stopWatch != null and stopWatch != ''">
                 stopWatch = #{stopWatch},
             </if>
-            <if test = "source != null and source != ''">
+            <if test="source != null and source != ''">
                 source = #{source},
             </if>
-            <if test = "typeNo != null and typeNo != ''">
+            <if test="typeNo != null and typeNo != ''">
                 typeNo = #{typeNo},
             </if>
-            <if test = "remark != null and remark != ''">
+            <if test="remark != null and remark != ''">
                 remark = #{remark},
             </if>
-            <if test = "status != null ">
+            <if test="status != null ">
                 status = #{status},
             </if>
             lastUpdateTime = #{lastUpdateTime}
@@ -59,8 +62,9 @@
         where id = #{id}
     </update>
 
-    <update id="updateStatusById" >
-        update <include refid="tableName"/>
+    <update id="updateStatusById">
+        update
+        <include refid="tableName"/>
         <set>
             status = #{status}
         </set>
@@ -68,36 +72,52 @@
     </update>
 
     <delete id="deleteById">
-        delete from <include refid="tableName"/>
+        delete from
+        <include refid="tableName"/>
         where id = #{id}
     </delete>
 
 
-    <select id="selectTypeAblitySetByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
+    <select id="selectTypeAblitySetByTypeId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         select
         *
         FROM t_device_type_ablity_set
         WHERE typeId = #{typeId} limit 1
     </select>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
+    <select id="selectById" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
 
-    <select id = "selectCount" resultType="java.lang.Integer">
+    <select id="selectListByTypeIds" parameterType="java.util.List"
+            resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer">
         select count(1)
-        from <include refid="tableName"/>
+        from
+        <include refid="tableName"/>
         <where>
-            <if test = "param.name != null and param.name != ''">
+            <if test="param.name != null and param.name != ''">
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
-            <if test = "param.typeNo != null and param.typeNo != ''">
+            <if test="param.typeNo != null and param.typeNo != ''">
                 and typeNo = #{param.typeNo}
             </if>
-            <if test = "param.status != null and param.status != ''">
+            <if test="param.status != null and param.status != ''">
                 and status = #{param.status}
             </if>
         </where>
@@ -105,22 +125,22 @@
 
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
-        select * from <include refid="tableName"/>
+        select * from
+        <include refid="tableName"/>
         <where>
 
-            <if test = "param.name != null and param.name != ''">
+            <if test="param.name != null and param.name != ''">
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
-            <if test = "param.typeNo != null and param.typeNo != ''">
+            <if test="param.typeNo != null and param.typeNo != ''">
                 and typeNo = #{param.typeNo}
             </if>
-            <if test = "param.status != null and param.status != ''">
+            <if test="param.status != null and param.status != ''">
                 and status = #{param.status}
             </if>
         </where>
         limit #{limit} offset #{offset}
     </select>
-
 
 
 </mapper>

@@ -44,12 +44,11 @@ public class CustomerController {
      */
     @ApiOperation("修改客户信息")
     @PutMapping(value = "updateDetail")
-    public ApiResponse<Boolean> updateDetail(@RequestBody CustomerVo customerVo) {
+    public ApiResponse<Integer> updateDetail(@RequestBody CustomerVo customerVo) {
         if (StringUtils.isBlank(customerVo.getName())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"客户名称不能为空");
         }
-        this.customerService.saveDetail(customerVo);
-        return new ApiResponse<>(true);
+        return customerService.saveDetail(customerVo);
     }
 
     /**

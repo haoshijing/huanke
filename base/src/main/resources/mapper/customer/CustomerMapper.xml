@@ -13,7 +13,7 @@
         <include refid="tableName"/>
         (
         name,
-        loginname,
+        loginName,
         userType,
         remark,
         publicName,
@@ -21,9 +21,10 @@
         appid,
         appsecret,
         SLD,
+        typeIds,
+        modelIds,
         status,
         createTime,
-        lastUpdateTime,
         creatUser
         )
         VALUES (
@@ -36,9 +37,10 @@
         #{appid},
         #{appsecret},
         #{SLD},
+        #{typeIds},
+        #{modelIds},
         #{status},
         #{createTime},
-        #{lastUpdateTime},
         #{creatUser}
         )
     </insert>
@@ -127,12 +129,8 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="selectAllCustomers">
-        select id,name,
-        userType,
-        publicName,
-        loginname,
-        remark
+    <select id="selectAllCustomers" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select *
         from <include refid="tableName"/>
         where status = 1
     </select>

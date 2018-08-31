@@ -148,6 +148,7 @@ public class DeviceTypeController {
         return new ApiResponse<>(deviceTypeVos);
     }
 
+
     /**
      * 根据id查询 类型
      * @param typeId
@@ -173,6 +174,18 @@ public class DeviceTypeController {
         List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(typeRequest);
         return new ApiResponse<>(deviceTypeVos);
     }
+
+    @ApiOperation("根据设备类型主键集合，查询所有设备类型 ")
+    @GetMapping(value = "/selectListByTypeIds/{typeIds}")
+    public ApiResponse<List<DeviceTypeVo>> selectListByTypeIds(@PathVariable("typeIds") String typeIds) {
+        if(typeIds.split(",").length>0){
+            List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectListByTypeIds(typeIds);
+            return new ApiResponse<>(deviceTypeVos);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键格式不正确");
+        }
+    }
+
 
 //    /**
 //     * 根据 类型主键查询 该类型的能力集

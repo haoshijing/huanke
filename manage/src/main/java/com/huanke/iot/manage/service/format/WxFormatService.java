@@ -4,10 +4,12 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatPageMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.format.WxFormatPo;
@@ -37,6 +39,10 @@ public class WxFormatService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private DeviceTypeMapper deviceTypeMapper;
+
 
     /**
      * 新增 版式以及版式的 配置项
@@ -204,18 +210,21 @@ public class WxFormatService {
      * @param customerId
      * @return
      */
-    public ApiResponse<List<WxFormatVo>> selectFormatsByCustomerId(Integer customerId) {
+    public ApiResponse<List<WxFormatVo>> selectFormatsByCustomerId(Integer customerId,Integer typeId) {
 
         WxFormatPo queryWxFormatPo = new WxFormatPo();
 
         //先查询该客户id是否存在
         CustomerPo customerPo = customerMapper.selectById(customerId);
-
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+        if(deviceTypePo==null){
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该类型不存在");
+        }
         if(customerPo!=null){
             //查询 版式列表
-
             queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
             queryWxFormatPo.setCustomerIds(customerId.toString());
+            queryWxFormatPo.setTypeIds(typeId.toString());
             List<WxFormatPo> wxformatPoList = wxFormatMapper.selectFormatsByCustomerId(queryWxFormatPo);
             List<WxFormatVo> wxFormatVoList = wxformatPoList.stream().map(wxFormatPo -> {
                 WxFormatVo wxFormatVo = new WxFormatVo();

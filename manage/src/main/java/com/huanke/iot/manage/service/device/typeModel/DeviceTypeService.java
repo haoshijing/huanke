@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -239,7 +240,37 @@ public class DeviceTypeService {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * 根据类型集合查询该客户可用的设备类型信息
+     *
+     * @param typeIds
+     * @return
+     */
+    public List<DeviceTypeVo> selectListByTypeIds(String typeIds) {
 
+        List<String> typeIdList = Arrays.asList(typeIds.split(","));
+
+        //查询 类型列表
+        List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectListByTypeIds(typeIdList);
+        return deviceTypePos.stream().map(deviceTypePo -> {
+            DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
+            if(deviceTypePo!=null){
+                deviceTypeVo.setName(deviceTypePo.getName());
+                deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
+                deviceTypeVo.setIcon(deviceTypePo.getIcon());
+                deviceTypeVo.setStopWatch(deviceTypePo.getStopWatch());
+                deviceTypeVo.setSource(deviceTypePo.getSource());
+                deviceTypeVo.setRemark(deviceTypePo.getRemark());
+                deviceTypeVo.setId(deviceTypePo.getId());
+            }
+
+            //查询该 类型的 功能集合
+            List<DeviceTypeAblitysVo> deviceTypeAblitysVos = selectAblitysByTypeId(deviceTypePo.getId());
+
+            deviceTypeVo.setDeviceTypeAblitys(deviceTypeAblitysVos);
+            return deviceTypeVo;
+        }).collect(Collectors.toList());
+    }
     /**
      * 根据主键查询类型
      *

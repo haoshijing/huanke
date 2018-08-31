@@ -97,9 +97,9 @@ public class WxFormatController {
      * @throws Exception
      */
     @ApiOperation("查询客户可使用的版式列表")
-    @GetMapping(value = "/selectFormatsByCustomerId/{customerId}")
-    public ApiResponse<List<WxFormatVo>> selectFormatsByCustomerId(@PathVariable("customerId")Integer customerId) throws Exception{
-        ApiResponse<List<WxFormatVo>> result  =  wxFormatService.selectFormatsByCustomerId(customerId);
+    @GetMapping(value = "/selectFormatsByCustomerId/{customerId}/{typeId}")
+    public ApiResponse<List<WxFormatVo>> selectFormatsByCustomerId(@PathVariable("customerId")Integer customerId,@PathVariable("typeId")Integer typeId) throws Exception{
+        ApiResponse<List<WxFormatVo>> result  =  wxFormatService.selectFormatsByCustomerId(customerId,typeId);
         return result;
     }
 

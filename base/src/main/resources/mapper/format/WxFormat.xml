@@ -82,6 +82,15 @@
                 or  customerIds like CONCAT('%,',CONCAT(#{customerIds},',%'))
                 or customerIds = #{customerIds}
                 )
+
+            <if test="typeIds != null and typeIds !='' ">
+                AND  ( typeIds like CONCAT(#{typeIds},',%')
+                or  typeIds like CONCAT('%,',#{typeIds})
+                or  typeIds like CONCAT('%,',CONCAT(#{typeIds},',%'))
+                or typeIds = #{typeIds}
+                )
+            </if>
+
             <if test="type != null ">
                 AND type = #{type}
             </if>
@@ -89,7 +98,7 @@
                 AND owerType = #{owerType}
             </if>
             <if test="status != null">
-                AND status = #{status}
+                AND status = 1
             </if>
         </where>
     </select>
