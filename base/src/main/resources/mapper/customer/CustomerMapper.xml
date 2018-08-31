@@ -117,16 +117,6 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="selectCustomerList">
-        select tc.name,
-        tc.userType,
-        tc.publicName,
-        tc.loginname,
-        tc.remark
-        from <include refid="tableName"/>
-        limit #{limit} offset #{offset}
-    </select>
-
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select

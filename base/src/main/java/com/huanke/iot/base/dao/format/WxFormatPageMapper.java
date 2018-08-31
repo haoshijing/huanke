@@ -3,7 +3,6 @@ package com.huanke.iot.base.dao.format;
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
-import com.huanke.iot.base.po.format.WxFormatPo;
 
 import java.util.List;
 

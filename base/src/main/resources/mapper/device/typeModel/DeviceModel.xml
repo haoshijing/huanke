@@ -14,6 +14,7 @@
         typeId,
         customerId,
         productId,
+        formatId,
         icon,
         version,
         status,
@@ -25,6 +26,7 @@
         #{typeId},
         #{customerId},
         #{productId},
+        #{formatId},
         #{icon},
         #{version},
         #{status},
@@ -133,6 +135,12 @@
             </if>
         </where>
         limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getFormatIdById" parameterType="java.lang.Integer" resultType="java.long.Integer">
+        select formatId from <include refid="tableName"/>
+        WHERE id = #{modelId}
+        limit 1
     </select>
 
 </mapper>

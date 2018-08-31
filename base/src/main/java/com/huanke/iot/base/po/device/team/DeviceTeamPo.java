@@ -31,7 +31,7 @@ public class DeviceTeamPo {
     /**
      * 组控制人
      */
-    private String masterUserId;
+    private Integer masterUserId;
 
     /**
      * B端客户id

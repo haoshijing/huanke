@@ -2,7 +2,7 @@ package com.huanke.iot.base.dao.device.typeModel;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,4 +16,6 @@ public interface DeviceModelAblityMapper extends BaseMapper<DeviceModelAblityPo>
     List<DeviceModelAblityPo> selectByModelId(Integer modelId);
 
     void insertBatch(List<DeviceModelAblityPo> deviceModelAblityPoList);
+
+    DeviceModelAblityPo getByJoinId(@Param("modelId") Integer modelId, @Param("abilityId") Integer abilityId);
 }

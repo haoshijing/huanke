@@ -11,5 +11,4 @@ import java.util.List;
  */
 public interface DeviceFormatItemMapper extends BaseMapper<WxFormatItemPo> {
 
-    List<Integer> getItemIdsByModelId(Integer modelId);
 }
