@@ -8,7 +8,7 @@ import lombok.Data;
  **/
 @Data
 public class WxFormatQueryRequest {
-    private Integer id;
+//    private Integer id;
     private String name;
 //    private String htmlUrl;
 //    private String icon;
@@ -22,4 +22,14 @@ public class WxFormatQueryRequest {
 
     private Integer page = 1;
     private Integer limit = 20;
+
+    @Data
+    public static class WxFormatItemQueryRequest{
+        private Integer formatId;
+        private Integer pageId;
+        private String name;
+        private Integer ablityType;
+        private Integer status;
+
+    }
 }

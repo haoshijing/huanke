@@ -107,6 +107,7 @@ public class WxFormatService {
                             wxFormatItemMapper.updateById(wxFormatItemPo);
                         } else {
                             wxFormatItemPo.setFormatId(wxFormatPo.getId());
+                            wxFormatItemPo.setPageId(wxFormatPagePo.getId());
                             wxFormatItemPo.setCreateTime(System.currentTimeMillis());
                             wxFormatItemPo.setStatus(CommonConstant.STATUS_YES);
                             wxFormatItemMapper.insert(wxFormatItemPo);
@@ -134,7 +135,7 @@ public class WxFormatService {
         WxFormatPo queryWxFormatPo = new WxFormatPo();
 
         if (request != null) {
-            queryWxFormatPo.setId(request.getId());
+//            queryWxFormatPo.setId(request.getId());
             queryWxFormatPo.setName(request.getName());
             queryWxFormatPo.setOwerType(request.getOwerType());
             queryWxFormatPo.setType(request.getType());
@@ -155,32 +156,9 @@ public class WxFormatService {
             BeanUtils.copyProperties(wxFormatPo, wxFormatVo);
 
             //根据版式主键 查询该版式下的 页面
-            List<WxFormatPagePo> wxFormatPagePos = wxFormatPageMapper.selectByFormatId(wxFormatPo.getId());
-
-            List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = wxFormatPagePos.stream().map(wxFormatPagePo -> {
-                WxFormatVo.WxFormatPageVo wxFormatPageVo = new WxFormatVo.WxFormatPageVo();
-                wxFormatPageVo.setId(wxFormatPagePo.getId());
-                wxFormatPageVo.setName(wxFormatPagePo.getName());
-                wxFormatPageVo.setPageNo(wxFormatPagePo.getPageNo());
-                wxFormatPageVo.setShowImg(wxFormatPagePo.getShowImg());
-                wxFormatPageVo.setStatus(wxFormatPagePo.getStatus());
-
-                //根据版式主键 查询该版式下的 配置项
-                List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByPageId(wxFormatPagePo.getId());
-
-                List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
-                    WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
-                    wxFormatItemVo.setName(wxFormatItemPo.getName());
-                    wxFormatItemVo.setId(wxFormatItemPo.getId());
-                    wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
-                    return wxFormatItemVo;
-                }).collect(Collectors.toList());
-
-                wxFormatPageVo.setWxFormatItemVos(wxFormatItemVos);
-                return wxFormatPageVo;
-            }).collect(Collectors.toList());
-
+            List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = getPageList(wxFormatPo.getId());
             wxFormatVo.setWxFormatPageVos(wxFormatPageVos);
+
 
             return wxFormatVo;
         }).collect(Collectors.toList());
@@ -214,32 +192,7 @@ public class WxFormatService {
             wxFormatVo.setStatus(wxFormatPo.getStatus());
 
             //根据版式主键 查询该版式下的 页面
-            List<WxFormatPagePo> wxFormatPagePos = wxFormatPageMapper.selectByFormatId(wxFormatPo.getId());
-
-            List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = wxFormatPagePos.stream().map(wxFormatPagePo -> {
-                WxFormatVo.WxFormatPageVo wxFormatPageVo = new WxFormatVo.WxFormatPageVo();
-                wxFormatPageVo.setId(wxFormatPagePo.getId());
-                wxFormatPageVo.setName(wxFormatPagePo.getName());
-                wxFormatPageVo.setPageNo(wxFormatPagePo.getPageNo());
-                wxFormatPageVo.setShowImg(wxFormatPagePo.getShowImg());
-                wxFormatPageVo.setStatus(wxFormatPagePo.getStatus());
-
-                //根据版式主键 查询该版式下的 配置项
-                List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByPageId(wxFormatPagePo.getId());
-
-                List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
-                    WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
-                    wxFormatItemVo.setName(wxFormatItemPo.getName());
-                    wxFormatItemVo.setId(wxFormatItemPo.getId());
-                    wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
-                    return wxFormatItemVo;
-                }).collect(Collectors.toList());
-
-                wxFormatPageVo.setWxFormatItemVos(wxFormatItemVos);
-                return wxFormatPageVo;
-            }).collect(Collectors.toList());
-
-
+            List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = getPageList(wxFormatPo.getId());
             wxFormatVo.setWxFormatPageVos(wxFormatPageVos);
         }
         return wxFormatVo;
@@ -269,31 +222,7 @@ public class WxFormatService {
                 BeanUtils.copyProperties(wxFormatPo, wxFormatVo);
 
                 //根据版式主键 查询该版式下的 页面
-                List<WxFormatPagePo> wxFormatPagePos = wxFormatPageMapper.selectByFormatId(wxFormatPo.getId());
-
-                List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = wxFormatPagePos.stream().map(wxFormatPagePo -> {
-                    WxFormatVo.WxFormatPageVo wxFormatPageVo = new WxFormatVo.WxFormatPageVo();
-                    wxFormatPageVo.setId(wxFormatPagePo.getId());
-                    wxFormatPageVo.setName(wxFormatPagePo.getName());
-                    wxFormatPageVo.setPageNo(wxFormatPagePo.getPageNo());
-                    wxFormatPageVo.setShowImg(wxFormatPagePo.getShowImg());
-                    wxFormatPageVo.setStatus(wxFormatPagePo.getStatus());
-
-                    //根据版式主键 查询该版式下的 配置项
-                    List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByPageId(wxFormatPagePo.getId());
-
-                    List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
-                        WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
-                        wxFormatItemVo.setName(wxFormatItemPo.getName());
-                        wxFormatItemVo.setId(wxFormatItemPo.getId());
-                        wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
-                        return wxFormatItemVo;
-                    }).collect(Collectors.toList());
-
-                    wxFormatPageVo.setWxFormatItemVos(wxFormatItemVos);
-                    return wxFormatPageVo;
-                }).collect(Collectors.toList());
-
+                List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = getPageList(wxFormatPo.getId());
                 wxFormatVo.setWxFormatPageVos(wxFormatPageVos);
                 return wxFormatVo;
             }).collect(Collectors.toList());
@@ -309,13 +238,60 @@ public class WxFormatService {
     }
 
     /**
+     * 查询 版式下的页面
+     * @param formatId
+     * @return
+     */
+    public List getPageList(Integer formatId){
+
+        List<WxFormatPagePo> wxFormatPagePos = wxFormatPageMapper.selectByFormatId(formatId);
+
+        List<WxFormatVo.WxFormatPageVo> wxFormatPageVos = wxFormatPagePos.stream().map(wxFormatPagePo -> {
+            WxFormatVo.WxFormatPageVo wxFormatPageVo = new WxFormatVo.WxFormatPageVo();
+            wxFormatPageVo.setId(wxFormatPagePo.getId());
+            wxFormatPageVo.setName(wxFormatPagePo.getName());
+            wxFormatPageVo.setPageNo(wxFormatPagePo.getPageNo());
+            wxFormatPageVo.setShowImg(wxFormatPagePo.getShowImg());
+            wxFormatPageVo.setStatus(wxFormatPagePo.getStatus());
+
+            List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = getItemList(formatId,wxFormatPagePo.getId());
+
+            wxFormatPageVo.setWxFormatItemVos(wxFormatItemVos);
+            return wxFormatPageVo;
+        }).collect(Collectors.toList());
+        return  wxFormatPageVos;
+    }
+
+    /**
+     * 查询 每个页面下的配置项
+     * @param formatId
+     * @param pageId
+     * @return
+     */
+    public List<WxFormatVo.WxFormatItemVo> getItemList(Integer formatId,Integer pageId){
+
+        //根据版式主键 查询该版式下的 配置项
+        List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByPageId(formatId,pageId);
+
+        List<WxFormatVo.WxFormatItemVo> wxFormatItemVos = wxFormatItemPos.stream().map(wxFormatItemPo -> {
+            WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
+            wxFormatItemVo.setName(wxFormatItemPo.getName());
+            wxFormatItemVo.setId(wxFormatItemPo.getId());
+            wxFormatItemVo.setAblityType(wxFormatItemPo.getAblityType());
+            wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
+            return wxFormatItemVo;
+        }).collect(Collectors.toList());
+
+        return  wxFormatItemVos;
+    }
+    /**
      * 删除 该版式
      * 并同时删除该版式下 所有的配置项
      *
      * @param formatId
      * @return
      */
-    public ApiResponse<Boolean> delteById(Integer formatId) {
+    public ApiResponse<Boolean> deleteById(Integer formatId) {
 
         Boolean ret = true;
         //先删除(逻辑删除) 该 版式

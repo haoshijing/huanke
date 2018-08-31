@@ -6,6 +6,7 @@ import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -73,8 +74,8 @@ public class DeviceAblityController {
      * @throws Exception
      */
     @ApiOperation("根据Id删除功能")
-    @DeleteMapping(value = "/delteAblity/{id}")
-    public ApiResponse<Boolean> delteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
+    @DeleteMapping(value = "/deleteAblity/{id}")
+    public ApiResponse<Boolean> deleteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
         Boolean ret =  deviceAblityService.deleteAblity(ablityId);
         return new ApiResponse<>(ret);
     }
@@ -90,6 +91,20 @@ public class DeviceAblityController {
     public ApiResponse<List<DeviceAblityVo>> selectList(@RequestBody DeviceAblityQueryRequest ablityRequest) throws Exception{
         List<DeviceAblityVo> deviceAblityVos =  deviceAblityService.selectList(ablityRequest);
         return new ApiResponse<>(deviceAblityVos);
+    }
+
+    /**
+     * 查询功能列表
+     * @param typeId
+     * @param ablityType
+     * @return 返回功能项列表
+     * @throws Exception
+     */
+    @ApiOperation("根据设备类型和功能项类型 查询功能列表")
+    @GetMapping(value = "/selectListByConditions/{typeId}/{ablityType}")
+    public ApiResponse<List<DeviceTypeAblitysVo>> selectListByConditions(@PathVariable("typeId") Integer typeId, @PathVariable("ablityType") Integer ablityType) throws Exception{
+        List<DeviceTypeAblitysVo> deviceTypeAblitysVos =  deviceAblityService.selectListByType(typeId,ablityType);
+        return new ApiResponse<>(deviceTypeAblitysVos);
     }
 
 }

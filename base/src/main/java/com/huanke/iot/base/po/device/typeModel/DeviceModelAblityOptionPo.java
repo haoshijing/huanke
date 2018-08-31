@@ -11,6 +11,7 @@ import lombok.Data;
 public class DeviceModelAblityOptionPo {
     private Integer id;
     private Integer modelAblityId;
+    private Integer ablityOptionId;
     private String definedName;
     private Integer status;
     private Long createTime;

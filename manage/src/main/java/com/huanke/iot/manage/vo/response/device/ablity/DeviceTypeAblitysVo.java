@@ -2,6 +2,8 @@ package com.huanke.iot.manage.vo.response.device.ablity;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author Caik
  * @date 2018/8/14 19:19
@@ -13,4 +15,6 @@ public class DeviceTypeAblitysVo {
     private Integer ablityId;
     private String ablityName;
     private Integer typeId;
+
+    private List<DeviceAblityOptionVo> deviceAblityOptions;
 }

@@ -56,13 +56,13 @@
         <include refid="tableName"/>
         <where>
             1 = 1
-            <if test="param.name != null and param.name != ''">
+            <if test="param.name != null and param.name != '' ">
                 AND  name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test="param.type != null ">
                 AND type = #{param.type}
             </if>
-            <if test="param.owerType != null">
+            <if test="param.owerType != null ">
                 AND owerType = #{param.owerType}
             </if>
             <if test="param.status != null">

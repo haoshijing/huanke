@@ -12,6 +12,7 @@
         <include refid="tableName"/>
         (
         formatId,
+        pageId,
         name,
         ablityType,
         status,
@@ -20,6 +21,7 @@
         )
         VALUES (
         #{formatId},
+        #{pageId},
         #{name},
         #{ablityType},
         #{status},
@@ -36,12 +38,15 @@
         WHERE id = #{id} limit 1
     </select>
 
-    <select id="selectByPageId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.format.WxFormatItemPo">
+    <select id="selectByPageId"  resultType="com.huanke.iot.base.po.format.WxFormatItemPo">
         select
         *
         FROM
         <include refid="tableName"/>
-        WHERE pageId = #{pageId}
+        WHERE formatId = #{formatId}
+        <if test=" pageId !=null ">
+        and pageId = #{pageId}
+        </if>
         and status = 1
     </select>
 

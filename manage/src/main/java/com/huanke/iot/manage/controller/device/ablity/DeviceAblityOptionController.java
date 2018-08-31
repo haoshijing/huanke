@@ -87,8 +87,8 @@ public class DeviceAblityOptionController {
      * @throws Exception
      */
     @ApiOperation("查询选项列表")
-    @DeleteMapping(value = "/delteAblityOption")
-    public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody DeviceAblityOptionQueryRequest optionRequest) throws Exception{
+    @DeleteMapping(value = "/deleteAblityOption")
+    public ApiResponse<Boolean> deleteDeviceAblitySet(@RequestBody DeviceAblityOptionQueryRequest optionRequest) throws Exception{
         if(null==optionRequest.getId()){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"选项主键不能为空");        }
         Boolean ret =  deviceAblityOptionService.deleteOptionById(optionRequest);

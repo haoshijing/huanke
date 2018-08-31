@@ -6,11 +6,13 @@ import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
+import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityOptionCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,6 +139,42 @@ public class DeviceAblityService {
     }
 
 
+    /**
+     * 查询设备类型指定的 功能类型的 功能列表
+     *
+     * @param typeId
+     * @param ablityType
+     * @return
+     */
+    public List<DeviceTypeAblitysVo> selectListByType(Integer typeId,Integer ablityType) {
+
+        //查询 功能列表
+        List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceAblityMapper.selectAblitysByType(typeId,ablityType);
+
+        List<DeviceTypeAblitysVo> deviceTypeAblitysVos = deviceTypeAblitysPos.stream().map(deviceTypeAblitysPo -> {
+            DeviceTypeAblitysVo deviceTypeAblitysVo = new DeviceTypeAblitysVo();
+            deviceTypeAblitysVo.setId(deviceTypeAblitysPo.getId());
+            deviceTypeAblitysVo.setAblityId(deviceTypeAblitysPo.getAblityId());
+            deviceTypeAblitysVo.setAblityName(deviceTypeAblitysPo.getAblityName());
+            deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
+
+            //根据功能主键 查询该功能下的 选项列表
+            List<DeviceAblityOptionPo> deviceAblityOptionpos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceTypeAblitysPo.getAblityId());
+            List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionpos.stream().map(deviceAblityOptionPo -> {
+                DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
+                deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
+                deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
+                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
+                deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
+                return deviceAblityOptionVo;
+            }).collect(Collectors.toList());
+
+            deviceTypeAblitysVo.setDeviceAblityOptions(deviceAblityOptionVos);
+            return deviceTypeAblitysVo;
+        }).collect(Collectors.toList());
+
+        return deviceTypeAblitysVos;
+    }
     /**
      * 根据主键查询 功能
      *

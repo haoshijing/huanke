@@ -11,7 +11,9 @@ public class DeviceModelFormatConfigPo {
     private Integer id;
     private Integer modelId;
     private Integer formatId;
+    private Integer pageId;
     private Integer itemId;
+    private Integer ablityId;
     private Integer showStatus;
     private String showName;
     private Integer status;

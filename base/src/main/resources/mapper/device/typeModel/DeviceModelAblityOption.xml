@@ -11,13 +11,14 @@
         INSERT INTO <include refid="tableName"/>
         (
         modelAblityId,
+        ablityOptionId,
         definedName,
         status,
         createTime
         )
         VALUES (
-        #{modelId},
-        #{ablityId},
+        #{modelAblityId},
+        #{ablityOptionId},
         #{definedName},
         #{status},
         #{createTime}
@@ -27,7 +28,10 @@
         update <include refid="tableName"/>
         <set>
             <if test = "modelAblityId != null">
-                modelId = #{modelAblityId},
+                modelAblityId = #{modelAblityId},
+            </if>
+            <if test = "ablityOptionId != null">
+                ablityOptionId = #{ablityOptionId},
             </if>
             <if test = "definedName != null and definedName != ''  ">
                 definedName = #{definedName},
@@ -75,6 +79,9 @@
 
             <if test = "param.modelAblityId != null">
                 and modelAblityId = #{param.modelAblityId}
+            </if>
+            <if test = "param.ablityOptionId != null">
+                and ablityOptionId = #{param.ablityOptionId}
             </if>
             <if test = "param.definedName != null and param.definedName != '' ">
                 and definedName = #{param.definedName}

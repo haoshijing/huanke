@@ -73,6 +73,7 @@ public class DeviceModelService {
             effectCount = deviceModelMapper.insert(deviceModelPo);
         }
 
+
         //随后取出 型号的 功能
         List<DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest> deviceModelAblityRequests = modelRequest.getDeviceModelAblitys();
         if (deviceModelAblityRequests != null && deviceModelAblityRequests.size() > 0) {

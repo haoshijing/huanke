@@ -111,9 +111,9 @@ public class WxFormatController {
      * @throws Exception
      */
     @ApiOperation("根据Id删除功能")
-    @DeleteMapping(value = "/delteById/{id}")
-    public ApiResponse<Boolean> delteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
-        ApiResponse<Boolean> result =  wxFormatService.delteById(ablityId);
+    @DeleteMapping(value = "/deleteById/{id}")
+    public ApiResponse<Boolean> deleteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
+        ApiResponse<Boolean> result =  wxFormatService.deleteById(ablityId);
         return result;
     }
 }

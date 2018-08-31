@@ -65,6 +65,18 @@ public class CustomerController {
         return new ApiResponse<>(customerVos);
     }
 
+    /**
+     * 查询客户列表-没有分页
+     * @param
+     * @return 返回客户列表
+     * @throws Exception
+     */
+    @ApiOperation("查询所有的客户")
+    @PostMapping(value = "/selectAllCustomers")
+    public ApiResponse<List<CustomerVo>> selectAllCustomers() throws Exception{
+        List<CustomerVo> customerVos =  customerService.selectAllCustomers();
+        return new ApiResponse<>(customerVos);
+    }
 
     /**
      * 根据客户主键查询客户详情

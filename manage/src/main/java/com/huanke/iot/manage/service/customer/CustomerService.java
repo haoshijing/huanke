@@ -261,6 +261,23 @@ public class CustomerService {
     }
 
     /**
+     * 查询客户列表
+     *
+     * @param
+     * @return
+     */
+    public List<CustomerVo> selectAllCustomers() {
+
+        List<CustomerPo> customerPos = customerMapper.selectAllCustomers();
+        List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
+            CustomerVo customerVo = new CustomerVo();
+            BeanUtils.copyProperties(customerPo, customerVo);
+            return customerVo;
+        }).collect(Collectors.toList());
+
+        return customerVos;
+    }
+    /**
      * 根据主键查询 客户
      *
      * @param customerId

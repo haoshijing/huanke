@@ -76,8 +76,8 @@ public class DeviceAblitySetController {
      * @throws Exception
      */
     @ApiOperation("删除功能集")
-    @DeleteMapping(value = "/delteAblitySet")
-    public ApiResponse<Boolean> delteDeviceAblitySet(@RequestBody String body) throws Exception{
+    @DeleteMapping(value = "/deleteAblitySet")
+    public ApiResponse<Boolean> deleteDeviceAblitySet(@RequestBody String body) throws Exception{
 
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
 
@@ -109,8 +109,8 @@ public class DeviceAblitySetController {
      * @throws Exception
      */
     @ApiOperation("根据功能主键，删除功能集中的功能")
-    @DeleteMapping(value = "/delteAblitySetItemByAblityId")
-    public ApiResponse<Boolean> delteDeviceAblitySetItemByAblityId(@RequestBody String body) throws Exception{
+    @DeleteMapping(value = "/deleteAblitySetItemByAblityId")
+    public ApiResponse<Boolean> deleteDeviceAblitySetItemByAblityId(@RequestBody String body) throws Exception{
 
         Map<String,Object> requestParam = new ObjectMapper().readValue(body,Map.class);
 
