@@ -62,4 +62,16 @@
             <if test="id != null">and id = #{id}</if>
         </where>
     </update>
+
+    <select id="obtainAbilityIdsByJoinId" resultType="java.lang.Integer">
+        select
+        ablityId
+        FROM
+        <include refid="tableName"/>
+        WHERE modelId = #{modelId}
+        AND formatId = #{formatId}
+        AND pageId = #{pageId}
+        AND itemId = #{itemId}
+        AND status = 1
+    </select>
 </mapper>

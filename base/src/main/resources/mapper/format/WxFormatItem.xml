@@ -81,10 +81,14 @@
         pageId = #{pageId}
     </update>
 
-    <select id="getItemIdsByModelId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select itemId
-        from t_device_model_format_config
-        where modelId = #{modelId}
+    <select id="selectByJoinId" resultType="com.huanke.iot.base.po.format.WxFormatItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE pageId = #{pageId}
+        and formatId = #{formatId}
+        and status = 1
     </select>
 
 </mapper>

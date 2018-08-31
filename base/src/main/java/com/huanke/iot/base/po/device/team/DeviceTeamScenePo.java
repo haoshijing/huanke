@@ -9,5 +9,5 @@ public class DeviceTeamScenePo {
     private String imgVideo;
     private Integer status;
     private Long createTime;
-    private Long LastUpdateTime;
+    private Long lastUpdateTime;
 }
