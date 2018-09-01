@@ -1,15 +1,19 @@
 package com.huanke.iot.manage.service.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
+import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +64,7 @@ public class DeviceModelService {
      * @param modelRequest
      * @return
      */
-    public Boolean createOrUpdate(DeviceModelCreateOrUpdateRequest modelRequest) {
+    public ApiResponse<Integer> createOrUpdate(DeviceModelCreateOrUpdateRequest modelRequest) {
 
         //先保存 型号
         int effectCount = 0;
@@ -67,9 +72,14 @@ public class DeviceModelService {
         BeanUtils.copyProperties(modelRequest, deviceModelPo);
         if (modelRequest.getId() != null && modelRequest.getId() > 0) {
             deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
+            //如果不是删除，则设置成 正常状态
+            if (!deviceModelPo.getStatus().equals(CommonConstant.STATUS_DEL)) {
+                deviceModelPo.setStatus(CommonConstant.STATUS_YES);
+            }
             effectCount = deviceModelMapper.updateById(deviceModelPo);
         } else {
             deviceModelPo.setCreateTime(System.currentTimeMillis());
+            deviceModelPo.setStatus(CommonConstant.STATUS_YES);
             effectCount = deviceModelMapper.insert(deviceModelPo);
         }
 
@@ -77,11 +87,11 @@ public class DeviceModelService {
         //随后取出 型号的 功能
         List<DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest> deviceModelAblityRequests = modelRequest.getDeviceModelAblitys();
         if (deviceModelAblityRequests != null && deviceModelAblityRequests.size() > 0) {
-            //遍历当前 型号的能力 b
-            for (int i = 0; i < deviceModelAblityRequests.size(); i++) {
-                DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest deviceModelAblityRequest = deviceModelAblityRequests.get(i);
-                DeviceModelAblityPo deviceModelAblityPo = new DeviceModelAblityPo();
 
+            //遍历当前 型号的能力
+            deviceModelAblityRequests.stream().forEach(deviceModelAblityRequest -> {
+
+                DeviceModelAblityPo deviceModelAblityPo = new DeviceModelAblityPo();
                 deviceModelAblityPo.setModelId(deviceModelPo.getId());
                 deviceModelAblityPo.setDefinedName(deviceModelAblityRequest.getDefinedName());
                 deviceModelAblityPo.setAblityId(deviceModelAblityRequest.getAblityId());
@@ -89,18 +99,49 @@ public class DeviceModelService {
 
                 //判断当前型号的功能 主键是否为空，不为空是更新，空是 保存
                 //todo 选项未保存
-                if (deviceModelAblityRequest.getId() != null) {
+                if (deviceModelAblityRequest.getId() != null && deviceModelAblityRequest.getId() > 0) {
                     deviceModelAblityPo.setId(deviceModelAblityRequest.getId());
                     deviceModelAblityPo.setLastUpdateTime(System.currentTimeMillis());
+                    if (deviceModelAblityPo.getStatus() != CommonConstant.STATUS_DEL) {
+                        deviceModelAblityPo.setStatus(CommonConstant.STATUS_YES);
+                    }
                     deviceModelAblityMapper.updateById(deviceModelAblityPo);
                 } else {
+                    deviceModelAblityPo.setStatus(CommonConstant.STATUS_YES);
                     deviceModelAblityPo.setCreateTime(System.currentTimeMillis());
                     deviceModelAblityMapper.insert(deviceModelAblityPo);
                 }
-            }
+                //遍历 当前 型号的功能项的自定义选项
+                List<DeviceModelCreateOrUpdateRequest.DeviceModelAblityOptionRequest> deviceModelAblityOptionRequests = deviceModelAblityRequest.getDeviceModelAblityOptions();
+                if (deviceModelAblityOptionRequests != null && deviceModelAblityOptionRequests.size() > 0) {
+                    deviceModelAblityOptionRequests.stream().forEach(deviceModelAblityOptionRequest -> {
+
+                        DeviceModelAblityOptionPo deviceModelAblityOptionPo = new DeviceModelAblityOptionPo();
+                        deviceModelAblityOptionPo.setModelAblityId(deviceModelAblityPo.getId());
+                        deviceModelAblityOptionPo.setAblityOptionId(deviceModelAblityOptionRequest.getAblityOptionId());
+                        deviceModelAblityOptionPo.setDefinedName(deviceModelAblityOptionRequest.getDefinedName());
+
+                        // 如果 有id 是 更新，否则是新增
+                        if (deviceModelAblityOptionRequest.getId() != null && deviceModelAblityOptionRequest.getId() > 0) {
+                            if (deviceModelAblityOptionRequest.getStatus() != CommonConstant.STATUS_DEL) {
+                                deviceModelAblityOptionPo.setStatus(CommonConstant.STATUS_YES);
+                            }
+                            deviceModelAblityOptionPo.setId(deviceModelAblityRequest.getId());
+                            deviceModelAblityOptionPo.setLastUpdateTime(System.currentTimeMillis());
+                            deviceModelAblityOptionMapper.updateById(deviceModelAblityOptionPo);
+                        } else {
+                            deviceModelAblityOptionPo.setStatus(CommonConstant.STATUS_YES);
+                            deviceModelAblityOptionPo.setCreateTime(System.currentTimeMillis());
+                            deviceModelAblityOptionMapper.insert(deviceModelAblityOptionPo);
+                        }
+                    });
+                }
+            });
+
         }
-        return effectCount > 0;
+        return new ApiResponse<>(deviceModelPo.getId());
     }
+
 
     /**
      * 查询 型号的列表
@@ -120,6 +161,7 @@ public class DeviceModelService {
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 
+        //查询 型号列表
         List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectList(queryDeviceModelPo, limit, offset);
         return deviceModelPos.stream().map(deviceModelPo -> {
             DeviceModelVo deviceModelVo = new DeviceModelVo();
@@ -132,6 +174,10 @@ public class DeviceModelService {
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setIcon(deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
+
+            List<DeviceModelAblityVo> deviceModelAblityVos =  selectModelAblitysByModelId(deviceModelPo.getId());
+
+            deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
             return deviceModelVo;
         }).collect(Collectors.toList());
     }
@@ -158,6 +204,9 @@ public class DeviceModelService {
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setIcon(deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
+
+            List<DeviceModelAblityVo> deviceModelAblityVos =  selectModelAblitysByModelId(deviceModelPo.getId());
+            deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
             return deviceModelVo;
         }).collect(Collectors.toList());
 
@@ -186,6 +235,8 @@ public class DeviceModelService {
         deviceModelVo.setIcon(deviceModelVo.getIcon());
         deviceModelVo.setId(deviceModelPo.getId());
 
+        List<DeviceModelAblityVo> deviceModelAblityVos =  selectModelAblitysByModelId(deviceModelPo.getId());
+        deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
         return deviceModelVo;
     }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {
@@ -271,29 +322,63 @@ public class DeviceModelService {
 
 
     /**
-     * 根据类型主键 查询 该型号的功能
+     * 根据型号主键 查询 该型号的功能
      *
      * @param modelId
      * @return
      */
     public List<DeviceModelAblityVo> selectModelAblitysByModelId(Integer modelId) {
 
+        //查询型号的自定义能力项
         List<DeviceModelAblityPo> deviceModelAblityPos = deviceModelAblityMapper.selectByModelId(modelId);
 
-        return deviceModelAblityPos.stream().map(deviceModelAblityPo -> {
-            DeviceModelAblityVo deviceModelAblityVo = new DeviceModelAblityVo();
-            deviceModelAblityVo.setId(deviceModelAblityPo.getId());
-            deviceModelAblityVo.setDefinedName(deviceModelAblityPo.getDefinedName());
-            deviceModelAblityVo.setAblityId(deviceModelAblityPo.getAblityId());
-            deviceModelAblityVo.setModelId(deviceModelAblityPo.getModelId());
-            deviceModelAblityVo.setStatus(deviceModelAblityPo.getStatus());
-            return deviceModelAblityVo;
-        }).collect(Collectors.toList());
+        List<DeviceModelAblityVo> deviceModelAblityVos = new ArrayList<DeviceModelAblityVo>();
+        if (deviceModelAblityPos != null && deviceModelAblityPos.size() > 0) {
+            deviceModelAblityVos = deviceModelAblityPos.stream().map(deviceModelAblityPo -> {
+                DeviceModelAblityVo deviceModelAblityVo = new DeviceModelAblityVo();
+                deviceModelAblityVo.setId(deviceModelAblityPo.getId());
+                deviceModelAblityVo.setModelId(deviceModelAblityPo.getModelId());
+                deviceModelAblityVo.setAblityId(deviceModelAblityPo.getAblityId());
+                deviceModelAblityVo.setDefinedName(deviceModelAblityPo.getDefinedName());
+                deviceModelAblityVo.setStatus(deviceModelAblityPo.getStatus());
 
+                //查询 型号的能力项的 选项
+                List<DeviceModelAblityVo.DeviceModelAblityOptionVo> deviceModelAblityOptionVos = selectModelAblityOptionsByModelAblityId(deviceModelAblityPo.getId());
+
+                deviceModelAblityVo.setDeviceModelAblityOptions(deviceModelAblityOptionVos);
+                return deviceModelAblityVo;
+            }).collect(Collectors.toList());
+        }
+        return deviceModelAblityVos;
+    }
+
+    /**
+     * 根据 型号的能力主键 获取 自定义的选项
+     *
+     * @param modelAblityId
+     * @return
+     */
+    public List<DeviceModelAblityVo.DeviceModelAblityOptionVo> selectModelAblityOptionsByModelAblityId(Integer modelAblityId) {
+
+        List<DeviceModelAblityOptionPo> deviceModelAblityOptionPos = deviceModelAblityOptionMapper.getOptionsByJoinId(modelAblityId);
+        List<DeviceModelAblityVo.DeviceModelAblityOptionVo> deviceModelAblityOptionVos = new ArrayList<>();
+        if (deviceModelAblityOptionPos != null && deviceModelAblityOptionPos.size() > 0) {
+            deviceModelAblityOptionVos = deviceModelAblityOptionPos.stream().map(deviceModelAblityOptionPo -> {
+                DeviceModelAblityVo.DeviceModelAblityOptionVo deviceModelAblityOptionVo = new DeviceModelAblityVo.DeviceModelAblityOptionVo();
+
+                deviceModelAblityOptionVo.setAblityOptionId(deviceModelAblityOptionPo.getAblityOptionId());
+                deviceModelAblityOptionVo.setDefinedName(deviceModelAblityOptionPo.getDefinedName());
+                deviceModelAblityOptionVo.setStatus(deviceModelAblityOptionPo.getStatus());
+                deviceModelAblityOptionVo.setId(deviceModelAblityOptionPo.getId());
+                return deviceModelAblityOptionVo;
+            }).collect(Collectors.toList());
+        }
+        return deviceModelAblityOptionVos;
     }
 
     /**
      * 根据主键 删除 型号
+     *
      * @param modelId
      * @return
      */

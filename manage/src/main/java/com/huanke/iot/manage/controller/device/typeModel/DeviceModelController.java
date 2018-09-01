@@ -35,15 +35,15 @@ public class DeviceModelController {
      */
     @ApiOperation("添加新型号")
     @RequestMapping(value = "/createDeviceModel",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDeviceModel(@RequestBody DeviceModelCreateOrUpdateRequest modelRequest) throws Exception{
+    public ApiResponse<Integer> createDeviceModel(@RequestBody DeviceModelCreateOrUpdateRequest modelRequest) throws Exception{
         if(StringUtils.isBlank(modelRequest.getName()) ){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"型号名称不能为空");
         }
         if(modelRequest.getCustomerId()==null ){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"客户主键不能为空");
         }
-        Boolean ret =  deviceModelService.createOrUpdate(modelRequest);
-        return new ApiResponse<>(ret);
+        ApiResponse<Integer> result =   deviceModelService.createOrUpdate(modelRequest);
+        return result;
     }
 
 
@@ -55,15 +55,17 @@ public class DeviceModelController {
      */
     @ApiOperation("修改设备型号")
     @PutMapping(value = "/updateDeviceModel")
-    public ApiResponse<Boolean> updateDeviceModel(@RequestBody DeviceModelCreateOrUpdateRequest modelRequest) throws Exception{
+    public ApiResponse<Integer> updateDeviceModel(@RequestBody DeviceModelCreateOrUpdateRequest modelRequest) throws Exception{
         if(modelRequest.getId()==null||modelRequest.getId()<=0){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"型号主键不存在");
         }
         if(StringUtils.isBlank(modelRequest.getName()) ){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"型号名称不能为空");
         }
-        Boolean ret =  deviceModelService.createOrUpdate(modelRequest);
-        return new ApiResponse<>(ret);
+
+        ApiResponse<Integer> result =   deviceModelService.createOrUpdate(modelRequest);
+
+        return result;
     }
 
     /**
@@ -78,19 +80,19 @@ public class DeviceModelController {
         List<DeviceModelVo> deviceModelVos =  deviceModelService.selectList(modelRequest);
         return new ApiResponse<>(deviceModelVos);
     }
-
-    /**
-     * 查询类型Id 查询型号列表
-     * @param typeId
-     * @return 返回型号项列表
-     * @throws Exception
-     */
-    @ApiOperation("根据类型Id 查询型号列表")
-    @GetMapping(value = "/selectByTypeId/{typeId}")
-    public ApiResponse<List<DeviceModelVo>> selectByTypeId(@PathVariable("typeId")Integer typeId) throws Exception{
-        List<DeviceModelVo> deviceModelVos =  deviceModelService.selectByTypeId(typeId);
-        return new ApiResponse<>(deviceModelVos);
-    }
+//
+//    /**
+//     * 查询类型Id 查询型号列表
+//     * @param typeId
+//     * @return 返回型号项列表
+//     * @throws Exception
+//     */
+//    @ApiOperation("根据类型Id 查询型号列表")
+//    @GetMapping(value = "/selectByTypeId/{typeId}")
+//    public ApiResponse<List<DeviceModelVo>> selectByTypeId(@PathVariable("typeId")Integer typeId) throws Exception{
+//        List<DeviceModelVo> deviceModelVos =  deviceModelService.selectByTypeId(typeId);
+//        return new ApiResponse<>(deviceModelVos);
+//    }
 
     /**
      * 根据id查询型号

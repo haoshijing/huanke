@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.device.typeModel;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -13,7 +14,7 @@ public class DeviceModelAblityPo {
     private Integer modelId;
     private Integer ablityId;
     private String definedName;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;
 }

@@ -8,7 +8,8 @@
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
-        INSERT INTO <include refid="tableName"/>
+        INSERT INTO
+        <include refid="tableName"/>
         (
         name,
         modelNo,
@@ -47,6 +48,9 @@
             </if>
             <if test = "typeId != null ">
                 typeId = #{typeId},
+            </if>
+            <if test = "formatId != null ">
+                formatId = #{formatId},
             </if>
             <if test = "customerId != null ">
                 customerId = #{customerId},

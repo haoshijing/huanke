@@ -2,6 +2,8 @@ package com.huanke.iot.manage.vo.response.device.typeModel;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author Caik
  * @date 2018/8/14 19:19
@@ -19,4 +21,7 @@ public class DeviceModelVo {
     private String version;
     private Integer status;
     private String remark;
+
+    private List<DeviceModelAblityVo> deviceModelAblitys;
+
 }

@@ -4,10 +4,12 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
+import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceTypeAblitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblitySetPo;
 import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
@@ -17,6 +19,7 @@ import com.huanke.iot.manage.vo.request.device.ablity.DeviceTypeAblitysCreateReq
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
@@ -50,6 +53,9 @@ public class DeviceTypeService {
 
     @Autowired
     private DeviceAblityMapper deviceAblityMapper;
+
+    @Autowired
+    private DeviceAblityOptionMapper deviceAblityOptionMapper;
 
     @Autowired
     private DeviceAblitySetMapper deviceAblitySetMapper;
@@ -316,6 +322,22 @@ public class DeviceTypeService {
                 deviceTypeAblitysVo.setAblityName(deviceTypeAblitysPo.getAblityName());
                 deviceTypeAblitysVo.setId(deviceTypeAblitysPo.getId());
                 deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
+
+                List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceTypeAblitysPo.getAblityId());
+                if(deviceAblityOptionPos!=null&&deviceAblityOptionPos.size()>0){
+                    List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionPos.stream().map(deviceAblityOptionPo -> {
+                        DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
+
+                        deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
+                        deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
+                        deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
+                        deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
+                        return deviceAblityOptionVo;
+                    }).collect(Collectors.toList());
+
+                    deviceTypeAblitysVo.setDeviceAblityOptions(deviceAblityOptionVos);
+                }
+
             }
 
             return deviceTypeAblitysVo;

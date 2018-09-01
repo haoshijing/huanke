@@ -18,6 +18,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private Integer typeId; //类型id
     private Integer customerId;
     private Integer productId;
+    private Integer formatId;
     private String icon; //缩略图
     private String version;
     private String description;
@@ -26,6 +27,30 @@ public class DeviceModelCreateOrUpdateRequest {
 //    private List<DeviceModelFormatConfigCreateRequest> deviceModelFormatConfigs;
 
     private List<DeviceModelAblityRequest> deviceModelAblitys;
+
+    /**
+     * 型号的功能
+     */
+    @Data
+    public static class DeviceModelAblityRequest {
+
+        private Integer id;
+        private Integer ablityId;
+        private String definedName;
+        private Integer status;
+
+        private List<DeviceModelAblityOptionRequest> deviceModelAblityOptions;
+    }
+
+    @Data
+    public static class DeviceModelAblityOptionRequest {
+
+        private Integer id;
+        private Integer ablityOptionId;
+        private String definedName;
+        private Integer status;
+
+    }
 
     @Data
     public static class DeviceModelFormatConfigCreateRequest {
@@ -39,23 +64,4 @@ public class DeviceModelCreateOrUpdateRequest {
         private String showName;
         private Integer status;
     }
-    /**
-     * 型号的功能
-     */
-    @Data
-    public static class DeviceModelAblityRequest {
-
-        private Integer id;
-//        private Integer modelId;
-        private Integer ablityId;
-        private String definedName;
-        private Integer status;
-//        private Long createTime;
-//        private Long lastUpdateTime;
-
-//        private Integer modelAblityId;
-//        private String definedName;
-//        private Integer status;
-    }
-    
 }

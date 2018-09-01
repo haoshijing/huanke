@@ -82,7 +82,7 @@
         select
         *
         FROM <include refid="tableName"/>
-        WHERE modelId = #{modelId} limit 1
+        WHERE modelId = #{modelId}
     </select>
 
     <select id = "selectCount" resultType="java.lang.Integer">

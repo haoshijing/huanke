@@ -4,6 +4,8 @@ import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author Caik
  * @date 2018/8/16 15:21
@@ -11,5 +13,6 @@ import org.apache.ibatis.annotations.Param;
 public interface DeviceModelAblityOptionMapper extends BaseMapper<DeviceModelAblityOptionPo> {
 
     DeviceModelAblityOptionPo getByJoinId(@Param("modelAblityId") Integer modelAblityId, @Param("ablityOptionId") Integer ablityOptionId);
+    List<DeviceModelAblityOptionPo> getOptionsByJoinId(@Param("modelAblityId") Integer modelAblityId);
 }
 

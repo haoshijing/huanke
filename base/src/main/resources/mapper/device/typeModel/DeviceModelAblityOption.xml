@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.device.typeModel.DeviceModelOptionMapper">
+<mapper namespace="com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityOptionMapper">
 
     <sql id="tableName">
         t_device_model_ablity_option
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+    <insert id="insert"  parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo">
         INSERT INTO <include refid="tableName"/>
         (
         modelAblityId,
@@ -24,7 +24,7 @@
         #{createTime}
         )
     </insert>
-    <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo">
         update <include refid="tableName"/>
         <set>
             <if test = "modelAblityId != null">
@@ -49,7 +49,7 @@
         where id = #{id}
     </delete>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo">
         select
         *
         FROM <include refid="tableName"/>
@@ -73,7 +73,7 @@
     </select>
 
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo">
         select * from <include refid="tableName"/>
         <where>
 
@@ -106,6 +106,17 @@
 
         </where>
         limit 1
+    </select>
+
+    <select id="getOptionsByJoinId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo">
+        select * from <include refid="tableName"/>
+        <where>
+
+            <if test = "modelAblityId != null">
+                and modelAblityId = #{modelAblityId}
+            </if>
+
+        </where>
     </select>
 
 </mapper>
