@@ -7,7 +7,7 @@ import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
-import com.huanke.iot.base.dao.format.DeviceModelFormatConfigMapper;
+import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -41,7 +41,7 @@ public class DeviceFormatService {
     @Autowired
     private DeviceModelMapper deviceModelMapper;
     @Autowired
-    private DeviceModelFormatConfigMapper deviceModelFormatConfigMapper;
+    private DeviceModelFormatMapper deviceModelFormatMapper;
     @Autowired
     private DeviceAblityMapper deviceAblityMapper;
     @Autowired
@@ -63,7 +63,7 @@ public class DeviceFormatService {
         itemAbilitysVo.setItemName(wxFormatPo.getName());
         Integer itemId = wxFormatItemPo.getId();
         log.info("查功能项Ids, modelId={},formatId={},pageId={},itemId={}", modelId, formatId, pageId, itemId);
-        List<Integer> abilityIds = deviceModelFormatConfigMapper.obtainAbilityIdsByJoinId(modelId, formatId, pageId, itemId);
+        List<Integer> abilityIds = deviceModelFormatMapper.obtainAbilityIdsByJoinId(modelId, formatId, pageId, itemId);
         //遍历查功能项
         for (Integer abilityId : abilityIds) {
             ItemAbilitysVo.Abilitys abilitys = new ItemAbilitysVo.Abilitys();

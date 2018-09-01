@@ -7,11 +7,9 @@ import lombok.Data;
  * @date 2018/8/27 13:13
  */
 @Data
-public class DeviceModelFormatConfigPo {
+public class DeviceModelFormatItemPo {
     private Integer id;
-    private Integer modelId;
-    private Integer formatId;
-    private Integer pageId;
+    private Integer modelFormatId;
     private Integer itemId;
     private Integer ablityId;
     private Integer showStatus;

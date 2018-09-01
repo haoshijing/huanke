@@ -28,6 +28,8 @@ public class DeviceModelCreateOrUpdateRequest {
 
     private List<DeviceModelAblityRequest> deviceModelAblitys;
 
+    private DeviceModelFormatCreateRequest deviceModelFormat;
+
     /**
      * 型号的功能
      */
@@ -52,21 +54,5 @@ public class DeviceModelCreateOrUpdateRequest {
 
     }
 
-    @Data
-    public static class DeviceModelFormatRequests{
-        List<DeviceModelFormatCreateRequest> deviceModelFormats;
-    }
 
-    @Data
-    public static class DeviceModelFormatCreateRequest {
-        private Integer id;
-        private Integer modelId;
-        private Integer formatId;
-        private Integer pageId;
-        private Integer itemId;
-        private Integer ablityId;
-        private Integer showStatus;
-        private String showName;
-        private Integer status;
-    }
 }
