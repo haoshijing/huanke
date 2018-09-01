@@ -13,6 +13,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamScenePo;
 import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamDeviceCreateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
+import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Repository
@@ -61,8 +61,10 @@ public class DeviceTeamService {
         //创建之后为托管之前，创建人和materUser为同一人
         deviceTeamPo.setCreateUserId(customerUserPo.getId());
         deviceTeamPo.setMasterUserId(customerUserPo.getId());
-        //1.终端组  2.托管组
+        //设置该组的使用状态为正常
         deviceTeamPo.setStatus(1);
+        //设置组的状态为终端组
+        deviceTeamPo.setTeamStatus(1);
         deviceTeamPo.setSceneDescription(teamCreateOrUpdateRequest.getSceneDescription());
         deviceTeamPo.setCreateTime(System.currentTimeMillis());
         deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
@@ -94,7 +96,8 @@ public class DeviceTeamService {
      * @param deviceTeamPo
      * @return
      */
-    public Boolean addDeviceToTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest,DeviceTeamPo deviceTeamPo){
+    public DeviceTeamPo addDeviceToTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest,DeviceTeamPo deviceTeamPo){
+        Boolean deviceLinkAge=false;
         List<DeviceTeamItemPo> deviceTeamItemPoList=new ArrayList<>();
         List<DevicePo> devicePoList=new ArrayList<>();
         CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(teamCreateOrUpdateRequest.getCreateUserOpenId());
@@ -102,26 +105,44 @@ public class DeviceTeamService {
             DeviceTeamItemPo deviceTeamItemPo=new DeviceTeamItemPo();
             DevicePo devicePo=this.deviceMapper.selectByMac(device.getMac());
             devicePo.setName(device.getName());
+            //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
+            devicePo.setBindStatus(2);
+            //设定绑定时间
+            devicePo.setBindTime(System.currentTimeMillis());
             devicePo.setLastUpdateTime(System.currentTimeMillis());
             deviceTeamItemPo.setDeviceId(devicePo.getId());
             deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
             deviceTeamItemPo.setUserId(customerUserPo.getId());
             deviceTeamItemPo.setStatus(1);
+            deviceTeamItemPo.setLinkAgeStatus(device.getLinkAgeStatus());
+            if(1 == device.getLinkAgeStatus()){
+                deviceLinkAge=true;
+            }
             deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
             deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
-
             devicePoList.add(devicePo);
             deviceTeamItemPoList.add(deviceTeamItemPo);
         }
+        //如果当前组中存在联动设备，则设定组为联动组
+        if(deviceLinkAge){
+            deviceTeamPo.setTeamType(1);
+        }
+        //否则为普通终端组
+        else {
+            deviceTeamPo.setTeamType(2);
+        }
+        deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
+        //更新当前组的组类型
+        deviceTeamMapper.updateById(deviceTeamPo);
         //进行设备名称的批量更新
         this.deviceMapper.updateBatch(devicePoList);
         //进行设备的批量绑定
         Boolean ret=this.deviceTeamItemMapper.insertBatch(deviceTeamItemPoList)>0;
         if(ret){
-            return true;
+            return deviceTeamPo;
         }
         else {
-            return false;
+            return null;
         }
     }
 
@@ -138,7 +159,7 @@ public class DeviceTeamService {
         List<DeviceTeamVo> deviceTeamVoList=deviceTeamPoList.stream().map(deviceTeamPo -> {
             CustomerUserPo customerUserPo;
             DeviceTeamVo deviceTeamVo=new DeviceTeamVo();
-            deviceTeamVo.setTeamId(deviceTeamPo.getId());
+            deviceTeamVo.setId(deviceTeamPo.getId());
             deviceTeamVo.setName(deviceTeamPo.getName());
             deviceTeamVo.setIcon(deviceTeamPo.getIcon());
             customerUserPo=this.customerUserMapper.selectByUserId(deviceTeamPo.getCreateUserId());
@@ -150,8 +171,12 @@ public class DeviceTeamService {
             deviceTeamVo.setOwnerNickName(customerUserPo.getNickname());
             deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
             deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
-            //1.终端组  2.托管组
+            //组的使用状态，1-正常，2-不正常
             deviceTeamVo.setStatus(deviceTeamPo.getStatus());
+            //获取组的状态，终端组或是托管组
+            deviceTeamVo.setTeamStatus(deviceTeamPo.getTeamStatus());
+            //获取组的类型，用户组或是联动组
+            deviceTeamVo.setTeamType(deviceTeamPo.getTeamType());
             deviceTeamVo.setRemark(deviceTeamPo.getRemark());
             DeviceTeamItemPo deviceTeamItemPo=new DeviceTeamItemPo();
             deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
@@ -167,6 +192,28 @@ public class DeviceTeamService {
             return deviceTeamVo;
         }).collect(Collectors.toList());
         return  deviceTeamVoList;
+    }
+
+    public CustomerUserPo trusteeTeam(TeamTrusteeRequest teamTrusteeRequest){
+        DeviceTeamPo deviceTeamPo=this.deviceTeamMapper.selectById(teamTrusteeRequest.getId());
+        CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(teamTrusteeRequest.getOpenId());
+        deviceTeamPo.setMasterUserId(customerUserPo.getId());
+        if(teamTrusteeRequest.getDeleteCreator()){
+            deviceTeamPo.setCreateUserId(null);
+        }
+        Boolean ret=this.deviceTeamMapper.updateById(deviceTeamPo)>0;
+        if(ret){
+            return customerUserPo;
+        }
+        else {
+            return null;
+        }
+    }
+
+
+    public Integer selectTeamCount(){
+        DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
+        return this.deviceTeamMapper.selectCount(deviceTeamPo);
     }
 
     public DevicePo isDeviceHasTeam(List<TeamDeviceCreateRequest> teamDeviceCreateRequestList){
@@ -192,6 +239,15 @@ public class DeviceTeamService {
         }
     }
 
+    public Boolean queryCustomerUser(String openId){
+        CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
+        if(null != customerUserPo){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     public DevicePo queryDeviceByMac(List<TeamDeviceCreateRequest> teamDeviceList){
         DevicePo devicePo=null;

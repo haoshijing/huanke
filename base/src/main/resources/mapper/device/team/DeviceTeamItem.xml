@@ -15,6 +15,7 @@
         userId,
         deviceId,
         teamId,
+        linkAgeStatus,
         status,
         createTime,
         lastUpdateTime
@@ -23,6 +24,7 @@
         #{userId},
         #{deviceId},
         #{teamId},
+        #{linkAgeStatus},
         #{status},
         #{createTime},
         #{lastUpdateTime}
@@ -37,6 +39,7 @@
         userId,
         deviceId,
         teamId,
+        linkAgeStatus,
         status,
         createTime,
         lastUpdateTime
@@ -47,6 +50,7 @@
             #{teamItem.userId},
             #{teamItem.deviceId},
             #{teamItem.teamId},
+            #{teamItem.linkAgeStatus},
             #{teamItem.status},
             #{teamItem.createTime},
             #{teamItem.lastUpdateTime}

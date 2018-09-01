@@ -20,6 +20,8 @@
         customerId,
         manageUserIds,
         status,
+        teamStatus,
+        teamType,
         sceneDescription,
         videoCover,
         videoUrl,
@@ -36,6 +38,8 @@
         #{customerId},
         #{manageUserIds},
         #{status},
+        #{teamStatus},
+        #{teamType},
         #{sceneDescription},
         #{videoCover},
         #{videoUrl},
@@ -57,7 +61,7 @@
                 AND status = #{param.status}
             </if>
             <if test="param.name != null">
-                and groupName = #{param.name}
+                and name = #{param.name}
             </if>
         </where>
     </select>
@@ -88,6 +92,12 @@
             </if>
             <if test="status != null">
                 status = #{status},
+            </if>
+            <if test="teamType != null">
+                teamType = #{teamType},
+            </if>
+            <if test="createUserId != null">
+                teamType = #{createUserId},
             </if>
             lastUpdateTime = #{lastUpdateTime}
             where id = #{id}

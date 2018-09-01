@@ -319,6 +319,20 @@
                     </if>
                 </foreach>
             </trim>
+            <trim prefix="bindStatus =case" suffix="end,">
+                <foreach collection="list" item="device" index="index">
+                    <if test="device.bindStatus !=null">
+                        when id=#{device.id} then #{device.bindStatus}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="bindTime =case" suffix="end,">
+                <foreach collection="list" item="device" index="index">
+                    <if test="device.bindTime !=null">
+                        when id=#{device.id} then #{device.bindTime}
+                    </if>
+                </foreach>
+            </trim>
             <trim prefix="lastUpdateTime =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
                     <if test="device.lastUpdateTime !=null">

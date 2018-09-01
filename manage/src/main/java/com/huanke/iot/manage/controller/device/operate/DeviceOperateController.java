@@ -96,7 +96,7 @@ public class DeviceOperateController {
         }
         else {
             Boolean ret = deviceService.createDevice(deviceList);
-            return new ApiResponse<>(ret);
+            return new ApiResponse<>(RetCode.OK,"创建成功",ret);
         }
     }
 
@@ -112,10 +112,10 @@ public class DeviceOperateController {
     public ApiResponse<List<DeviceListVo>> queryAllDevice(@RequestBody DeviceListQueryRequest deviceListQueryRequest) throws Exception{
         List<DeviceListVo> deviceQueryVos=deviceService.queryDeviceByPage(deviceListQueryRequest);
         if(0 == deviceQueryVos.size()){
-            return new ApiResponse<>(RetCode.OK,"设备列表中无设备");
+            return new ApiResponse<>(RetCode.OK,"查询成功，设备列表中无设备");
         }
         else {
-            return new ApiResponse<>(deviceQueryVos);
+            return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
         }
     }
 
@@ -128,7 +128,7 @@ public class DeviceOperateController {
     @ApiOperation("获取设备总数")
     @RequestMapping(value = "/queryCount",method = RequestMethod.GET)
     public ApiResponse<Integer> queryCount(){
-        return new ApiResponse<>(deviceService.selectCount());
+        return new ApiResponse<>(RetCode.OK,"查询成功",deviceService.selectCount());
     }
 
     /**
@@ -145,7 +145,7 @@ public class DeviceOperateController {
         if(null == deviceList){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"请先选中设备再删除");
         }
-        return new ApiResponse<>(deviceService.deleteDevice(deviceList));
+        return new ApiResponse<>(RetCode.OK,"删除成功",deviceService.deleteDevice(deviceList));
     }
 
     /**
@@ -171,7 +171,7 @@ public class DeviceOperateController {
         }
         else {
             Boolean ret=deviceService.assignDeviceToCustomer(deviceAssignToCustomerRequest);
-            return new ApiResponse<>(ret);
+            return new ApiResponse<>(RetCode.OK,"分配成功",ret);
         }
     }
     /**
@@ -194,7 +194,7 @@ public class DeviceOperateController {
         }
         else {
             Boolean ret=deviceService.callBackDeviceFromCustomer(deviceList);
-            return new ApiResponse<>(ret);
+            return new ApiResponse<>(RetCode.OK,"召回成功",ret);
         }
     }
 

@@ -50,7 +50,7 @@ public class DeviceGroupController {
             if(null != groupCreateOrUpdateRequest.getDeviceQueryRequest()) {
                 deviceGroupService.addDeviceToGroup(groupCreateOrUpdateRequest,deviceGroupPo);
             }
-            return new ApiResponse<>(true);
+            return new ApiResponse<>(RetCode.OK,"集群成功",true);
         }
         else {
             //首先创建集群,并返回新增集群的相关信息
@@ -61,7 +61,7 @@ public class DeviceGroupController {
             if(null != groupCreateOrUpdateRequest.getDeviceQueryRequest()) {
                 deviceGroupService.addDeviceToGroup(groupCreateOrUpdateRequest,deviceGroupPo);
             }
-            return new ApiResponse<>(true);
+            return new ApiResponse<>(RetCode.OK,"集群成功",true);
         }
     }
 
@@ -84,7 +84,7 @@ public class DeviceGroupController {
                 deviceGroupPo=deviceGroupService.queryGroupName(deviceLists);
             }
         }
-        return new ApiResponse(deviceGroupPo);
+        return new ApiResponse(RetCode.OK,"查询成功",deviceGroupPo);
     }
 
 }
