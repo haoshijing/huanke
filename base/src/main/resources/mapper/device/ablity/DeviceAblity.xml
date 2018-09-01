@@ -135,7 +135,7 @@
 
     <select id="selectAblityListByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo">
         SELECT
-        t_device_ablity.ablityName,t_device_type_ablitys.*
+        t_device_ablity.ablityName,t_device_ablity.ablityType,t_device_type_ablitys.*
         FROM
         t_device_type_ablitys,
         t_device_type,
@@ -148,7 +148,7 @@
 
     <select id="selectAblitysByType"  resultType="com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo">
         SELECT
-        t_device_ablity.ablityName,t_device_type_ablitys.*
+        t_device_ablity.ablityName,t_device_ablity.ablityType,t_device_type_ablitys.*
         FROM
         t_device_type_ablitys,
         t_device_type,

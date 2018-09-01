@@ -14,22 +14,24 @@
         (
         modelId,
         formatId,
+        pageId,
         itemId,
+        ablityId,
         showStatus,
         showName,
         status,
-        createTime,
-        lastUpdateTime
+        createTime
         )
         VALUES (
         #{modelId},
         #{formatId},
+        #{pageId},
         #{itemId},
+        #{ablityId},
         #{showStatus},
         #{showName},
         #{status},
-        #{createTime},
-        #{lastUpdateTime}
+        #{createTime}
         )
     </insert>
 
@@ -46,6 +48,21 @@
         update
         <include refid="tableName"/>
         <set>
+            <if test="modelId != null">
+                modelId = #{modelId},
+            </if>
+            <if test="formatId != null">
+                formatId = #{formatId},
+            </if>
+            <if test="pageId != null">
+                pageId = #{pageId},
+            </if>
+            <if test="itemId != null">
+                itemId = #{itemId},
+            </if>
+            <if test="ablityId != null">
+                ablityId = #{ablityId},
+            </if>
             <if test="showStatus != null">
                 showStatus = #{showStatus},
             </if>

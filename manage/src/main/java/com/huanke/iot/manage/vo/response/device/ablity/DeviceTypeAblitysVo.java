@@ -13,6 +13,7 @@ public class DeviceTypeAblitysVo {
 
     private Integer id;
     private Integer ablityId;
+    private Integer ablityType;
     private String ablityName;
     private Integer typeId;
 

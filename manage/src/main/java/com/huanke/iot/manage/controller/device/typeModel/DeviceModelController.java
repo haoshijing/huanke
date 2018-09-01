@@ -121,6 +121,33 @@ public class DeviceModelController {
         return new ApiResponse<>(ret);
     }
 
+    /**
+     * 添加型号的版式配置
+     * @param modelFormatRequests
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @ApiOperation("添加型号的版式配置")
+    @RequestMapping(value = "/createModelFormat",method = RequestMethod.POST)
+    public  ApiResponse<Boolean>  createModelFormat(@RequestBody DeviceModelCreateOrUpdateRequest.DeviceModelFormatRequests modelFormatRequests) throws Exception{
+
+        ApiResponse<Boolean> result =   deviceModelService.createOrUpdateModelFormat(modelFormatRequests);
+        return result;
+    }
+
+    /**
+     * 修改型号的版式配置
+     * @param modelFormatRequests
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @ApiOperation("修改型号的版式配置")
+    @PutMapping(value = "/updateModelFormat")
+    public  ApiResponse<Boolean>  updateModelFormat(@RequestBody DeviceModelCreateOrUpdateRequest.DeviceModelFormatRequests modelFormatRequests) throws Exception{
+
+        ApiResponse<Boolean> result =   deviceModelService.createOrUpdateModelFormat(modelFormatRequests);
+        return result;
+    }
 //
 //    /**
 //     * 添加 型号的能力

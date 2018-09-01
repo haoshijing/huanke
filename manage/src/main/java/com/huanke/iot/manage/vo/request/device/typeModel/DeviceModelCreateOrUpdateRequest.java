@@ -53,7 +53,12 @@ public class DeviceModelCreateOrUpdateRequest {
     }
 
     @Data
-    public static class DeviceModelFormatConfigCreateRequest {
+    public static class DeviceModelFormatRequests{
+        List<DeviceModelFormatCreateRequest> deviceModelFormats;
+    }
+
+    @Data
+    public static class DeviceModelFormatCreateRequest {
         private Integer id;
         private Integer modelId;
         private Integer formatId;

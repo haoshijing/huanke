@@ -12,6 +12,7 @@ public class DeviceTypeAblitysPo {
     private Integer id;
     private Integer typeId;
     private Integer ablityId;
+    private Integer ablityType;
     private String ablityName;
     private Long createTime;
     private Long lastUpdateTime;

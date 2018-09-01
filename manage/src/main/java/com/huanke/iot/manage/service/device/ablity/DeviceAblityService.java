@@ -156,6 +156,7 @@ public class DeviceAblityService {
             deviceTypeAblitysVo.setId(deviceTypeAblitysPo.getId());
             deviceTypeAblitysVo.setAblityId(deviceTypeAblitysPo.getAblityId());
             deviceTypeAblitysVo.setAblityName(deviceTypeAblitysPo.getAblityName());
+            deviceTypeAblitysVo.setAblityType(deviceTypeAblitysPo.getAblityType());
             deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
 
             //根据功能主键 查询该功能下的 选项列表

@@ -10,7 +10,6 @@ import com.huanke.iot.base.dao.device.ablity.DeviceTypeAblitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblitySetPo;
 import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo;
@@ -20,7 +19,6 @@ import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCrea
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
@@ -84,11 +82,14 @@ public class DeviceTypeService {
         //先保存 类型基本信息
         DeviceTypePo deviceTypePo = new DeviceTypePo();
         BeanUtils.copyProperties(typeRequest, deviceTypePo);
-        deviceTypePo.setStatus(CommonConstant.STATUS_YES);
         if (typeRequest.getId() != null && typeRequest.getId() > 0) {
+            if(!deviceTypePo.getStatus().equals(CommonConstant.STATUS_DEL)){
+                deviceTypePo.setStatus(CommonConstant.STATUS_YES);
+            }
             deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
             deviceTypeMapper.updateById(deviceTypePo);
         } else {
+            deviceTypePo.setStatus(CommonConstant.STATUS_YES);
             deviceTypePo.setCreateTime(System.currentTimeMillis());
             deviceTypeMapper.insert(deviceTypePo);
         }
@@ -322,6 +323,7 @@ public class DeviceTypeService {
                 deviceTypeAblitysVo.setAblityName(deviceTypeAblitysPo.getAblityName());
                 deviceTypeAblitysVo.setId(deviceTypeAblitysPo.getId());
                 deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
+                deviceTypeAblitysVo.setAblityType(deviceTypeAblitysPo.getAblityType());
 
                 List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceTypeAblitysPo.getAblityId());
                 if(deviceAblityOptionPos!=null&&deviceAblityOptionPos.size()>0){
