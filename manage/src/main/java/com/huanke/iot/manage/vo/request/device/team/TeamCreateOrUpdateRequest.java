@@ -15,6 +15,8 @@ public class TeamCreateOrUpdateRequest {
     //安卓场景的介绍封面
     private String teamCover;
 
+    private String sceneDescription;
+
     private List<imgOrVideo> imgOrVideoList;
 
     private List<TeamDeviceCreateRequest> teamDeviceCreateRequestList;

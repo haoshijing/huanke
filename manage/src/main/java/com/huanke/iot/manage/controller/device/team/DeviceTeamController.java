@@ -7,6 +7,8 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.manage.service.device.team.DeviceTeamService;
 import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
+import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/team")
 @Slf4j
@@ -22,8 +26,8 @@ public class DeviceTeamController {
     @Autowired
     private DeviceTeamService deviceTeamService;
     @ApiOperation("创建新的组，并向其中添加设备")
-    @RequestMapping(value = "/CreateNewTeam",method = RequestMethod.POST)
-    public ApiResponse<Integer> CreateNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
+    @RequestMapping(value = "/createNewTeam",method = RequestMethod.POST)
+    public ApiResponse<Integer> createNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
         //若设备列表中无设备则仅创建新组，不添加设备
         if(null == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()){
             return new ApiResponse<>(this.deviceTeamService.createTeam(teamCreateOrUpdateRequest).getId());
@@ -50,6 +54,18 @@ public class DeviceTeamController {
                 //添加成功后返回teamId
                 return new ApiResponse<>(RetCode.OK,"添加成功",resultPo.getId());
             }
+        }
+    }
+
+    @ApiOperation("查询组列表")
+    @RequestMapping(value = "/queryTeamList",method = RequestMethod.POST)
+    public ApiResponse<List<DeviceTeamVo>> queryTeamList(@RequestBody TeamListQueryRequest teamListQueryRequest){
+        List<DeviceTeamVo> deviceTeamVoList=this.deviceTeamService.queryTeamList(teamListQueryRequest);
+        if(0 == deviceTeamVoList.size()){
+            return new ApiResponse<>(RetCode.OK,"当期设备列表中无设备",deviceTeamVoList);
+        }
+        else {
+            return new ApiResponse<>(deviceTeamVoList);
         }
     }
 }
