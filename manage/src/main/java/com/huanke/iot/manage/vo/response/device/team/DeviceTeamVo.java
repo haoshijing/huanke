@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class DeviceTeamVo {
-    private Integer teamId;
+    private Integer id;
     private String name;
     private String icon;
     private String createUserNickName;
@@ -18,6 +18,8 @@ public class DeviceTeamVo {
     private List<ImgVideos> imgVideosList;
     private String sceneDescription;
     private Integer status;
+    private Integer teamStatus;
+    private Integer teamType;
     private String remark;
     private Integer deviceCount;
     @Data

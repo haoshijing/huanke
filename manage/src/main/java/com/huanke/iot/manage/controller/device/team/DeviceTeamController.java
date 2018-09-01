@@ -3,11 +3,13 @@ package com.huanke.iot.manage.controller.device.team;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.manage.service.device.team.DeviceTeamService;
 import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
+import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,10 @@ public class DeviceTeamController {
     @ApiOperation("创建新的组，并向其中添加设备")
     @RequestMapping(value = "/createNewTeam",method = RequestMethod.POST)
     public ApiResponse<Integer> createNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
+        //首先查询当前用户是否存在
+        if (!this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamCreateOrUpdateRequest.getCreateUserOpenId()+" 不存在");
+        }
         //若设备列表中无设备则仅创建新组，不添加设备
         if(null == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()){
             return new ApiResponse<>(this.deviceTeamService.createTeam(teamCreateOrUpdateRequest).getId());
@@ -66,6 +72,21 @@ public class DeviceTeamController {
         }
         else {
             return new ApiResponse<>(deviceTeamVoList);
+        }
+    }
+    @ApiOperation("托管组给另一用户")
+    @RequestMapping(value = "/trusteeTeam",method = RequestMethod.POST)
+    public ApiResponse<Integer> trusteeTeam(TeamTrusteeRequest teamTrusteeRequest){
+        //首先查询要托管的用户是否存在
+        if (!this.deviceTeamService.queryCustomerUser(teamTrusteeRequest.getOpenId())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamTrusteeRequest.getOpenId()+" 不存在");
+        }
+        CustomerUserPo customerUserPo=this.deviceTeamService.trusteeTeam(teamTrusteeRequest);
+        if(null != customerUserPo){
+            return new ApiResponse<>(RetCode.OK,"托管成功",customerUserPo.getId());
+        }
+        else {
+            return new ApiResponse<>(RetCode.ERROR,"托管失败");
         }
     }
 }
