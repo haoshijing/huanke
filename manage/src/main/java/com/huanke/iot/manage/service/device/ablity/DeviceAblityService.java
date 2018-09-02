@@ -47,7 +47,7 @@ public class DeviceAblityService {
         //如果有id则为更新 否则为新增
         if (ablityRequest.getId() != null && ablityRequest.getId() > 0) {
             //如果 状态不是删除，则全部默认为正常
-            if(deviceAblityPo.getStatus()!=null&&deviceAblityPo.getStatus().equals(CommonConstant.STATUS_DEL)){
+            if(CommonConstant.STATUS_DEL.equals(deviceAblityPo.getStatus())){
 //                deviceAblityPo.setStatus(CommonConstant.STATUS_YES);
             }else{
                 deviceAblityPo.setStatus(CommonConstant.STATUS_YES);

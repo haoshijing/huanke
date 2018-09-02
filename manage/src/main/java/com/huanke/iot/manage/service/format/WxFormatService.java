@@ -59,7 +59,7 @@ public class WxFormatService {
         //如果有id则为更新 否则为新增
         if (wxFormatVo.getId() != null && wxFormatVo.getId() > 0) {
             wxFormatPo.setLastUpdateTime(System.currentTimeMillis());
-            if (wxFormatVo.getStatus() != null && wxFormatVo.getStatus().equals(CommonConstant.STATUS_DEL)) {
+            if (CommonConstant.STATUS_DEL.equals( wxFormatVo.getStatus())) {
                 wxFormatPo.setStatus(CommonConstant.STATUS_DEL);
             } else {
                 wxFormatPo.setStatus(CommonConstant.STATUS_YES);
@@ -145,7 +145,7 @@ public class WxFormatService {
             queryWxFormatPo.setName(request.getName());
             queryWxFormatPo.setOwerType(request.getOwerType());
             queryWxFormatPo.setType(request.getType());
-            if (request.getStatus() != null && request.getStatus().equals(CommonConstant.STATUS_DEL)) {
+            if (CommonConstant.STATUS_DEL.equals(request.getStatus())) {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_DEL);
             } else {
                 queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);

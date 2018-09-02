@@ -21,10 +21,9 @@ public class DeviceModelFormatCreateRequest {
     @Data
     public static class DeviceModelFormatPageCreateRequest {
         private Integer id;
-        private Integer modelFormatId;
+        private Integer modelId;
+        private Integer formatId;
         private Integer pageId;
-        private Integer itemId;
-        private Integer ablityId;
         private Integer showStatus;
         private String showName;
         private Integer status = CommonConstant.STATUS_YES;

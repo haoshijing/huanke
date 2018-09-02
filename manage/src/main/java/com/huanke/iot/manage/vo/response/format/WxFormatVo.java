@@ -52,19 +52,4 @@ public class WxFormatVo {
         private Integer status = CommonConstant.STATUS_YES;
     }
 
-    @Data
-    public class DeviceModelFormatConfigVo {
-        private Integer id;
-        private Integer modelId;
-        private Integer formatId;
-        private Integer pageId;
-        private Integer itemId;
-        private Integer ablityId;
-        private Integer showStatus;
-        private String showName;
-        private Integer status = CommonConstant.STATUS_YES;
-        private Long createTime;
-        private Long lastUpdateTime;
-    }
-
 }

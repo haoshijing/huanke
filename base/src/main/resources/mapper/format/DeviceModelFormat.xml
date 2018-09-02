@@ -83,4 +83,16 @@
         AND itemId = #{itemId}
         AND status = 1
     </select>
+
+    <select id="obtainModelFormatPages" resultType="com.huanke.iot.base.po.format.DeviceModelFormatPo">
+        select
+        *
+        FROM
+        t_device_model_format
+        WHERE
+        1=1
+        AND modelId = #{modelId}
+        AND formatId = #{formatId}
+        AND status = 1
+    </select>
 </mapper>

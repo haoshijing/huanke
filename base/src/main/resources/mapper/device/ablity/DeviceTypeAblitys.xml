@@ -29,7 +29,6 @@
             <if test="typeId != null ">
                 typeId = #{typeId},
             </if>
-            lastUpdateTime = #{lastUpdateTime}
         </set>
         where
         id = #{id}
@@ -39,7 +38,7 @@
         delete from <include refid="tableName"/>
         where id = #{id}
     </delete>
-    <delete id="deleteByTypeId">
+    <delete id="deleteByTypeId" >
         delete from <include refid="tableName"/>
         where typeId = #{typeId}
     </delete>

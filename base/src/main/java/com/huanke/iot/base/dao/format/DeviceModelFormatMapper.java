@@ -13,4 +13,5 @@ import java.util.List;
 public interface DeviceModelFormatMapper extends BaseMapper<DeviceModelFormatPo> {
 
     List<Integer> obtainAbilityIdsByJoinId(@Param("modelId") Integer modelId, @Param("formatId") Integer formatId, @Param("pageId") Integer pageId, @Param("itemId") Integer itemId);
+    List<DeviceModelFormatPo> obtainModelFormatPages(@Param("modelId") Integer modelId, @Param("formatId") Integer formatId);
 }

@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class DeviceTypeAblitysCreateRequest {
 
-    private Integer id;
+//    private Integer id;
     private Integer ablityId;
 //    private Integer typeId;
 }

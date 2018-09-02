@@ -12,5 +12,6 @@ import java.util.List;
 public interface DeviceTypeAblitysMapper extends BaseMapper<DeviceTypeAblitysPo> {
 
     List<DeviceTypeAblitysPo> selectByTypeId(Integer typeId);
+    Integer deleteByTypeId (Integer typeId);
 
 }

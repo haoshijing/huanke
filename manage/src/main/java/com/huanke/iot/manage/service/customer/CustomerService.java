@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.po.customer.*;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,9 +70,9 @@ public class CustomerService {
         customerPo.setStatus(CommonConstant.STATUS_YES);
 
         //先验证二级域名是否重复 如果重复 不允许添加
-        if (customerVo.getSLD() != null && !"".equals(customerVo.getSLD())) {
+        if (StringUtils.isNotBlank(customerVo.getSLD())) {
             CustomerPo queryCustomer = customerMapper.selectBySLD(customerVo.getSLD());
-            if (queryCustomer != null&&queryCustomer.getId().equals(customerPo.getId())) {
+            if (queryCustomer != null&&!queryCustomer.getId().equals(customerPo.getId())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在该二级域名");
             }
         }

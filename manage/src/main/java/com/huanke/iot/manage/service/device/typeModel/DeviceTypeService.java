@@ -83,7 +83,9 @@ public class DeviceTypeService {
         DeviceTypePo deviceTypePo = new DeviceTypePo();
         BeanUtils.copyProperties(typeRequest, deviceTypePo);
         if (typeRequest.getId() != null && typeRequest.getId() > 0) {
-            if(!deviceTypePo.getStatus().equals(CommonConstant.STATUS_DEL)){
+            if(CommonConstant.STATUS_DEL.equals(deviceTypePo.getStatus())){
+                deviceTypePo.setStatus(CommonConstant.STATUS_DEL);
+            }else{
                 deviceTypePo.setStatus(CommonConstant.STATUS_YES);
             }
             deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
@@ -94,7 +96,9 @@ public class DeviceTypeService {
             deviceTypeMapper.insert(deviceTypePo);
         }
 
-        //再保存 类型的功能集
+        //先删除 已保存的功能集 ，再保存 类型的功能集
+        deviceTypeAblitysMapper.deleteByTypeId(deviceTypePo.getId());
+
         List<DeviceTypeAblitysCreateRequest> deviceTypeAblitysCreateRequests = typeRequest.getDeviceTypeAblitys();
         if (deviceTypeAblitysCreateRequests != null && deviceTypeAblitysCreateRequests.size() > 0) {
             //遍历功能集
@@ -103,15 +107,7 @@ public class DeviceTypeService {
                 deviceTypeAblitysPo.setAblityId(deviceTypeAblitysCreateRequest.getAblityId());
                 deviceTypeAblitysPo.setTypeId(deviceTypePo.getId());
 
-                //如果该功能id不为空 则是更新 否则为新增
-                if (deviceTypeAblitysCreateRequest.getId() != null && deviceTypeAblitysCreateRequest.getId() > 0) {
-                    deviceTypeAblitysPo.setId(deviceTypeAblitysCreateRequest.getId());
-                    deviceTypeAblitysPo.setLastUpdateTime(System.currentTimeMillis());
-                    deviceTypeAblitysMapper.updateById(deviceTypeAblitysPo);
-                } else {
-                    deviceTypeAblitysPo.setCreateTime(System.currentTimeMillis());
-                    deviceTypeAblitysMapper.insert(deviceTypeAblitysPo);
-                }
+                deviceTypeAblitysMapper.insert(deviceTypeAblitysPo);
 
             });
 

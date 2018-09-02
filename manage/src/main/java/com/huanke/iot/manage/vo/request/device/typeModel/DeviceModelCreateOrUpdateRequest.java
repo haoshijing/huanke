@@ -40,6 +40,8 @@ public class DeviceModelCreateOrUpdateRequest {
         private Integer id;
         private Integer ablityId;
         private String definedName;
+        private Integer minVal;
+        private Integer maxVal;
         private Integer status = CommonConstant.STATUS_YES;
 
         private List<DeviceModelAblityOptionRequest> deviceModelAblityOptions;
@@ -51,6 +53,8 @@ public class DeviceModelCreateOrUpdateRequest {
         private Integer id;
         private Integer ablityOptionId;
         private String definedName;
+        private Integer minVal;
+        private Integer maxVal;
         private Integer status = CommonConstant.STATUS_YES;
 
     }

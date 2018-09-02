@@ -70,4 +70,14 @@
         </where>
     </update>
 
+    <select id="obtainModelFormatItems" resultType="com.huanke.iot.base.po.format.DeviceModelFormatItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        1=1
+        AND modelFormatId = #{modelFormatId}
+        AND status = 1
+    </select>
 </mapper>
