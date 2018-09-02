@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.response.format;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,7 +29,7 @@ public class WxFormatVo {
     private Integer type;
     private Integer owerType;
     private String description;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private List<WxFormatPageVo> wxFormatPageVos;
 
     @Data
@@ -37,7 +38,7 @@ public class WxFormatVo {
         private Integer pageNo;
         private String name;
         private String showImg;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
         private List<WxFormatItemVo> wxFormatItemVos;
 
     }
@@ -48,7 +49,7 @@ public class WxFormatVo {
         //        private Integer formatId;
         private String name;
         private Integer ablityType;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
     }
 
     @Data
@@ -61,7 +62,7 @@ public class WxFormatVo {
         private Integer ablityId;
         private Integer showStatus;
         private String showName;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
         private Long createTime;
         private Long lastUpdateTime;
     }

@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.customer;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -14,7 +15,7 @@ public class AndroidScenePo {
     private String name;    //场景名称，如：白天，晚上等。
     private String imgsCover;   //图册封面
     private String description;    //描述
-    private Integer status;    //状态
+    private Integer status = CommonConstant.STATUS_YES;    //状态
     private Long createTime;
     private Long lastUpdateTime;    //最后更新时间
 }

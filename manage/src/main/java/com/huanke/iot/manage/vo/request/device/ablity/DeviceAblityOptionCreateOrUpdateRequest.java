@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.device.ablity;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -12,6 +13,8 @@ public class DeviceAblityOptionCreateOrUpdateRequest {
     private Integer id;
     private String optionName;
     private String optionValue;
-    private Integer status;
+    private Integer minVal;
+    private Integer maxVal;
+    private Integer status = CommonConstant.STATUS_YES;
 //    private String ablityId;
 }

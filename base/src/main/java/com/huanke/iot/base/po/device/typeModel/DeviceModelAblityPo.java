@@ -14,6 +14,8 @@ public class DeviceModelAblityPo {
     private Integer modelId;
     private Integer ablityId;
     private String definedName;
+    private Integer minVal;
+    private Integer maxVal;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;

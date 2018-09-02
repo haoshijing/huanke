@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.device;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 @Data
@@ -10,7 +11,7 @@ public class DeviceTimerPo {
     private String name;
     private Integer timerType;
     private Long executeTime;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private Integer executeRet;
     private Long createTime;
     private Long lastUpdateTime;

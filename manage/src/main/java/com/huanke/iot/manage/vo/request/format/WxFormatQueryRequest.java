@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.format;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -18,7 +19,7 @@ public class WxFormatQueryRequest {
 //    private String version;
     private Integer type;
     private Integer owerType;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
 
     private Integer page = 1;
     private Integer limit = 20;
@@ -29,7 +30,7 @@ public class WxFormatQueryRequest {
         private Integer pageId;
         private String name;
         private Integer ablityType;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
 
     }
 }

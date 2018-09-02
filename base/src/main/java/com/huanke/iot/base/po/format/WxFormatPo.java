@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.format;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -18,7 +19,7 @@ public class WxFormatPo {
     private String version;
     private Integer type;
     private Integer owerType;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private String description;
     private Long createTime;
     private Long lastUpdateTime;

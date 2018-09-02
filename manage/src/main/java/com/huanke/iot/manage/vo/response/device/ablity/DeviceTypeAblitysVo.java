@@ -12,10 +12,12 @@ import java.util.List;
 public class DeviceTypeAblitysVo {
 
     private Integer id;
-    private Integer ablityId;
-    private Integer ablityType;
-    private String ablityName;
     private Integer typeId;
+    private Integer ablityId;
+    private String ablityName;
+    private Integer ablityType;
+    private Integer minVal;
+    private Integer maxVal;
 
     private List<DeviceAblityOptionVo> deviceAblityOptions;
 }

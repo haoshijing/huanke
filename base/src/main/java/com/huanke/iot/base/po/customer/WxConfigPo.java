@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.customer;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 @Data
@@ -14,7 +15,7 @@ public class WxConfigPo {
     private String themeName;
     private String logo;
     private String version;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;
 }

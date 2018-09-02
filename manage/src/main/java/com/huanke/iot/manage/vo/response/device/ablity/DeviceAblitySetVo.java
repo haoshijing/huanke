@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.response.device.ablity;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -11,6 +12,6 @@ public class DeviceAblitySetVo {
 
     private Integer id;
     private String name;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private String remark;
 }

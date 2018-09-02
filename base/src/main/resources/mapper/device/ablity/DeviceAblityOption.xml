@@ -12,15 +12,21 @@
         INSERT INTO
         <include refid="tableName"/>
         (
+        ablityId,
         optionName,
         optionValue,
-        ablityId,
+        status,
+        minVal,
+        maxVal,
         createTime
         )
         VALUES (
+        #{ablityId},
         #{optionName},
         #{optionValue},
-        #{ablityId},
+        #{status},
+        #{minVal},
+        #{maxVal},
         #{createTime}
         )
     </insert>
@@ -68,6 +74,15 @@
             </if>
             <if test="optionValue != null and optionValue != ''">
                 optionValue = #{optionValue},
+            </if>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            <if test="minVal != null ">
+                minVal = #{minVal},
+            </if>
+            <if test="maxVal != null ">
+                maxVal = #{maxVal},
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>

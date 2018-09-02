@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.device.typeModel;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -15,7 +16,7 @@ public class DeviceModelQueryRequest {
     private Integer typeId; //类型id
     private Integer customerId;
     private Integer productId;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
 
     private Integer page = 1;
     private Integer limit = 20;

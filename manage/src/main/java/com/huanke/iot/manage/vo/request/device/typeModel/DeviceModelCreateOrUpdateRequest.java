@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.vo.request.device.typeModel;
 
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private String icon; //缩略图
     private String version;
     private String description;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private String remark;
 //    private List<DeviceModelFormatConfigCreateRequest> deviceModelFormatConfigs;
 
@@ -39,7 +40,7 @@ public class DeviceModelCreateOrUpdateRequest {
         private Integer id;
         private Integer ablityId;
         private String definedName;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
 
         private List<DeviceModelAblityOptionRequest> deviceModelAblityOptions;
     }
@@ -50,7 +51,7 @@ public class DeviceModelCreateOrUpdateRequest {
         private Integer id;
         private Integer ablityOptionId;
         private String definedName;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
 
     }
 

@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.customer;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class CustomerVo {
         private String logo;
         private String name;
         private Integer type;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
     }
 
     /**
@@ -61,7 +62,7 @@ public class CustomerVo {
         private String themeName;
         private String logoKey;
         private String version;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
         private List<H5BgImg> h5BgImgList;  //背景列表
     }
 
@@ -74,7 +75,7 @@ public class CustomerVo {
         private String name;    //图片名称
         private String bgImg;    //图片或视频
         private String description;    //描述介绍
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
     }
 
     /**
@@ -97,7 +98,7 @@ public class CustomerVo {
         private String logoKey;
         private String version;
         private String deviceChangePassword;    //设备切换密码
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
         private List<AndroidScene> androidSceneList;  //场景列表
     }
 
@@ -111,7 +112,7 @@ public class CustomerVo {
         private String name;
         private String imgsCover;    //图册封面
         private String description;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
         private List<AndroidSceneImg> androidSceneImgList;  //图片列表
     }
 
@@ -124,6 +125,6 @@ public class CustomerVo {
         private String name;
         private String imgVideo;    //图片或视频
         private String description;
-        private Integer status;
+        private Integer status = CommonConstant.STATUS_YES;
     }
 }

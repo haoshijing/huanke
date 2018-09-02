@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.customer;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class CustomerQueryRequest {
     private Integer userType;
     private String loginName;
     private String SLD;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
 
     private Integer page = 1;
     private Integer limit = 20;

@@ -23,5 +23,12 @@ public class DeviceConstant {
     private static final Integer ENABLE_STATUS_NO = 0;// 禁用
 
 
+    /*能力类型*/
+    private static final Integer ABLITY_TYPE_TEXT = 1; //文本类
+    private static final Integer ABLITY_TYPE_RADIO = 2; //单选类
+    private static final Integer ABLITY_TYPE_SELECT = 3; //多选类
+    private static final Integer ABLITY_TYPE_NUMBER = 4; //阈值类
+    private static final Integer ABLITY_TYPE_SELECT_NUMBER = 5; //阈值选项类
+
 
 }

@@ -14,6 +14,8 @@ public class DeviceTypeAblitysPo {
     private Integer ablityId;
     private Integer ablityType;
     private String ablityName;
+    private Integer minVal;
+    private Integer maxVal;
     private Long createTime;
     private Long lastUpdateTime;
 

@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.customer;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -15,7 +16,7 @@ public class AndroidSceneImgPo {
     private String name;    //图片名称
     private String imgVideo;    //图片或视频
     private String description;    //描述介绍
-    private Integer status;    //状态
+    private Integer status = CommonConstant.STATUS_YES;    //状态
     private Long createTime;
     private Long lastUpdateTime;
 

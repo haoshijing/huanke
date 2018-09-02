@@ -17,6 +17,9 @@
         runStatus,
         configType,
         ablityType,
+        minVal,
+        maxVal,
+        status,
         remark,
         createTime
         )
@@ -28,6 +31,9 @@
         #{runStatus},
         #{configType},
         #{ablityType},
+        #{minVal},
+        #{maxVal},
+        #{status},
         #{remark},
         #{createTime}
         )
@@ -96,6 +102,12 @@
             <if test="ablityType != null">
                 ablityType = #{ablityType},
             </if>
+            <if test="minVal != null">
+                minVal = #{minVal},
+            </if>
+            <if test="maxVal != null">
+                maxVal = #{maxVal},
+            </if>
             <if test="remark != null and remark != ''">
                 remark = #{remark},
             </if>
@@ -135,7 +147,7 @@
 
     <select id="selectAblityListByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo">
         SELECT
-        t_device_ablity.ablityName,t_device_ablity.ablityType,t_device_type_ablitys.*
+        t_device_ablity.ablityName,t_device_ablity.ablityType, t_device_ablity.minVal, t_device_ablity.minVal,t_device_type_ablitys.*
         FROM
         t_device_type_ablitys,
         t_device_type,
@@ -148,7 +160,7 @@
 
     <select id="selectAblitysByType"  resultType="com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo">
         SELECT
-        t_device_ablity.ablityName,t_device_ablity.ablityType,t_device_type_ablitys.*
+        t_device_ablity.ablityName,t_device_ablity.ablityType, t_device_ablity.minVal, t_device_ablity.minVal,t_device_type_ablitys.*
         FROM
         t_device_type_ablitys,
         t_device_type,

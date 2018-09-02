@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.device.team;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -28,7 +29,7 @@ public class DeviceTeamItemPo {
     //设备的联动状态，1-联动，2-不联动
     private Integer linkAgeStatus;
 
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
 
     private Long createTime;
 

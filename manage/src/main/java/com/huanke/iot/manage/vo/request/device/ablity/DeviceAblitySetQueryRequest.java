@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.device.ablity;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -11,7 +12,7 @@ public class DeviceAblitySetQueryRequest {
 
     private Integer id;
     private String name;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private String remark;
     private Integer page = 1;
     private Integer limit = 20;

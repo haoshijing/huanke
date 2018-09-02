@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.response.device.typeModel;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class DeviceModelVo {
     private Integer productId;
     private String icon;
     private String version;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private String remark;
 
     private List<DeviceModelAblityVo> deviceModelAblitys;

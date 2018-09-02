@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.format;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -14,7 +15,7 @@ public class DeviceModelFormatItemPo {
     private Integer ablityId;
     private Integer showStatus;
     private String showName;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;
 }

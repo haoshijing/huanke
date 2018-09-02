@@ -46,9 +46,16 @@ public class DeviceAblityService {
         BeanUtils.copyProperties(ablityRequest, deviceAblityPo);
         //如果有id则为更新 否则为新增
         if (ablityRequest.getId() != null && ablityRequest.getId() > 0) {
+            //如果 状态不是删除，则全部默认为正常
+            if(deviceAblityPo.getStatus()!=null&&deviceAblityPo.getStatus().equals(CommonConstant.STATUS_DEL)){
+//                deviceAblityPo.setStatus(CommonConstant.STATUS_YES);
+            }else{
+                deviceAblityPo.setStatus(CommonConstant.STATUS_YES);
+            }
             deviceAblityPo.setLastUpdateTime(System.currentTimeMillis());
             ret = deviceAblityMapper.updateById(deviceAblityPo) > 0;
         } else {
+            deviceAblityPo.setStatus(CommonConstant.STATUS_YES);
             deviceAblityPo.setCreateTime(System.currentTimeMillis());
             ret = deviceAblityMapper.insert(deviceAblityPo) > 0;
         }
@@ -57,9 +64,11 @@ public class DeviceAblityService {
 
             for (DeviceAblityOptionCreateOrUpdateRequest deviceAblityOptionRequest : ablityRequest.getDeviceAblityOptions()) {
                 DeviceAblityOptionPo deviceAblityOptionPo = new DeviceAblityOptionPo();
+                deviceAblityOptionPo.setAblityId(deviceAblityPo.getId());
                 deviceAblityOptionPo.setOptionName(deviceAblityOptionRequest.getOptionName());
                 deviceAblityOptionPo.setOptionValue(deviceAblityOptionRequest.getOptionValue());
-                deviceAblityOptionPo.setAblityId(deviceAblityPo.getId());
+                deviceAblityOptionPo.setMinVal(deviceAblityOptionRequest.getMinVal());
+                deviceAblityOptionPo.setMaxVal(deviceAblityOptionRequest.getMinVal());
                 deviceAblityOptionPo.setStatus(CommonConstant.STATUS_YES);
                 //如果 该选项有id 则为更新 ，否则为新增
                 if(deviceAblityOptionRequest.getId()!=null&&deviceAblityOptionRequest.getId()>0){
@@ -117,6 +126,8 @@ public class DeviceAblityService {
             deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
             deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
             deviceAblityVo.setAblityType(deviceAblityPo.getAblityType());
+            deviceAblityVo.setMinVal(deviceAblityPo.getMinVal());
+            deviceAblityVo.setMaxVal(deviceAblityPo.getMaxVal());
             deviceAblityVo.setRemark(deviceAblityPo.getRemark());
             deviceAblityVo.setId(deviceAblityPo.getId());
 
@@ -124,10 +135,12 @@ public class DeviceAblityService {
             List<DeviceAblityOptionPo> deviceAblityOptionpos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
             List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionpos.stream().map(deviceAblityOptionPo -> {
                 DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
-                deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
-                deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
                 deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
                 deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
+                deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
+                deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
+                deviceAblityOptionVo.setMinVal(deviceAblityOptionPo.getMinVal());
+                deviceAblityOptionVo.setMaxVal(deviceAblityOptionPo.getMaxVal());
                 return deviceAblityOptionVo;
             }).collect(Collectors.toList());
 
@@ -154,18 +167,22 @@ public class DeviceAblityService {
         List<DeviceTypeAblitysVo> deviceTypeAblitysVos = deviceTypeAblitysPos.stream().map(deviceTypeAblitysPo -> {
             DeviceTypeAblitysVo deviceTypeAblitysVo = new DeviceTypeAblitysVo();
             deviceTypeAblitysVo.setId(deviceTypeAblitysPo.getId());
+            deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
             deviceTypeAblitysVo.setAblityId(deviceTypeAblitysPo.getAblityId());
             deviceTypeAblitysVo.setAblityName(deviceTypeAblitysPo.getAblityName());
             deviceTypeAblitysVo.setAblityType(deviceTypeAblitysPo.getAblityType());
-            deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
+            deviceTypeAblitysVo.setMinVal(deviceTypeAblitysPo.getMinVal());
+            deviceTypeAblitysVo.setMaxVal(deviceTypeAblitysPo.getMaxVal());
 
             //根据功能主键 查询该功能下的 选项列表
             List<DeviceAblityOptionPo> deviceAblityOptionpos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceTypeAblitysPo.getAblityId());
             List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionpos.stream().map(deviceAblityOptionPo -> {
                 DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
+                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
                 deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
                 deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
-                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
+                deviceAblityOptionVo.setMinVal(deviceAblityOptionPo.getMinVal());
+                deviceAblityOptionVo.setMaxVal(deviceAblityOptionPo.getMaxVal());
                 deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
                 return deviceAblityOptionVo;
             }).collect(Collectors.toList());
@@ -195,6 +212,8 @@ public class DeviceAblityService {
             deviceAblityVo.setRunStatus(deviceAblityPo.getRunStatus());
             deviceAblityVo.setConfigType(deviceAblityPo.getConfigType());
             deviceAblityVo.setAblityType(deviceAblityPo.getAblityType());
+            deviceAblityVo.setMinVal(deviceAblityPo.getMinVal());
+            deviceAblityVo.setMaxVal(deviceAblityPo.getMaxVal());
             deviceAblityVo.setRemark(deviceAblityPo.getRemark());
             deviceAblityVo.setId(deviceAblityPo.getId());
 
@@ -202,9 +221,11 @@ public class DeviceAblityService {
             List<DeviceAblityOptionPo> deviceAblityOptionpos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
             List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionpos.stream().map(deviceAblityOptionPo -> {
                 DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
+                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
                 deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
                 deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
-                deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
+                deviceAblityOptionVo.setMinVal(deviceAblityOptionPo.getMinVal());
+                deviceAblityOptionVo.setMaxVal(deviceAblityOptionPo.getMaxVal());
                 deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
                 return deviceAblityOptionVo;
             }).collect(Collectors.toList());

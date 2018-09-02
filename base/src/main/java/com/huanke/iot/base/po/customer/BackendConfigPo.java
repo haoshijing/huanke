@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.customer;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -14,7 +15,7 @@ public class BackendConfigPo {
     private Integer type;   //类型
     private Integer enableStatus;   //后台是否可用
     private Integer customerId;
-    private Integer status;   //
+    private Integer status = CommonConstant.STATUS_YES;   //
     private Long createTime;
     private Long lastUpdateTime;
 }

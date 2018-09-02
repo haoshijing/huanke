@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.device.team;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -51,7 +52,7 @@ public class DeviceTeamPo {
     /**
      *组的状态1正常，2不正常
      */
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
 
     //组状态，1-普通终端组，2-托管组
     private Integer teamStatus;

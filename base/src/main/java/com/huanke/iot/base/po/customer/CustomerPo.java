@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.customer;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -23,6 +24,6 @@ public class CustomerPo {
     private String creatUser;
     private Long createTime;
     private Long lastUpdateTime;
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
 
 }

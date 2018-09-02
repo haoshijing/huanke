@@ -1,5 +1,6 @@
 package com.huanke.iot.base.po.device.group;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -23,7 +24,7 @@ public class DeviceGroupItemPo {
      */
     private Integer groupId;
 
-    private Integer status;
+    private Integer status = CommonConstant.STATUS_YES;
 
     private Long createTime;
 
