@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.format.DeviceModelFormatConfigMapper">
+<mapper namespace="com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper">
 
     <sql id="tableName">
-        t_device_model_format_config
+        t_device_model_format_item
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.huanke.iot.base.po.format.DeviceModelFormatConfigPo">
+            parameterType="com.huanke.iot.base.po.format.DeviceModelFormatItemPo">
         INSERT INTO
         <include refid="tableName"/>
         (
-        modelId,
-        formatId,
-        pageId,
+        modelFormatId,
         itemId,
         ablityId,
         showStatus,
@@ -23,9 +21,7 @@
         createTime
         )
         VALUES (
-        #{modelId},
-        #{formatId},
-        #{pageId},
+        #{modelFormatId},
         #{itemId},
         #{ablityId},
         #{showStatus},
@@ -35,7 +31,7 @@
         )
     </insert>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.format.DeviceModelFormatConfigPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.format.DeviceModelFormatItemPo">
         select
         *
         FROM
@@ -44,18 +40,12 @@
     </select>
 
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.format.DeviceModelFormatConfigPo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.format.DeviceModelFormatItemPo">
         update
         <include refid="tableName"/>
         <set>
-            <if test="modelId != null">
-                modelId = #{modelId},
-            </if>
-            <if test="formatId != null">
-                formatId = #{formatId},
-            </if>
-            <if test="pageId != null">
-                pageId = #{pageId},
+            <if test="modelFormatId != null">
+                modelFormatId = #{modelFormatId},
             </if>
             <if test="itemId != null">
                 itemId = #{itemId},
@@ -80,15 +70,4 @@
         </where>
     </update>
 
-    <select id="obtainAbilityIdsByJoinId" resultType="java.lang.Integer">
-        select
-        ablityId
-        FROM
-        <include refid="tableName"/>
-        WHERE modelId = #{modelId}
-        AND formatId = #{formatId}
-        AND pageId = #{pageId}
-        AND itemId = #{itemId}
-        AND status = 1
-    </select>
 </mapper>

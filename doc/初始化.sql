@@ -11,11 +11,10 @@
  Target Server Version : 80011
  File Encoding         : 65001
 
- Date: 31/08/2018 11:21:49
+ Date: 02/09/2018 00:43:50
 */
 
-CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-use iot;
+
 -- ----------------------------
 -- Table structure for android_config
 -- ----------------------------
@@ -33,13 +32,13 @@ CREATE TABLE `android_config` (
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `androidConfCustomUni` (`customerId`) USING BTREE
-)  AUTO_INCREMENT=18  COMMENT='安卓配置表';
+) AUTO_INCREMENT=23 COMMENT='安卓配置表';
 
 -- ----------------------------
 -- Records of android_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `android_config` VALUES (6, 12, 'name', 'logo', 'qrcode', 'deviceChangePassword', 'version', 1, 1535039115470, NULL);
+INSERT INTO `android_config` VALUES (6, 12, 'string', 'logo', 'string', 'string', 'string', 0, 1535039115470, 1535707873923);
 INSERT INTO `android_config` VALUES (7, 13, 'string1', 'string1', 'string1', 'string1', 'string1', 1, 1535080238159, 1535095503940);
 INSERT INTO `android_config` VALUES (8, 1, 'string', 'string', 'string', 'string', 'string', 1, 1535093903752, 1535093928620);
 INSERT INTO `android_config` VALUES (9, 14, '3', 'string', 'string', '3', '3', 1, 1535098205781, NULL);
@@ -51,6 +50,11 @@ INSERT INTO `android_config` VALUES (14, 20, '1', '', '', '1', '1', 1, 153510916
 INSERT INTO `android_config` VALUES (15, 21, 'my app', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/thinking3.png', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/gs.jpg', '1188', '', 1, 1535168536987, NULL);
 INSERT INTO `android_config` VALUES (16, 23, 'string', 'string', 'string', 'string', 'string', 0, 1535192475570, 1535193056766);
 INSERT INTO `android_config` VALUES (17, 25, '456', '', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-6-580x616.png', '567678', '657567', 1, 1535609325741, NULL);
+INSERT INTO `android_config` VALUES (18, 27, '1string', NULL, '1string', 's1tring', '1string', NULL, 1535705722555, NULL);
+INSERT INTO `android_config` VALUES (19, 28, '1string', NULL, '1string', 's1tring', '1string', NULL, 1535706216175, NULL);
+INSERT INTO `android_config` VALUES (20, 29, '123123', NULL, '', '2323', '123213', NULL, 1535706296849, NULL);
+INSERT INTO `android_config` VALUES (21, 30, '4545', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-9.png', '123', '454', NULL, 1535706639461, NULL);
+INSERT INTO `android_config` VALUES (22, 31, '345', NULL, '', '345', '345345', NULL, 1535706926068, 1535779193221);
 COMMIT;
 
 -- ----------------------------
@@ -68,7 +72,7 @@ CREATE TABLE `android_scene` (
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   `status` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=28  COMMENT='安卓场景表';
+) AUTO_INCREMENT=37 COMMENT='安卓场景表';
 
 -- ----------------------------
 -- Records of android_scene
@@ -100,6 +104,15 @@ INSERT INTO `android_scene` VALUES (24, 16, 23, 'string', 'string', 'string', 15
 INSERT INTO `android_scene` VALUES (25, 16, 23, 'string', 'string', 'string', 1535192982095, NULL, NULL);
 INSERT INTO `android_scene` VALUES (26, 16, 23, 'string', 'string', 'string', 1535193056795, NULL, NULL);
 INSERT INTO `android_scene` VALUES (27, 17, 25, '1', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-11-580x514.png', '1', 1535609325780, NULL, NULL);
+INSERT INTO `android_scene` VALUES (28, 18, 27, '1string', '1string', '1string', 1535705722571, NULL, NULL);
+INSERT INTO `android_scene` VALUES (29, 19, 28, '1string', '1string', '1string', 1535706216191, NULL, NULL);
+INSERT INTO `android_scene` VALUES (30, 20, 29, '213', '', '23', 1535706296853, NULL, NULL);
+INSERT INTO `android_scene` VALUES (31, 21, 30, '34', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/77faf2de7998394fce4f05c789e5e6b8.jpg', '34', 1535706639464, NULL, NULL);
+INSERT INTO `android_scene` VALUES (32, 22, 31, '', '', '', 1535706926070, NULL, NULL);
+INSERT INTO `android_scene` VALUES (33, 6, 12, 'string', 'string', 'string', 1535707720358, NULL, NULL);
+INSERT INTO `android_scene` VALUES (34, 6, 12, 'string', 'string', 'string', 1535707873939, NULL, NULL);
+INSERT INTO `android_scene` VALUES (35, 22, 31, '', '', '', 1535707966627, NULL, NULL);
+INSERT INTO `android_scene` VALUES (36, 22, 31, '', '', '', 1535779193241, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -118,7 +131,7 @@ CREATE TABLE `android_scene_img` (
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   `status` int(1) DEFAULT NULL COMMENT '状态',
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=31  COMMENT='安卓场景图册表';
+) AUTO_INCREMENT=40 COMMENT='安卓场景图册表';
 
 -- ----------------------------
 -- Records of android_scene_img
@@ -153,6 +166,15 @@ INSERT INTO `android_scene_img` VALUES (27, 16, 25, 23, 'string', 'string', 'str
 INSERT INTO `android_scene_img` VALUES (28, 16, 26, 23, 'string', 'string', 'string', 1535193056816, NULL, 1);
 INSERT INTO `android_scene_img` VALUES (29, 17, 27, 25, '22', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-19.png', '22', 1535609325837, NULL, 1);
 INSERT INTO `android_scene_img` VALUES (30, 17, 27, 25, '33', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-18.png', '33', 1535609325860, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (31, 18, 28, 27, '1string', '1string', '12', 1535705722586, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (32, 19, 29, 28, '1string', '1string', '12', 1535706216223, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (33, 20, 30, 29, '232', '', '3', 1535706296857, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (34, 21, 31, 30, '23', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/gs.jpg', '23', 1535706639467, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (35, 22, 32, 31, '', '', '', 1535706926072, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (36, 6, 33, 12, 'string', 'string', 'string', 1535707720369, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (37, 6, 34, 12, 'string', 'string', 'string', 1535707873954, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (38, 22, 35, 31, '', '', '', 1535707966630, NULL, 1);
+INSERT INTO `android_scene_img` VALUES (39, 22, 36, 31, '', '', '', 1535779193260, NULL, 1);
 COMMIT;
 
 -- ----------------------------
@@ -171,13 +193,13 @@ CREATE TABLE `backend_config` (
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `backConfCustomUni` (`customerId`) USING BTREE
-)  AUTO_INCREMENT=13  COMMENT='后端配置表';
+) AUTO_INCREMENT=17 COMMENT='后端配置表';
 
 -- ----------------------------
 -- Records of backend_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `backend_config` VALUES (2, 12, 'name', 'logo', 1, 1, NULL, 1535039177748, NULL);
+INSERT INTO `backend_config` VALUES (2, 12, 'string', 'string', 1, 0, 0, 1535039177748, 1535707873973);
 INSERT INTO `backend_config` VALUES (3, 13, 'string1', 'string1', 1, 1, NULL, 1535080238306, 1535095504056);
 INSERT INTO `backend_config` VALUES (4, 1, 'string', 'string', 0, 1, NULL, 1535093903858, NULL);
 INSERT INTO `backend_config` VALUES (5, 14, '3', 'string', NULL, NULL, NULL, 1535098205999, NULL);
@@ -188,6 +210,10 @@ INSERT INTO `backend_config` VALUES (9, 20, '1', '', NULL, NULL, 1, 153510916560
 INSERT INTO `backend_config` VALUES (10, 21, 'my app', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/thinking3.png', NULL, NULL, 1, 1535168537029, NULL);
 INSERT INTO `backend_config` VALUES (11, 23, 'string', 'string', 0, 0, 0, 1535192475618, 1535193056833);
 INSERT INTO `backend_config` VALUES (12, 25, '456', '', NULL, NULL, 1, 1535609325886, NULL);
+INSERT INTO `backend_config` VALUES (13, 28, NULL, '1string', 0, 0, 1, 1535706216275, NULL);
+INSERT INTO `backend_config` VALUES (14, 29, NULL, '', NULL, NULL, 1, 1535706296864, NULL);
+INSERT INTO `backend_config` VALUES (15, 30, NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-19.png', NULL, NULL, 1, 1535706639473, NULL);
+INSERT INTO `backend_config` VALUES (16, 31, '345', '', NULL, NULL, 1, 1535706926076, 1535779193273);
 COMMIT;
 
 -- ----------------------------
@@ -213,13 +239,13 @@ CREATE TABLE `t_customer` (
   `creatUser` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `customerSld` (`SLD`) USING BTREE COMMENT '二级域名唯一索引'
-)  AUTO_INCREMENT=26  COMMENT='客户表  有公众号的表，B端';
+) AUTO_INCREMENT=32 COMMENT='客户表  有公众号的表，B端';
 
 -- ----------------------------
 -- Records of t_customer
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_customer` VALUES (12, 'name', 'loginName', 1, 'remark', 'publicName', '1', 'appid', 'appid', 'sld', '4,5,6', '1,2,3', 2, 1535039114171, NULL, NULL);
+INSERT INTO `t_customer` VALUES (12, 'name', 'loginName', 0, 'string', 'string', '0', 'string', 'string', 'sld', 'typeIds', 'modelIds', 2, 1535039114171, 1535707873721, NULL);
 INSERT INTO `t_customer` VALUES (13, 'string1', 'string12', 1, 'string1', 'string1', '1', 'string', 'string', 'string1', 'string1', 'string1', 2, 1535080238055, 1535095503632, NULL);
 INSERT INTO `t_customer` VALUES (14, '1', '1', 1, '1', '1', NULL, '1', '1', '1', '43,44', NULL, 2, 1535098205679, NULL, NULL);
 INSERT INTO `t_customer` VALUES (16, 'string', 'string', 0, 'string', 'string', '0', 'string', 'string', 'string', 'string', 'string', 2, 1535100162521, NULL, NULL);
@@ -229,8 +255,14 @@ INSERT INTO `t_customer` VALUES (19, 'asd', 'asd', 1, 'asd', 'ad', NULL, 'asd', 
 INSERT INTO `t_customer` VALUES (20, '1', '1', 1, '1', '1', NULL, '1', '1', '111111', '44,43', NULL, 2, 1535109165289, NULL, NULL);
 INSERT INTO `t_customer` VALUES (21, 'agae', 'hcoiot', 1, 'adsf', 'adfff', NULL, 'adfa', 'adga', 'hco', '45,44', NULL, 2, 1535168536848, NULL, NULL);
 INSERT INTO `t_customer` VALUES (22, 'string', 'string', 0, 'string', 'string', '0', 'string', 'string', 'string123', 'string', 'string', 2, 1535192306691, NULL, NULL);
-INSERT INTO `t_customer` VALUES (23, 'string', 'string', 0, 'string', 'string', '0', 'string', 'string', 'string1231301', 'string', 'string', 1, 1535192475408, 1535193048810, NULL);
-INSERT INTO `t_customer` VALUES (25, '123', 'asd', 2, '345345', '123', NULL, '213', '324', 'asd', '43,44', NULL, 1, 1535609325526, NULL, NULL);
+INSERT INTO `t_customer` VALUES (23, 'string', 'string', 0, 'string', 'string', '0', 'string', 'string', 'string1231301', 'string', 'string', 2, 1535192475408, 1535193048810, NULL);
+INSERT INTO `t_customer` VALUES (25, '123', 'asd', 2, '345345', '123', NULL, '213', '324', 'asd', '43,44', NULL, 2, 1535609325526, NULL, NULL);
+INSERT INTO `t_customer` VALUES (26, '1', '22', 2, '5', '2', NULL, '3', '4', '23', NULL, NULL, 2, 1535705214400, NULL, NULL);
+INSERT INTO `t_customer` VALUES (27, 'string', 'string', 0, 'string', '1string', '0', '1string', '1string', '11string', NULL, NULL, 2, 1535705722467, NULL, NULL);
+INSERT INTO `t_customer` VALUES (28, 'string', 'string', 0, 'string', '1string', '0', '1string', '1string', '12tring', NULL, NULL, 2, 1535706216018, NULL, NULL);
+INSERT INTO `t_customer` VALUES (29, '123', '213', 1, '123', '123', NULL, '3123', '12', '2323', NULL, NULL, 2, 1535706296761, NULL, NULL);
+INSERT INTO `t_customer` VALUES (30, '1', '213', 1, '1', '2', NULL, '3', '1', '232', NULL, NULL, 2, 1535706639357, NULL, NULL);
+INSERT INTO `t_customer` VALUES (31, '43', '345', 2, '34', '43', NULL, '43', '43', '345345345', '53', NULL, 1, 1535706926052, 1535779193168, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -251,7 +283,7 @@ CREATE TABLE `t_customer_user` (
   `lastVisitTime` bigint(20) DEFAULT NULL,
   `mac` varchar(100) DEFAULT NULL COMMENT '用户设备mac地址',
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='终端用户表（C端用户）';
+) COMMENT='终端用户表（C端用户）';
 
 -- ----------------------------
 -- Table structure for t_device
@@ -286,7 +318,7 @@ CREATE TABLE `t_device` (
   `createTime` bigint(20) DEFAULT NULL COMMENT '写入时间',
   `lastUpdateTime` bigint(20) DEFAULT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=8  COMMENT='设备表 （基础属性）';
+) AUTO_INCREMENT=10 COMMENT='设备表 （基础属性）';
 
 -- ----------------------------
 -- Records of t_device
@@ -299,6 +331,8 @@ INSERT INTO `t_device` VALUES (4, '设备4', '3B-5A-SK-90-K9', NULL, NULL, NULL,
 INSERT INTO `t_device` VALUES (5, '123', '123', NULL, NULL, NULL, NULL, NULL, 45, NULL, NULL, 0, 1, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, '123', NULL, NULL, 1535536450822, 1535536450792, 1535536450792);
 INSERT INTO `t_device` VALUES (6, '345', '345', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, '546', NULL, NULL, 1535536488794, 1535536490310, 1535536490310);
 INSERT INTO `t_device` VALUES (7, 'asdasd', 'asdasd', NULL, NULL, NULL, NULL, NULL, 50, NULL, NULL, 0, 1, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, 'asdasd', NULL, NULL, 1535536544721, 1535536544979, 1535536544979);
+INSERT INTO `t_device` VALUES (8, 'string1', 'string1', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, 1, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, 'string1', NULL, NULL, 123, 1535781386339, 1535781386339);
+INSERT INTO `t_device` VALUES (9, 'string2', 'strin2', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, 1, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, 'string2', NULL, NULL, 1234, 1535781386339, 1535781386339);
 COMMIT;
 
 -- ----------------------------
@@ -313,20 +347,19 @@ CREATE TABLE `t_device_ablity` (
   `readStatus` int(1) DEFAULT NULL COMMENT '是否可读',
   `runStatus` int(1) DEFAULT NULL COMMENT '是否可执行',
   `configType` int(1) DEFAULT NULL COMMENT '配置方式',
-  `ablityType` int(1) DEFAULT NULL COMMENT '能力类型：1-硬件；2-软件',
+  `ablityType` int(1) DEFAULT NULL COMMENT '能力类型：',
   `remark` varchar(300) DEFAULT NULL COMMENT '备注',
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=15  COMMENT='设备能力表';
+) AUTO_INCREMENT=17 COMMENT='设备能力表';
 
 -- ----------------------------
 -- Records of t_device_ablity
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_ablity` VALUES (12, 'onoff', '0x01', 0, 0, 0, 1, NULL, '', 1535166927696, NULL);
-INSERT INTO `t_device_ablity` VALUES (13, 'onoff', '0x01', 1, 0, 0, 2, NULL, 'this is a fanspeed ablity', 1535166969249, 1535167010714);
-INSERT INTO `t_device_ablity` VALUES (14, '1', '2', 0, 1, 1, 1, 4, '3', 1535640160323, NULL);
+INSERT INTO `t_device_ablity` VALUES (15, '风速', '0xx', 1, 0, 1, 2, 123, '123123', 1535727952623, 1535803931474);
+INSERT INTO `t_device_ablity` VALUES (16, '123', '123', 1, 0, 1, 2, 123, '123', 1535728062625, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -342,22 +375,22 @@ CREATE TABLE `t_device_ablity_option` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=40  COMMENT='设备能力选项表';
+) AUTO_INCREMENT=46 COMMENT='设备能力选项表';
 
 -- ----------------------------
 -- Records of t_device_ablity_option
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_ablity_option` VALUES (9, '0', '1挡', '1', NULL, 1534940511987, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (10, '0', '2挡', '2', NULL, 1534940512020, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (11, '0', '1挡', '1', NULL, 1534940564625, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (12, '0', '2挡', '2', NULL, 1534940564666, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (34, '13', 'dangwei', '1', 1, 1535166969384, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (35, '13', 'dangwei', '2', 1, 1535166969409, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (36, '13', 'dangwei', '3', 1, 1535166969416, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (37, '13', 'dangwei', '1', 1, 1535167010848, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (38, '13', 'dangwei', '2', 1, 1535167010851, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (39, '13', 'dangwei', '3', 1, 1535167010854, NULL);
+INSERT INTO `t_device_ablity_option` VALUES (9, '0', '1挡', '1', 1, 1534940511987, NULL);
+INSERT INTO `t_device_ablity_option` VALUES (10, '0', '2挡', '2', 1, 1534940512020, NULL);
+INSERT INTO `t_device_ablity_option` VALUES (11, '0', '1挡', '1', 1, 1534940564625, NULL);
+INSERT INTO `t_device_ablity_option` VALUES (12, '0', '2挡', '2', 1, 1534940564666, NULL);
+INSERT INTO `t_device_ablity_option` VALUES (40, '15', '123', '123', 1, 1535727952712, 1535803931562);
+INSERT INTO `t_device_ablity_option` VALUES (41, '15', '一档', '10', 1, 1535728048640, 1535803931569);
+INSERT INTO `t_device_ablity_option` VALUES (42, '15', '二档', '20', 1, 1535728048643, 1535803931572);
+INSERT INTO `t_device_ablity_option` VALUES (43, '16', '三档', '123', 1, 1535728062709, NULL);
+INSERT INTO `t_device_ablity_option` VALUES (44, '16', '一档', '10', 1, 1535728062714, NULL);
+INSERT INTO `t_device_ablity_option` VALUES (45, '16', '二档', '20', 1, 1535728062724, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -372,7 +405,7 @@ CREATE TABLE `t_device_ablity_set` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='功能集';
+) COMMENT='功能集';
 
 -- ----------------------------
 -- Table structure for t_device_ablity_set_relation
@@ -383,7 +416,7 @@ CREATE TABLE `t_device_ablity_set_relation` (
   `ablityId` int(11) DEFAULT NULL COMMENT '能力主键',
   `ablitySetId` int(11) DEFAULT NULL COMMENT '能力集合主键',
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='功能集 和能力 关联关系表';
+) COMMENT='功能集 和能力 关联关系表';
 
 -- ----------------------------
 -- Table structure for t_device_alarm
@@ -392,7 +425,7 @@ DROP TABLE IF EXISTS `t_device_alarm`;
 CREATE TABLE `t_device_alarm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备告警信息';
+) COMMENT='设备告警信息';
 
 -- ----------------------------
 -- Table structure for t_device_customer_relation
@@ -405,7 +438,7 @@ CREATE TABLE `t_device_customer_relation` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备客户关系表';
+) COMMENT='设备客户关系表';
 
 -- ----------------------------
 -- Table structure for t_device_customer_user_relation
@@ -422,7 +455,7 @@ CREATE TABLE `t_device_customer_user_relation` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备 和终端用户关系表';
+) COMMENT='设备 和终端用户关系表';
 
 -- ----------------------------
 -- Table structure for t_device_group
@@ -438,7 +471,7 @@ CREATE TABLE `t_device_group` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备群';
+) COMMENT='设备群';
 
 -- ----------------------------
 -- Table structure for t_device_group_item
@@ -453,7 +486,7 @@ CREATE TABLE `t_device_group_item` (
   `createTIme` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备群 和设备关系表';
+) COMMENT='设备群 和设备关系表';
 
 -- ----------------------------
 -- Table structure for t_device_model
@@ -469,25 +502,20 @@ CREATE TABLE `t_device_model` (
   `formatId` int(11) DEFAULT NULL COMMENT '版式主键',
   `version` varchar(20) DEFAULT NULL COMMENT '版本',
   `icon` varchar(200) DEFAULT NULL COMMENT '图标',
+  `remark` varchar(500) DEFAULT NULL,
   `status` int(1) DEFAULT NULL COMMENT '状态',
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
-  `remark` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=9  COMMENT='设备型号表';
+) AUTO_INCREMENT=17 COMMENT='设备型号表';
 
 -- ----------------------------
 -- Records of t_device_model
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_model` VALUES (1, 111, '型号名称1-2', NULL, 111, 111, NULL, '111.1', '111', 3, 1534476864007, 1534477078688, 'remark11');
-INSERT INTO `t_device_model` VALUES (2, 1, '型号名称2', NULL, 1, 1, NULL, '1.1', '1', 1, 1534476900001, NULL, 'remark');
-INSERT INTO `t_device_model` VALUES (3, 2, '型号名称22', NULL, 2, 2, NULL, '1.1', '2', 1, 1534476913421, NULL, 'remark');
-INSERT INTO `t_device_model` VALUES (4, 111, '型号名称1-1', NULL, 111, 111, NULL, '111.1', '111', 3, 1534476959580, NULL, 'remark11');
-INSERT INTO `t_device_model` VALUES (5, 111, '型号名称1-2', NULL, 111, 111, NULL, '111.1', '111', 3, 1534476989787, NULL, 'remark11');
-INSERT INTO `t_device_model` VALUES (6, 0, 'string', NULL, 0, 0, NULL, 'string', 'string', 0, 1535118489980, NULL, 'string');
-INSERT INTO `t_device_model` VALUES (7, 0, 'string', NULL, 0, 0, NULL, 'string', 'string', 0, 1535120486103, NULL, 'string');
-INSERT INTO `t_device_model` VALUES (8, 0, 'string', NULL, 0, 0, NULL, 'string', 'string', 0, 1535511286029, NULL, 'string');
+INSERT INTO `t_device_model` VALUES (9, 0, '型号1-1', 'hx001', 1, 0, NULL, 'string', 'string1', 'string', 1, 1535723775794, NULL);
+INSERT INTO `t_device_model` VALUES (15, 0, 'string', 'string', 0, 0, 0, 'string', 'string', 'string', 1, 1535817757747, NULL);
+INSERT INTO `t_device_model` VALUES (16, 1, 'name', 'sh01', 0, 1, 11, '1.1', 'string', 'remark', 1, 1535818362818, 1535818629334);
 COMMIT;
 
 -- ----------------------------
@@ -503,7 +531,18 @@ CREATE TABLE `t_device_model_ablity` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备型号 功能表';
+) AUTO_INCREMENT=6 COMMENT='设备型号 功能表';
+
+-- ----------------------------
+-- Records of t_device_model_ablity
+-- ----------------------------
+BEGIN;
+INSERT INTO `t_device_model_ablity` VALUES (1, 1, 1, 'string2', 1, 1535724644801, 1535725374901);
+INSERT INTO `t_device_model_ablity` VALUES (2, 1, 0, 'string', 1, 1535724817486, NULL);
+INSERT INTO `t_device_model_ablity` VALUES (3, 15, 0, 'string', 1, 1535817757815, NULL);
+INSERT INTO `t_device_model_ablity` VALUES (4, 16, 0, 'string', 1, 1535818363330, NULL);
+INSERT INTO `t_device_model_ablity` VALUES (5, 16, 0, 'string', 1, 1535818629401, NULL);
+COMMIT;
 
 -- ----------------------------
 -- Table structure for t_device_model_ablity_option
@@ -518,17 +557,56 @@ CREATE TABLE `t_device_model_ablity_option` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备型号 功能选项自定义表';
+) AUTO_INCREMENT=8 COMMENT='设备型号 功能选项自定义表';
 
 -- ----------------------------
--- Table structure for t_device_model_format_config
+-- Records of t_device_model_ablity_option
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_model_format_config`;
-CREATE TABLE `t_device_model_format_config` (
+BEGIN;
+INSERT INTO `t_device_model_ablity_option` VALUES (1, 1, 2, 'string222', 1, 1535724367090, 1535725380182);
+INSERT INTO `t_device_model_ablity_option` VALUES (2, 0, 1, 'definedName', 1, 1535724604655, NULL);
+INSERT INTO `t_device_model_ablity_option` VALUES (3, 1, 1, 'definedName', 1, 1535724648135, NULL);
+INSERT INTO `t_device_model_ablity_option` VALUES (4, 2, 0, 'string', 1, 1535724817606, NULL);
+INSERT INTO `t_device_model_ablity_option` VALUES (5, 3, 0, 'string', 1, 1535817757823, NULL);
+INSERT INTO `t_device_model_ablity_option` VALUES (6, 4, 0, 'string', 1, 1535818363343, NULL);
+INSERT INTO `t_device_model_ablity_option` VALUES (7, 5, 0, 'string', 1, 1535818629406, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_device_model_format
+-- ----------------------------
+DROP TABLE IF EXISTS `t_device_model_format`;
+CREATE TABLE `t_device_model_format` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `modelId` int(11) DEFAULT NULL COMMENT '型号主键',
   `formatId` int(11) DEFAULT NULL COMMENT '版式主键',
   `pageId` int(11) DEFAULT NULL COMMENT '所在版式页面主键',
+  `showStatus` int(1) DEFAULT NULL COMMENT '是否展示',
+  `showName` varchar(100) DEFAULT NULL COMMENT '展示名称',
+  `status` int(1) DEFAULT NULL COMMENT '状态',
+  `createTime` bigint(20) DEFAULT NULL,
+  `lastUpdateTime` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) AUTO_INCREMENT=6;
+
+-- ----------------------------
+-- Records of t_device_model_format
+-- ----------------------------
+BEGIN;
+INSERT INTO `t_device_model_format` VALUES (1, 1, 1, 1, 1, NULL, 1, 1535778632802, NULL);
+INSERT INTO `t_device_model_format` VALUES (2, 1, 1, 1, 1, NULL, 1, 1535782891745, NULL);
+INSERT INTO `t_device_model_format` VALUES (3, 20, 2, 0, 2, NULL, 1, 1535782892218, NULL);
+INSERT INTO `t_device_model_format` VALUES (4, 0, 0, 0, 0, 'string', 1, 1535818363365, NULL);
+INSERT INTO `t_device_model_format` VALUES (5, 11, 0, 1, 0, 'showName', 1, 1535818629412, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_device_model_format_item
+-- ----------------------------
+DROP TABLE IF EXISTS `t_device_model_format_item`;
+CREATE TABLE `t_device_model_format_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `modelFormatId` int(11) DEFAULT NULL COMMENT '型号版式主键',
   `itemId` int(11) DEFAULT NULL COMMENT '版式软件功能项主键',
   `ablityId` int(11) DEFAULT NULL COMMENT '能力主键',
   `showStatus` int(1) DEFAULT NULL COMMENT '是否展示',
@@ -537,7 +615,18 @@ CREATE TABLE `t_device_model_format_config` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  ;
+) AUTO_INCREMENT=6;
+
+-- ----------------------------
+-- Records of t_device_model_format_item
+-- ----------------------------
+BEGIN;
+INSERT INTO `t_device_model_format_item` VALUES (1, 1, 1, 1, 1, 'string1', 1, 1535778632802, NULL);
+INSERT INTO `t_device_model_format_item` VALUES (2, 1, 1, 1, 1, 'string11111', 1, 1535782891745, NULL);
+INSERT INTO `t_device_model_format_item` VALUES (3, 20, 20, 20, 2, '2string', 1, 1535782892218, NULL);
+INSERT INTO `t_device_model_format_item` VALUES (4, 4, 0, 0, 0, 'string', 1, 1535818363377, NULL);
+INSERT INTO `t_device_model_format_item` VALUES (5, 5, 11, 11, 0, 'string', 1, 1535818629418, NULL);
+COMMIT;
 
 -- ----------------------------
 -- Table structure for t_device_operlog
@@ -554,7 +643,7 @@ CREATE TABLE `t_device_operlog` (
   `retMsg` varchar(255) DEFAULT NULL COMMENT '处理结果',
   `createTime` bigint(20) DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='操作日志表';
+) COMMENT='操作日志表';
 
 -- ----------------------------
 -- Table structure for t_device_team
@@ -580,7 +669,7 @@ CREATE TABLE `t_device_team` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备组';
+) COMMENT='设备组';
 
 -- ----------------------------
 -- Table structure for t_device_team_item
@@ -596,7 +685,7 @@ CREATE TABLE `t_device_team_item` (
   `createTIme` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备组和设备关系表';
+) COMMENT='设备组和设备关系表';
 
 -- ----------------------------
 -- Table structure for t_device_team_scene
@@ -610,7 +699,7 @@ CREATE TABLE `t_device_team_scene` (
   `createTIme` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备组和组场景关系表';
+) COMMENT='设备组和组场景关系表';
 
 -- ----------------------------
 -- Table structure for t_device_timer
@@ -628,7 +717,7 @@ CREATE TABLE `t_device_timer` (
   `createTime` bigint(20) DEFAULT NULL COMMENT '创建时间',
   `lastUpdateTime` bigint(20) DEFAULT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`) USING BTREE
-)  ;
+);
 
 -- ----------------------------
 -- Table structure for t_device_type
@@ -646,7 +735,7 @@ CREATE TABLE `t_device_type` (
   `lastUpdateTIme` bigint(20) DEFAULT NULL,
   `status` int(1) DEFAULT NULL COMMENT '状态 1-正常，2-删除',
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=52  COMMENT='设备类型 表';
+) AUTO_INCREMENT=54 COMMENT='设备类型 表';
 
 -- ----------------------------
 -- Records of t_device_type
@@ -668,15 +757,17 @@ INSERT INTO `t_device_type` VALUES (39, '3', '3', '', '', '3', '', 1534932755420
 INSERT INTO `t_device_type` VALUES (40, '4', '4', '', '', '4', '', 1534932800100, NULL, 2);
 INSERT INTO `t_device_type` VALUES (41, '5', '5', '', '', '5', '', 1534933081948, NULL, 2);
 INSERT INTO `t_device_type` VALUES (42, '1', '1', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/c9c681a5dd326b0234172e1d213a7eea.jpg', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-19.png', '1', '1', 1534998503863, NULL, 2);
-INSERT INTO `t_device_type` VALUES (43, '12', '12', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-18.png', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/2c2dc0556800c0386b66218240a7a50a--x-rays-plants.jpg', '12', '12', 1534998532575, NULL, 1);
-INSERT INTO `t_device_type` VALUES (44, '4', '3', '', '', '3', '3', 1535015351594, NULL, 1);
-INSERT INTO `t_device_type` VALUES (45, 'niubi', '082501', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/gs.jpg', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/BingWallpaper-2018-06-13.jpg', 'hco', 'this is a  test type', 1535167085380, NULL, 1);
+INSERT INTO `t_device_type` VALUES (43, '12', '12', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-18.png', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/2c2dc0556800c0386b66218240a7a50a--x-rays-plants.jpg', '12', '12', 1534998532575, NULL, 2);
+INSERT INTO `t_device_type` VALUES (44, '4', '3', '', '', '3', '3', 1535015351594, NULL, 2);
+INSERT INTO `t_device_type` VALUES (45, 'niubi', '082501', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/gs.jpg', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/BingWallpaper-2018-06-13.jpg', 'hco', 'this is a  test type', 1535167085380, NULL, 2);
 INSERT INTO `t_device_type` VALUES (46, '123123', '123', '', '', '123', '343434', 1535186093374, NULL, 2);
 INSERT INTO `t_device_type` VALUES (47, '123', '123', '', '', '4343434', '2323', 1535186182827, NULL, 2);
 INSERT INTO `t_device_type` VALUES (48, '1', '1', '', '', '1', '1', 1535186236428, NULL, 2);
 INSERT INTO `t_device_type` VALUES (49, '123', '12', '', '', '213', '', 1535186687969, NULL, 2);
-INSERT INTO `t_device_type` VALUES (50, '123', '123', '', '', '123', '', 1535186791250, NULL, 1);
-INSERT INTO `t_device_type` VALUES (51, '123', '123123123', '', '', '123', '', 1535186996186, NULL, 1);
+INSERT INTO `t_device_type` VALUES (50, '123', '123', '', '', '123', '', 1535186791250, NULL, 2);
+INSERT INTO `t_device_type` VALUES (51, '123', '123123123', '', '', '123', '', 1535186996186, NULL, 2);
+INSERT INTO `t_device_type` VALUES (52, '3345', '324', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-6-580x616.png', '', '45', '456456', 1535728122665, NULL, 2);
+INSERT INTO `t_device_type` VALUES (53, '2', '1', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-9.png', '', '3', '4', 1535779170825, NULL, 1);
 COMMIT;
 
 -- ----------------------------
@@ -689,7 +780,7 @@ CREATE TABLE `t_device_type_ablity_set` (
   `ablitySetId` int(11) DEFAULT NULL COMMENT '能力集合主键',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `uk_typeId` (`typeId`) USING BTREE
-)   COMMENT='设备类型对应的 功能集表 (1v1)';
+) COMMENT='设备类型对应的 功能集表 (1v1)';
 
 -- ----------------------------
 -- Table structure for t_device_type_ablitys
@@ -700,7 +791,7 @@ CREATE TABLE `t_device_type_ablitys` (
   `ablityId` int(11) DEFAULT NULL COMMENT '能力主键',
   `typeId` int(11) DEFAULT NULL COMMENT '设备类型主键',
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=80  COMMENT='功能集 和能力 关联关系表';
+) AUTO_INCREMENT=84 COMMENT='功能集 和能力 关联关系表';
 
 -- ----------------------------
 -- Records of t_device_type_ablitys
@@ -785,6 +876,10 @@ INSERT INTO `t_device_type_ablitys` VALUES (76, 12, 50);
 INSERT INTO `t_device_type_ablitys` VALUES (77, 13, 50);
 INSERT INTO `t_device_type_ablitys` VALUES (78, 13, 51);
 INSERT INTO `t_device_type_ablitys` VALUES (79, 11, 51);
+INSERT INTO `t_device_type_ablitys` VALUES (80, 16, 52);
+INSERT INTO `t_device_type_ablitys` VALUES (81, 15, 52);
+INSERT INTO `t_device_type_ablitys` VALUES (82, 15, 53);
+INSERT INTO `t_device_type_ablitys` VALUES (83, 16, 53);
 COMMIT;
 
 -- ----------------------------
@@ -800,7 +895,7 @@ CREATE TABLE `t_deviceid_pool` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='设备id池表';
+) COMMENT='设备id池表';
 
 -- ----------------------------
 -- Table structure for t_product
@@ -815,7 +910,7 @@ CREATE TABLE `t_product` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpadateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)   COMMENT='微信 设备型号备案表';
+) COMMENT='微信 设备型号备案表';
 
 -- ----------------------------
 -- Table structure for t_productid_pool
@@ -829,7 +924,7 @@ CREATE TABLE `t_productid_pool` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  ;
+);
 
 -- ----------------------------
 -- Table structure for wx_bg_img
@@ -846,7 +941,7 @@ CREATE TABLE `wx_bg_img` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=7  COMMENT='安卓背景图片表';
+) AUTO_INCREMENT=11 COMMENT='安卓背景图片表';
 
 -- ----------------------------
 -- Records of wx_bg_img
@@ -858,6 +953,10 @@ INSERT INTO `wx_bg_img` VALUES (3, 11, 23, 'string2', 'string2', 'string2', 1, 1
 INSERT INTO `wx_bg_img` VALUES (4, 11, 23, 'string3', 'string3', 'string3', 1, 1535192874659, NULL);
 INSERT INTO `wx_bg_img` VALUES (5, 11, 23, 'string2', 'string2', 'string2', 1, 1535192982067, NULL);
 INSERT INTO `wx_bg_img` VALUES (6, 11, 23, 'string3', 'string3', 'string3', 1, 1535192982079, NULL);
+INSERT INTO `wx_bg_img` VALUES (7, 13, 27, 'string', '1string', 'string', 1, 1535705722534, NULL);
+INSERT INTO `wx_bg_img` VALUES (8, 14, 28, 'string', '1string', 'string', 1, 1535706216135, NULL);
+INSERT INTO `wx_bg_img` VALUES (9, 1, 12, 'string', 'string', 'string', 1, 1535707720301, NULL);
+INSERT INTO `wx_bg_img` VALUES (10, 1, 12, 'string', 'string', 'string', 1, 1535707873889, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -879,13 +978,13 @@ CREATE TABLE `wx_config` (
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `wxConfCustomUni` (`customerId`) USING BTREE
-)  AUTO_INCREMENT=13  COMMENT='微信h5端配置表';
+) AUTO_INCREMENT=18 COMMENT='微信h5端配置表';
 
 -- ----------------------------
 -- Records of wx_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `wx_config` VALUES (1, 12, 'string', 'string', 0, 'string', 'string', 'string', 'string', '1', 1535017649781, 1535093926361);
+INSERT INTO `wx_config` VALUES (1, 12, 'string', 'string', 0, 'string', 'string', 'string', 'string', '0', 1535017649781, 1535707873868);
 INSERT INTO `wx_config` VALUES (2, 13, 'string1', 'string1', 1, 'string1', 'string1', 'string1', 'string1', '1', 1535080238111, 1535095503893);
 INSERT INTO `wx_config` VALUES (3, 14, '2', '2', 2, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/77faf2de7998394fce4f05c789e5e6b8.jpg', '2', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/5869ac2f522a4f6e2e1febbc1d8709ca.jpg', '2', '1', 1535098205734, NULL);
 INSERT INTO `wx_config` VALUES (4, 16, 'string', 'string', 0, 'string', 'string', 'string', 'string', '1', 1535100162780, NULL);
@@ -897,6 +996,11 @@ INSERT INTO `wx_config` VALUES (9, 21, '1188', 'NOT MORENG', 2, 'http://mybucket
 INSERT INTO `wx_config` VALUES (10, 22, 'string', 'string', 0, 'string', 'string', 'string', 'string', '1', 1535192306789, NULL);
 INSERT INTO `wx_config` VALUES (11, 23, 'string', 'string', 0, 'string', 'string', 'string', 'string', '0', 1535192475525, 1535193048996);
 INSERT INTO `wx_config` VALUES (12, 25, '45', '234', 2, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-19.png', '456', 'http://mybucket42.oss-cn-beijing.aliyuncs.com/c9c681a5dd326b0234172e1d213a7eea.jpg', '3', '1', 1535609325686, NULL);
+INSERT INTO `wx_config` VALUES (13, 27, 'string', '1string', 0, NULL, 'string', NULL, 'string', '1', 1535705722516, NULL);
+INSERT INTO `wx_config` VALUES (14, 28, 'string', '1string', 0, NULL, 'string', NULL, 'string', '1', 1535706216107, NULL);
+INSERT INTO `wx_config` VALUES (15, 29, '2323', '213123', 2, NULL, '2323', NULL, '', '1', 1535706296840, NULL);
+INSERT INTO `wx_config` VALUES (16, 30, '23', '23', 2, NULL, '3434', NULL, '2', '1', 1535706639456, NULL);
+INSERT INTO `wx_config` VALUES (17, 31, '345', '345', 2, NULL, '345', NULL, '2', '1', 1535706926063, 1535779193208);
 COMMIT;
 
 -- ----------------------------
@@ -919,30 +1023,30 @@ CREATE TABLE `wx_format` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=23  COMMENT='微信h5端版型表';
+) AUTO_INCREMENT=23 COMMENT='微信h5端版型表';
 
 -- ----------------------------
 -- Records of wx_format
 -- ----------------------------
 BEGIN;
 INSERT INTO `wx_format` VALUES (1, '1', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/c9c681a5dd326b0234172e1d213a7eea.jpg', NULL, 2, NULL, NULL, NULL, '21,1', NULL, '2', 1535534162735, 1535636541381);
-INSERT INTO `wx_format` VALUES (2, '1', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-6-580x616.png', NULL, 2, NULL, NULL, NULL, '21,221', NULL, '2', 1535534266807, 1535636544988);
+INSERT INTO `wx_format` VALUES (2, '1', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-6-580x616.png', NULL, 2, NULL, NULL, NULL, '212,211', NULL, '2', 1535534266807, 1535636544988);
 INSERT INTO `wx_format` VALUES (3, 'string', 'string', 'string', 'string', 2, 0, 'string', 0, '3', NULL, 'string', 1535534422608, 1535636652692);
 INSERT INTO `wx_format` VALUES (4, 'string', 'string', 'string', 'string', 2, 0, 'string', 0, '4', NULL, 'string', 1535534452586, 1535636740982);
-INSERT INTO `wx_format` VALUES (5, 'string', 'string', 'string', 'string', 2, 0, 'string', 0, '5,8', NULL, 'string', 1535534568082, 1535636741699);
+INSERT INTO `wx_format` VALUES (5, 'string', 'string', 'string', 'string', 2, 0, 'string', 0, '12,5,8,', NULL, 'string', 1535534568082, 1535636741699);
 INSERT INTO `wx_format` VALUES (6, 'string', 'string', 'string', 'string', 2, 0, 'string', 0, '2,24,21', NULL, 'string', 1535534772350, 1535636742420);
-INSERT INTO `wx_format` VALUES (7, 'string', 'string', 'string', 'string', 2, 0, 'string', 0, '6', NULL, 'string', 1535535024647, 1535636742924);
+INSERT INTO `wx_format` VALUES (7, 'string', 'string', 'string', 'string', 2, 0, 'string', 0, '6,32', NULL, 'string', 1535535024647, 1535636742924);
 INSERT INTO `wx_format` VALUES (8, '1', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-9.png', NULL, 2, NULL, NULL, NULL, '23', NULL, '2', 1535535062526, 1535636744264);
 INSERT INTO `wx_format` VALUES (9, '121231231233', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-9.png', NULL, 2, NULL, NULL, NULL, '22', NULL, '1asdasd23', 1535535770447, 1535636744870);
-INSERT INTO `wx_format` VALUES (10, '123', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-9.png', NULL, 2, NULL, NULL, NULL, '22', NULL, '123', 1535536186967, 1535636745485);
+INSERT INTO `wx_format` VALUES (10, '123', NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-9.png', NULL, 2, NULL, NULL, NULL, '22,23', NULL, '123', 1535536186967, 1535636745485);
 INSERT INTO `wx_format` VALUES (11, 'string', 'string', 'string', 'string', 2, 0, '1,2', 0, 'string1112', NULL, 'string', 1535611600034, 1535636746000);
 INSERT INTO `wx_format` VALUES (12, 'string3', 'string3', 'string3', 'string3', 2, 0, 'string3', 0, 'string3', 'string3', 'string3', 1535623969269, 1535637211302);
 INSERT INTO `wx_format` VALUES (13, '123', NULL, NULL, NULL, 2, NULL, NULL, NULL, '23', '345345', '123123', 1535634218303, 1535637212094);
 INSERT INTO `wx_format` VALUES (14, '123', NULL, NULL, NULL, 2, NULL, NULL, NULL, '23', '454', '123', 1535634349210, 1535637212899);
-INSERT INTO `wx_format` VALUES (15, '版式1', 'www.html', 'xx.png', 'xxx.img', 2, 1, '1,2,3,4,5', 1, '1,2,3', '这是个版式1', '1.1', 1535634775154, 1535637213558);
+INSERT INTO `wx_format` VALUES (15, '版式1', 'www.html', 'xx.png', 'xxx.img', 1, 1, '1,27,31,4,5', 1, '1,12,3', '这是个版式1', '1.1', 1535634775154, 1535637213558);
 INSERT INTO `wx_format` VALUES (16, '123', NULL, NULL, NULL, 2, NULL, NULL, NULL, '23', '454', '123', 1535635315464, 1535637214382);
-INSERT INTO `wx_format` VALUES (17, '12312', NULL, NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-11-580x514.png', 2, NULL, NULL, 2, '25', 'asdasd', '3123', 1535635744428, 1535637272033);
-INSERT INTO `wx_format` VALUES (18, '版式2', 'www.html', 'xx.png', 'xxx.img', 2, 1, '1,2,3,4,5', 1, '1,2,3', '这是个版式2', '1.1', 1535636010811, 1535637266699);
+INSERT INTO `wx_format` VALUES (17, '12312', NULL, NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-11-580x514.png', 1, NULL, NULL, 2, '25', 'asdasd', '3123', 1535635744428, 1535637272033);
+INSERT INTO `wx_format` VALUES (18, '版式2', 'www.html', 'xx.png', 'xxx.img', 1, 1, '1,28,3,4,5', 1, '1,12,3', '这是个版式2', '1.1', 1535636010811, 1535637266699);
 INSERT INTO `wx_format` VALUES (19, '1', NULL, NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-6-580x616.png', 2, NULL, NULL, 2, '25', '1', '1', 1535636876898, 1535637270384);
 INSERT INTO `wx_format` VALUES (20, '1', NULL, NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-6-580x616.png', 1, NULL, NULL, 2, '25', '1', '1', 1535636876897, 1535638069098);
 INSERT INTO `wx_format` VALUES (21, '1', NULL, NULL, 'http://mybucket42.oss-cn-beijing.aliyuncs.com/X-rays-of-flowers-by-Hugh-Turvey-6-580x616.png', 1, NULL, NULL, 2, '25', '1', '1', 1535636916954, NULL);
@@ -963,7 +1067,7 @@ CREATE TABLE `wx_format_items` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTIme` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-)  AUTO_INCREMENT=47 ;
+) AUTO_INCREMENT=47;
 
 -- ----------------------------
 -- Records of wx_format_items
@@ -1029,7 +1133,7 @@ CREATE TABLE `wx_format_page` (
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-)  AUTO_INCREMENT=29 ;
+) AUTO_INCREMENT=29;
 
 -- ----------------------------
 -- Records of wx_format_page
