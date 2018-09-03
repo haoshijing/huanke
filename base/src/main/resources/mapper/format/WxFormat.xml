@@ -122,6 +122,9 @@
             <if test="customerIds != null and customerIds != '' ">
                 customerIds = #{customerIds},
             </if>
+            <if test="typeIds != null and typeIds != '' ">
+                typeIds = #{typeIds},
+            </if>
             <if test="version != null and version != '' ">
                 version = #{version},
             </if>

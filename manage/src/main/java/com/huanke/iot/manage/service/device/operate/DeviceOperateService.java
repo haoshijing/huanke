@@ -393,11 +393,12 @@ public class DeviceOperateService {
      */
     public DevicePo isDeviceHasCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceList){
         for(DeviceQueryRequest.DeviceQueryList device:deviceList){
-            DevicePo devicePo=deviceMapper.selectByMac(device.getMac());
+            DevicePo devicePo=deviceMapper.selectDeviceCustomerRelationByMac(device.getMac());
             //如果当前设备已被分配则返回错误
-            if(null != deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId())){
+            if(null!=devicePo){
                 return devicePo;
             }
+
         }
         return null;
     }
