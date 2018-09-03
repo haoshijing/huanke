@@ -221,6 +221,7 @@ COMMIT;
 DROP TABLE IF EXISTS `t_customer`;
 CREATE TABLE `t_customer` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `customerId` int(11) NOT NULL COMMENT '用户所属的客户ID',
   `name` varchar(200) DEFAULT NULL COMMENT '客户名称',
   `loginName` varchar(100) DEFAULT NULL COMMENT '登录名',
   `userType` int(1) DEFAULT NULL COMMENT '用户类型',
