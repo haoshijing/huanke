@@ -7,3 +7,11 @@ server:
 
 swaggerUrl:
   218.2.177.210:70
+#SSH_USER:
+#  root
+#SSH_PASSWORD:
+#  Kong198818
+#SSH_REMOTE_SERVER:
+#  39.104.52.84
+#MYSQL_REMOTE_SERVER:
+#  39.104.52.84
