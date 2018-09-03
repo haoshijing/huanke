@@ -14,6 +14,8 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
      */
     DevicePo selectByMac(String mac);
 
+    DevicePo selectDeviceCustomerRelationByMac(String mac);
+
     /**
      * 查找所有设备
      * @return
