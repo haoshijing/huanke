@@ -233,7 +233,8 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon(deviceModelVo.getIcon());
+            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
             List<DeviceModelAblityVo> deviceModelAblityVos = selectModelAblitysByModelId(deviceModelPo.getId());
@@ -384,8 +385,6 @@ public class DeviceModelService {
     public Boolean createOrUpdateModelFormat(DeviceModelFormatCreateRequest modelFormatRequest, Integer modelId, Integer formatId) {
 
         Boolean ret = true;
-//        Integer modelId = modelFormatRequest.getModelId();
-//        Integer formatId = modelFormatRequest.getFormatId();
         try {
             //遍历保存 型号的版式页面信息
             if (modelFormatRequest.getModelFormatPages() != null && modelFormatRequest.getModelFormatPages().size() > 0) {
