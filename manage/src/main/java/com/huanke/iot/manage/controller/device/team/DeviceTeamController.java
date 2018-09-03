@@ -8,6 +8,7 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.manage.service.device.team.DeviceTeamService;
 import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.team.TeamDeviceCreateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
@@ -31,8 +32,14 @@ public class DeviceTeamController {
     @RequestMapping(value = "/createNewTeam",method = RequestMethod.POST)
     public ApiResponse<Integer> createNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
         //首先查询当前用户是否存在
-        if (!this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId())){
+        Boolean isCustomerExist=this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId());
+        if (!isCustomerExist){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamCreateOrUpdateRequest.getCreateUserOpenId()+" 不存在");
+        }
+        //接着判断当前设备列表中的customer归属和当前的用户所在的customer是否一致
+        DevicePo deviceStatus=this.deviceTeamService.queryDeviceStatus(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),teamCreateOrUpdateRequest.getCreateUserOpenId());
+        if(null != deviceStatus){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设备列表中mac地址 "+deviceStatus.getMac()+" 尚未分配，请联系管理员");
         }
         //若设备列表中无设备则仅创建新组，不添加设备
         if(null == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()){
@@ -48,7 +55,7 @@ public class DeviceTeamController {
             //若已存在该组名，则直接添加设备
             if(null != deviceTeamPo){
                 //向组中添加设备
-                this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest,deviceTeamPo);
+                this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),deviceTeamPo);
                 //添加成功后返回teamId
                 return new ApiResponse<>(RetCode.OK,"添加成功",deviceTeamPo.getId());
             }
@@ -56,7 +63,7 @@ public class DeviceTeamController {
                 //首先创建组
                 DeviceTeamPo resultPo=this.deviceTeamService.createTeam(teamCreateOrUpdateRequest);
                 //向组中添加设备
-                this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest,resultPo);
+                this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),resultPo);
                 //添加成功后返回teamId
                 return new ApiResponse<>(RetCode.OK,"添加成功",resultPo.getId());
             }
@@ -81,7 +88,7 @@ public class DeviceTeamController {
     }
 
 
-    @ApiOperation("托管组给另一用户")
+    @ApiOperation("通过指定用户openId托管组给另一用户")
     @RequestMapping(value = "/trusteeTeam",method = RequestMethod.POST)
     public ApiResponse<Integer> trusteeTeam(TeamTrusteeRequest teamTrusteeRequest){
         //首先查询要托管的用户是否存在
@@ -94,6 +101,17 @@ public class DeviceTeamController {
         }
         else {
             return new ApiResponse<>(RetCode.ERROR,"托管失败");
+        }
+    }
+    @ApiOperation("生成托管二维码")
+    @RequestMapping(value = "/createTrusteeQrCode",method = RequestMethod.POST)
+    public ApiResponse<String> createTrusteeQrCode(@RequestBody Integer teamId){
+        try {
+            String code = this.deviceTeamService.createQrCode(teamId);
+            return new ApiResponse<>(RetCode.OK,code);
+        }
+        catch (Exception e){
+            return new ApiResponse<>(RetCode.ERROR,"二维码生成错误");
         }
     }
 }

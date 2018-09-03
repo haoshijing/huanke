@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class DeviceTeamVo {
+    //组的Id
     private Integer id;
     private String name;
     private String icon;

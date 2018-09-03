@@ -142,6 +142,18 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select
+        t_customer.*
+        FROM
+        t_customer,t_device_team
+        WHERE
+        t_device_team.id = #{teamId}
+        AND
+        t_customer.id = t_device_team.customerId
+        limit 1
+    </select>
+
 
     <select id="selectBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select

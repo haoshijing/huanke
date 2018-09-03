@@ -9,6 +9,8 @@ public interface DeviceCustomerRelationMapper extends BaseMapper<DeviceCustomerR
 
     DeviceCustomerRelationPo selectByDeviceId(Integer id);
 
+    DeviceCustomerRelationPo selectByDeviceMac(String mac);
+
     Integer deleteDeviceById(Integer id);
 
     Integer insertBatch(List<DeviceCustomerRelationPo> deviceCustomerRelationPoList);

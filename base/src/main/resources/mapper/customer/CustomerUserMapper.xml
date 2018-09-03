@@ -55,6 +55,16 @@
         limit 1
     </select>
 
+    <select id="selectCustomerByMasterUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        select
+        t_customer_user.*
+        FROM
+        t_customer_user,t_device_team
+        WHERE t_device_team.masterUserId = #{masterUserId}
+         AND t_customer_user.id = t_device_team.masterUserId
+         limit 1
+    </select>
+
     <update id="updateById" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
         update
         <include refid="tableName"/>

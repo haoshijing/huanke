@@ -52,6 +52,18 @@
         WHERE deviceId = #{deviceId} limit 1
     </select>
 
+    <select id="selectByDeviceMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DeviceCustomerRelationPo">
+        select
+        t_device_customer_relation.*
+        FROM
+        t_device_customer_relation,t_device
+        WHERE
+        t_device.mac = #{mac}
+        AND
+        t_device_customer_relation.deviceId=t_device.id
+        limit 1
+    </select>
+
     <delete id="deleteDeviceById" parameterType="java.lang.Integer">
         delete from
         <include refid="tableName"/>

@@ -1,16 +1,16 @@
 package com.huanke.iot.manage.service.device.team;
 
+import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
-import com.huanke.iot.base.dao.device.DeviceMapper;
-import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
-import com.huanke.iot.base.dao.device.DeviceTeamMapper;
-import com.huanke.iot.base.dao.device.DeviceTeamSceneMapper;
+import com.huanke.iot.base.dao.device.*;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
-import com.huanke.iot.base.po.customer.CustomerUserRelationPo;
+import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamScenePo;
+import com.huanke.iot.manage.common.util.QRCodeUtil;
 import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamDeviceCreateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
@@ -21,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -43,6 +41,12 @@ public class DeviceTeamService {
 
     @Autowired
     private CustomerUserMapper customerUserMapper;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
+    private DeviceCustomerRelationMapper deviceCustomerRelationMapper;
 
 
 
@@ -98,16 +102,16 @@ public class DeviceTeamService {
      * 将选中设备添加至组
      * sixiaojun
      * 2018-08-30
-     * @param teamCreateOrUpdateRequest
+     * @param teamDeviceCreateRequestList
      * @param deviceTeamPo
      * @return
      */
-    public DeviceTeamPo addDeviceToTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest,DeviceTeamPo deviceTeamPo){
+    public DeviceTeamPo addDeviceToTeam(List<TeamDeviceCreateRequest> teamDeviceCreateRequestList,DeviceTeamPo deviceTeamPo){
         Boolean deviceLinkAge=false;
         List<DeviceTeamItemPo> deviceTeamItemPoList=new ArrayList<>();
         List<DevicePo> devicePoList=new ArrayList<>();
-        CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(teamCreateOrUpdateRequest.getCreateUserOpenId());
-        for(TeamDeviceCreateRequest device:teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()){
+        CustomerUserPo customerUserPo=this.customerUserMapper.selectCustomerByMasterUserId(deviceTeamPo.getMasterUserId());
+        for(TeamDeviceCreateRequest device:teamDeviceCreateRequestList){
             DeviceTeamItemPo deviceTeamItemPo=new DeviceTeamItemPo();
             DevicePo devicePo=this.deviceMapper.selectByMac(device.getMac());
             devicePo.setName(device.getName());
@@ -152,6 +156,13 @@ public class DeviceTeamService {
         }
     }
 
+    /**
+     * 分页查询组列表
+     * sixiaojun
+     * 2018-09-01
+     * @param teamListQueryRequest
+     * @return
+     */
     public List<DeviceTeamVo> queryTeamList(TeamListQueryRequest teamListQueryRequest){
         //当期要查询的页
         Integer currentPage = teamListQueryRequest.getPage();
@@ -168,10 +179,15 @@ public class DeviceTeamService {
             deviceTeamVo.setId(deviceTeamPo.getId());
             deviceTeamVo.setName(deviceTeamPo.getName());
             deviceTeamVo.setIcon(deviceTeamPo.getIcon());
-            customerUserPo=this.customerUserMapper.selectByUserId(deviceTeamPo.getCreateUserId());
-            deviceTeamVo.setCreateUserNickName(customerUserPo.getNickname());
-            deviceTeamVo.setCreateUserOpenId(customerUserPo.getOpenId());
-            deviceTeamVo.setCreateTime(deviceTeamPo.getCreateTime());
+            //获取原始创始人的相关信息
+            //因为在托管时有是否删除创建人选项，所以此处需要一个逻辑判断
+            if(null != deviceTeamPo.getCreateUserId()) {
+                customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getCreateUserId());
+                deviceTeamVo.setCreateUserNickName(customerUserPo.getNickname());
+                deviceTeamVo.setCreateUserOpenId(customerUserPo.getOpenId());
+                deviceTeamVo.setCreateTime(deviceTeamPo.getCreateTime());
+            }
+            //获取当前管理员的相关信息
             customerUserPo=this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
             deviceTeamVo.setOwnerOpenId(customerUserPo.getOpenId());
             deviceTeamVo.setOwnerNickName(customerUserPo.getNickname());
@@ -200,15 +216,23 @@ public class DeviceTeamService {
         return  deviceTeamVoList;
     }
 
+    /**
+     * 托管组给指定用户（输入指定用户openId方式）
+     * @param teamTrusteeRequest
+     * @return
+     */
     public CustomerUserPo trusteeTeam(TeamTrusteeRequest teamTrusteeRequest){
         DeviceTeamPo deviceTeamPo=this.deviceTeamMapper.selectById(teamTrusteeRequest.getId());
         CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(teamTrusteeRequest.getOpenId());
         deviceTeamPo.setMasterUserId(customerUserPo.getId());
+        //设置的组状态为托管组
+        deviceTeamPo.setTeamStatus(2);
         if(teamTrusteeRequest.getDeleteCreator()){
             deviceTeamPo.setCreateUserId(null);
         }
         Boolean ret=this.deviceTeamMapper.updateById(deviceTeamPo)>0;
         if(ret){
+            //成功返回被托管用户的相关信息
             return customerUserPo;
         }
         else {
@@ -216,17 +240,45 @@ public class DeviceTeamService {
         }
     }
 
-    public DevicePo queryDeviceBelongs(List<TeamDeviceCreateRequest> deviceList){
-        return new DevicePo();
+    public String createQrCode(Integer teamId)throws Exception{
+        //根据当前传入的teamId查询到当前customer的appId等相关信息
+        CustomerPo customerPo=this.customerMapper.selectByTeamId(teamId);
+        String appId=customerPo.getAppid();
+        String code="https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
+        return code;
+    }
+    /**
+     * 查询设备与当前用户所对应的客户是否一致
+     * @param deviceList
+     * @param openId
+     * @return
+     */
+    public DevicePo queryDeviceStatus(List<TeamDeviceCreateRequest> deviceList,String openId){
+        for(TeamDeviceCreateRequest queryDevice:deviceList){
+            DeviceCustomerRelationPo deviceCustomerRelationPo=this.deviceCustomerRelationMapper.selectByDeviceMac(queryDevice.getMac());
+            CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
+            //若当前设备归属的customer与user的归属的customer不一致，返回错误信息
+            if(deviceCustomerRelationPo.getCustomerId() != customerUserPo.getCustomerId()){
+                return this.deviceMapper.selectByMac(queryDevice.getMac());
+            }
+        }
+        return null;
     }
 
-
+    /**
+     * 查询组的总数
+     * @return
+     */
     public Integer selectTeamCount(){
         DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
         return this.deviceTeamMapper.selectCount(deviceTeamPo);
     }
 
-
+    /**
+     * 判断当前设备是否已被分组
+     * @param teamDeviceCreateRequestList
+     * @return
+     */
     public DevicePo isDeviceHasTeam(List<TeamDeviceCreateRequest> teamDeviceCreateRequestList){
         for(TeamDeviceCreateRequest teamDeviceCreateRequest:teamDeviceCreateRequestList){
             DevicePo devicePo=this.deviceMapper.selectByMac(teamDeviceCreateRequest.getMac());
@@ -238,6 +290,11 @@ public class DeviceTeamService {
         return null;
     }
 
+    /**
+     * 通过组名查询组
+     * @param name
+     * @return
+     */
     public DeviceTeamPo queryTeamByName(String name){
         DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
         deviceTeamPo.setName(name);
@@ -250,6 +307,11 @@ public class DeviceTeamService {
         }
     }
 
+    /**
+     * 查询当前用户是否已关注公众号
+     * @param openId
+     * @return
+     */
     public Boolean queryCustomerUser(String openId){
         CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
         if(null != customerUserPo){
@@ -258,16 +320,5 @@ public class DeviceTeamService {
         else {
             return false;
         }
-    }
-
-    public DevicePo queryDeviceByMac(List<TeamDeviceCreateRequest> teamDeviceList){
-        DevicePo devicePo=null;
-        for(TeamDeviceCreateRequest teamDevice:teamDeviceList){
-            devicePo=this.deviceMapper.selectByMac(teamDevice.getMac());
-            if(null == devicePo){
-                return devicePo;
-            }
-        }
-        return devicePo;
     }
 }
