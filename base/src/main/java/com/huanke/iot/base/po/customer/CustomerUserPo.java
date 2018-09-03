@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class CustomerUserPo {
     private Integer id;
+    private Integer customerId;
     private String openId;
     private String nickname;
     private String unionid;

@@ -74,6 +74,13 @@ public class DeviceTeamController {
             return new ApiResponse<>(deviceTeamVoList);
         }
     }
+    @ApiOperation("查询组的数量")
+    @RequestMapping(value = "/queryTeamCount",method = RequestMethod.GET)
+    public ApiResponse<Integer> queryTeamCount(){
+        return new ApiResponse<>(this.deviceTeamService.selectTeamCount());
+    }
+
+
     @ApiOperation("托管组给另一用户")
     @RequestMapping(value = "/trusteeTeam",method = RequestMethod.POST)
     public ApiResponse<Integer> trusteeTeam(TeamTrusteeRequest teamTrusteeRequest){

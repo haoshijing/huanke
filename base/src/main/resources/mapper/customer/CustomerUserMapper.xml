@@ -10,6 +10,7 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
         INSERT INTO <include refid="tableName"/>
         (
+        customerId,
         openId,
         nickname,
         unionid,
@@ -23,6 +24,7 @@
         mac
         )
         VALUES (
+        #{customerId},
         #{openId},
         #{nickname},
         #{unionid},

@@ -13,7 +13,8 @@
 
  Date: 02/09/2018 14:07:30
 */
-
+CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+use iot;
 -- ----------------------------
 -- Table structure for android_config
 -- ----------------------------
@@ -270,6 +271,7 @@ COMMIT;
 DROP TABLE IF EXISTS `t_customer_user`;
 CREATE TABLE `t_customer_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `customerId` int(11) NOT NULL COMMENT '用户所属的客户ID',
   `openId` varchar(100) DEFAULT NULL COMMENT '公众号下 用户openId',
   `nickname` varchar(200) DEFAULT NULL COMMENT '昵称',
   `unionid` varchar(100) DEFAULT NULL COMMENT '微信用户唯一Id',

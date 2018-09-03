@@ -6,6 +6,7 @@ import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamSceneMapper;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.customer.CustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
@@ -20,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -42,6 +45,7 @@ public class DeviceTeamService {
     private CustomerUserMapper customerUserMapper;
 
 
+
     /**
      * 创建新的自定义组
      * 2018-08-29
@@ -54,6 +58,8 @@ public class DeviceTeamService {
         List<DeviceTeamScenePo> deviceTeamScenePoList=new ArrayList<>();
         //根据微信用户openId查询对应的userId
         CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(teamCreateOrUpdateRequest.getCreateUserOpenId());
+        //根据当前用户找到用户归属的customer，将改组的customerId设为当前customer
+        deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
         deviceTeamPo.setName(teamCreateOrUpdateRequest.getName());
         deviceTeamPo.setIcon(teamCreateOrUpdateRequest.getTeamIcon());
         //封面
@@ -210,11 +216,16 @@ public class DeviceTeamService {
         }
     }
 
+    public DevicePo queryDeviceBelongs(List<TeamDeviceCreateRequest> deviceList){
+        return new DevicePo();
+    }
+
 
     public Integer selectTeamCount(){
         DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
         return this.deviceTeamMapper.selectCount(deviceTeamPo);
     }
+
 
     public DevicePo isDeviceHasTeam(List<TeamDeviceCreateRequest> teamDeviceCreateRequestList){
         for(TeamDeviceCreateRequest teamDeviceCreateRequest:teamDeviceCreateRequestList){
