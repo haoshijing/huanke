@@ -348,7 +348,7 @@ CREATE TABLE `t_device_ablity` (
   `readStatus` int(1) DEFAULT NULL COMMENT '是否可读',
   `runStatus` int(1) DEFAULT NULL COMMENT '是否可执行',
   `configType` int(1) DEFAULT NULL COMMENT '配置方式',
-  `ablityType` int(1) DEFAULT NULL COMMENT '能力类型：1-文本类、2-单选类、3-多选类、4、阈值选择类',
+  `ablityType` int(1) DEFAULT NULL COMMENT '能力类型：1-文本类、2-单选类、3-多选类、4-阈值类、5-选择阈值类',
   `minVal` int(20) DEFAULT NULL COMMENT '最小值',
   `maxVal` int(20) DEFAULT NULL COMMENT '最大值',
   `remark` varchar(300) DEFAULT NULL COMMENT '备注',

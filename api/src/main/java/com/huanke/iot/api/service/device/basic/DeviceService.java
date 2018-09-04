@@ -119,7 +119,7 @@ public class DeviceService {
                         videoCover = Constants.DEFAULT_COVER;
                     }
 
-                    String memo = deviceTeamPo.getMemo();
+                    String memo = deviceTeamPo.getSceneDescription();
                     if (StringUtils.isEmpty(memo)) {
                         memo = Constants.MEMO;
                     }

@@ -20,7 +20,6 @@
         city,
         createTime,
         lastUpdateTime,
-        creatUser,
         mac
         )
         VALUES (
@@ -34,7 +33,6 @@
         #{city},
         #{createTime},
         #{lastUpdateTime},
-        #{creatUser},
         #{mac}
         )
     </insert>
