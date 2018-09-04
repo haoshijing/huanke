@@ -93,4 +93,7 @@ public class DeviceTeamPo {
      */
     private Long lastUpdateTime;
 
+    //TODO
+    private String memo;
+
 }

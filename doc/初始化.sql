@@ -13,7 +13,8 @@
 
  Date: 02/09/2018 14:07:30
 */
-
+CREATE DATABASE iot DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+use iot;
 -- ----------------------------
 -- Table structure for android_config
 -- ----------------------------
@@ -219,26 +220,26 @@ COMMIT;
 -- Table structure for t_customer
 -- ----------------------------
 DROP TABLE IF EXISTS `t_customer`;
-CREATE TABLE `t_customer` (
+CREATE TABLE `t_customer`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `name` varchar(200) DEFAULT NULL COMMENT '客户名称',
-  `loginName` varchar(100) DEFAULT NULL COMMENT '登录名',
-  `userType` int(1) DEFAULT NULL COMMENT '用户类型',
-  `remark` varchar(2000) DEFAULT NULL COMMENT '描述/备注',
-  `publicName` varchar(200) DEFAULT NULL COMMENT '公众号名称',
-  `publicId` varchar(200) DEFAULT NULL COMMENT '公众号id',
-  `appid` varchar(200) DEFAULT NULL,
-  `appsecret` varchar(200) DEFAULT NULL,
-  `SLD` varchar(100) DEFAULT NULL COMMENT '二级域名',
-  `typeIds` varchar(1000) DEFAULT NULL COMMENT '添加客户时，分配的设备类型',
-  `modelIds` varchar(1000) DEFAULT NULL COMMENT '客户所拥有的型号',
-  `status` int(1) DEFAULT NULL COMMENT '状态',
-  `createTime` bigint(20) DEFAULT NULL,
-  `lastUpdateTime` bigint(20) DEFAULT NULL,
-  `creatUser` varchar(100) DEFAULT NULL,
+  `name` varchar(200)  NULL DEFAULT NULL COMMENT '客户名称',
+  `loginName` varchar(100)  NULL DEFAULT NULL COMMENT '登录名',
+  `userType` int(1) NULL DEFAULT NULL COMMENT '用户类型',
+  `remark` varchar(2000)  NULL DEFAULT NULL COMMENT '描述/备注',
+  `publicName` varchar(200)  NULL DEFAULT NULL COMMENT '公众号名称',
+  `publicId` varchar(200)  NULL DEFAULT NULL COMMENT '公众号id',
+  `appid` varchar(200)  NULL DEFAULT NULL,
+  `appsecret` varchar(200)  NULL DEFAULT NULL,
+  `SLD` varchar(100)  NULL DEFAULT NULL COMMENT '二级域名',
+  `typeIds` varchar(1000)  NULL DEFAULT NULL COMMENT '添加客户时，分配的设备类型',
+  `modelIds` varchar(1000)  NULL DEFAULT NULL COMMENT '客户所拥有的型号',
+  `status` int(1) NULL DEFAULT NULL COMMENT '状态',
+  `createTime` bigint(20) NULL DEFAULT NULL,
+  `lastUpdateTime` bigint(20) NULL DEFAULT NULL,
+  `creatUser` varchar(100)  NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `customerSld` (`SLD`) USING BTREE COMMENT '二级域名唯一索引'
-) AUTO_INCREMENT=32  COMMENT='客户表  有公众号的表，B端';
+  UNIQUE INDEX `customerSld`(`SLD`) USING BTREE COMMENT '二级域名唯一索引'
+) AUTO_INCREMENT = 32  COMMENT = '客户表  有公众号的表，B端' ;
 
 -- ----------------------------
 -- Records of t_customer
@@ -270,6 +271,7 @@ COMMIT;
 DROP TABLE IF EXISTS `t_customer_user`;
 CREATE TABLE `t_customer_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `customerId` int(11) NOT NULL COMMENT '用户所属的客户ID',
   `openId` varchar(100) DEFAULT NULL COMMENT '公众号下 用户openId',
   `nickname` varchar(200) DEFAULT NULL COMMENT '昵称',
   `unionid` varchar(100) DEFAULT NULL COMMENT '微信用户唯一Id',

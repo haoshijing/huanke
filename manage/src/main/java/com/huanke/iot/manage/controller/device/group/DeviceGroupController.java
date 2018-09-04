@@ -86,5 +86,4 @@ public class DeviceGroupController {
         }
         return new ApiResponse(RetCode.OK,"查询成功",deviceGroupPo);
     }
-
 }

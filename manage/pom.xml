@@ -10,11 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>manage</artifactId>
-    <dependencies><dependency>
-        <artifactId>base</artifactId>
-        <groupId>com.huanke</groupId>
-        <version>${parent.version}</version>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <artifactId>base</artifactId>
+            <groupId>com.huanke</groupId>
+            <version>${parent.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -50,6 +51,13 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.5</version>
         </dependency>
+        <!--通过ssh协议连接数据库 -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.53</version>
+        </dependency>
+
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
@@ -76,19 +84,26 @@
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
             <version>1.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.2.1</version>
+        </dependency>
 
     </dependencies>
+
     <build>
-        <finalName>admin</finalName>
+        <finalName>manage</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <jvmArguments>
-                        -Xdebug -Xnoagent -Djava.compiler=NONE -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8011
+                        -Xdebug -Xnoagent -Djava.compiler=NONE
+                        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8011
                     </jvmArguments>
-                    <mainClass>com.huanke.iot.manage.AdminStarter</mainClass>
+                    <mainClass>com.huanke.iot.manage.ManageStarter</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -98,6 +113,31 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<source>1.8</source>-->
+                    <!--<target>1.8</target>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<useUniqueVersions>false</useUniqueVersions>-->
+                            <!--<classpathPrefix>lib/</classpathPrefix>-->
+                            <!--<mainClass>com.huanke.iot.manage.ManageStarter</mainClass>-->
+                        <!--</manifest>-->
+                        <!--<manifestEntries>-->
+                            <!--<version>${project.version}</version>-->
+                        <!--</manifestEntries>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 

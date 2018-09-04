@@ -13,6 +13,7 @@ public interface CustomerMapper extends BaseMapper<CustomerPo>{
 
      CustomerPo selectBySLD(String SLD);
 
+     CustomerPo selectByTeamId(Integer teamId);
      List<CustomerPo> selectAllCustomers();
 
      Integer updateStatusById(CustomerPo customerPo);

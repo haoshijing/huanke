@@ -93,6 +93,9 @@
             <if test="status != null">
                 status = #{status},
             </if>
+            <if test="teamStatus != null">
+                teamStatus = #{teamStatus},
+            </if>
             <if test="teamType != null">
                 teamType = #{teamType},
             </if>
