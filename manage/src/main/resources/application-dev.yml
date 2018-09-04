@@ -3,10 +3,11 @@
 #服务器配置
 server:
   address: 0.0.0.0
-  port: 70
+  port: 8070
 
 swaggerUrl:
-  218.2.177.210:70
+39.104.52.84
+#  vancem.s1.natapp.cc
 #SSH_USER:
 #  root
 #SSH_PASSWORD:
