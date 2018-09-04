@@ -20,6 +20,8 @@ public class ItemAbilitysVo {
         private Integer runStatus;
         private String deviceValue;
         private Integer ablityType;
+        private Integer minVal;
+        private Integer maxVal;
         private List<AbilityOption> abilityOptionList;
     }
 
