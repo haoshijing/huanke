@@ -1,0 +1,46 @@
+package com.huanke.iot.api.controller.h5.response;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class DeviceModelVo {
+    private Integer formatId;
+    private String formatShowName;
+    private Integer modelId;
+    private List<Abilitys> abilitysList;
+    private List<FormatItems> formatItemsList;
+
+    @Data
+    public static class Abilitys{
+        private Integer abilityId;
+        private String abilityName;
+        private String definedName;
+        private String dirValue;
+        private Integer writeStatus;
+        private Integer readStatus;
+        private Integer runStatus;
+        private String deviceValue;
+        private Integer ablityType;
+        private Integer minVal;
+        private Integer maxVal;
+        private List<AbilityOption> abilityOptionList;
+    }
+
+    @Data
+    public static class AbilityOption{
+        private String optionName;
+        private String optionDefinedName;
+        private String optionValue;
+        private Integer minVal;
+        private Integer maxVal;
+    }
+
+    @Data
+    public static class FormatItems{
+        private Integer itemId;
+        private String showName;
+        private Integer showStatus;
+    }
+}

@@ -1,6 +1,6 @@
 package com.huanke.iot.api.controller.h5;
 
-import com.huanke.iot.api.controller.h5.response.ItemAbilitysVo;
+import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.api.service.device.format.DeviceFormatService;
 import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,11 @@ public class DeviceFormatController {
      * 获取 formatId
      * @return
      */
-    @RequestMapping("/obtainItemAbilitys")
-    public ApiResponse<ItemAbilitysVo> getFormatId(String deviceId, Integer pageId) {
-        ItemAbilitysVo itemAbilitysVo = deviceFormatService.getItemAbilitys(deviceId, pageId);
-        return new ApiResponse<>(itemAbilitysVo);
+    @RequestMapping("/getModelVo")
+    public ApiResponse<DeviceModelVo> getModelVo(String deviceId, Integer pageId) {
+        DeviceModelVo deviceModelVo = deviceFormatService.getModelVo(deviceId, pageId);
+        return new ApiResponse<>(deviceModelVo);
     }
+
+
 }

@@ -95,4 +95,19 @@
         AND formatId = #{formatId}
         AND status = 1
     </select>
+
+    <select id="selectByJoinId" resultType="com.huanke.iot.base.po.format.DeviceModelFormatPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        <if test="formatId != null">
+            formatId = #{formatId},
+        </if>
+        <if test="pageId != null">
+            pageId = #{pageId},
+        </if>
+        AND status = 1
+    </select>
 </mapper>

@@ -80,4 +80,21 @@
         AND modelFormatId = #{modelFormatId}
         AND status = 1
     </select>
+
+    <select id="selectByJoinId" resultType="com.huanke.iot.base.po.format.DeviceModelFormatItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        1=1
+        <if test="modelFormatId != null">
+            AND modelFormatId = #{modelFormatId},
+        </if>
+        <if test="itemId != null">
+            AND itemId = #{itemId},
+        </if>
+        AND status = 1
+        limit 1
+    </select>
 </mapper>
