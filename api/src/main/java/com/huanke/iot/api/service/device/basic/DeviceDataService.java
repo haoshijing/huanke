@@ -11,6 +11,7 @@ import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
@@ -86,6 +87,9 @@ public class DeviceDataService {
     private DeviceSensorStatMapper deviceSensorStatMapper;
 
     @Autowired
+    private WxConfigMapper wxConfigMapper;
+
+    @Autowired
     private LocationUtils locationUtils;
 
     @Value("${unit}")
@@ -137,7 +141,8 @@ public class DeviceDataService {
         }
 
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
-        deviceTeamPo.setName("默认组");
+        String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
+        deviceTeamPo.setName(defaultTeamName);
         deviceTeamPo.setMasterUserId(toId);
         Integer defaultTeamId = 0;
         Integer defaultTeamCount = deviceTeamMapper.queryTeamCount(toId, "默认组");
