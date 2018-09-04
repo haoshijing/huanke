@@ -6,7 +6,7 @@ server:
   port: 8070
 
 swaggerUrl:
-39.104.52.84
+  39.104.52.84
 #  vancem.s1.natapp.cc
 #SSH_USER:
 #  root
