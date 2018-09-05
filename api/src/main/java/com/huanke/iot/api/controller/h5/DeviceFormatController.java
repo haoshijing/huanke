@@ -24,7 +24,7 @@ public class DeviceFormatController {
      * 获取 formatId
      * @return
      */
-    @RequestMapping("/getModelVo")
+    @RequestMapping("/getModelVo1")
     public ApiResponse<DeviceModelVo> getModelVo(String deviceId, Integer pageId) {
         DeviceModelVo deviceModelVo = deviceFormatService.getModelVo(deviceId, pageId);
         return new ApiResponse<>(deviceModelVo);
