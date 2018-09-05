@@ -14,7 +14,7 @@ public class CustomerPo {
     private String loginName;
     private Integer userType;
     private String remark;
-    private Integer publicId;
+    private String publicId;
     private String publicName;
     private String appid;
     private String appsecret;

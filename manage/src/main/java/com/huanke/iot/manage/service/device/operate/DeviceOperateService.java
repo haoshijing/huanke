@@ -403,7 +403,7 @@ public class DeviceOperateService {
         return null;
     }
 
-    private JSONObject obtainDeviceJson(String appId,String appSecret,Integer publicId,Integer productId) {
+    private JSONObject obtainDeviceJson(String appId,String appSecret,String publicId, String productId) {
         JSONObject deviceInfo = obtainDeviceInfo(appId,appSecret,publicId,productId);
         if (deviceInfo == null) {
             wechartUtil.getAccessToken(appId,appSecret,publicId, true);
@@ -415,7 +415,7 @@ public class DeviceOperateService {
         return null;
     }
 
-    private JSONObject obtainDeviceInfo(String appId,String appSecret,Integer publicId,Integer productId) {
+    private JSONObject obtainDeviceInfo(String appId,String appSecret,String publicId, String productId) {
         String accessToken = wechartUtil.getAccessToken(appId, appSecret,publicId, false);
         String url = new StringBuilder("https://api.weixin.qq.com/device/getqrcode?access_token=").append(accessToken).append("&product_id=").append(productId).toString();
         HttpGet httpGet = new HttpGet();
@@ -445,7 +445,7 @@ public class DeviceOperateService {
         return null;
     }
 
-    private Integer getCanUseProductId(Integer publicId) {
+    private Integer getCanUseProductId(String publicId) {
         String productKey = "productKey." + publicId;
         String productIdStr = stringRedisTemplate.opsForValue().get(productKey);
         if (StringUtils.isEmpty(productIdStr)) {

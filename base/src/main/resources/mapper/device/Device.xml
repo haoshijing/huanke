@@ -249,7 +249,7 @@
             <if test="modelId != null">
                 modelId = #{modelId},
             </if>
-            <if test="productId != null">
+            <if test="productId != null and productId!='' ">
                 productId = #{productId},
             </if>
             <if test="onlineStatus != null">
@@ -310,7 +310,7 @@
             </trim>
             <trim prefix="productId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.productId !=null">
+                    <if test="device.productId !=null and device.productId !='' ">
                         when id=#{device.id} then #{device.productId}
                     </if>
                 </foreach>

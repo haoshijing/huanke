@@ -28,7 +28,7 @@ public class WechartUtil {
     private StringRedisTemplate stringRedisTemplate;
 
 
-    public String getAccessToken(String appId,String appSecret,Integer publicId,boolean getFromSever) {
+    public String getAccessToken(String appId,String appSecret,String publicId,boolean getFromSever) {
         String accessTokenKey = ACCESSS_TOKEN_PREIX+publicId;
         boolean needFromServer = getFromSever;
         if (!needFromServer) {
@@ -65,7 +65,7 @@ public class WechartUtil {
         }
         return "";
     }
-    public JSONObject obtainAuthAccessToken(String appId,String appSecret,Integer publicId,String code){
+    public JSONObject obtainAuthAccessToken(String appId,String appSecret,String publicId,String code){
         String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+appSecret+"&code="+code+"&grant_type=authorization_code";
         log.info("obtainAuthAccessToken url = {}",url);
         try {
@@ -93,7 +93,7 @@ public class WechartUtil {
         return null;
     }
 
-    public  String getJsApi(String appId,String appSecret,Integer publicId){
+    public  String getJsApi(String appId,String appSecret,String publicId){
         String jsapiKey = JSAPI_PREIX+publicId;
         String ticketKey  = TICKET_PREFIX + publicId;
         String jsapi  = stringRedisTemplate.opsForValue().get(jsapiKey);
@@ -121,7 +121,7 @@ public class WechartUtil {
         return "";
     }
 
-    private String obtainRemoteJsapi(String appId,String appSecret,Integer publicId) {
+    private String obtainRemoteJsapi(String appId,String appSecret,String publicId) {
         String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" +
                 getAccessToken(appId,appSecret,publicId,false) + "&type=jsapi";
         try {
@@ -198,7 +198,7 @@ public class WechartUtil {
         }
     }
 
-    private String obtainRemoteTicket(String appId,String appSecret,Integer publicId) {
+    private String obtainRemoteTicket(String appId,String appSecret,String publicId) {
         String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + getAccessToken(appId,appSecret,publicId,false) + "&type=wx_card";
         try {
             HttpGet httpGet = new HttpGet();

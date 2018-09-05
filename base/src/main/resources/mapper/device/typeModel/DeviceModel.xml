@@ -55,7 +55,7 @@
             <if test = "customerId != null ">
                 customerId = #{customerId},
             </if>
-            <if test = "productId != null ">
+            <if test = "productId != null and productId !='' ">
                 productId = #{productId},
             </if>
             <if test = "icon != null and icon != ''">
@@ -107,7 +107,7 @@
             <if test = "param.customerId != null">
                 and customerId = #{param.customerId}
             </if>
-            <if test = "param.productId != null">
+            <if test = "param.productId != null and param.productId != '' ">
                 and productId = #{param.productId}
             </if>
             <if test = "param.version != null and param.version != '' ">
@@ -136,7 +136,7 @@
             <if test = "param.customerId != null">
                 and customerId = #{param.customerId}
             </if>
-            <if test = "param.productId != null">
+            <if test = "param.productId != null and param.productId !='' ">
                 and productId = #{param.productId}
             </if>
             <if test = "param.version != null and param.version != '' ">

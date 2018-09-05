@@ -87,7 +87,9 @@ public class DeviceModelService {
         DeviceModelPo deviceModelPo = new DeviceModelPo();
 
         try {
-            BeanUtils.copyProperties(modelRequest, deviceModelPo);
+            if(modelRequest!=null){
+                BeanUtils.copyProperties(modelRequest, deviceModelPo);
+            }
             if (modelRequest.getId() != null && modelRequest.getId() > 0) {
                 deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
                 //如果不是删除，则设置成 正常状态
@@ -287,18 +289,20 @@ public class DeviceModelService {
         DeviceModelPo deviceModelPo = deviceModelMapper.selectById(id);
 
         DeviceModelVo deviceModelVo = new DeviceModelVo();
-        deviceModelVo.setName(deviceModelPo.getName());
-        deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
-        deviceModelVo.setProductId(deviceModelPo.getProductId());
-        deviceModelVo.setTypeId(deviceModelPo.getTypeId());
-        deviceModelVo.setRemark(deviceModelPo.getRemark());
-        deviceModelVo.setStatus(deviceModelPo.getStatus());
-        deviceModelVo.setVersion(deviceModelPo.getVersion());
-        deviceModelVo.setIcon(deviceModelVo.getIcon());
-        deviceModelVo.setId(deviceModelPo.getId());
+        if(null!=deviceModelPo){
+            deviceModelVo.setName(deviceModelPo.getName());
+            deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
+            deviceModelVo.setProductId(deviceModelPo.getProductId());
+            deviceModelVo.setTypeId(deviceModelPo.getTypeId());
+            deviceModelVo.setRemark(deviceModelPo.getRemark());
+            deviceModelVo.setStatus(deviceModelPo.getStatus());
+            deviceModelVo.setVersion(deviceModelPo.getVersion());
+            deviceModelVo.setIcon(deviceModelVo.getIcon());
+            deviceModelVo.setId(deviceModelPo.getId());
 
-        List<DeviceModelAblityVo> deviceModelAblityVos = selectModelAblitysByModelId(deviceModelPo.getId());
-        deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
+            List<DeviceModelAblityVo> deviceModelAblityVos = selectModelAblitysByModelId(deviceModelPo.getId());
+            deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
+        }
         return deviceModelVo;
     }
 
@@ -392,7 +396,9 @@ public class DeviceModelService {
 
                     DeviceModelFormatPo deviceModelFormatPo = new DeviceModelFormatPo();
 
-                    BeanUtils.copyProperties(modelFormatPageCreateRequest, deviceModelFormatPo);
+                    if(modelFormatPageCreateRequest!=null){
+                        BeanUtils.copyProperties(modelFormatPageCreateRequest, deviceModelFormatPo);
+                    }
                     deviceModelFormatPo.setFormatId(formatId);
                     deviceModelFormatPo.setModelId(modelId);
 

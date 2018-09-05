@@ -17,7 +17,7 @@ public class DeviceModelVo {
     private String modelNo;
     private Integer typeId; //类型id
     private Integer customerId;
-    private Integer productId;
+    private String productId;
     private String icon;
     private String version;
     private Integer status = CommonConstant.STATUS_YES;

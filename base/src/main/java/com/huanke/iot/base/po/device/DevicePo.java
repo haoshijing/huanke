@@ -34,7 +34,7 @@ public class DevicePo {
 
     private Integer typeId;
     private Integer modelId;
-    private Integer productId;
+    private String productId;
 
     private Long bindTime;
     //绑定状态
