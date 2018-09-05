@@ -102,11 +102,12 @@
         FROM
         <include refid="tableName"/>
         WHERE
+        1=1
         <if test="formatId != null">
-            formatId = #{formatId},
+            AND formatId = #{formatId}
         </if>
         <if test="pageId != null">
-            pageId = #{pageId},
+            AND pageId = #{pageId}
         </if>
         AND status = 1
     </select>

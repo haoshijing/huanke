@@ -25,6 +25,7 @@ public class DeviceModelVo {
         private Integer ablityType;
         private Integer minVal;
         private Integer maxVal;
+        private String remark;
         private List<AbilityOption> abilityOptionList;
     }
 

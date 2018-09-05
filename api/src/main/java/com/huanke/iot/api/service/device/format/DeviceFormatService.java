@@ -26,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,7 +73,7 @@ public class DeviceFormatService {
         Integer modelFormatId = deviceModelFormatPo.getId();
         deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
         //查型号版式配置项
-        List<DeviceModelVo.FormatItems> formatItemsList = deviceModelVo.getFormatItemsList();
+        List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
         List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByJoinId(formatId, pageId);
         for (WxFormatItemPo wxFormatItemPo : wxFormatItemPos) {
             DeviceModelVo.FormatItems formatItems = new DeviceModelVo.FormatItems();
@@ -82,8 +83,9 @@ public class DeviceFormatService {
             formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
             formatItemsList.add(formatItems);
         }
+        deviceModelVo.setFormatItemsList(formatItemsList);
         //查型号硬件功能项
-        List<DeviceModelVo.Abilitys> abilitysList = deviceModelVo.getAbilitysList();
+        List<DeviceModelVo.Abilitys> abilitysList = new ArrayList<>();
         List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceTypeAblitysMapper.selectByTypeId(typeId);
         for (DeviceTypeAblitysPo deviceTypeAblitysPo : deviceTypeAblitysPos) {
             Integer abilityId = deviceTypeAblitysPo.getId();
@@ -93,7 +95,8 @@ public class DeviceFormatService {
             DeviceModelAblityPo deviceModelAblityPo = deviceModelAblityMapper.getByJoinId(modelId, abilityId);
             abilitys.setDefinedName(deviceModelAblityPo.getDefinedName());
             BeanUtils.copyProperties(deviceAblityPo, abilitys);
-            List<DeviceModelVo.AbilityOption> abilityOptionList = abilitys.getAbilityOptionList();
+            List<DeviceModelVo.AbilityOption> abilityOptionList = new ArrayList<>();
+
             List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
             //查功能项选项及别名
             for (DeviceAblityOptionPo deviceAblityOptionPo : deviceAblityOptionPos) {
@@ -108,7 +111,7 @@ public class DeviceFormatService {
             }
             abilitysList.add(abilitys);
         }
-
+        deviceModelVo.setAbilitysList(abilitysList);
         return deviceModelVo;
     }
 }

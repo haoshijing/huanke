@@ -89,10 +89,10 @@
         WHERE
         1=1
         <if test="modelFormatId != null">
-            AND modelFormatId = #{modelFormatId},
+            AND modelFormatId = #{modelFormatId}
         </if>
         <if test="itemId != null">
-            AND itemId = #{itemId},
+            AND itemId = #{itemId}
         </if>
         AND status = 1
         limit 1
