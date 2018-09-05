@@ -7,7 +7,8 @@
         t_device_model
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -38,36 +39,37 @@
         )
     </insert>
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
-        update <include refid="tableName"/>
+        update
+        <include refid="tableName"/>
         <set>
-            <if test = "name != null and name != ''">
+            <if test="name != null and name != ''">
                 name = #{name},
             </if>
-            <if test = "modelNo != null and modelNo != ''">
+            <if test="modelNo != null and modelNo != ''">
                 modelNo = #{modelNo},
             </if>
-            <if test = "typeId != null ">
+            <if test="typeId != null ">
                 typeId = #{typeId},
             </if>
-            <if test = "formatId != null ">
+            <if test="formatId != null ">
                 formatId = #{formatId},
             </if>
-            <if test = "customerId != null ">
+            <if test="customerId != null ">
                 customerId = #{customerId},
             </if>
-            <if test = "productId != null and productId !='' ">
+            <if test="productId != null and productId !='' ">
                 productId = #{productId},
             </if>
-            <if test = "icon != null and icon != ''">
+            <if test="icon != null and icon != ''">
                 icon = #{icon},
             </if>
-            <if test = "version != null and version != ''">
+            <if test="version != null and version != ''">
                 version = #{version},
             </if>
-            <if test = "status != null ">
+            <if test="status != null ">
                 status = #{status},
             </if>
-            <if test = "remark != null and remark != ''">
+            <if test="remark != null and remark != ''">
                 remark = #{remark},
             </if>
             lastUpdateTime = #{lastUpdateTime}
@@ -76,44 +78,50 @@
     </update>
 
     <delete id="deleteById">
-        delete from <include refid="tableName"/>
+        delete from
+        <include refid="tableName"/>
         where id = #{id}
     </delete>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
+    <select id="selectById" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
 
-    <select id="selectByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
+    <select id="selectByCustomerId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE customerId = #{customerId} limit 1
     </select>
 
-    <select id = "selectCount" resultType="java.lang.Integer">
+    <select id="selectCount" resultType="java.lang.Integer">
         select count(1)
-        from <include refid="tableName"/>
+        from
+        <include refid="tableName"/>
         <where>
-            <if test = "param.name != null and param.name != ''">
+            <if test="param.name != null and param.name != ''">
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
-            <if test = "param.typeId != null">
+            <if test="param.typeId != null">
                 and typeId = #{param.typeId}
             </if>
-            <if test = "param.customerId != null">
+            <if test="param.customerId != null">
                 and customerId = #{param.customerId}
             </if>
-            <if test = "param.productId != null and param.productId != '' ">
+            <if test="param.productId != null and param.productId != '' ">
                 and productId = #{param.productId}
             </if>
-            <if test = "param.version != null and param.version != '' ">
+            <if test="param.version != null and param.version != '' ">
                 and version = #{param.version}
             </if>
-            <if test = "param.status != null">
+            <if test="param.status != null">
                 and status = #{param.status}
             </if>
         </where>
@@ -121,36 +129,51 @@
 
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
-        select * from <include refid="tableName"/>
+        select * from
+        <include refid="tableName"/>
         <where>
 
-            <if test = "param.name != null and param.name != ''">
+            <if test="param.name != null and param.name != ''">
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
-            <if test = "param.modelNo != null and param.modelNo != ''">
+            <if test="param.modelNo != null and param.modelNo != ''">
                 AND modelNo = #{modelNo})
             </if>
-            <if test = "param.typeId != null">
+            <if test="param.typeId != null">
                 and typeId = #{param.typeId}
             </if>
-            <if test = "param.customerId != null">
+            <if test="param.customerId != null">
                 and customerId = #{param.customerId}
             </if>
-            <if test = "param.productId != null and param.productId !='' ">
+            <if test="param.productId != null and param.productId !='' ">
                 and productId = #{param.productId}
             </if>
-            <if test = "param.version != null and param.version != '' ">
+            <if test="param.version != null and param.version != '' ">
                 and version = #{param.version}
             </if>
-            <if test = "param.status != null">
+            <if test="param.status != null">
                 and status = #{param.status}
             </if>
         </where>
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectModelsByTypeIds" parameterType="java.util.List"
+            resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
+        select
+        t_device_model.*
+        FROM
+        t_device_model,t_device_type
+        WHERE t_device_type.id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and t_device_model.typeId = t_device_type.id
+    </select>
+
     <select id="getFormatIdById" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select formatId from <include refid="tableName"/>
+        select formatId from
+        <include refid="tableName"/>
         WHERE id = #{modelId}
         limit 1
     </select>

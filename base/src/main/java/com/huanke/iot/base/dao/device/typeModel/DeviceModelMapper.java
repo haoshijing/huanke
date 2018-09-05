@@ -17,5 +17,7 @@ public interface DeviceModelMapper extends BaseMapper<DeviceModelPo> {
 
     List<DeviceModelPo> selectByTypeId(Integer typeId);
 
+    List<DeviceModelPo> selectModelsByTypeIds(List typeIds);
+
     Integer getFormatIdById(Integer modelId);
 }

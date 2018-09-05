@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -242,6 +243,11 @@ public class DeviceModelService {
             List<DeviceModelAblityVo> deviceModelAblityVos = selectModelAblitysByModelId(deviceModelPo.getId());
 
             deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
+
+            //型号的版式
+            ModelFormatVo modelFormatVo = selectModelFormatPages(deviceModelPo.getId(),deviceModelPo.getFormatId());
+            deviceModelVo.setModelFormatVo(modelFormatVo);
+
             return deviceModelVo;
         }).collect(Collectors.toList());
     }
@@ -276,6 +282,36 @@ public class DeviceModelService {
 
     }
 
+    /**
+     * 根据类型ID 查询型号列表
+     *
+     * @param typeIds
+     * @return
+     */
+    public List<DeviceModelVo> selectModelsByTypeIds(String typeIds) {
+
+        List<String> typeIdList = Arrays.asList(typeIds.split(","));
+
+        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectModelsByTypeIds(typeIdList);
+        return deviceModelPos.stream().map(deviceModelPo -> {
+            DeviceModelVo deviceModelVo = new DeviceModelVo();
+            deviceModelVo.setName(deviceModelPo.getName());
+            deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
+            deviceModelVo.setProductId(deviceModelPo.getProductId());
+            deviceModelVo.setTypeId(deviceModelPo.getTypeId());
+            deviceModelVo.setRemark(deviceModelPo.getRemark());
+            deviceModelVo.setStatus(deviceModelPo.getStatus());
+            deviceModelVo.setVersion(deviceModelPo.getVersion());
+            deviceModelVo.setIcon(deviceModelVo.getIcon());
+            deviceModelVo.setId(deviceModelPo.getId());
+
+            List<DeviceModelAblityVo> deviceModelAblityVos = selectModelAblitysByModelId(deviceModelPo.getId());
+            deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
+
+            return deviceModelVo;
+        }).collect(Collectors.toList());
+
+    }
 
     /**
      * 根据型号主键查询 型号
@@ -293,6 +329,7 @@ public class DeviceModelService {
             deviceModelVo.setName(deviceModelPo.getName());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
+            deviceModelVo.setFormatId(deviceModelPo.getFormatId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
@@ -300,8 +337,15 @@ public class DeviceModelService {
             deviceModelVo.setIcon(deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
 
+            //型号的功能集
             List<DeviceModelAblityVo> deviceModelAblityVos = selectModelAblitysByModelId(deviceModelPo.getId());
+
             deviceModelVo.setDeviceModelAblitys(deviceModelAblityVos);
+
+            //型号的版式
+            ModelFormatVo modelFormatVo = selectModelFormatPages(deviceModelPo.getId(),deviceModelPo.getFormatId());
+            deviceModelVo.setModelFormatVo(modelFormatVo);
+
         }
         return deviceModelVo;
     }
@@ -338,6 +382,8 @@ public class DeviceModelService {
         }
         return deviceModelAblityVos;
     }
+
+
 
     /**
      * 根据 型号的能力主键 获取 自定义的选项
