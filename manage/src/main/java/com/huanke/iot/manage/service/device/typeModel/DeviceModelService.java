@@ -1,8 +1,12 @@
 package com.huanke.iot.manage.service.device.typeModel;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityOptionMapper;
@@ -10,11 +14,14 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
+import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelFormatCreateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
@@ -23,6 +30,7 @@ import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.format.ModelFormatVo;
 import com.huanke.iot.manage.vo.response.format.WxFormatVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +46,7 @@ import java.util.stream.Collectors;
 public class DeviceModelService {
 
     @Autowired
-    private DeviceTypeService deviceTypeService;
+    private DeviceOperateService deviceOperateService;
 
     @Autowired
     private DeviceModelMapper deviceModelMapper;
@@ -53,13 +61,16 @@ public class DeviceModelService {
     private DeviceAblityOptionMapper deviceAblityOptionMapper;
 
     @Autowired
-    private WxFormatMapper wxFormatMapper;
+    private CustomerMapper customerMapper;
 
     @Autowired
     private DeviceModelFormatMapper deviceModelFormatMapper;
 
     @Autowired
     private DeviceModelFormatItemMapper deviceModelFormatItemMapper;
+
+    @Autowired
+    private DeviceIdPoolMapper deviceIdPoolMapper;
 
 
     @Value("${accessKeyId}")
@@ -91,34 +102,55 @@ public class DeviceModelService {
             if(modelRequest!=null){
                 BeanUtils.copyProperties(modelRequest, deviceModelPo);
             }
-            if (modelRequest.getId() != null && modelRequest.getId() > 0) {
-                deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
-                //如果不是删除，则设置成 正常状态
-                if (!CommonConstant.STATUS_DEL.equals(modelRequest.getStatus())) {
+            //校验 productId 不可为空
+            if(StringUtils.isNotBlank(modelRequest.getProductId())){
+                DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
+                queryDeviceModelPo = deviceModelMapper.selectByProductId(modelRequest.getProductId());
+
+                if (modelRequest.getId() != null && modelRequest.getId() > 0) {
+                    //如果 存在此productid 的型号 且 主键 和 保存的型号 不一致时不允许
+                    if(null!=queryDeviceModelPo&&!modelRequest.getId().equals(queryDeviceModelPo.getId())){
+                        return  new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
+                    }
+                    deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
+                    //如果不是删除，则设置成 正常状态
+                    if (!CommonConstant.STATUS_DEL.equals(modelRequest.getStatus())) {
+                        deviceModelPo.setStatus(CommonConstant.STATUS_YES);
+                    }
+                    deviceModelMapper.updateById(deviceModelPo);
+                } else {
+                    //新增的时候 如果存在此productid 则不可保存
+                    if(null!=queryDeviceModelPo){
+                        return  new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
+                    }
+                    deviceModelPo.setCreateTime(System.currentTimeMillis());
                     deviceModelPo.setStatus(CommonConstant.STATUS_YES);
+                    deviceModelMapper.insert(deviceModelPo);
+
+                    //增加wxdeviceid配额 //todo 默认增加 200
+                    deviceOperateService.createWxDeviceIdPools(deviceModelPo.getCustomerId(),deviceModelPo.getProductId(),200);
                 }
-                deviceModelMapper.updateById(deviceModelPo);
-            } else {
-                deviceModelPo.setCreateTime(System.currentTimeMillis());
-                deviceModelPo.setStatus(CommonConstant.STATUS_YES);
-                deviceModelMapper.insert(deviceModelPo);
+
+
+                //随后保存型号的自定义功能
+                List<DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest> deviceModelAblityRequests = modelRequest.getDeviceModelAblitys();
+                if (deviceModelAblityRequests != null && deviceModelAblityRequests.size() > 0) {
+
+                    this.createOrUpdateModelAblitys(deviceModelAblityRequests, deviceModelPo.getId());
+                }
+
+                //保存 型号的自定义版式
+                DeviceModelFormatCreateRequest modelFormat = modelRequest.getDeviceModelFormat();
+
+                if (modelFormat != null && modelFormat.getModelFormatPages() != null && modelFormat.getModelFormatPages().size() > 0) {
+                    this.createOrUpdateModelFormat(modelFormat, deviceModelPo.getId(), deviceModelPo.getFormatId());
+                }
+
+                return new ApiResponse<>(deviceModelPo.getId());
+            }else{
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "产品id不可为空。");
             }
 
-
-            //随后保存型号的自定义功能
-            List<DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest> deviceModelAblityRequests = modelRequest.getDeviceModelAblitys();
-            if (deviceModelAblityRequests != null && deviceModelAblityRequests.size() > 0) {
-
-                this.createOrUpdateModelAblitys(deviceModelAblityRequests, deviceModelPo.getId());
-            }
-
-            //保存 型号的自定义版式
-            DeviceModelFormatCreateRequest modelFormat = modelRequest.getDeviceModelFormat();
-
-            if (modelFormat != null && modelFormat.getModelFormatPages() != null && modelFormat.getModelFormatPages().size() > 0) {
-                this.createOrUpdateModelFormat(modelFormat, deviceModelPo.getId(), deviceModelPo.getFormatId());
-            }
-            return new ApiResponse<>(deviceModelPo.getId());
 
         } catch (Exception e) {
             log.error("保存型号出错！", e);
@@ -127,6 +159,42 @@ public class DeviceModelService {
         }
 //        return new ApiResponse<>(deviceModelPo.getId());
 //        Boolean formatRet = createOrUpdateModelFormat(d);
+    }
+
+
+    /**
+     * 增加 型号的 deviceId 配额
+     * @param customerId
+     * @param productId
+     * @param addCount
+     * @return
+     */
+    public ApiResponse<Boolean> createWxDeviceIdPools(Integer customerId, String productId, Integer addCount){
+        Boolean ret = true;
+        try {
+
+            if(null==addCount||addCount<=0){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "配额数量必须大于0");
+            }
+            if(addCount>2000){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "配额数量超出上限");
+            }
+            //校验客户是否存在
+            CustomerPo queryCustomerPo = customerMapper.selectById(customerId);
+            if(null==queryCustomerPo){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "客户不存在");
+            }else if(null==queryCustomerPo.getAppid()||null==queryCustomerPo.getAppsecret()||null==queryCustomerPo.getPublicId()){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "客户公众号信息不存在");
+            }
+
+            ret =  deviceOperateService.createWxDeviceIdPools(customerId,productId,addCount);
+
+            return new ApiResponse<>(ret);
+        }catch (Exception e){
+            ret = false;
+            log.error("createWxDeviceIdPools.error = {}", e);
+            throw new RuntimeException("增加 型号的 deviceId 配额");
+        }
     }
 
     /**
@@ -345,6 +413,11 @@ public class DeviceModelService {
             //型号的版式
             ModelFormatVo modelFormatVo = selectModelFormatPages(deviceModelPo.getId(),deviceModelPo.getFormatId());
             deviceModelVo.setModelFormatVo(modelFormatVo);
+
+            //首先查询device_pool表中 该型号可用的 wxDeviceId数量
+            DeviceIdPoolPo deviceIdPoolPo=new DeviceIdPoolPo();
+            Integer devicePoolCount=deviceIdPoolMapper.selectCount(deviceIdPoolPo);
+            deviceModelVo.setDevicePoolCount(devicePoolCount);
 
         }
         return deviceModelVo;

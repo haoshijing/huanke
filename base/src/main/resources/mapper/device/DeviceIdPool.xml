@@ -11,15 +11,15 @@
         INSERT INTO <include refid="tableName"/>
         (
         customerId,
-        deviceId,
-        deviceLicense,
+        wxDeviceId,
+        wxDeviceLicence,
         status,
         createTime
         )
         VALUES (
         #{customerId},
-        #{deviceId},
-        #{deviceLicense},
+        #{wxDeviceId},
+        #{wxDeviceLicence},
         #{status},
         #{createTime}
         )
@@ -31,8 +31,8 @@
         <include refid="tableName"/>
         (
         customerId,
-        deviceId,
-        deviceLicense,
+        wxDeviceId,
+        wxDeviceLicence,
         status,
         createTime,
         lastUpdateTime
@@ -41,8 +41,8 @@
         <foreach collection="list" item="deviceIdpool" separator=",">
             (
             #{deviceIdpool.customerId},
-            #{deviceIdpool.deviceId},
-            #{deviceIdpool.deviceLicense},
+            #{deviceIdpool.wxDeviceId},
+            #{deviceIdpool.wxDeviceLicence},
             #{deviceIdpool.status},
             #{deviceIdpool.createTime},
             #{deviceIdpool.lastUpdateTime}
@@ -57,11 +57,14 @@
             <if test="param.customerId != null and param.customerId != ''">
                 AND customerId = #{param.customerId}
             </if>
-            <if test="param.deviceId != null and param.deviceId != ''">
-                AND deviceId = #{param.deviceId}
+            <if test="param.wxDeviceId != null and param.wxDeviceId != ''">
+                AND wxDeviceId = #{param.wxDeviceId}
             </if>
-            <if test="param.deviceLicense != null  and param.deviceLicense != ''  ">
-                AND deviceLicense = #{param.deviceLicense}
+            <if test="param.wxDeviceLicence != null  and param.wxDeviceLicence != ''  ">
+                AND wxDeviceLicence = #{param.wxDeviceLicence}
+            </if>
+            <if test="param.status != null ">
+                AND status = #{param.status}
             </if>
         </where>
     </select>
@@ -75,11 +78,11 @@
                 AND customerId = #{param.customerId}
 
             </if>
-            <if test="param.deviceId != null and param.deviceId != ''">
-                AND deviceId = #{param.deviceId}
+            <if test="param.wxDeviceId != null and param.wxDeviceId != ''">
+                AND wxDeviceId = #{param.wxDeviceId}
             </if>
-            <if test="param.deviceLicense != null  and param.deviceLicense != ''  ">
-                AND deviceLicense = #{param.deviceLicense}
+            <if test="param.wxDeviceLicence != null  and param.wxDeviceLicence != ''  ">
+                AND wxDeviceLicence = #{param.wxDeviceLicence}
             </if>
             <if test="param.status != null">
                 AND status = #{param.status}

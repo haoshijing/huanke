@@ -34,7 +34,7 @@ public class DeviceListVo {
         /**
          * 设备id
          */
-        private String deviceId;
+        private Integer deviceId;
         /**
          * 设备名称
          */
@@ -69,7 +69,7 @@ public class DeviceListVo {
         DeviceItemPo deviceItemPo  = new DeviceItemPo();
         deviceItemPo.setIcon("http:xxxxxx");
         deviceItemPo.setDeviceName("测试设备1");
-        deviceItemPo.setDeviceId("xxxxxx");
+        deviceItemPo.setDeviceId(123);
         deviceItemPo.setOnlineStatus(1);
         deviceItemPo.setPm("20");
         deviceTeamData.setDeviceItemPos(Lists.newArrayList(deviceItemPo));

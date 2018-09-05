@@ -7,8 +7,9 @@ import lombok.Data;
 public class DeviceIdPoolPo {
     private Integer id;
     private Integer customerId;
-    private String deviceId;
-    private String deviceLicence;
+    private String productId;
+    private String wxDeviceId;
+    private String wxDeviceLicence;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;

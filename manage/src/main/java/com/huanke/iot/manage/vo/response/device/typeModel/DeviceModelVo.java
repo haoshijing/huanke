@@ -29,4 +29,6 @@ public class DeviceModelVo {
 
     private ModelFormatVo modelFormatVo;
 
+    private Integer devicePoolCount;
+
 }
