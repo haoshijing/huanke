@@ -66,6 +66,22 @@
         WHERE deviceId = #{deviceId}
     </select>
 
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE userId = #{userId}
+    </select>
+
+    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE teamId = #{teamId}
+    </select>
+
     <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
         *

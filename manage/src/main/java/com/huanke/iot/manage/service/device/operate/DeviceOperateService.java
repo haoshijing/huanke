@@ -3,19 +3,19 @@ package com.huanke.iot.manage.service.device.operate;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceAssignToCustomerRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceListQueryRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.device.DeviceListVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +55,9 @@ public class DeviceOperateService {
     private CustomerMapper customerMapper;
 
     @Autowired
+    private CustomerUserMapper customerUserMapper;
+
+    @Autowired
     private DeviceIdPoolMapper deviceIdPoolMapper;
 
     @Autowired
@@ -62,6 +65,9 @@ public class DeviceOperateService {
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private DeviceTeamItemMapper deviceTeamItemMapper;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -141,48 +147,17 @@ public class DeviceOperateService {
                 deviceQueryVo.setModelName(deviceModelMapper.selectByCustomerId(customerId).getName());
             }
             deviceQueryVo.setModelId(devicePo.getModelId());
-            if(null != devicePo.getBindStatus()){
-                if(3 == devicePo.getBindStatus()){
-                    deviceQueryVo.setBindStatus("已解绑");
-                }
-                if(2 == devicePo.getBindStatus()){
-                    deviceQueryVo.setBindStatus("已绑定");
-                }
-                if(1 == devicePo.getBindStatus()){
-                    deviceQueryVo.setBindStatus("未绑定");
-                }
-            }
-            if(null != devicePo.getEnableStatus()){
-                if(1 == devicePo.getEnableStatus()){
-                    deviceQueryVo.setEnableStatus("已启用");
-                }
-                if(0 == devicePo.getEnableStatus()){
-                    deviceQueryVo.setEnableStatus("已禁用");
-                }
-            }
+            deviceQueryVo.setBindStatus(devicePo.getBindStatus());
+            deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
+            deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
+            deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
                 deviceQueryVo.setGroupId(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
-                deviceQueryVo.setGroupName(deviceGroupMapper.selectById(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId()).getName());
+                deviceQueryVo.setGroupName(deviceGroupMapper.selectByDeviceId(devicePo.getId()).getName());
             }
             else {
                 deviceQueryVo.setGroupId(-1);
                 deviceQueryVo.setGroupName("无集群");
-            }
-            if(null !=devicePo.getWorkStatus()){
-                if(1 == devicePo.getWorkStatus()){
-                    deviceQueryVo.setWorkStatus("租赁中");
-                }
-                if(0 == devicePo.getWorkStatus()){
-                    deviceQueryVo.setWorkStatus("空闲");
-                }
-            }
-            if(null != devicePo.getOnlineStatus()){
-                if(1 == devicePo.getOnlineStatus()){
-                    deviceQueryVo.setOnlineStatus("在线");
-                }
-                if(0 == devicePo.getOnlineStatus()){
-                    deviceQueryVo.setOnlineStatus("离线");
-                }
             }
             deviceQueryVo.setId(devicePo.getId());
             deviceQueryVo.setCreateTime(devicePo.getCreateTime());
@@ -342,6 +317,23 @@ public class DeviceOperateService {
         }
         return true;
     }
+
+    public CustomerUserPo bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest){
+        CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
+        if(null != customerUserPo){
+            //首先查询该用户是否有自定义的组
+            DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserId(customerUserPo.getId());
+            //若不存在则到客户组配置中查询相关默认信息，并新建一个默认组
+            if(null == deviceTeamItemPo){
+
+            }
+        }
+        else {
+            return null;
+        }
+        return null;
+    }
+
 
     /**
      * 2018-08-18
