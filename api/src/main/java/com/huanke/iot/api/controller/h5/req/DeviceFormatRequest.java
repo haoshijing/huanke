@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class DeviceFormatRequest {
     @NotNull
-    private String deviceId;
+    private String wxDeviceId;
     @NotNull
     private Integer pageId;
 }

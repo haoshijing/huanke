@@ -13,11 +13,6 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 /**
  * @模块名：taf

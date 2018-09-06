@@ -61,9 +61,9 @@ public class DeviceFormatService {
     private DeviceTypeAblitysMapper deviceTypeAblitysMapper;
 
 
-    public DeviceModelVo getModelVo(String deviceId, Integer pageId) {
+    public DeviceModelVo getModelVo(String wxDeviceId, Integer pageId) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
         Integer typeId = devicePo.getTypeId();
         Integer modelId = devicePo.getModelId();
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);

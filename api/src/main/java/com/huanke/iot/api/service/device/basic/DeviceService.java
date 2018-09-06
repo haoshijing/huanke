@@ -9,6 +9,7 @@ import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceSpeedConfigVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
@@ -80,9 +81,10 @@ public class DeviceService {
 
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
         queryDevicePo.setMasterUserId(userId);
+        queryDevicePo.setStatus(CommonConstant.STATUS_YES);
         List<DeviceTeamPo> deviceTeamPos = deviceTeamMapper.selectList(queryDevicePo, 100000, 0);
 
-        List<DeviceListVo.DeviceTeamData> groupDatas = deviceTeamPos.stream().map(
+        List<DeviceListVo.DeviceTeamData> teamDatas = deviceTeamPos.stream().map(
                 deviceTeamPo -> {
                     DeviceListVo.DeviceTeamData deviceTeamData = new DeviceListVo.DeviceTeamData();
                     deviceTeamData.setTeamName(deviceTeamPo.getName());
@@ -137,6 +139,7 @@ public class DeviceService {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
                         DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getId());
+                        deviceItemPo.setWxDevicdId(devicePo.getWxDeviceId());
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getTypeId());
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
                         deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
@@ -178,7 +181,7 @@ public class DeviceService {
                 }
         ).collect(Collectors.toList());
 
-        deviceListVo.setTeamDataList(groupDatas);
+        deviceListVo.setTeamDataList(teamDatas);
         return deviceListVo;
     }
 
