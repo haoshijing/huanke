@@ -1,6 +1,7 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.h5.req.BaseRequest;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.req.DeviceRequest;
 import com.huanke.iot.api.controller.h5.response.*;
@@ -78,14 +79,15 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/token")
-    public ApiResponse<String> obtainShareToken(String deviceId) {
-        String lastToken = stringRedisTemplate.opsForValue().get("token." + deviceId);
+    public ApiResponse<String> obtainShareToken(@RequestBody BaseRequest<String> request) {
+        String wxDeviceId = request.getValue();
+        String lastToken = stringRedisTemplate.opsForValue().get("token." + wxDeviceId);
         if (StringUtils.isNotEmpty(lastToken)) {
             return new ApiResponse<>(lastToken);
         }
         String token = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        stringRedisTemplate.opsForValue().set("token." + deviceId, token);
-        stringRedisTemplate.expire("token." + deviceId, 10, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set("token." + wxDeviceId, token);
+        stringRedisTemplate.expire("token." + wxDeviceId, 10, TimeUnit.MINUTES);
         return new ApiResponse<>(token);
     }
 
@@ -97,11 +99,14 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/deleteDevice")
-    public ApiResponse<Boolean> deleteDevice(HttpServletRequest request,String deviceId){
+    public ApiResponse<Boolean> deleteDevice(@RequestBody BaseRequest<String> request){
+        String wxDeviceId = request.getValue();
         Integer userId = getCurrentUserId();
-        Boolean ret = deviceDataService.deleteDevice(userId,deviceId);
+        log.info("删除设备，wxDeviceId={}，userId={}", wxDeviceId, userId);
+        Boolean ret = deviceDataService.deleteDevice(userId,wxDeviceId);
         return new ApiResponse<>(ret);
     }
+
     @RequestMapping("/clearRelation")
     public ApiResponse<Boolean> clearRelation(String deviceId, String joinOpenId) {
         Integer userId = getCurrentUserId();
