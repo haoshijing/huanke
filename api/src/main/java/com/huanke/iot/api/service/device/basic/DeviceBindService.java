@@ -45,7 +45,7 @@ public class DeviceBindService {
     public void handlerDeviceEvent(HttpServletRequest request,Map<String, String> requestMap, String event) {
         String openId = requestMap.get("OpenID");
         String deviceId = requestMap.get("DeviceID");
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
         if (devicePo == null) {
             log.warn("deviceId = {} not in db", deviceId);
             return;

@@ -136,7 +136,7 @@ public class DeviceService {
                     List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().map(deviceTeamItemPo -> {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
                         DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
-                        deviceItemPo.setDeviceId(devicePo.getDeviceId());
+                        deviceItemPo.setDeviceId(devicePo.getId());
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getTypeId());
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
                         deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
@@ -195,7 +195,7 @@ public class DeviceService {
 
 
     public boolean editDevice(Integer userId, String deviceId, String deviceName) {
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
         if (devicePo == null) {
             log.error("找不到设备，deviceId={}", deviceId);
             return false;
@@ -211,7 +211,7 @@ public class DeviceService {
             return false;
         }
         DevicePo updatePo = new DevicePo();
-        updatePo.setDeviceId(deviceId);
+        updatePo.setWxDeviceId(deviceId);
         updatePo.setName(deviceName);
         return deviceMapper.updateByDeviceId(updatePo) > 0;
     }
@@ -222,7 +222,7 @@ public class DeviceService {
             log.error("参数错误");
             return false;
         }
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
         if (devicePo == null) {
             log.error("找不到设备，deviceIdStr={}", deviceIdStr);
             return false;
@@ -251,7 +251,7 @@ public class DeviceService {
     }
 
     public DeviceSpeedConfigVo getSpeed(String deviceId) {
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
         if (devicePo == null) {
             log.error("找不到设备，deviceId={}", deviceId);
             return null;
@@ -306,7 +306,7 @@ public class DeviceService {
 
     public Boolean editDeviceLoc(Integer userId, String deviceId, String location) {
         DevicePo devicePo = new DevicePo();
-        devicePo.setDeviceId(deviceId);
+        devicePo.setWxDeviceId(deviceId);
         devicePo.setLocation(location);
         return deviceMapper.updateByDeviceId(devicePo) > 0;
     }

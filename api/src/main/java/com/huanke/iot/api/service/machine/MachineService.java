@@ -50,13 +50,13 @@ public class MachineService {
         if(devicePo != null){
             MachineDeviceVo machineDeviceVo = new MachineDeviceVo();
             machineDeviceVo.setDeviceId(devicePo.getId());
-            String deviceId = devicePo.getDeviceId();
+            String deviceId = devicePo.getWxDeviceId();
             String datas[] = deviceId.split("_");
             if(datas.length == 3){
                 machineDeviceVo.setDeviceType(datas[0]+"_"+datas[1]);
             }
-            machineDeviceVo.setDevicelicence(devicePo.getDevicelicence());
-            machineDeviceVo.setWechatDeviceId(devicePo.getDeviceId());
+            machineDeviceVo.setDevicelicence(devicePo.getWxDevicelicence());
+            machineDeviceVo.setWechatDeviceId(devicePo.getWxDeviceId());
 
             DevicePo updatePo = new DevicePo();
             updatePo.setId(devicePo.getId());
@@ -85,9 +85,9 @@ public class MachineService {
             String deviceId = jsonObject.getString("deviceid");
             String devicelicence = jsonObject.getString("devicelicence");
             devicePo.setMac(mac);
-            devicePo.setDeviceId(deviceId);
+            devicePo.setWxDeviceId(deviceId);
             devicePo.setTypeId(typeId);
-            devicePo.setDevicelicence(devicelicence);
+            devicePo.setWxDevicelicence(devicelicence);
             devicePo.setCreateTime(System.currentTimeMillis());
             devicePo.setName(deviceTypePo.getName());
             int insertRet = deviceMapper.insert(devicePo);

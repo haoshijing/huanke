@@ -108,7 +108,7 @@ public class DeviceDataService {
     private static final String TOKEN_PREFIX = "token.";
 
     public Boolean shareDevice(String master, Integer toId, String deviceIdStr, String token) {
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
         if (devicePo == null) {
             log.error("找不到设备，deviceIdStr={}", deviceIdStr);
             return false;
@@ -197,7 +197,7 @@ public class DeviceDataService {
     }
 
     public Boolean clearRelation(String joinOpenId, Integer userId, String deviceIdStr) {
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
         if (devicePo == null) {
             log.error("找不到设备，deviceIdStr={}", deviceIdStr);
             return false;
@@ -233,7 +233,7 @@ public class DeviceDataService {
         Long endTimeStamp = System.currentTimeMillis();
 
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
         if (devicePo == null) {
             return null;
         }
@@ -287,7 +287,7 @@ public class DeviceDataService {
     }
 
     public List<DeviceShareVo> shareList(Integer userId, String deviceIdStr) {
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
@@ -315,7 +315,7 @@ public class DeviceDataService {
                                     deviceShareVo.setAvatar(customerUserPo.getHeadimgurl());
                                     deviceShareVo.setNickname(customerUserPo.getNickname());
                                     deviceShareVo.setJoinTime(customerUserPo.getCreateTime());
-                                    deviceShareVo.setDeviceId(devicePo.getDeviceId());
+                                    deviceShareVo.setDeviceId(devicePo.getWxDeviceId());
                                     deviceShareVo.setDeviceName(devicePo.getName());
 
                                 }
@@ -333,7 +333,7 @@ public class DeviceDataService {
         if (StringUtils.isEmpty(deviceId)) {
             return false;
         }
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
         if (devicePo == null) {
             return false;
         }
@@ -359,8 +359,8 @@ public class DeviceDataService {
             //回收到池子中
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
             deviceIdPoolPo.setCustomerId(deviceMapper.getCustomerId(devicePo));
-            deviceIdPoolPo.setDeviceId(devicePo.getDeviceId());
-            deviceIdPoolPo.setDeviceLicence(devicePo.getDevicelicence());
+            deviceIdPoolPo.setWxDeviceId(devicePo.getWxDeviceId());
+            deviceIdPoolPo.setWxDeviceLicence(devicePo.getWxDevicelicence());
             deviceIdPoolPo.setStatus(1);
             deviceIdPoolPo.setCreateTime(System.currentTimeMillis());
             deviceIdPoolMapper.insert(deviceIdPoolPo);
@@ -387,7 +387,7 @@ public class DeviceDataService {
 
     public DeviceDetailVo queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = new DeviceDetailVo();
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
 
         if (devicePo != null) {
             deviceDetailVo.setDeviceName(devicePo.getName());
@@ -465,7 +465,7 @@ public class DeviceDataService {
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceFuncVo.getDeviceId());
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceFuncVo.getDeviceId());
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;

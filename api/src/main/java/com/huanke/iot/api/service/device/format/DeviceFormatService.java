@@ -63,7 +63,7 @@ public class DeviceFormatService {
 
     public DeviceModelVo getModelVo(String deviceId, Integer pageId) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
         Integer typeId = devicePo.getTypeId();
         Integer modelId = devicePo.getModelId();
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);
@@ -92,8 +92,11 @@ public class DeviceFormatService {
 
             DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
             DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(abilityId);
+            abilitys.setAbilityName(deviceAblityPo.getAblityName());
             DeviceModelAblityPo deviceModelAblityPo = deviceModelAblityMapper.getByJoinId(modelId, abilityId);
-            abilitys.setDefinedName(deviceModelAblityPo.getDefinedName());
+            if(deviceModelAblityPo != null){
+                abilitys.setDefinedName(deviceModelAblityPo.getDefinedName());
+            }
             BeanUtils.copyProperties(deviceAblityPo, abilitys);
             List<DeviceModelVo.AbilityOption> abilityOptionList = new ArrayList<>();
 
@@ -103,10 +106,14 @@ public class DeviceFormatService {
                 DeviceModelVo.AbilityOption abilityOption = new DeviceModelVo.AbilityOption();
                 abilityOption.setOptionName(deviceAblityOptionPo.getOptionName());
                 abilityOption.setOptionValue(deviceAblityOptionPo.getOptionValue());
+                abilityOption.setMaxVal(deviceAblityOptionPo.getMaxVal());
+                abilityOption.setMinVal(deviceAblityOptionPo.getMinVal());
                 DeviceModelAblityOptionPo deviceModelAblityOptionPo = deviceModelAblityOptionMapper.getByJoinId(deviceModelAblityPo.getId(), deviceAblityOptionPo.getId());
-                abilityOption.setOptionDefinedName(deviceModelAblityOptionPo.getDefinedName());
-                abilityOption.setMaxVal(deviceModelAblityOptionPo.getMaxVal());
-                abilityOption.setMinVal(deviceModelAblityOptionPo.getMinVal());
+                if(deviceModelAblityOptionPo != null){
+                    abilityOption.setOptionDefinedName(deviceModelAblityOptionPo.getDefinedName());
+                    abilityOption.setMaxVal(deviceModelAblityOptionPo.getMaxVal());
+                    abilityOption.setMinVal(deviceModelAblityOptionPo.getMinVal());
+                }
                 abilityOptionList.add(abilityOption);
             }
             abilitysList.add(abilitys);

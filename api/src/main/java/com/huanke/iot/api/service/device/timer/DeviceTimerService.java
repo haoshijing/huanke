@@ -32,7 +32,7 @@ public class DeviceTimerService {
         if(afterTime <= 0){
             return false;
         }
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
         if(devicePo == null){
             return  false;
         }
@@ -53,7 +53,7 @@ public class DeviceTimerService {
 
     public List<DeviceTimerVo> queryTimerList(Integer userId,String deviceIdStr, Integer timerType) {
 
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceIdStr);
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
         if(devicePo == null){
             return Lists.newArrayList();
         }
