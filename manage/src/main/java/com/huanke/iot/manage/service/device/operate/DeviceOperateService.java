@@ -264,6 +264,7 @@ public class DeviceOperateService {
                 //记录本次使用的pool状态为已占用
                 resultPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_YES);
                 deviceIdPoolPoList.add(resultPo);
+                offset++;
                 //在设备表中更新deviceModelId字段，将设备与设备型号表关联
                 DevicePo devicePo = new DevicePo();
                 devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface DeviceIdPoolMapper extends BaseMapper<DeviceIdPoolPo> {
+
     Integer insertBatch(List<DeviceIdPoolPo> deviceIdPoolPoList);
 
     Integer updateBatch(List<DeviceIdPoolPo> deviceIdPoolPoList);

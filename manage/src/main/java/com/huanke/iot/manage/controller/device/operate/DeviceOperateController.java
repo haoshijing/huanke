@@ -167,7 +167,7 @@ public class DeviceOperateController {
         }
         else if(null != deviceService.isDeviceHasCustomer(deviceList)){
             DevicePo devicePo=deviceService.isDeviceHasCustomer(deviceList);
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设别列表设备 "+devicePo.getName()+" 已被分配",false);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设别列表设备mac地址 "+devicePo.getMac()+" 已被分配",false);
         }
         else {
             Boolean ret=deviceService.assignDeviceToCustomer(deviceAssignToCustomerRequest);
