@@ -64,6 +64,13 @@
         limit 1
     </select>
 
+    <select id="selectByWxDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
     <delete id="deleteDeviceById" parameterType="java.lang.Integer">
         delete from
         <include refid="tableName"/>

@@ -31,6 +31,7 @@
         <include refid="tableName"/>
         (
         customerId,
+        productId,
         wxDeviceId,
         wxDeviceLicence,
         status,
@@ -41,6 +42,7 @@
         <foreach collection="list" item="deviceIdpool" separator=",">
             (
             #{deviceIdpool.customerId},
+            #{deviceIdpool.productId},
             #{deviceIdpool.wxDeviceId},
             #{deviceIdpool.wxDeviceLicence},
             #{deviceIdpool.status},
@@ -90,6 +92,25 @@
         </where>
         limit #{offset},#{limit}
     </select>
+
+    <!--批量更新-->
+    <update id="updateBatch" parameterType="java.util.List">
+        update
+        <include refid="tableName"/>
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="status =case" suffix="end,">
+                <foreach collection="list" item="deviceIdPool" index="index">
+                    <if test="deviceIdPool.status !=null">
+                        when id=#{deviceIdPool.id} then #{device.status}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
 
 
     <delete id="deleteById" parameterType="java.lang.Integer">

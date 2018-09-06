@@ -102,6 +102,7 @@ public class DeviceOperateService {
             insertPo.setBindStatus(1);
             //设定工作状态为空闲
             insertPo.setWorkStatus(0);
+            insertPo.setStatus(CommonConstant.STATUS_YES);
             //设定在线状态为离线
             insertPo.setOnlineStatus(0);
             //设定启用状态为禁用
@@ -226,6 +227,7 @@ public class DeviceOperateService {
         List<DeviceQueryRequest.DeviceQueryList> deviceList = deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
         //首先查询device_pool表中是否存在足够数量的device_id和device_license
         DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
+        deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
         Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
         //若当前设备池中的数量不够，则向微信公众号请求200个新的设备证书
         if (deviceList.size() > devicePoolCount) {
@@ -256,8 +258,11 @@ public class DeviceOperateService {
                 deviceCustomerRelationPoList.add(deviceCustomerRelationPo);
                 //从pool中获取设备id和证书
                 DeviceIdPoolPo queryPoolPo = new DeviceIdPoolPo();
+                queryPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                //每次查找当前池中未使用第一条license
                 DeviceIdPoolPo resultPo = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset).get(0);
-                //记录本次使用的pool
+                //记录本次使用的pool状态为已占用
+                resultPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_YES);
                 deviceIdPoolPoList.add(resultPo);
                 //在设备表中更新deviceModelId字段，将设备与设备型号表关联
                 DevicePo devicePo = new DevicePo();
@@ -272,13 +277,16 @@ public class DeviceOperateService {
                 devicePoList.add(devicePo);
             }
             //device_customer_relation表中进行批量插入
-            deviceCustomerRelationMapper.insertBatch(deviceCustomerRelationPoList);
+            this.deviceCustomerRelationMapper.insertBatch(deviceCustomerRelationPoList);
             //批量更新设备表
-            deviceMapper.updateBatch(devicePoList);
-            //关系表和设备处理完成后批量删除本次使用的pool
-
+            this.deviceMapper.updateBatch(devicePoList);
+            //关系表和设备处理完成后批量更新本次使用的pool
+            this.deviceIdPoolMapper.updateBatch(deviceIdPoolPoList);
+            return true;
         }
-        return true;
+        else {
+            return true;
+        }
     }
 
     /**
@@ -290,22 +298,22 @@ public class DeviceOperateService {
      * @return
      */
     public Boolean callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests) {
-
+        List<DeviceCustomerRelationPo> deviceCustomerRelationPoList=new ArrayList<>();
+        List<DevicePo> devicePoList=new ArrayList<>();
+        List<DeviceIdPoolPo> deviceIdPoolPoList=new ArrayList<>();
         for (DeviceQueryRequest.DeviceQueryList device : deviceQueryRequests) {
-            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
-            DeviceCustomerRelationPo deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
-            //首先删除设备与客户的关系
-            if (deviceCustomerRelationMapper.deleteDeviceById(deviceCustomerRelationPo.getId()) > 0) {
-                //更新设备表中的相关字段，清楚modelId和productId;
-                devicePo.setModelId(null);
-                devicePo.setProductId(null);
-                devicePo.setLastUpdateTime(System.currentTimeMillis());
-                if (deviceMapper.updateByDeviceId(devicePo) < 1) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            DevicePo devicePo=this.deviceMapper.selectByMac(device.getMac());
+            DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
+            //记录需要删除的客户设备关系
+            deviceCustomerRelationPoList.add(deviceCustomerRelationPo);
+            //记录要更新的设备池信息
+//            DeviceIdPoolPo deviceIdPoolPo=this.deviceIdPoolMapper
+            //记录要更新的设备信息
+            devicePo.setModelId(null);
+            devicePo.setProductId(null);
+            devicePo.setLastUpdateTime(System.currentTimeMillis());
+            devicePoList.add(devicePo);
+            //记
         }
         return true;
     }

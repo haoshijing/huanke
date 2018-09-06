@@ -362,6 +362,13 @@
                     </if>
                 </foreach>
             </trim>
+            <trim prefix="productId =case" suffix="end,">
+                <foreach collection="list" item="device" index="index">
+                    <if test="device.productId !=null">
+                        when id=#{device.id} then #{device.productId}
+                    </if>
+                </foreach>
+            </trim>
         </trim>
         where id in
         <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
