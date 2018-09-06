@@ -3,12 +3,10 @@
 #服务器配置
 server:
   address: 0.0.0.0
-  port: 10086
+  port: 8070
 
 swaggerUrl:
-  #39.104.52.84
-  driftingjane.s1.natapp.cc
-  #39.104.52.84:8070
+  39.104.52.84
 #  vancem.s1.natapp.cc
 #SSH_USER:
 #  root
