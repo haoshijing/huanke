@@ -36,6 +36,7 @@
         <include refid="tableName"/>
         WHERE openId = #{openId}
         AND deviceId = #{deviceId}
+        AND status = 1
     </select>
 
     <delete id="deleteRelationByJoinId">

@@ -97,4 +97,12 @@
         id = #{id}
     </update>
 
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
 </mapper>

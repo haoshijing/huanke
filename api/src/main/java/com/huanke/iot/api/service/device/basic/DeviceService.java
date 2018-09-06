@@ -197,10 +197,10 @@ public class DeviceService {
     }
 
 
-    public boolean editDevice(Integer userId, String deviceId, String deviceName) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
+    public boolean editDevice(Integer userId, String wxDeviceId, String deviceName) {
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
         if (devicePo == null) {
-            log.error("找不到设备，deviceId={}", deviceId);
+            log.error("找不到设备，wxDeviceId={}", wxDeviceId);
             return false;
         }
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
@@ -210,11 +210,11 @@ public class DeviceService {
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
         int count = deviceCustomerUserRelationPos.size();
         if (count == 0) {
-            log.error("找不到设备用户对应关系，deviceId={}，openId={}", deviceId, customerUserPo.getOpenId());
+            log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", wxDeviceId, customerUserPo.getOpenId());
             return false;
         }
         DevicePo updatePo = new DevicePo();
-        updatePo.setWxDeviceId(deviceId);
+        updatePo.setWxDeviceId(wxDeviceId);
         updatePo.setName(deviceName);
         return deviceMapper.updateByDeviceId(updatePo) > 0;
     }

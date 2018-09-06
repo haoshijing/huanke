@@ -2,6 +2,7 @@ package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
+import com.huanke.iot.api.controller.h5.req.DeviceRequest;
 import com.huanke.iot.api.controller.h5.response.*;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
@@ -67,9 +68,12 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/editDevice")
-    public ApiResponse<Boolean> editDevice(String deviceId, String deviceName) {
+    public ApiResponse<Boolean> editDevice(@RequestBody DeviceRequest request) {
+        String wxDeviceId = request.getWxDeviceId();
+        String deviceName = request.getDeviceName();
         Integer userId = getCurrentUserId();
-        boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
+        log.info("编辑设备，wxDeviceId={}，deviceName={}，userId={}", wxDeviceId, deviceName, userId);
+        boolean ret = deviceService.editDevice(userId, wxDeviceId, deviceName);
         return new ApiResponse<>(ret);
     }
 

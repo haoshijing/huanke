@@ -228,7 +228,9 @@
         *
         FROM
         <include refid="tableName"/>
-        WHERE wxDeviceId = #{wxDeviceId} limit 1
+        WHERE wxDeviceId = #{wxDeviceId}
+        AND status = 1
+        limit 1
     </select>
 
     <!--单条更新-->
