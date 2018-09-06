@@ -88,7 +88,7 @@ public class DeviceFormatService {
         List<DeviceModelVo.Abilitys> abilitysList = new ArrayList<>();
         List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceTypeAblitysMapper.selectByTypeId(typeId);
         for (DeviceTypeAblitysPo deviceTypeAblitysPo : deviceTypeAblitysPos) {
-            Integer abilityId = deviceTypeAblitysPo.getId();
+            Integer abilityId = deviceTypeAblitysPo.getAblityId();
 
             DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
             DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(abilityId);
@@ -116,6 +116,7 @@ public class DeviceFormatService {
                 }
                 abilityOptionList.add(abilityOption);
             }
+            abilitys.setAbilityOptionList(abilityOptionList);
             abilitysList.add(abilitys);
         }
         deviceModelVo.setAbilitysList(abilitysList);
