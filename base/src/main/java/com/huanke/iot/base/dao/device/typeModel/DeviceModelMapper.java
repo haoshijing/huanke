@@ -15,7 +15,11 @@ public interface DeviceModelMapper extends BaseMapper<DeviceModelPo> {
 
     DeviceModelPo selectByCustomerId(Integer customerId);
 
+    DeviceModelPo selectByProductId(String productId);
+
     List<DeviceModelPo> selectByTypeId(Integer typeId);
+
+    List<DeviceModelPo> selectModelsByTypeIds(List typeIds);
 
     Integer getFormatIdById(Integer modelId);
 }

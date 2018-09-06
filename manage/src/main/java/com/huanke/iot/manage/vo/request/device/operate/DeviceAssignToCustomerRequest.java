@@ -10,7 +10,7 @@ public class DeviceAssignToCustomerRequest {
     private String appid;
 
     private Integer modelId;
-    private Integer productId;
+    private String productId;
 
     private DeviceQueryRequest deviceQueryRequest;
 }

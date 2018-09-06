@@ -121,6 +121,23 @@ public class DeviceModelController {
         return new ApiResponse<>(ret);
     }
 
+
+    @ApiOperation("根据设备类型主键集合，查询所有设备型号")
+    @GetMapping(value = "/selectModelsByTypeIds/{typeIds}")
+    public ApiResponse<List<DeviceModelVo>> selectModelsByTypeIds(@PathVariable("typeIds") String typeIds) {
+        if (typeIds.split(",").length > 0) {
+            List<DeviceModelVo> deviceModelVos = deviceModelService.selectModelsByTypeIds(typeIds);
+            return new ApiResponse<>(deviceModelVos);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "类型主键格式不正确");
+        }
+    }
+
+    @ApiOperation("根据设备类型主键集合，查询所有设备型号")
+    @PostMapping(value = "/createWxDeviceIds}")
+    public ApiResponse<Boolean> createWxDeviceIdPools(@PathVariable("customerId") Integer customerId, @PathVariable("productId")String productId,@PathVariable("addCount") Integer addCount) {
+        return  deviceModelService.createWxDeviceIdPools(customerId,productId,addCount);
+    }
 //    /**
 //     * 添加型号的版式配置
 //     * @param modelFormatRequests

@@ -13,7 +13,7 @@ public class CustomerUserRelationPo {
     private Integer customerId;
     private String openId;
     private String parentOpenId;
-    private String deviceId;
+    private Integer deviceId;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;
