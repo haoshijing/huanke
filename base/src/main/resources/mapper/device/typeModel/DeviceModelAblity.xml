@@ -142,8 +142,8 @@
             <if test = "modelId != null">
                 and modelId = #{modelId}
             </if>
-            <if test = "ablityId != null">
-                and ablityId = #{ablityId}
+            <if test = "abilityId != null">
+                and ablityId = #{abilityId}
             </if>
             and status = 1
         </where>

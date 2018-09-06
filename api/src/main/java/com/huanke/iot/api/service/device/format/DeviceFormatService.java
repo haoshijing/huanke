@@ -1,27 +1,32 @@
 package com.huanke.iot.api.service.device.format;
 
-import com.huanke.iot.api.controller.h5.response.ItemAbilitysVo;
+import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
+import com.huanke.iot.base.dao.device.ablity.DeviceTypeAblitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
+import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
+import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
+import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
+import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
-import com.huanke.iot.base.po.format.WxFormatPo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +48,8 @@ public class DeviceFormatService {
     @Autowired
     private DeviceModelFormatMapper deviceModelFormatMapper;
     @Autowired
+    private DeviceModelFormatItemMapper deviceModelFormatItemMapper;
+    @Autowired
     private DeviceAblityMapper deviceAblityMapper;
     @Autowired
     private DeviceAblityOptionMapper deviceAblityOptionMapper;
@@ -50,41 +57,69 @@ public class DeviceFormatService {
     private DeviceModelAblityMapper deviceModelAblityMapper;
     @Autowired
     private DeviceModelAblityOptionMapper deviceModelAblityOptionMapper;
+    @Autowired
+    private DeviceTypeAblitysMapper deviceTypeAblitysMapper;
 
-    public ItemAbilitysVo getItemAbilitys(String deviceId, Integer pageId) {
-        ItemAbilitysVo itemAbilitysVo = new ItemAbilitysVo();
-        DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+
+    public DeviceModelVo getModelVo(String wxDeviceId, Integer pageId) {
+        DeviceModelVo deviceModelVo = new DeviceModelVo();
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
+        Integer typeId = devicePo.getTypeId();
         Integer modelId = devicePo.getModelId();
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);
-        itemAbilitysVo.setFormatId(formatId);
+        deviceModelVo.setFormatId(formatId);
+        deviceModelVo.setModelId(modelId);
+        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(formatId, pageId);
+        Integer modelFormatId = deviceModelFormatPo.getId();
+        deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
+        //查型号版式配置项
+        List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
+        List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByJoinId(formatId, pageId);
+        for (WxFormatItemPo wxFormatItemPo : wxFormatItemPos) {
+            DeviceModelVo.FormatItems formatItems = new DeviceModelVo.FormatItems();
+            DeviceModelFormatItemPo deviceModelFormatItemPo = deviceModelFormatItemMapper.selectByJoinId(modelFormatId, wxFormatItemPo.getId());
+            formatItems.setItemId(wxFormatItemPo.getId());
+            formatItems.setShowName(deviceModelFormatItemPo.getShowName());
+            formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
+            formatItemsList.add(formatItems);
+        }
+        deviceModelVo.setFormatItemsList(formatItemsList);
+        //查型号硬件功能项
+        List<DeviceModelVo.Abilitys> abilitysList = new ArrayList<>();
+        List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceTypeAblitysMapper.selectByTypeId(typeId);
+        for (DeviceTypeAblitysPo deviceTypeAblitysPo : deviceTypeAblitysPos) {
+            Integer abilityId = deviceTypeAblitysPo.getAblityId();
 
-        WxFormatItemPo wxFormatItemPo = wxFormatItemMapper.selectByJoinId(formatId, pageId);
-        WxFormatPo wxFormatPo = wxFormatMapper.selectById(formatId);
-        itemAbilitysVo.setItemName(wxFormatPo.getName());
-        Integer itemId = wxFormatItemPo.getId();
-        log.info("查功能项Ids, modelId={},formatId={},pageId={},itemId={}", modelId, formatId, pageId, itemId);
-        List<Integer> abilityIds = deviceModelFormatMapper.obtainAbilityIdsByJoinId(modelId, formatId, pageId, itemId);
-        //遍历查功能项
-        for (Integer abilityId : abilityIds) {
-            ItemAbilitysVo.Abilitys abilitys = new ItemAbilitysVo.Abilitys();
+            DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
             DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(abilityId);
+            abilitys.setAbilityName(deviceAblityPo.getAblityName());
             DeviceModelAblityPo deviceModelAblityPo = deviceModelAblityMapper.getByJoinId(modelId, abilityId);
-            abilitys.setDefinedName(deviceModelAblityPo.getDefinedName());
+            if(deviceModelAblityPo != null){
+                abilitys.setDefinedName(deviceModelAblityPo.getDefinedName());
+            }
             BeanUtils.copyProperties(deviceAblityPo, abilitys);
-            List<ItemAbilitysVo.AbilityOption> abilityOptionList = abilitys.getAbilityOptionList();
+            List<DeviceModelVo.AbilityOption> abilityOptionList = new ArrayList<>();
+
             List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
             //查功能项选项及别名
             for (DeviceAblityOptionPo deviceAblityOptionPo : deviceAblityOptionPos) {
-                ItemAbilitysVo.AbilityOption abilityOption = new ItemAbilitysVo.AbilityOption();
+                DeviceModelVo.AbilityOption abilityOption = new DeviceModelVo.AbilityOption();
                 abilityOption.setOptionName(deviceAblityOptionPo.getOptionName());
                 abilityOption.setOptionValue(deviceAblityOptionPo.getOptionValue());
+                abilityOption.setMaxVal(deviceAblityOptionPo.getMaxVal());
+                abilityOption.setMinVal(deviceAblityOptionPo.getMinVal());
                 DeviceModelAblityOptionPo deviceModelAblityOptionPo = deviceModelAblityOptionMapper.getByJoinId(deviceModelAblityPo.getId(), deviceAblityOptionPo.getId());
-                abilityOption.setOptionDefinedName(deviceModelAblityOptionPo.getDefinedName());
+                if(deviceModelAblityOptionPo != null){
+                    abilityOption.setOptionDefinedName(deviceModelAblityOptionPo.getDefinedName());
+                    abilityOption.setMaxVal(deviceModelAblityOptionPo.getMaxVal());
+                    abilityOption.setMinVal(deviceModelAblityOptionPo.getMinVal());
+                }
                 abilityOptionList.add(abilityOption);
             }
-            itemAbilitysVo.getAbilitysList().add(abilitys);
+            abilitys.setAbilityOptionList(abilityOptionList);
+            abilitysList.add(abilitys);
         }
-        return itemAbilitysVo;
+        deviceModelVo.setAbilitysList(abilitysList);
+        return deviceModelVo;
     }
-
 }
