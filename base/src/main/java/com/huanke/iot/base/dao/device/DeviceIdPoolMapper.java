@@ -11,4 +11,6 @@ public interface DeviceIdPoolMapper extends BaseMapper<DeviceIdPoolPo> {
     Integer insertBatch(List<DeviceIdPoolPo> deviceIdPoolPoList);
 
     Integer updateBatch(List<DeviceIdPoolPo> deviceIdPoolPoList);
+
+    DeviceIdPoolPo selectByWxDeviceId(String wxDeviceId);
 }

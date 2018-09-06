@@ -13,6 +13,7 @@ public interface DeviceCustomerRelationMapper extends BaseMapper<DeviceCustomerR
 
     Integer deleteDeviceById(Integer id);
 
+    Integer deleteBatch(List<DeviceCustomerRelationPo> deviceCustomerRelationPoList);
     Integer insertBatch(List<DeviceCustomerRelationPo> deviceCustomerRelationPoList);
 
 }

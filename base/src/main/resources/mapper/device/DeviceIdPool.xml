@@ -113,6 +113,14 @@
     </update>
 
 
+    <select id="selectByWxDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE wxDeviceId = #{wxDeviceId} limit 1
+    </select>
+
     <delete id="deleteById" parameterType="java.lang.Integer">
         delete from
         <include refid="tableName"/>
