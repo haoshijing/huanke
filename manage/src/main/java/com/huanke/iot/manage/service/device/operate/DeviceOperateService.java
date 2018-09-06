@@ -225,12 +225,12 @@ public class DeviceOperateService {
         DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
         deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
         Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
-        //若当前设备池中的数量不够，则向微信公众号请求200个新的设备证书
+        //若当前设备池中的数量不够，则向微信公众号请求所需要的个新的设备证书
         if (deviceList.size() > devicePoolCount) {
             Integer addCount=deviceList.size()-devicePoolCount;
             isPoolAdequate = false;
             //获取数据
-            Boolean ret=createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(),deviceAssignToCustomerRequest.getProductId(),addCount);
+            Boolean ret = createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(),deviceAssignToCustomerRequest.getProductId(),addCount);
             if(ret){
                 isPoolAdequate=true;
             }
@@ -472,6 +472,8 @@ public class DeviceOperateService {
 
             if (deviceIdPoolPos != null && deviceIdPoolPos.size() > 0) {
                 ret = deviceIdPoolMapper.insertBatch(deviceIdPoolPos) > 0;
+            }else{
+                ret = false;
             }
 
         }
