@@ -1,5 +1,11 @@
 package com.huanke.iot.manage.common.util;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,11 +19,6 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 /**
  * @模块名：taf
@@ -104,7 +105,7 @@ public class QRCodeUtil {
      * @修改时间：2018年8月27日 下午3:12:24
      */
     private static BufferedImage createImage(String content, String logoPath, boolean needCompress) throws Exception {
-        Hashtable < EncodeHintType, Object > hints = new Hashtable < EncodeHintType, Object >();
+        Hashtable < EncodeHintType, Object > hints = new Hashtable <EncodeHintType, Object >();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
         hints.put(EncodeHintType.MARGIN, 1);

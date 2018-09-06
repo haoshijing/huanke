@@ -16,5 +16,5 @@ public interface WxFormatItemMapper  extends BaseMapper<WxFormatItemPo> {
 
     Integer updateStatusByPageId(WxFormatItemPo wxFormatItemPo);
 
-    WxFormatItemPo selectByJoinId(@Param("formatId") Integer formatId, @Param("pageId") Integer pageId);
+    List<WxFormatItemPo> selectByJoinId(@Param("formatId") Integer formatId, @Param("pageId") Integer pageId);
 }

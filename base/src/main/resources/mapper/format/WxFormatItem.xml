@@ -86,8 +86,14 @@
         *
         FROM
         <include refid="tableName"/>
-        WHERE pageId = #{pageId}
-        and formatId = #{formatId}
+        WHERE
+            1=1
+        <if test=" pageId !=null ">
+            and pageId = #{pageId}
+        </if>
+        <if test=" formatId !=null ">
+            and formatId = #{formatId}
+        </if>
         and status = 1
     </select>
 

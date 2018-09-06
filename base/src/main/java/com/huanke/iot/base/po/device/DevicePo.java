@@ -23,7 +23,6 @@ public class DevicePo {
 
 
     //设备序列号
-    private String sano;
     private String imei;
     private String imsi;
     private String saNo;

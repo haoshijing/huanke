@@ -10,6 +10,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @RequestMapping("/h5/api")
 @RestController
+@Slf4j
 public class DeviceController extends BaseController {
 
     @Autowired
@@ -44,12 +46,12 @@ public class DeviceController extends BaseController {
 
     /**
      * 首页查询我的设备
-     * update by onlymark  2018/8/20
      * @return
      */
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice() {
         Integer userId = getCurrentUserId();
+        log.info("查询我的设备列表，userId={}", userId);
         DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
         return new ApiResponse<>(deviceListVo);
     }

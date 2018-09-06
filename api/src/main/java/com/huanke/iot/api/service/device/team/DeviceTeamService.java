@@ -93,7 +93,7 @@ public class DeviceTeamService {
     public Boolean updateDeviceTeam(Integer userId, DeviceTeamRequest deviceTeamRequest) {
         final Integer teamId = deviceTeamRequest.getTeamId();
         deviceTeamRequest.getDeviceIds().forEach((deviceId) -> {
-                    DevicePo devicePo = deviceMapper.selectByDeviceId(deviceId);
+                    DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
                     if (devicePo != null) {
                         Integer dId = devicePo.getId();
                         deviceTeamMapper.updateDeviceGroupId(userId, teamId, dId);

@@ -422,6 +422,7 @@ public class DeviceOperateService {
         Boolean ret = true;
         CustomerPo customerPo = customerMapper.selectById(customerId);
         //获取数据
+        System.out.println(customerPo);
         String appId = customerPo.getAppid();
         String appSecret = customerPo.getAppsecret();
         String publicId = customerPo.getPublicId();
