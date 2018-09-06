@@ -267,11 +267,11 @@ public class WechartUtil {
         }
     }
 
-    private Integer getCurrentPublicId(){
+    private String getCurrentPublicId(){
         UserRequestContext context =  UserRequestContextHolder.get();
         Integer customerId = context.getCurrentId();
         CustomerPo customerPo = customerMapper.selectById(customerId);
-        Integer publicId = customerPo.getPublicId();
+        String publicId = customerPo.getPublicId();
         return publicId;
     }
 }

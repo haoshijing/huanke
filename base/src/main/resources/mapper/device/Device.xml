@@ -13,8 +13,8 @@
         (
         name,
         mac,
-        deviceId,
-        devicelicence,
+        wxDeviceId,
+        wxDevicelicence,
         imei,
         imsi,
         saNo,
@@ -35,6 +35,9 @@
         communicationVersion,
         softVersion,
         birthTime,
+        hostStatus,
+        hostDeviceId,
+        childId,
         createTime,
         lastUpdateTime
         )
@@ -42,8 +45,8 @@
         (
         #{name},
         #{mac},
-        #{deviceId},
-        #{devicelicence},
+        #{wxDeviceId},
+        #{wxDevicelicence},
         #{imei},
         #{imsi},
         #{saNo},
@@ -64,6 +67,9 @@
         #{communicationVersion},
         #{softVersion},
         #{birthTime},
+        #{hostStatus},
+        #{hostDeviceId},
+        #{childId},
         #{createTime},
         #{lastUpdateTime}
         )
@@ -76,8 +82,8 @@
         (
         name,
         mac,
-        deviceId,
-        devicelicence,
+        wxDeviceId,
+        wxDevicelicence,
         imei,
         imsi,
         saNo,
@@ -98,6 +104,9 @@
         communicationVersion,
         softVersion,
         birthTime,
+        hostStatus,
+        hostDeviceId,
+        childId,
         createTime,
         lastUpdateTime
         )
@@ -106,8 +115,8 @@
             (
             #{device.name},
             #{device.mac},
-            #{device.deviceId},
-            #{device.devicelicence},
+            #{device.wxDeviceId},
+            #{device.wxDevicelicence},
             #{device.imei},
             #{device.imsi},
             #{device.saNo},
@@ -128,6 +137,9 @@
             #{device.communicationVersion},
             #{device.softVersion},
             #{device.birthTime},
+            #{device.hostStatus},
+            #{device.hostDeviceId},
+            #{device.childId},
             #{device.createTime},
             #{device.lastUpdateTime}
             )
@@ -211,12 +223,12 @@
         </where>
     </select>
 
-    <select id="selectByDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectByWxDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
         FROM
         <include refid="tableName"/>
-        WHERE deviceId = #{deviceId} limit 1
+        WHERE wxDeviceId = #{wxDeviceId} limit 1
     </select>
 
     <!--单条更新-->
@@ -228,11 +240,11 @@
             <if test="name != null">
                 name = #{name},
             </if>
-            <if test="deviceId != null">
-                deviceId = #{deviceId},
+            <if test="wxDeviceId != null">
+                wxDeviceId = #{wxDeviceId},
             </if>
-            <if test="devicelicence != null">
-                devicelicence = #{devicelicence},
+            <if test="wxDevicelicence != null">
+                wxDevicelicence = #{wxDevicelicence},
             </if>
             <if test="imei != null">
                 imei = #{imei},
@@ -249,7 +261,7 @@
             <if test="modelId != null">
                 modelId = #{modelId},
             </if>
-            <if test="productId != null">
+            <if test="productId != null and productId!='' ">
                 productId = #{productId},
             </if>
             <if test="onlineStatus != null">
@@ -286,7 +298,7 @@
         where
         1= 1
         <if test="id != null"> and id = #{id}</if>
-        <if test="deviceId != null and deviceId != ''"> and deviceId = #{deviceId}</if>
+        <if test="wxDeviceId != null and wxDeviceId != ''"> and wxDeviceId = #{wxDeviceId}</if>
     </update>
 
     <!--批量更新-->
@@ -310,22 +322,22 @@
             </trim>
             <trim prefix="productId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.productId !=null">
+                    <if test="device.productId !=null and device.productId !='' ">
                         when id=#{device.id} then #{device.productId}
                     </if>
                 </foreach>
             </trim>
-            <trim prefix="deviceId =case" suffix="end,">
+            <trim prefix="wxDeviceId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.deviceId !=null">
-                        when id=#{device.id} then #{device.deviceId}
+                    <if test="device.wxDeviceId !=null">
+                        when id=#{device.id} then #{device.wxDeviceId}
                     </if>
                 </foreach>
             </trim>
-            <trim prefix="devicelicence =case" suffix="end,">
+            <trim prefix="wxDevicelicence =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.devicelicence !=null">
-                        when id=#{device.id} then #{device.devicelicence}
+                    <if test="device.wxDevicelicence !=null">
+                        when id=#{device.id} then #{device.wxDevicelicence}
                     </if>
                 </foreach>
             </trim>
@@ -382,7 +394,7 @@
     </update>
 
     <update id="updateOnlyDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
-        update  <include refid="tableName"/>  set deviceId = #{deviceId} where id = #{id}
+        update  <include refid="tableName"/>  set wxDeviceId = #{wxDeviceId} where id = #{id}
     </update>
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
@@ -411,7 +423,7 @@
     <select id="getCustomerId" parameterType="com.huanke.iot.base.po.device.DevicePo" resultType="java.lang.Integer">
         select customerId
         from t_device_customer_relation
-        where deviceId = #{deviceId}
+        where wxDeviceId = #{wxDeviceId}
     </select>
 
 </mapper>

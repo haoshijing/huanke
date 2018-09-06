@@ -2,17 +2,22 @@ package com.huanke.iot.manage.service.device.operate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
@@ -76,14 +81,19 @@ public class DeviceOperateService {
     @Autowired
     private WechartUtil wechartUtil;
 
-    /**2018-08-15
+    @Autowired
+    private WxConfigMapper wxConfigMapper;
+
+    /**
+     * 2018-08-15
      * sixiaojun
      * 支持批量或单个添加
+     *
      * @param deviceLists
      * @return
      */
     public Boolean createDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) {
-        List<DevicePo> devicePoList=deviceLists.stream().map(device -> {
+        List<DevicePo> devicePoList = deviceLists.stream().map(device -> {
             DevicePo insertPo = new DevicePo();
             insertPo.setName(device.getName());
             insertPo.setTypeId(device.getTypeId());
@@ -103,46 +113,46 @@ public class DeviceOperateService {
             return insertPo;
         }).collect(Collectors.toList());
         //批量插入
-        Boolean ret=deviceMapper.insertBatch(devicePoList)>0;
-        if(ret){
+        Boolean ret = deviceMapper.insertBatch(devicePoList) > 0;
+        if (ret) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
-    /**2018-08-15
+    /**
+     * 2018-08-15
      * sixiaojun
      * 根据前台请求按页查询设备数据
+     *
      * @param deviceListQueryRequest
      * @return list
      */
-    public List<DeviceListVo> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest){
+    public List<DeviceListVo> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) {
         //当期要查询的页
         Integer currentPage = deviceListQueryRequest.getPage();
         //每页显示的数量
-        Integer limit= deviceListQueryRequest.getLimit();
+        Integer limit = deviceListQueryRequest.getLimit();
         //偏移量
         Integer offset = (currentPage - 1) * limit;
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
-        DevicePo queryPo=new DevicePo();
-        List<DevicePo> devicePos=deviceMapper.selectList(queryPo,limit,offset);
-        List<DeviceListVo> deviceQueryVos=devicePos.stream().map(devicePo -> {
+        DevicePo queryPo = new DevicePo();
+        List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
+        List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceCustomerRelationPo deviceCustomerRelationPo;
-            DeviceListVo deviceQueryVo=new DeviceListVo();
+            DeviceListVo deviceQueryVo = new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setMac(devicePo.getMac());
-            if(null != deviceTypeMapper.selectById(devicePo.getTypeId())) {
+            if (null != deviceTypeMapper.selectById(devicePo.getTypeId())) {
                 deviceQueryVo.setTypeId(devicePo.getTypeId());
                 deviceQueryVo.setDeviceType(deviceTypeMapper.selectById(devicePo.getTypeId()).getName());
-            }
-            else {
+            } else {
                 deviceQueryVo.setDeviceType("未查询到该类型");
             }
-            deviceCustomerRelationPo=deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
-            if(null != deviceCustomerRelationPo){
-                Integer customerId=deviceCustomerRelationPo.getCustomerId();
+            deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
+            if (null != deviceCustomerRelationPo) {
+                Integer customerId = deviceCustomerRelationPo.getCustomerId();
                 deviceQueryVo.setOwner(customerMapper.selectById(customerId).getName());
                 deviceQueryVo.setModelName(deviceModelMapper.selectByCustomerId(customerId).getName());
             }
@@ -175,22 +185,23 @@ public class DeviceOperateService {
      * 删除设备及与设备相关的信息
      * 2018-08-21
      * sixiaojun
+     *
      * @param deviceLists
      * @return
      */
-    public Integer deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists){
-        int count=0;
-        for(DeviceCreateOrUpdateRequest.DeviceUpdateList device:deviceLists){
+    public Integer deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) {
+        int count = 0;
+        for (DeviceCreateOrUpdateRequest.DeviceUpdateList device : deviceLists) {
             //先从设备表中删除该mac地址的设备
-            DevicePo devicePo=deviceMapper.selectByMac(device.getMac());
-            if(deviceMapper.deleteDevice(devicePo)>0){
+            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
+            if (deviceMapper.deleteDevice(devicePo) > 0) {
                 //如果当前设备存在集群
-                if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
+                if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
                     //删除成功后再从设备集群列表中删除该设备的集群相关信息
                     deviceGroupItemMapper.deleteDeviceById(devicePo.getId());
                 }
                 //如果当前设备已被分配给客户
-                if(null != deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId())){
+                if (null != deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId())) {
                     //从客户关系表中删除记录
                     deviceCustomerRelationMapper.deleteDeviceById(devicePo.getId());
                 }
@@ -205,55 +216,36 @@ public class DeviceOperateService {
      * 将设备列表中的设备分配给设备型号，并与当前客户关联
      * 2018-08-21
      * sixiaojun
+     *
      * @param deviceAssignToCustomerRequest
      * @return
      */
-    public Boolean assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest){
-        Boolean isPoolAdequate=true;
+    public Boolean assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest) {
+        Boolean isPoolAdequate = true;
         //获取设备列表
-        List<DeviceQueryRequest.DeviceQueryList> deviceList=deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
+        List<DeviceQueryRequest.DeviceQueryList> deviceList = deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
         //首先查询device_pool表中是否存在足够数量的device_id和device_license
-        DeviceIdPoolPo deviceIdPoolPo=new DeviceIdPoolPo();
-        Integer devicePoolCount=deviceIdPoolMapper.selectCount(deviceIdPoolPo);
+        DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
+        Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
         //若当前设备池中的数量不够，则向微信公众号请求200个新的设备证书
-        if(deviceList.size()>devicePoolCount) {
-            isPoolAdequate=false;
-            CustomerPo customerPo = customerMapper.selectById(deviceAssignToCustomerRequest.getCustomerId());
+        if (deviceList.size() > devicePoolCount) {
+            Integer addCount=deviceList.size()-devicePoolCount;
+            isPoolAdequate = false;
             //获取数据
-            JSONObject devicePoolInfo = obtainDeviceJson(customerPo.getAppid(), customerPo.getAppsecret(), customerPo.getPublicId(), deviceAssignToCustomerRequest.getProductId());
-            if (null == devicePoolInfo) {
-                return false;
+            Boolean ret=createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(),deviceAssignToCustomerRequest.getProductId(),addCount);
+            if(ret){
+                isPoolAdequate=true;
             }
             else {
-                //这边有待修改，由于目前不知道后台微信的回复方式
-                Object jsonArray = devicePoolInfo.get("devicePoolInfo");
-                //将jsonArray转换为list
-                List<DeviceIdPoolPo> deviceIdPoolPoList = JSON.parseArray(jsonArray + "", DeviceIdPoolPo.class);
-                List<DeviceIdPoolPo> insertPos = deviceIdPoolPoList.stream().map(deviceIdPoolPo1 -> {
-                    DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
-                    BeanUtils.copyProperties(deviceIdPoolPo1, insertPo);
-                    insertPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
-                    insertPo.setStatus(1);
-                    insertPo.setCreateTime(System.currentTimeMillis());
-                    insertPo.setLastUpdateTime(System.currentTimeMillis());
-                    return insertPo;
-                }).collect(Collectors.toList());
-                //执行批量插入
-                Boolean ret=deviceIdPoolMapper.insertBatch(insertPos)>0;
-                if(ret){
-                    isPoolAdequate=true;
-                }
-                else {
-                    return false;
-                }
+                return false;
             }
         }
         //当pool中的证书数量充足时进行分配
-        if(isPoolAdequate) {
-            Integer offset=0;
-            List<DeviceCustomerRelationPo> deviceCustomerRelationPoList=new ArrayList<>();
-            List<DevicePo> devicePoList=new ArrayList<>();
-            List<DeviceIdPoolPo> deviceIdPoolPoList=new ArrayList<>();
+        if (isPoolAdequate) {
+            Integer offset = 0;
+            List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
+            List<DevicePo> devicePoList = new ArrayList<>();
+            List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
             for (DeviceQueryRequest.DeviceQueryList device : deviceList) {
                 DeviceCustomerRelationPo deviceCustomerRelationPo = new DeviceCustomerRelationPo();
                 deviceCustomerRelationPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
@@ -263,8 +255,8 @@ public class DeviceOperateService {
                 //记录本次添加所有客户与添加设备的关系
                 deviceCustomerRelationPoList.add(deviceCustomerRelationPo);
                 //从pool中获取设备id和证书
-                DeviceIdPoolPo queryPoolPo=new DeviceIdPoolPo();
-                DeviceIdPoolPo resultPo=deviceIdPoolMapper.selectList(queryPoolPo,1,offset).get(0);
+                DeviceIdPoolPo queryPoolPo = new DeviceIdPoolPo();
+                DeviceIdPoolPo resultPo = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset).get(0);
                 //记录本次使用的pool
                 deviceIdPoolPoList.add(resultPo);
                 //在设备表中更新deviceModelId字段，将设备与设备型号表关联
@@ -272,8 +264,8 @@ public class DeviceOperateService {
                 devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
                 devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
                 devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
-                devicePo.setDeviceId(resultPo.getDeviceId());
-                devicePo.setDevicelicence(resultPo.getDeviceLicence());
+                devicePo.setWxDeviceId(resultPo.getWxDeviceId());
+                devicePo.setWxDevicelicence(resultPo.getWxDeviceLicence());
                 //刷新最新更新时间
                 devicePo.setLastUpdateTime(System.currentTimeMillis());
                 //记录本次需要更新的设备
@@ -293,25 +285,25 @@ public class DeviceOperateService {
      * 将设备列表中设备召回，并取消相关关联
      * 2018-08-21
      * sixiaojun
+     *
      * @param deviceQueryRequests
      * @return
      */
-    public Boolean callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests){
+    public Boolean callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests) {
 
         for (DeviceQueryRequest.DeviceQueryList device : deviceQueryRequests) {
-            DevicePo devicePo=deviceMapper.selectByMac(device.getMac());
-            DeviceCustomerRelationPo deviceCustomerRelationPo=deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
+            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
+            DeviceCustomerRelationPo deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
             //首先删除设备与客户的关系
-            if(deviceCustomerRelationMapper.deleteDeviceById(deviceCustomerRelationPo.getId())>0) {
+            if (deviceCustomerRelationMapper.deleteDeviceById(deviceCustomerRelationPo.getId()) > 0) {
                 //更新设备表中的相关字段，清楚modelId和productId;
                 devicePo.setModelId(null);
                 devicePo.setProductId(null);
                 devicePo.setLastUpdateTime(System.currentTimeMillis());
-                if(deviceMapper.updateByDeviceId(devicePo)<1){
+                if (deviceMapper.updateByDeviceId(devicePo) < 1) {
                     return false;
                 }
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -325,6 +317,10 @@ public class DeviceOperateService {
             DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserId(customerUserPo.getId());
             //若不存在则到客户组配置中查询相关默认信息，并新建一个默认组
             if(null == deviceTeamItemPo){
+                WxConfigPo wxConfigPo=this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
+                DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
+                //使用默认组名创建组
+                deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
 
             }
         }
@@ -339,6 +335,7 @@ public class DeviceOperateService {
      * 2018-08-18
      * sixiaojun
      * 获取设备总数
+     *
      * @param
      * @return
      */
@@ -351,25 +348,26 @@ public class DeviceOperateService {
      * 2018-08-20
      * sixiaojun
      * 根据mac地址查询设备表中是否存在相同mac地址的设备，如存在，返回DevicePo，新增失败
+     *
      * @param deviceList
      * @return devicePo
      */
-    public DevicePo queryDeviceByMac(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList){
-        DevicePo devicePo=null;
-        for(DeviceCreateOrUpdateRequest.DeviceUpdateList device:deviceList){
-            devicePo=deviceMapper.selectByMac(device.getMac());
-            if(null != devicePo){
+    public DevicePo queryDeviceByMac(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList) {
+        DevicePo devicePo = null;
+        for (DeviceCreateOrUpdateRequest.DeviceUpdateList device : deviceList) {
+            devicePo = deviceMapper.selectByMac(device.getMac());
+            if (null != devicePo) {
                 return devicePo;
             }
         }
         return devicePo;
     }
 
-    public DevicePo queryDeviceByName(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList){
-        DevicePo devicePo=null;
-        for(DeviceCreateOrUpdateRequest.DeviceUpdateList device:deviceList){
-            devicePo=deviceMapper.selectByMac(device.getName());
-            if(null != devicePo){
+    public DevicePo queryDeviceByName(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList) {
+        DevicePo devicePo = null;
+        for (DeviceCreateOrUpdateRequest.DeviceUpdateList device : deviceList) {
+            devicePo = deviceMapper.selectByMac(device.getName());
+            if (null != devicePo) {
                 return devicePo;
             }
         }
@@ -380,14 +378,15 @@ public class DeviceOperateService {
      * 2018-08-20
      * sixiaojun
      * 根据设备列表中的设备mac查询某个设备是否已被分配
+     *
      * @param deviceList
      * @return
      */
-    public DevicePo isDeviceHasCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceList){
-        for(DeviceQueryRequest.DeviceQueryList device:deviceList){
-            DevicePo devicePo=deviceMapper.selectDeviceCustomerRelationByMac(device.getMac());
+    public DevicePo isDeviceHasCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceList) {
+        for (DeviceQueryRequest.DeviceQueryList device : deviceList) {
+            DevicePo devicePo = deviceMapper.selectDeviceCustomerRelationByMac(device.getMac());
             //如果当前设备已被分配则返回错误
-            if(null!=devicePo){
+            if (null != devicePo) {
                 return devicePo;
             }
 
@@ -395,11 +394,111 @@ public class DeviceOperateService {
         return null;
     }
 
-    private JSONObject obtainDeviceJson(String appId,String appSecret,Integer publicId,Integer productId) {
-        JSONObject deviceInfo = obtainDeviceInfo(appId,appSecret,publicId,productId);
+    public DeviceTeamPo queryTeamInfoByUser(String openId){
+        //首先查询该用户是否有自定义组
+        DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserOpenId(openId);
+        if(null == deviceTeamItemPo){
+            return  null;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * 往deviceIdPool 增加多个个配额
+     *
+     * @param customerId
+     * @param productId
+     * @param addCount
+     * @return
+     */
+    public Boolean createWxDeviceIdPools(Integer customerId, String productId, Integer addCount) {
+        Boolean ret = true;
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        //获取数据
+        String appId = customerPo.getAppid();
+        String appSecret = customerPo.getAppsecret();
+        String publicId = customerPo.getPublicId();
+
+
+        if (null != addCount && addCount > 0) {
+            List<DeviceIdPoolPo> deviceIdPoolPos = new ArrayList<>();
+            for (int m = 0; m < addCount; m++) {
+                JSONObject jsonObject = obtainDeviceJson(appId, appSecret, publicId, productId);
+                if (jsonObject != null) {
+                    String wxDeviceId = jsonObject.getString("deviceid");
+                    String wxDevicelicence = jsonObject.getString("devicelicence");
+
+                    DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
+
+                    insertPo.setCustomerId(customerId);
+                    insertPo.setProductId(productId);
+                    insertPo.setWxDeviceId(wxDeviceId);
+                    insertPo.setWxDeviceLicence(wxDevicelicence);
+                    insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                    insertPo.setCreateTime(System.currentTimeMillis());
+                    insertPo.setLastUpdateTime(System.currentTimeMillis());
+
+                    deviceIdPoolPos.add(insertPo);
+                } else {
+                    log.info("createWxDeviceIdPool.jsonObject = {}", false);
+                }
+            }
+
+            if (deviceIdPoolPos != null && deviceIdPoolPos.size() > 0) {
+                ret = deviceIdPoolMapper.insertBatch(deviceIdPoolPos) > 0;
+            }
+
+        }
+
+        return ret;
+    }
+
+    /**
+     * 往deviceIdPool 增加一个配额
+     *
+     * @param customerId
+     * @param productId
+     * @return
+     */
+    public Boolean createWxDeviceIdPool(Integer customerId, String productId) {
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        //获取数据
+        String appId = customerPo.getAppid();
+        String appSecret = customerPo.getAppsecret();
+        String publicId = customerPo.getPublicId();
+
+        JSONObject jsonObject = obtainDeviceJson(appId, appSecret, publicId, productId);
+        if (jsonObject != null) {
+            String wxDeviceId = jsonObject.getString("deviceid");
+            String wxDevicelicence = jsonObject.getString("devicelicence");
+
+            DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
+
+            insertPo.setCustomerId(customerId);
+            insertPo.setProductId(productId);
+            insertPo.setWxDeviceId(wxDeviceId);
+            insertPo.setWxDeviceLicence(wxDevicelicence);
+            insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+            insertPo.setCreateTime(System.currentTimeMillis());
+            insertPo.setLastUpdateTime(System.currentTimeMillis());
+
+            int insertRet = deviceIdPoolMapper.insert(insertPo);
+            log.info("createWxDeviceIdPool.insertRet = {}", insertRet);
+            return true;
+        } else {
+            log.info("createWxDeviceIdPool.jsonObject = {}", false);
+            return false;
+        }
+
+    }
+
+    private JSONObject obtainDeviceJson(String appId, String appSecret, String publicId, String productId) {
+        JSONObject deviceInfo = obtainDeviceInfo(appId, appSecret, publicId, productId);
         if (deviceInfo == null) {
-            wechartUtil.getAccessToken(appId,appSecret,publicId, true);
-            deviceInfo = obtainDeviceInfo(appId, appSecret, publicId,productId);
+            wechartUtil.getAccessToken(appId, appSecret, publicId, true);
+            deviceInfo = obtainDeviceInfo(appId, appSecret, publicId, productId);
         }
         if (deviceInfo != null) {
             return deviceInfo;
@@ -407,8 +506,8 @@ public class DeviceOperateService {
         return null;
     }
 
-    private JSONObject obtainDeviceInfo(String appId,String appSecret,Integer publicId,Integer productId) {
-        String accessToken = wechartUtil.getAccessToken(appId, appSecret,publicId, false);
+    private JSONObject obtainDeviceInfo(String appId, String appSecret, String publicId, String productId) {
+        String accessToken = wechartUtil.getAccessToken(appId, appSecret, publicId, false);
         String url = new StringBuilder("https://api.weixin.qq.com/device/getqrcode?access_token=").append(accessToken).append("&product_id=").append(productId).toString();
         HttpGet httpGet = new HttpGet();
         try {
@@ -437,7 +536,7 @@ public class DeviceOperateService {
         return null;
     }
 
-    private Integer getCanUseProductId(Integer publicId) {
+    private Integer getCanUseProductId(String publicId) {
         String productKey = "productKey." + publicId;
         String productIdStr = stringRedisTemplate.opsForValue().get(productKey);
         if (StringUtils.isEmpty(productIdStr)) {

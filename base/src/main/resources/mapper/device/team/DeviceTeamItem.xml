@@ -74,12 +74,15 @@
         WHERE userId = #{userId}
     </select>
 
-    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+    <select id="selectByUserOpenId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
-        *
+        t_device_team_item.*
         FROM
-        <include refid="tableName"/>
-        WHERE teamId = #{teamId}
+        t_device_team_item,t_customer_user
+        WHERE
+        t_customer_user.openId = #{openId}
+        AND
+        t_device_team_item.userId = t_customer_user.id
     </select>
 
     <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">

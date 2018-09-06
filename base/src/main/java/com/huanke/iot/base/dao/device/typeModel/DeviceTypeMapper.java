@@ -17,4 +17,6 @@ public interface DeviceTypeMapper extends BaseMapper<DeviceTypePo> {
     Integer updateStatusById(@Param("id")Integer id, @Param("status")Integer status);
 
     List<DeviceTypePo> selectListByTypeIds(List list);
+
+    List<DeviceTypePo> selectListByCustomerId(Integer customerID);
 }

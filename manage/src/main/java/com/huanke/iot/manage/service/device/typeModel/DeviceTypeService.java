@@ -81,7 +81,9 @@ public class DeviceTypeService {
 
         //先保存 类型基本信息
         DeviceTypePo deviceTypePo = new DeviceTypePo();
-        BeanUtils.copyProperties(typeRequest, deviceTypePo);
+        if(typeRequest!=null){
+            BeanUtils.copyProperties(typeRequest, deviceTypePo);
+        }
         if (typeRequest.getId() != null && typeRequest.getId() > 0) {
             if(CommonConstant.STATUS_DEL.equals(deviceTypePo.getStatus())){
                 deviceTypePo.setStatus(CommonConstant.STATUS_DEL);
@@ -274,6 +276,8 @@ public class DeviceTypeService {
             return deviceTypeVo;
         }).collect(Collectors.toList());
     }
+
+
     /**
      * 根据主键查询类型
      *

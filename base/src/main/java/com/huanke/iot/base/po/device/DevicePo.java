@@ -20,11 +20,7 @@ public class DevicePo {
      */
     private String mac;
 
-    /**
-     * 设备微信备案号
-     */
-    private String deviceId;
-    private String devicelicence;
+
 
     //设备序列号
     private String sano;
@@ -32,9 +28,15 @@ public class DevicePo {
     private String imsi;
     private String saNo;
 
+    //设备 类型、型号
     private Integer typeId;
     private Integer modelId;
-    private Integer productId;
+    private String productId;
+    /**
+     * 设备微信备案号
+     */
+    private String wxDeviceId;
+    private String wxDevicelicence;
 
     private Long bindTime;
     //绑定状态
@@ -48,6 +50,12 @@ public class DevicePo {
     //设备位置
     private String location;
 
+    //设备 主从状态 1-主设备 ；2-从设备
+    private Integer hostStatus;
+    //从设备 的主设备id
+    private Integer hostDeviceId;
+    //从设备编号
+    private String childId;
 
     /**
      * 机器所在ip

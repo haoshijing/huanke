@@ -35,62 +35,66 @@ public class DeviceTypeController {
 
     /**
      * 添加新类型
+     *
      * @param typeRrequest
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @ApiOperation("添加新类型")
     @PostMapping(value = "/createDeviceType")
-    public ApiResponse<Integer> createDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
-        if(StringUtils.isBlank(typeRrequest.getName())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
+    public ApiResponse<Integer> createDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception {
+        if (StringUtils.isBlank(typeRrequest.getName())) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "类型名称不能为空");
         }
-        return   deviceTypeService.createOrUpdate(typeRrequest);
+        return deviceTypeService.createOrUpdate(typeRrequest);
     }
 
 
     /**
      * 修改 类型
+     *
      * @param typeRrequest
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @ApiOperation("修改类型")
     @PutMapping(value = "/updateDeviceType")
-    public ApiResponse<Integer> updateDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception{
-        if(typeRrequest.getId()==null||typeRrequest.getId()<=0){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键不存在");
+    public ApiResponse<Integer> updateDeviceType(@RequestBody DeviceTypeCreateOrUpdateRequest typeRrequest) throws Exception {
+        if (typeRrequest.getId() == null || typeRrequest.getId() <= 0) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "类型主键不存在");
         }
-        if(StringUtils.isBlank(typeRrequest.getName())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型名称不能为空");
+        if (StringUtils.isBlank(typeRrequest.getName())) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "类型名称不能为空");
         }
-        return   deviceTypeService.createOrUpdate(typeRrequest);
+        return deviceTypeService.createOrUpdate(typeRrequest);
     }
 
     /**
      * 删除 类型
+     *
      * @param typeId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @ApiOperation("删除类型-逻辑删除")
     @DeleteMapping(value = "/deleteDeviceTypeById/{id}")
-    public ApiResponse<Boolean> deleteDeviceTypeById(@PathVariable("id") Integer typeId) throws Exception{
-        Boolean ret =  deviceTypeService.deleteDeviceType(typeId);
+    public ApiResponse<Boolean> deleteDeviceTypeById(@PathVariable("id") Integer typeId) throws Exception {
+        Boolean ret = deviceTypeService.deleteDeviceType(typeId);
         return new ApiResponse<>(ret);
     }
 
 
     /**
      * 删除 类型
+     *
      * @param typeId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
     @ApiOperation("删除类型-物理删除")
     @DeleteMapping(value = "/destoryDeviceType/{id}")
-    public ApiResponse<Boolean> destoryDeviceType(@PathVariable("id") Integer typeId) throws Exception{
-        Boolean ret =  deviceTypeService.destoryDeviceType(typeId);
+    public ApiResponse<Boolean> destoryDeviceType(@PathVariable("id") Integer typeId) throws Exception {
+        Boolean ret = deviceTypeService.destoryDeviceType(typeId);
         return new ApiResponse<>(ret);
     }
 
@@ -137,55 +141,57 @@ public class DeviceTypeController {
 
     /**
      * 查询类型列表
+     *
      * @param typeRequest
      * @return 返回类型列表
      * @throws Exception
      */
     @ApiOperation("查询类型列表")
     @PostMapping(value = "/select")
-    public ApiResponse<List<DeviceTypeVo>> selectList(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
-        List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(typeRequest);
+    public ApiResponse<List<DeviceTypeVo>> selectList(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception {
+        List<DeviceTypeVo> deviceTypeVos = deviceTypeService.selectList(typeRequest);
         return new ApiResponse<>(deviceTypeVos);
     }
 
 
     /**
      * 根据id查询 类型
+     *
      * @param typeId
      * @return 返回类型
      * @throws Exception
      */
     @ApiOperation("根据类型主键查询类型")
     @GetMapping(value = "/selectById/{id}")
-    public ApiResponse<DeviceTypeVo> selectById(@PathVariable("id")Integer typeId) throws Exception{
-        DeviceTypeVo deviceTypeVo =  deviceTypeService.selectById(typeId);
+    public ApiResponse<DeviceTypeVo> selectById(@PathVariable("id") Integer typeId) throws Exception {
+        DeviceTypeVo deviceTypeVo = deviceTypeService.selectById(typeId);
         return new ApiResponse<>(deviceTypeVo);
     }
 
     /**
      * 查询所有设备类型 包含微信h5端配置信息
+     *
      * @param typeRequest
      * @return 返回类型列表
      * @throws Exception
      */
     @ApiOperation("查询所有设备类型 包含微信h5端配置信息")
     @PostMapping(value = "/selectAllTypes")
-    public ApiResponse<List<DeviceTypeVo>> selectAllTypes(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception{
-        List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectList(typeRequest);
+    public ApiResponse<List<DeviceTypeVo>> selectAllTypes(@RequestBody DeviceTypeQueryRequest typeRequest) throws Exception {
+        List<DeviceTypeVo> deviceTypeVos = deviceTypeService.selectList(typeRequest);
         return new ApiResponse<>(deviceTypeVos);
     }
 
     @ApiOperation("根据设备类型主键集合，查询所有设备类型 ")
     @GetMapping(value = "/selectListByTypeIds/{typeIds}")
     public ApiResponse<List<DeviceTypeVo>> selectListByTypeIds(@PathVariable("typeIds") String typeIds) {
-        if(typeIds.split(",").length>0){
-            List<DeviceTypeVo> deviceTypeVos =  deviceTypeService.selectListByTypeIds(typeIds);
+        if (typeIds.split(",").length > 0) {
+            List<DeviceTypeVo> deviceTypeVos = deviceTypeService.selectListByTypeIds(typeIds);
             return new ApiResponse<>(deviceTypeVos);
-        }else{
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"类型主键格式不正确");
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "类型主键格式不正确");
         }
     }
-
 
 //    /**
 //     * 根据 类型主键查询 该类型的能力集

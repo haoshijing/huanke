@@ -14,7 +14,7 @@ public class CustomerQueryRequest {
     private Integer id;
     private String name;
     private String publicName;
-    private Integer publicId;
+    private String publicId;
     private String appid;
     private String appsecret;
     private Integer userType;

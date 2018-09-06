@@ -72,7 +72,7 @@ public class CustomerService {
         //先验证二级域名是否重复 如果重复 不允许添加
         if (StringUtils.isNotBlank(customerVo.getSLD())) {
             CustomerPo queryCustomer = customerMapper.selectBySLD(customerVo.getSLD());
-            if (queryCustomer != null&&!queryCustomer.getId().equals(customerPo.getId())) {
+            if (queryCustomer != null&&queryCustomer.getId().equals(customerPo.getId())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在该二级域名");
             }
         }
@@ -98,7 +98,9 @@ public class CustomerService {
 
         //若 存在 该h5配置 则进行更新，否则为新增。
         if (wxConfigPo != null) {
-            BeanUtils.copyProperties(h5Config, wxConfigPo);
+            if(null!=h5Config){
+                BeanUtils.copyProperties(h5Config, wxConfigPo);
+            }
 
             wxConfigPo.setLastUpdateTime(System.currentTimeMillis());
             this.wxConfigMapper.updateById(wxConfigPo);
@@ -288,9 +290,10 @@ public class CustomerService {
         CustomerVo customerVo = new CustomerVo();
         //先查询客户
         CustomerPo customerPo = customerMapper.selectById(customerId);
-        BeanUtils.copyProperties(customerPo, customerVo);
+
         //如果存在 此客户 则进行 查询相关配置项
         if (customerPo != null && customerPo.getId() > 0) {
+            BeanUtils.copyProperties(customerPo, customerVo);
             /*H5配置信息*/
             CustomerVo.H5Config h5ConfigVo = new CustomerVo.H5Config();
             WxConfigPo resultWxConfigPo = wxConfigMapper.selectConfigByCustomerId(customerVo.getId());

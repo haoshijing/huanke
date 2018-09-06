@@ -15,7 +15,7 @@ public class DeviceModelQueryRequest {
     private String modelNo;
     private Integer typeId; //类型id
     private Integer customerId;
-    private Integer productId;
+    private String productId;
     private Integer status = CommonConstant.STATUS_YES;
 
     private Integer page = 1;

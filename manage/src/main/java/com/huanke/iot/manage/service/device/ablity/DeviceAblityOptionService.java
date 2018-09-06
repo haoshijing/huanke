@@ -30,7 +30,9 @@ public class DeviceAblityOptionService {
 
         int effectCount = 0;
         DeviceAblityOptionPo deviceAblityOptionPo = new DeviceAblityOptionPo();
-        BeanUtils.copyProperties(optionRequest,deviceAblityOptionPo);
+        if(null!=optionRequest){
+            BeanUtils.copyProperties(optionRequest,deviceAblityOptionPo);
+        }
         if(optionRequest.getId() != null && optionRequest.getId() > 0){
             deviceAblityOptionPo.setLastUpdateTime(System.currentTimeMillis());
             effectCount = deviceAblityOptionMapper.updateById(deviceAblityOptionPo);

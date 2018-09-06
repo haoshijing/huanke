@@ -10,7 +10,7 @@ import lombok.Data;
 public class CustomerRelationPo {
     private Integer id;
     private Integer customerId;
-    private String deviceId;
+    private Integer deviceId;
     private Long createTime;
     private Long lastUpdateTime;
 }

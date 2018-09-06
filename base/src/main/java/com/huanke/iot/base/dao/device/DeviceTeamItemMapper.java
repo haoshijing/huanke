@@ -17,7 +17,7 @@ public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
     DeviceTeamItemPo selectByDeviceId(Integer deviceId);
 
-    DeviceTeamItemPo selectByTeamId(Integer teamId);
+    DeviceTeamItemPo selectByUserOpenId(String openId);
 
     DeviceTeamItemPo selectByUserId(Integer userId);
 
