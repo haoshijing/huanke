@@ -322,30 +322,22 @@
             </trim>
             <trim prefix="modelId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.modelId !=null">
-                        when id=#{device.id} then #{device.modelId}
-                    </if>
+                    when id=#{device.id} then #{device.modelId}
                 </foreach>
             </trim>
             <trim prefix="productId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.productId !=null and device.productId !='' ">
-                        when id=#{device.id} then #{device.productId}
-                    </if>
+                    when id=#{device.id} then #{device.productId}
                 </foreach>
             </trim>
             <trim prefix="wxDeviceId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.wxDeviceId !=null">
-                        when id=#{device.id} then #{device.wxDeviceId}
-                    </if>
+                    when id=#{device.id} then #{device.wxDeviceId}
                 </foreach>
             </trim>
             <trim prefix="wxDevicelicence =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.wxDevicelicence !=null">
-                        when id=#{device.id} then #{device.wxDevicelicence}
-                    </if>
+                    when id=#{device.id} then #{device.wxDevicelicence}
                 </foreach>
             </trim>
             <trim prefix="bindStatus =case" suffix="end,">
@@ -357,22 +349,13 @@
             </trim>
             <trim prefix="bindTime =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.bindTime !=null">
-                        when id=#{device.id} then #{device.bindTime}
-                    </if>
+                    when id=#{device.id} then #{device.bindTime}
                 </foreach>
             </trim>
             <trim prefix="lastUpdateTime =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
                     <if test="device.lastUpdateTime !=null">
                         when id=#{device.id} then #{device.lastUpdateTime}
-                    </if>
-                </foreach>
-            </trim>
-            <trim prefix="productId =case" suffix="end,">
-                <foreach collection="list" item="device" index="index">
-                    <if test="device.productId !=null">
-                        when id=#{device.id} then #{device.productId}
                     </if>
                 </foreach>
             </trim>
