@@ -221,9 +221,13 @@ public class DeviceOperateService {
         Boolean isPoolAdequate = true;
         //获取设备列表
         List<DeviceQueryRequest.DeviceQueryList> deviceList = deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
-        //首先查询device_pool表中是否存在足够数量的device_id和device_license
+        //首先查询device_pool表中 该客户的该型号下 是否存在足够数量的device_id和device_license
         DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
+
+        deviceIdPoolPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
+        deviceIdPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
         deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+
         Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
         //若当前设备池中的数量不够，则向微信公众号请求所需要的个新的设备证书
         if (deviceList.size() > devicePoolCount) {
