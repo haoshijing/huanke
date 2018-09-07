@@ -134,7 +134,7 @@ public class DeviceModelController {
     }
 
     @ApiOperation("增加设备配额")
-    @PostMapping(value = "/createWxDeviceIds}")
+    @PostMapping(value = "/{createWxDeviceIds}")
     public ApiResponse<Boolean> createWxDeviceIdPools(@PathVariable("customerId") Integer customerId, @PathVariable("productId")String productId,@PathVariable("addCount") Integer addCount) {
         return  deviceModelService.createWxDeviceIdPools(customerId,productId,addCount);
     }
