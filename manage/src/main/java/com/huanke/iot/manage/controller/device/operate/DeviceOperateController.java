@@ -209,6 +209,27 @@ public class DeviceOperateController {
         }
     }
 
+    @ApiOperation("将选中设备绑定给用户")
+    @RequestMapping(value = "/bindDeviceToUser",method = RequestMethod.POST)
+    public ApiResponse<Boolean> bindDeviceToUser(@RequestBody DeviceBindToUserRequest deviceBindToUserRequest){
+        Boolean ret=this.deviceService.bindDeviceToUser(deviceBindToUserRequest);
+        return new ApiResponse<>(ret);
+    }
+
+    @ApiOperation("查询当前客户下的用户列表")
+    @RequestMapping(value = "/queryUsers",method = RequestMethod.POST)
+    public ApiResponse<List<CustomerUserPo>> queryUsers(@RequestBody QueryUsersRequest queryUsersRequest){
+        List<CustomerUserPo> customerUserPoList=this.deviceService.queryUser(queryUsersRequest.getCustomerId());
+        if(0 != customerUserPoList.size()){
+            return new ApiResponse<>(RetCode.OK,"查询成功",customerUserPoList);
+        }
+        else {
+            return new ApiResponse<>(RetCode.OK,"当前客户下无用户数据",null);
+        }
+
+    }
+
+
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
 //        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);

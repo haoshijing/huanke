@@ -87,7 +87,7 @@ public class DeviceTeamController {
 
     @ApiOperation("通过指定用户openId托管组给另一用户")
     @RequestMapping(value = "/trusteeTeam",method = RequestMethod.POST)
-    public ApiResponse<Integer> trusteeTeam(TeamTrusteeRequest teamTrusteeRequest){
+    public ApiResponse<Integer> trusteeTeam(@RequestBody TeamTrusteeRequest teamTrusteeRequest){
         //首先查询要托管的用户是否存在
         if (!this.deviceTeamService.queryCustomerUser(teamTrusteeRequest.getOpenId())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamTrusteeRequest.getOpenId()+" 不存在");
@@ -105,7 +105,7 @@ public class DeviceTeamController {
     public ApiResponse<String> createTrusteeQrCode(@RequestBody TrusteeQrCodeRequest trusteeQrCodeRequest){
         try {
             String code = this.deviceTeamService.createQrCode(trusteeQrCodeRequest.getTeamId());
-            return new ApiResponse<>(RetCode.OK,code);
+            return new ApiResponse<>(RetCode.OK,"生成成功",code);
         }
         catch (Exception e){
             return new ApiResponse<>(RetCode.ERROR,"二维码生成错误");

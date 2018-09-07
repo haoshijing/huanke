@@ -14,6 +14,7 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
+import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
@@ -57,6 +58,9 @@ public class DeviceOperateService {
     private DeviceCustomerRelationMapper deviceCustomerRelationMapper;
 
     @Autowired
+    private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
+
+    @Autowired
     private CustomerMapper customerMapper;
 
     @Autowired
@@ -95,6 +99,7 @@ public class DeviceOperateService {
      * @param deviceLists
      * @return
      */
+
     public Boolean createDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) {
         List<DevicePo> devicePoList = deviceLists.stream().map(device -> {
             DevicePo insertPo = new DevicePo();
@@ -336,27 +341,56 @@ public class DeviceOperateService {
         }
     }
 
-    public CustomerUserPo bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest){
+    public Boolean bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest){
+        List<DeviceTeamItemPo> deviceTeamItemPoList=new ArrayList<>();
+        List<DevicePo> devicePoList=new ArrayList<>();
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList=new ArrayList<>();
+        DeviceTeamPo deviceTeamPo=this.deviceTeamMapper.selectById(deviceBindToUserRequest.getTeamId());
         CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
-        if(null != customerUserPo){
-            //首先查询该用户是否有自定义的组
-            DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserId(customerUserPo.getId());
-            //若不存在则到客户组配置中查询相关默认信息，并新建一个默认组
-            if(null == deviceTeamItemPo){
-                WxConfigPo wxConfigPo=this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
-                DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
-                //使用默认组名创建组
-                deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
-
-            }
+        List<DeviceQueryRequest.DeviceQueryList> bindDeviceList = deviceBindToUserRequest.getDeviceQueryRequest().getDeviceList();
+        bindDeviceList.stream().forEach(bindDevice->{
+            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=new DeviceCustomerUserRelationPo();
+            DeviceTeamItemPo deviceTeamItemPo=new DeviceTeamItemPo();
+            DevicePo devicePo=this.deviceMapper.selectByMac(bindDevice.getMac());
+            //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
+            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
+            //设定绑定时间
+            devicePo.setBindTime(System.currentTimeMillis());
+            devicePo.setLastUpdateTime(System.currentTimeMillis());
+            deviceTeamItemPo.setDeviceId(devicePo.getId());
+            deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
+            deviceTeamItemPo.setUserId(customerUserPo.getId());
+            deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+            deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
+            deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+            deviceCustomerUserRelationPo.setCustomerId(customerUserPo.getId());
+            deviceCustomerUserRelationPo.setOpenId(deviceBindToUserRequest.getOpenId());
+            deviceCustomerUserRelationPo.setStatus(CommonConstant.STATUS_YES);
+            deviceCustomerUserRelationPo.setCreateTime(System.currentTimeMillis());
+            deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
+            devicePoList.add(devicePo);
+            deviceTeamItemPoList.add(deviceTeamItemPo);
+            deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
+        });
+        //进行设备名称的批量更新
+        this.deviceMapper.updateBatch(devicePoList);
+        //进行设备、客户、用户关系的绑定
+        this.deviceCustomerUserRelationMapper.insertBatch(deviceCustomerUserRelationPoList);
+        //进行设备的批量绑定
+        Boolean ret=this.deviceTeamItemMapper.insertBatch(deviceTeamItemPoList)>0;
+        if(ret){
+            return true;
         }
         else {
-            return null;
+            return false;
         }
-        return null;
     }
 
-
+    public List<CustomerUserPo> queryUser(Integer customerId){
+        List<CustomerUserPo> customerUserPoList=this.customerUserMapper.selectByCustomerId(customerId);
+        return customerUserPoList;
+    }
     /**
      * 2018-08-18
      * sixiaojun
@@ -422,21 +456,16 @@ public class DeviceOperateService {
 
     public List<DeviceTeamPo> queryTeamInfoByUser(String openId){
         //首先查询该用户是否有自定义组
-        DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserOpenId(openId);
-        List<DeviceTeamPo> deviceTeamPoList=new ArrayList<>();
+        List<DeviceTeamPo> deviceTeamPoList=this.deviceTeamMapper.selectByUserOpenId(openId);
         DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
         CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
-        if(null == deviceTeamItemPo){
+        if(0 == deviceTeamPoList.size()){
+            deviceTeamPoList.clear();
             //若没有自定义组则加载默认组
             WxConfigPo wxConfigPo=this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
             deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
             deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
             deviceTeamPoList.add(deviceTeamPo);
-        }
-        else {
-            //若存在自定义组则加载用户的自定义组
-            deviceTeamPo.setMasterUserId(customerUserPo.getId());
-            deviceTeamPoList=this.deviceTeamMapper.selectTeamList(deviceTeamPo);
         }
         return deviceTeamPoList;
     }
