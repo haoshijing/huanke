@@ -99,7 +99,7 @@ public class DeviceOperateService {
             insertPo.setTypeId(device.getTypeId());
             insertPo.setMac(device.getMac());
             //设定绑定状态为未绑定
-            insertPo.setBindStatus(1);
+            insertPo.setBindStatus(0);
             //设定工作状态为空闲
             insertPo.setWorkStatus(0);
             insertPo.setStatus(CommonConstant.STATUS_YES);
@@ -227,7 +227,6 @@ public class DeviceOperateService {
         deviceIdPoolPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
         deviceIdPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
         deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-
         Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
         //若当前设备池中的数量不够，则向微信公众号请求所需要的个新的设备证书
         if (deviceList.size() > devicePoolCount) {
