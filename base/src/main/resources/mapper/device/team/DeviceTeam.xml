@@ -115,6 +115,26 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectByUserOpenId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
+        select
+        t_device_team.*
+        FROM
+        t_device_team,t_customer_user
+        WHERE
+        t_customer_user.openId = #{openId}
+        AND
+        t_device_team.masterUserId = t_customer_user.id
+        limit 1
+    </select>
+
+    <select id="selectTeamList" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamPo"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
+        select * from t_device_team
+        where 1= 1
+        <if test="masterUserId != null">
+            and masterUserId = #{masterUserId}
+        </if>
+    </select>
 
 
     <select id="queryByName" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamPo" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
