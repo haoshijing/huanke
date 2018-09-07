@@ -33,6 +33,8 @@ public class DeviceConstant {
     public static  final Integer WXDEVICEID_STATUS_YES = 1; // 已占用
     public static  final Integer WXDEVICEID_STATUS_NO = 0; // 未占用
 
+    public static  final Integer DEFAULT_TEAM_ID = -1; // 已占用
+
     public static  final Integer WXDEVICEID_DEF_COUNT = 200; // 设备id池 默认增加配额。
     public static  final Integer WXDEVICEID_MAX_COUNT = 2000; // 设备id池 增加配额最大限制。
 

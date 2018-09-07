@@ -120,7 +120,7 @@
     </update>
 
 
-    <select id="selectByWxDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
+    <select id="selectByWxDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
         select
         *
         FROM

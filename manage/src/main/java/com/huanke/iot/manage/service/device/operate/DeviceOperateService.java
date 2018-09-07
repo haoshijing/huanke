@@ -417,20 +417,24 @@ public class DeviceOperateService {
         return null;
     }
 
-    public DeviceTeamPo queryTeamInfoByUser(String openId){
+    public List<DeviceTeamPo> queryTeamInfoByUser(String openId){
         //首先查询该用户是否有自定义组
-//        DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserOpenId(openId);
-//        DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
-//        if(null == deviceTeamItemPo){
-//            //若没有自定义组则加载默认组
-//            CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
-//            WxConfigPo wxConfigPo=this.wxConfigMapper.selectConfigByCustomerId()
-//            deviceTeamPo.setName();
-//        }
-//        else {
-//            return null;
-//        }
-        return null;
+        DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserOpenId(openId);
+        List<DeviceTeamPo> deviceTeamPoList=new ArrayList<>();
+        DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
+        if(null == deviceTeamItemPo){
+            //若没有自定义组则加载默认组
+            CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
+            WxConfigPo wxConfigPo=this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
+            deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
+            deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
+            deviceTeamPoList.add(deviceTeamPo);
+        }
+        else {
+            //若存在自定义组则加载用户的自定义组
+
+        }
+        return deviceTeamPoList;
     }
 
     /**
