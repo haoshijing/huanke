@@ -297,8 +297,10 @@ public class DeviceModelService {
             DeviceModelVo deviceModelVo = new DeviceModelVo();
             deviceModelVo.setName(deviceModelPo.getName());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
+            deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
+            deviceModelVo.setTypeName(deviceModelPo.getTypeName());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
@@ -402,9 +404,11 @@ public class DeviceModelService {
         if (null != deviceModelPo) {
             deviceModelVo.setName(deviceModelPo.getName());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
+            deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
             deviceModelVo.setFormatId(deviceModelPo.getFormatId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
+            deviceModelVo.setTypeName(deviceModelPo.getTypeName());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());

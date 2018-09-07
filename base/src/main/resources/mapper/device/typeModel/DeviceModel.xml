@@ -138,31 +138,33 @@
 
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
-        select * from
-        <include refid="tableName"/>
+        select t_device_model.* , t_device_type.name typeName,t_customer.name customerName  from
+        t_device_model ,t_device_type,t_customer
         <where>
 
             <if test="param.name != null and param.name != ''">
-                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+                AND t_device_model.name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test="param.modelNo != null and param.modelNo != ''">
-                AND modelNo = #{modelNo})
+                AND t_device_model.modelNo = #{modelNo})
             </if>
             <if test="param.typeId != null">
-                and typeId = #{param.typeId}
+                and t_device_model.typeId = #{param.typeId}
             </if>
             <if test="param.customerId != null">
-                and customerId = #{param.customerId}
+                and t_device_model.customerId = #{param.customerId}
             </if>
             <if test="param.productId != null and param.productId !='' ">
-                and productId = #{param.productId}
+                and t_device_model.productId = #{param.productId}
             </if>
             <if test="param.version != null and param.version != '' ">
-                and version = #{param.version}
+                and t_device_model.version = #{param.version}
             </if>
             <if test="param.status != null">
-                and status = #{param.status}
+                and t_device_model.status = #{param.status}
             </if>
+            and t_device_model.typeId = t_device_type.id
+            and t_device_model.customerId = t_customer.id
         </where>
         limit #{limit} offset #{offset}
     </select>
