@@ -20,12 +20,14 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
+import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelFormatCreateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.format.ModelFormatVo;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -162,15 +164,21 @@ public class DeviceModelService {
     /**
      * 增加 型号的 deviceId 配额
      *
-     * @param customerId
-     * @param productId
-     * @param addCount
+     * @param devicePoolRequest
+     * @param devicePoolRequest
+     * @param devicePoolRequest
      * @return
      */
-    public ApiResponse<Boolean> createWxDeviceIdPools(Integer customerId, String productId, Integer addCount) {
+    public ApiResponse<Boolean> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
         Boolean ret = true;
         try {
+            Integer addCount = devicePoolRequest.getAddCount();
+            Integer customerId = devicePoolRequest.getCustomerId();
+            String productId = devicePoolRequest.getProductId();
 
+            if(null== devicePoolRequest){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "参数不可为空");
+            }
             if (null == addCount || addCount <= 0) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "配额数量必须大于0");
             }
@@ -181,7 +189,7 @@ public class DeviceModelService {
             CustomerPo queryCustomerPo = customerMapper.selectById(customerId);
             if (null == queryCustomerPo) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "客户不存在");
-            } else if (null == queryCustomerPo.getAppid() || null == queryCustomerPo.getAppsecret() || null == queryCustomerPo.getPublicId()) {
+            } else if (null == queryCustomerPo.getAppid() || null == queryCustomerPo.getAppsecret() ) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "客户公众号信息不存在");
             }
 

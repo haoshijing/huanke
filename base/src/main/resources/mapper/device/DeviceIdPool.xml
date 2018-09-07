@@ -38,8 +38,7 @@
         wxDeviceLicence,
         wxQrticket,
         status,
-        createTime,
-        lastUpdateTime
+        createTime
         )
         VALUES
         <foreach collection="list" item="deviceIdpool" separator=",">
@@ -50,8 +49,7 @@
             #{deviceIdpool.wxDeviceLicence},
             #{deviceIdpool.wxQrticket},
             #{deviceIdpool.status},
-            #{deviceIdpool.createTime},
-            #{deviceIdpool.lastUpdateTime}
+            #{deviceIdpool.createTime}
             )
         </foreach>
     </insert>
@@ -110,6 +108,7 @@
                     <if test="deviceIdPool.status !=null">
                         when id=#{deviceIdPool.id} then #{deviceIdPool.status}
                     </if>
+                    lastUpdateTime = #{lastUpdateTime}
                 </foreach>
             </trim>
         </trim>
