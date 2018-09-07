@@ -15,6 +15,7 @@
         mac,
         wxDeviceId,
         wxDevicelicence,
+        wxQrticket,
         imei,
         imsi,
         saNo,
@@ -47,6 +48,7 @@
         #{mac},
         #{wxDeviceId},
         #{wxDevicelicence},
+        #{wxQrticket},
         #{imei},
         #{imsi},
         #{saNo},
@@ -84,6 +86,7 @@
         mac,
         wxDeviceId,
         wxDevicelicence,
+        wxQrticket,
         imei,
         imsi,
         saNo,
@@ -117,6 +120,7 @@
             #{device.mac},
             #{device.wxDeviceId},
             #{device.wxDevicelicence},
+            #{device.wxQrticket},
             #{device.imei},
             #{device.imsi},
             #{device.saNo},
@@ -237,22 +241,25 @@
         update
         <include refid="tableName"/>
         <set>
-            <if test="name != null">
+            <if test="name != null  and name!='' ">
                 name = #{name},
             </if>
-            <if test="wxDeviceId != null">
+            <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
             </if>
-            <if test="wxDevicelicence != null">
+            <if test="wxDevicelicence != null and wxDevicelicence!='' ">
                 wxDevicelicence = #{wxDevicelicence},
             </if>
-            <if test="imei != null">
+            <if test="wxQrticket != null and wxQrticket!='' ">
+                wxQrticket = #{wxQrticket},
+            </if>
+            <if test="imei != null and imei != '' ">
                 imei = #{imei},
             </if>
-            <if test="imsi != null">
+            <if test="imsi != null and imsi != ''">
                 imsi = #{imsi},
             </if>
-            <if test="saNo != null">
+            <if test="saNo != null and saNo != '' ">
                 saNo = #{saNo},
             </if>
             <if test="typeId != null">
@@ -279,16 +286,16 @@
             <if test="workStatus != null">
                 workStatus = #{workStatus},
             </if>
-            <if test="ip != null">
+            <if test="ip != null and ip != '' ">
                 ip = #{ip},
             </if>
             <if test="speedConfig != null">
                 speedConfig = #{speedConfig},
             </if>
-            <if test="version != null">
+            <if test="version != null and version != '' ">
                 version = #{version},
             </if>
-            <if test="location != null">
+            <if test="location != null and location != '' ">
                 location = #{location},
             </if>
             <if test="lastUpdateTime != null">

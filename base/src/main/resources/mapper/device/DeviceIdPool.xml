@@ -13,6 +13,7 @@
         customerId,
         wxDeviceId,
         wxDeviceLicence,
+        wxQrticket,
         status,
         createTime
         )
@@ -20,6 +21,7 @@
         #{customerId},
         #{wxDeviceId},
         #{wxDeviceLicence},
+        #{wxQrticket},
         #{status},
         #{createTime}
         )
@@ -34,6 +36,7 @@
         productId,
         wxDeviceId,
         wxDeviceLicence,
+        wxQrticket,
         status,
         createTime,
         lastUpdateTime
@@ -45,6 +48,7 @@
             #{deviceIdpool.productId},
             #{deviceIdpool.wxDeviceId},
             #{deviceIdpool.wxDeviceLicence},
+            #{deviceIdpool.wxQrticket},
             #{deviceIdpool.status},
             #{deviceIdpool.createTime},
             #{deviceIdpool.lastUpdateTime}
@@ -85,6 +89,9 @@
             </if>
             <if test="param.wxDeviceLicence != null  and param.wxDeviceLicence != ''  ">
                 AND wxDeviceLicence = #{param.wxDeviceLicence}
+            </if>
+            <if test="param.wxQrticket != null  and param.wxQrticket != ''  ">
+                AND wxQrticket = #{param.wxQrticket}
             </if>
             <if test="param.status != null">
                 AND status = #{param.status}

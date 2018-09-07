@@ -268,6 +268,7 @@ public class DeviceOperateService {
                 devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
                 devicePo.setWxDeviceId(resultPo.getWxDeviceId());
                 devicePo.setWxDevicelicence(resultPo.getWxDeviceLicence());
+                devicePo.setWxQrticket(resultPo.getWxQrticket());
                 //刷新最新更新时间
                 devicePo.setLastUpdateTime(System.currentTimeMillis());
                 //记录本次需要更新的设备
@@ -312,6 +313,7 @@ public class DeviceOperateService {
             devicePo.setModelId(null);
             devicePo.setWxDeviceId(null);
             devicePo.setWxDevicelicence(null);
+            devicePo.setWxQrticket(null);
             devicePo.setProductId(null);
             devicePo.setLastUpdateTime(System.currentTimeMillis());
             devicePoList.add(devicePo);
@@ -443,16 +445,15 @@ public class DeviceOperateService {
         System.out.println(customerPo);
         String appId = customerPo.getAppid();
         String appSecret = customerPo.getAppsecret();
-        String publicId = customerPo.getPublicId();
-
 
         if (null != addCount && addCount > 0) {
             List<DeviceIdPoolPo> deviceIdPoolPos = new ArrayList<>();
             for (int m = 0; m < addCount; m++) {
-                JSONObject jsonObject = obtainDeviceJson(appId, appSecret, publicId, productId);
+                JSONObject jsonObject = obtainDeviceJson(appId, appSecret,customerId.toString() , productId);
                 if (jsonObject != null) {
                     String wxDeviceId = jsonObject.getString("deviceid");
                     String wxDevicelicence = jsonObject.getString("devicelicence");
+                    String wxQrticket = jsonObject.getString("qrticket");
 
                     DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
 
@@ -460,6 +461,7 @@ public class DeviceOperateService {
                     insertPo.setProductId(productId);
                     insertPo.setWxDeviceId(wxDeviceId);
                     insertPo.setWxDeviceLicence(wxDevicelicence);
+                    insertPo.setWxQrticket(wxQrticket);
                     insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
                     insertPo.setCreateTime(System.currentTimeMillis());
                     insertPo.setLastUpdateTime(System.currentTimeMillis());
@@ -493,19 +495,19 @@ public class DeviceOperateService {
         //获取数据
         String appId = customerPo.getAppid();
         String appSecret = customerPo.getAppsecret();
-        String publicId = customerPo.getPublicId();
 
-        JSONObject jsonObject = obtainDeviceJson(appId, appSecret, publicId, productId);
+        JSONObject jsonObject = obtainDeviceJson(appId, appSecret, customerId.toString(), productId);
         if (jsonObject != null) {
             String wxDeviceId = jsonObject.getString("deviceid");
             String wxDevicelicence = jsonObject.getString("devicelicence");
-
+            String wxQrticket = jsonObject.getString("qrticket");
             DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
 
             insertPo.setCustomerId(customerId);
             insertPo.setProductId(productId);
             insertPo.setWxDeviceId(wxDeviceId);
             insertPo.setWxDeviceLicence(wxDevicelicence);
+            insertPo.setWxQrticket(wxQrticket);
             insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setLastUpdateTime(System.currentTimeMillis());
@@ -520,11 +522,11 @@ public class DeviceOperateService {
 
     }
 
-    private JSONObject obtainDeviceJson(String appId, String appSecret, String publicId, String productId) {
-        JSONObject deviceInfo = obtainDeviceInfo(appId, appSecret, publicId, productId);
+    private JSONObject obtainDeviceJson(String appId, String appSecret, String customerId, String productId) {
+        JSONObject deviceInfo = obtainDeviceInfo(appId, appSecret, customerId, productId);
         if (deviceInfo == null) {
-            wechartUtil.getAccessToken(appId, appSecret, publicId, true);
-            deviceInfo = obtainDeviceInfo(appId, appSecret, publicId, productId);
+            wechartUtil.getAccessToken(appId, appSecret, customerId, true);
+            deviceInfo = obtainDeviceInfo(appId, appSecret, customerId, productId);
         }
         if (deviceInfo != null) {
             return deviceInfo;
@@ -532,8 +534,8 @@ public class DeviceOperateService {
         return null;
     }
 
-    private JSONObject obtainDeviceInfo(String appId, String appSecret, String publicId, String productId) {
-        String accessToken = wechartUtil.getAccessToken(appId, appSecret, publicId, false);
+    private JSONObject obtainDeviceInfo(String appId, String appSecret, String customerId, String productId) {
+        String accessToken = wechartUtil.getAccessToken(appId, appSecret, customerId, false);
         String url = new StringBuilder("https://api.weixin.qq.com/device/getqrcode?access_token=").append(accessToken).append("&product_id=").append(productId).toString();
         HttpGet httpGet = new HttpGet();
         try {
@@ -562,8 +564,8 @@ public class DeviceOperateService {
         return null;
     }
 
-    private Integer getCanUseProductId(String publicId) {
-        String productKey = "productKey." + publicId;
+    private Integer getCanUseProductId(String customerId) {
+        String productKey = "productKey." + customerId;
         String productIdStr = stringRedisTemplate.opsForValue().get(productKey);
         if (StringUtils.isEmpty(productIdStr)) {
             return 0;

@@ -10,6 +10,7 @@ public class DeviceIdPoolPo {
     private String productId;
     private String wxDeviceId;
     private String wxDeviceLicence;
+    private String wxQrticket;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;

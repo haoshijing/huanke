@@ -36,6 +36,7 @@ public class DevicePo {
      */
     private String wxDeviceId;
     private String wxDevicelicence;
+    private String wxQrticket;
 
     private Long bindTime;
     //绑定状态
