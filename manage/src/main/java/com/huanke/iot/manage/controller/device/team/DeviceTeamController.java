@@ -7,10 +7,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.manage.service.device.team.DeviceTeamService;
-import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.team.TeamDeviceCreateRequest;
-import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
-import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
+import com.huanke.iot.manage.vo.request.device.team.*;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -105,9 +102,9 @@ public class DeviceTeamController {
     }
     @ApiOperation("生成托管二维码")
     @RequestMapping(value = "/createTrusteeQrCode",method = RequestMethod.POST)
-    public ApiResponse<String> createTrusteeQrCode(@RequestBody Integer teamId){
+    public ApiResponse<String> createTrusteeQrCode(@RequestBody TrusteeQrCodeRequest trusteeQrCodeRequest){
         try {
-            String code = this.deviceTeamService.createQrCode(teamId);
+            String code = this.deviceTeamService.createQrCode(trusteeQrCodeRequest.getTeamId());
             return new ApiResponse<>(RetCode.OK,code);
         }
         catch (Exception e){

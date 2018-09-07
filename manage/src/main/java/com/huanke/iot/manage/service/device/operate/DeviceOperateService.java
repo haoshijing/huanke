@@ -72,6 +72,9 @@ public class DeviceOperateService {
     private DeviceTypeMapper deviceTypeMapper;
 
     @Autowired
+    private DeviceTeamMapper deviceTeamMapper;
+
+    @Autowired
     private DeviceTeamItemMapper deviceTeamItemMapper;
 
     @Autowired
@@ -422,9 +425,9 @@ public class DeviceOperateService {
         DeviceTeamItemPo deviceTeamItemPo=this.deviceTeamItemMapper.selectByUserOpenId(openId);
         List<DeviceTeamPo> deviceTeamPoList=new ArrayList<>();
         DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
+        CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
         if(null == deviceTeamItemPo){
             //若没有自定义组则加载默认组
-            CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
             WxConfigPo wxConfigPo=this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
             deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
             deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
@@ -432,9 +435,14 @@ public class DeviceOperateService {
         }
         else {
             //若存在自定义组则加载用户的自定义组
-
+            deviceTeamPo.setMasterUserId(customerUserPo.getId());
+            deviceTeamPoList=this.deviceTeamMapper.selectTeamList(deviceTeamPo);
         }
         return deviceTeamPoList;
+    }
+
+    public CustomerUserPo isUserExist(String openId){
+        return this.customerUserMapper.selectByOpenId(openId);
     }
 
     /**

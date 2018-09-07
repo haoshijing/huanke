@@ -4,10 +4,10 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceAssignToCustomerRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceListQueryRequest;
+import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.manage.vo.request.device.operate.*;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
@@ -15,7 +15,6 @@ import com.huanke.iot.manage.service.gateway.MqttSendService;
 //import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.device.DeviceListVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -195,6 +194,18 @@ public class DeviceOperateController {
         else {
             Boolean ret=deviceService.callBackDeviceFromCustomer(deviceList);
             return new ApiResponse<>(RetCode.OK,"召回成功",ret);
+        }
+    }
+
+    @ApiOperation("根据用户的openId查询用户的组信息")
+    @RequestMapping(value = "/queryTeamInfo",method = RequestMethod.POST)
+    public ApiResponse<List<DeviceTeamPo>> queryTeamInfo(@RequestBody TeamInfoQueryRequest teamInfoQueryRequest){
+        CustomerUserPo customerUserPo=this.deviceService.isUserExist(teamInfoQueryRequest.getOpenId());
+        if(null == customerUserPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"用户openId "+ teamInfoQueryRequest.getOpenId()+" 不存在");
+        }
+        else {
+            return new ApiResponse<>(this.deviceService.queryTeamInfoByUser(teamInfoQueryRequest.getOpenId()));
         }
     }
 

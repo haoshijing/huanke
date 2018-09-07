@@ -19,6 +19,7 @@ import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -240,7 +241,7 @@ public class DeviceTeamService {
         }
     }
 
-    public String createQrCode(Integer teamId)throws Exception{
+    public String createQrCode(@RequestBody  Integer teamId)throws Exception{
         //根据当前传入的teamId查询到当前customer的appId等相关信息
         CustomerPo customerPo=this.customerMapper.selectByTeamId(teamId);
         String appId=customerPo.getAppid();
