@@ -17,7 +17,9 @@ public class DeviceModelVo {
     private String name;
     private String modelNo;
     private Integer typeId; //类型id
+    private String typeName;
     private Integer customerId;
+    private String customerName;
     private String productId;
     private Integer formatId;
     private String icon;
