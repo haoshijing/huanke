@@ -34,13 +34,8 @@ public class DeviceTeamController {
         if (!isCustomerExist){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamCreateOrUpdateRequest.getCreateUserOpenId()+" 不存在");
         }
-//        //接着判断当前设备列表中的customer归属和当前的用户所在的customer是否一致
-//        DevicePo deviceStatus=this.deviceTeamService.queryDeviceStatus(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),teamCreateOrUpdateRequest.getCreateUserOpenId());
-//        if(null != deviceStatus){
-//            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设备列表中mac地址 "+deviceStatus.getMac()+" 尚未分配，请联系管理员");
-//        }
         //若设备列表中无设备则仅创建新组，不添加设备
-        if(null == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()){
+        if(0 == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList().size()){
             return new ApiResponse<>(this.deviceTeamService.createTeam(teamCreateOrUpdateRequest).getId());
         }
         else {

@@ -88,17 +88,20 @@ public class DeviceTeamService {
         deviceTeamPo.setCreateTime(System.currentTimeMillis());
         deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
         //向team表中插入相关数据
-        this.deviceTeamMapper.insert(deviceTeamPo);
-        teamCreateOrUpdateRequest.getImgOrVideoList().stream().forEach(imgVideo->{
-            DeviceTeamScenePo deviceTeamScenePo=new DeviceTeamScenePo();
-            deviceTeamScenePo.setTeamId(deviceTeamPo.getId());
-            deviceTeamScenePo.setImgVideo(imgVideo.getImgVideo());
-            deviceTeamScenePo.setCreateTime(System.currentTimeMillis());
-            deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
-            deviceTeamScenePoList.add(deviceTeamScenePo);
-        });
-        //进行场景图册和视频册的批量更新
-        Boolean ret=this.deviceTeamSceneMapper.insertBatch(deviceTeamScenePoList)>0;
+
+        if(0 != teamCreateOrUpdateRequest.getImgOrVideoList().size()){
+            teamCreateOrUpdateRequest.getImgOrVideoList().stream().forEach(imgVideo -> {
+                DeviceTeamScenePo deviceTeamScenePo = new DeviceTeamScenePo();
+                deviceTeamScenePo.setTeamId(deviceTeamPo.getId());
+                deviceTeamScenePo.setImgVideo(imgVideo.getImgVideo());
+                deviceTeamScenePo.setCreateTime(System.currentTimeMillis());
+                deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
+                deviceTeamScenePoList.add(deviceTeamScenePo);
+            });
+            //进行场景图册和视频册的批量更新
+            this.deviceTeamSceneMapper.insertBatch(deviceTeamScenePoList);
+        }
+        Boolean ret=this.deviceTeamMapper.insert(deviceTeamPo)>0;
         if(ret){
             return deviceTeamPo;
         }

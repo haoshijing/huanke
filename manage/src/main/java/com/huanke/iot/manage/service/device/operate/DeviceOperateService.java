@@ -108,14 +108,14 @@ public class DeviceOperateService {
             insertPo.setTypeId(device.getTypeId());
             insertPo.setMac(device.getMac());
             //设定绑定状态为未绑定
-            insertPo.setBindStatus(0);
+            insertPo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
             //设定工作状态为空闲
-            insertPo.setWorkStatus(0);
+            insertPo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
             insertPo.setStatus(CommonConstant.STATUS_YES);
             //设定在线状态为离线
-            insertPo.setOnlineStatus(0);
+            insertPo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
             //设定启用状态为禁用
-            insertPo.setEnableStatus(0);
+            insertPo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
             insertPo.setHardVersion(device.getHardVersion());
             insertPo.setBirthTime(device.getBirthTime());
             insertPo.setCreateTime(System.currentTimeMillis());
@@ -202,11 +202,7 @@ public class DeviceOperateService {
             //先从设备表中删除该mac地址的设备
             DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
             if (deviceMapper.deleteDevice(devicePo) > 0) {
-                //如果当前设备存在集群
-                if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
-                    //删除成功后再从设备集群列表中删除该设备的集群相关信息
-                    deviceGroupItemMapper.deleteDeviceById(devicePo.getId());
-                }
+                deviceGroupItemMapper.deleteDeviceById(devicePo.getId());
                 //如果当前设备已被分配给客户
                 if (null != deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId())) {
                     //从客户关系表中删除记录
@@ -385,6 +381,10 @@ public class DeviceOperateService {
         }
     }
 
+
+    public Boolean untieDeviceToUser(){//设备解绑 todo
+        return true;
+    }
     public List<CustomerUserPo> queryUser(Integer customerId){
         List<CustomerUserPo> customerUserPoList=this.customerUserMapper.selectByCustomerId(customerId);
         return customerUserPoList;
