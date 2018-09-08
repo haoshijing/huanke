@@ -371,12 +371,12 @@
                 location = #{location},
             </if>
             <if test="lastUpdateTime != null">
-                lastUpdateTime = #{lastUpdateTime},
+                lastUpdateTime = #{lastUpdateTime}
             </if>
         </set>
         where
         1= 1
-        id = #{id}
+        and id = #{id}
     </update>
 
     <!--批量更新-->

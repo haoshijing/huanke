@@ -240,6 +240,30 @@ public class DeviceOperateController {
         }
     }
 
+    @ApiOperation("禁用")
+    @RequestMapping(value = "/updateDeivceDisble",method = RequestMethod.PUT)
+    public ApiResponse<Boolean> updateDeivceDisble(@RequestBody DeviceUnbindRequest devices){
+        if(devices!=null&&devices.deviceVos!=null&&devices.deviceVos.size()>0){
+
+            return deviceService.updateDeivceDisble(devices);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"禁用设备列表不可为空");
+
+        }
+    }
+
+    @ApiOperation("启用")
+    @RequestMapping(value = "/updateDeivceEnable",method = RequestMethod.PUT)
+    public ApiResponse<Boolean> updateDeivceEnable(@RequestBody DeviceUnbindRequest devices){
+        if(devices!=null&&devices.deviceVos!=null&&devices.deviceVos.size()>0){
+
+            return deviceService.updateDeivceEnable(devices);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"启用设备列表不可为空");
+
+        }
+    }
+
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
 //        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);
