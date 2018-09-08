@@ -196,6 +196,7 @@ public class DeviceOperateService {
 
     /**
      * 删除设备及与设备相关的信息
+     * 删除设备需 先解除 绑定关系、组关系、群关系、解除客户分配关系（召回）、最后删除
      * 2018-08-21
      * sixiaojun
      *
@@ -204,6 +205,7 @@ public class DeviceOperateService {
      */
     public Integer deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) {
         deviceLists.stream().forEach(device -> {
+
             //先从设备表中删除该mac地址的设备
             DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
             if (deviceMapper.deleteDevice(devicePo) > 0) {
@@ -613,48 +615,53 @@ public class DeviceOperateService {
         Boolean ret = true;
         CustomerPo customerPo = customerMapper.selectById(customerId);
         //获取数据
-        String appId = customerPo.getAppid();
-        String appSecret = customerPo.getAppsecret();
-        int correctCount = 0;
-        if (null != addCount && addCount > 0) {
-            List<DeviceIdPoolPo> deviceIdPoolPos = new ArrayList<>();
+        if(customerPo!=null){
+            String appId = customerPo.getAppid();
+            String appSecret = customerPo.getAppsecret();
+            int correctCount = 0;
+            if (null != addCount && addCount > 0) {
+                List<DeviceIdPoolPo> deviceIdPoolPos = new ArrayList<>();
 
-            for (int m = 0; m < addCount; m++) {
-                ApiResponse<JSONObject> result = obtainDeviceInfo(appId, appSecret, customerId.toString(), productId);
-                //当第一个就开始 出现错误时，则直接返回结果
-                if (m == 0 && RetCode.PARAM_ERROR == result.getCode()) {
-                    return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg());
+                for (int m = 0; m < addCount; m++) {
+                    ApiResponse<JSONObject> result = obtainDeviceInfo(appId, appSecret, customerId.toString(), productId);
+                    //当第一个就开始 出现错误时，则直接返回结果
+                    if (m == 0 && RetCode.PARAM_ERROR == result.getCode()) {
+                        return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg());
+                    }
+                    JSONObject jsonObject = result.getData();
+                    if (jsonObject != null) {
+                        String wxDeviceId = jsonObject.getString("deviceid");
+                        String wxDevicelicence = jsonObject.getString("devicelicence");
+                        String wxQrticket = jsonObject.getString("qrticket");
+
+                        DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
+
+                        insertPo.setCustomerId(customerId);
+                        insertPo.setProductId(productId);
+                        insertPo.setWxDeviceId(wxDeviceId);
+                        insertPo.setWxDeviceLicence(wxDevicelicence);
+                        insertPo.setWxQrticket(wxQrticket);
+                        insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                        insertPo.setCreateTime(System.currentTimeMillis());
+                        insertPo.setLastUpdateTime(System.currentTimeMillis());
+
+                        deviceIdPoolPos.add(insertPo);
+                    } else {
+                        log.info("createWxDeviceIdPool.jsonObject = {}", false);
+                    }
                 }
-                JSONObject jsonObject = result.getData();
-                if (jsonObject != null) {
-                    String wxDeviceId = jsonObject.getString("deviceid");
-                    String wxDevicelicence = jsonObject.getString("devicelicence");
-                    String wxQrticket = jsonObject.getString("qrticket");
 
-                    DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
-
-                    insertPo.setCustomerId(customerId);
-                    insertPo.setProductId(productId);
-                    insertPo.setWxDeviceId(wxDeviceId);
-                    insertPo.setWxDeviceLicence(wxDevicelicence);
-                    insertPo.setWxQrticket(wxQrticket);
-                    insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-                    insertPo.setCreateTime(System.currentTimeMillis());
-                    insertPo.setLastUpdateTime(System.currentTimeMillis());
-
-                    deviceIdPoolPos.add(insertPo);
+                if (deviceIdPoolPos != null && deviceIdPoolPos.size() > 0) {
+                    ret = deviceIdPoolMapper.insertBatch(deviceIdPoolPos) > 0;
                 } else {
-                    log.info("createWxDeviceIdPool.jsonObject = {}", false);
+                    return new ApiResponse<>(RetCode.ERROR, "获取微信DeviceId失败");
                 }
-            }
 
-            if (deviceIdPoolPos != null && deviceIdPoolPos.size() > 0) {
-                ret = deviceIdPoolMapper.insertBatch(deviceIdPoolPos) > 0;
-            } else {
-                return new ApiResponse<>(RetCode.PARAM_ERROR, "获取微信DeviceId失败");
+            }else{
+                return new ApiResponse<>(RetCode.ERROR, "客户不存在");
             }
-
         }
+
 
         return new ApiResponse<>(ret);
     }
