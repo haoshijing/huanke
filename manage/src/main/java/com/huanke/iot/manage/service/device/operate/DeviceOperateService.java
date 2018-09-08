@@ -16,6 +16,7 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
+import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
@@ -57,6 +58,9 @@ public class DeviceOperateService {
 
     @Autowired
     private DeviceCustomerRelationMapper deviceCustomerRelationMapper;
+
+    @Autowired
+    private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
 
     @Autowired
     private CustomerMapper customerMapper;
@@ -167,10 +171,11 @@ public class DeviceOperateService {
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
-            if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
+            if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
                 deviceQueryVo.setGroupId(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
                 deviceQueryVo.setGroupName(deviceGroupMapper.selectByDeviceId(devicePo.getId()).getName());
-            } else {
+            }
+            else {
                 deviceQueryVo.setGroupId(-1);
                 deviceQueryVo.setGroupName("无集群");
             }
@@ -193,7 +198,7 @@ public class DeviceOperateService {
      * @return
      */
     public Integer deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) {
-        deviceLists.stream().forEach(device -> {
+         deviceLists.stream().forEach(device->{
             //先从设备表中删除该mac地址的设备
             DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
             if (deviceMapper.deleteDevice(devicePo) > 0) {
@@ -264,7 +269,6 @@ public class DeviceOperateService {
                 DeviceIdPoolPo resultPo = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset).get(0);
                 //记录本次使用的pool状态为已占用
                 resultPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_YES);
-                resultPo.setLastUpdateTime(System.currentTimeMillis());
                 deviceIdPoolPoList.add(resultPo);
                 offset++;
                 //在设备表中更新deviceModelId字段，将设备与设备型号表关联
@@ -301,59 +305,90 @@ public class DeviceOperateService {
      * @return
      */
     public Boolean callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests) {
-        List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
-        List<DevicePo> devicePoList = new ArrayList<>();
-        List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
-        deviceQueryRequests.stream().forEach(device -> {
-                    DevicePo devicePo = this.deviceMapper.selectByMac(device.getMac());
-                    DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
-                    //记录需要删除的客户设备关系
-                    deviceCustomerRelationPoList.add(deviceCustomerRelationPo);
-                    //记录要更新的设备池信息
-                    DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(devicePo.getWxDeviceId());
-                    deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-                    deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
-                    deviceIdPoolPoList.add(deviceIdPoolPo);
-                    //记录要更新的设备信息
-                    devicePo.setModelId(null);
-                    devicePo.setWxDeviceId(null);
-                    devicePo.setWxDevicelicence(null);
-                    devicePo.setWxQrticket(null);
-                    devicePo.setProductId(null);
-                    devicePo.setLastUpdateTime(System.currentTimeMillis());
-                    devicePoList.add(devicePo);
-                }
+        List<DeviceCustomerRelationPo> deviceCustomerRelationPoList=new ArrayList<>();
+        List<DevicePo> devicePoList=new ArrayList<>();
+        List<DeviceIdPoolPo> deviceIdPoolPoList=new ArrayList<>();
+        deviceQueryRequests.stream().forEach(device->{
+            DevicePo devicePo=this.deviceMapper.selectByMac(device.getMac());
+            DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
+            //记录需要删除的客户设备关系
+            deviceCustomerRelationPoList.add(deviceCustomerRelationPo);
+            //记录要更新的设备池信息
+            DeviceIdPoolPo deviceIdPoolPo=this.deviceIdPoolMapper.selectByWxDeviceId(devicePo.getWxDeviceId());
+            deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+            deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceIdPoolPoList.add(deviceIdPoolPo);
+            //记录要更新的设备信息
+            devicePo.setModelId(null);
+            devicePo.setWxDeviceId(null);
+            devicePo.setWxDevicelicence(null);
+            devicePo.setWxQrticket(null);
+            devicePo.setProductId(null);
+            devicePo.setLastUpdateTime(System.currentTimeMillis());
+            devicePoList.add(devicePo);
+            }
         );
         this.deviceMapper.updateBatch(devicePoList);
         this.deviceIdPoolMapper.updateBatch(deviceIdPoolPoList);
         Boolean ret = this.deviceCustomerRelationMapper.deleteBatch(deviceCustomerRelationPoList) > 0;
-        if (ret) {
+        if(ret) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
 
-    public CustomerUserPo bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest) {
-        CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
-        if (null != customerUserPo) {
-            //首先查询该用户是否有自定义的组
-            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByUserId(customerUserPo.getId());
-            //若不存在则到客户组配置中查询相关默认信息，并新建一个默认组
-            if (null == deviceTeamItemPo) {
-                WxConfigPo wxConfigPo = this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
-                DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
-                //使用默认组名创建组
-                deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
-
-            }
-        } else {
-            return null;
+    public Boolean bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest){
+        List<DeviceTeamItemPo> deviceTeamItemPoList=new ArrayList<>();
+        List<DevicePo> devicePoList=new ArrayList<>();
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList=new ArrayList<>();
+        DeviceTeamPo deviceTeamPo=this.deviceTeamMapper.selectById(deviceBindToUserRequest.getTeamId());
+        CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
+        List<DeviceQueryRequest.DeviceQueryList> bindDeviceList = deviceBindToUserRequest.getDeviceQueryRequest().getDeviceList();
+        bindDeviceList.stream().forEach(bindDevice->{
+            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=new DeviceCustomerUserRelationPo();
+            DeviceTeamItemPo deviceTeamItemPo=new DeviceTeamItemPo();
+            DevicePo devicePo=this.deviceMapper.selectByMac(bindDevice.getMac());
+            //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
+            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
+            //设定绑定时间
+            devicePo.setBindTime(System.currentTimeMillis());
+            devicePo.setLastUpdateTime(System.currentTimeMillis());
+            deviceTeamItemPo.setDeviceId(devicePo.getId());
+            deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
+            deviceTeamItemPo.setUserId(customerUserPo.getId());
+            deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+            deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
+            deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+            deviceCustomerUserRelationPo.setCustomerId(customerUserPo.getId());
+            deviceCustomerUserRelationPo.setOpenId(deviceBindToUserRequest.getOpenId());
+            deviceCustomerUserRelationPo.setStatus(CommonConstant.STATUS_YES);
+            deviceCustomerUserRelationPo.setCreateTime(System.currentTimeMillis());
+            deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
+            devicePoList.add(devicePo);
+            deviceTeamItemPoList.add(deviceTeamItemPo);
+            deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
+        });
+        //进行设备名称的批量更新
+        this.deviceMapper.updateBatch(devicePoList);
+        //进行设备、客户、用户关系的绑定
+        this.deviceCustomerUserRelationMapper.insertBatch(deviceCustomerUserRelationPoList);
+        //进行设备的批量绑定
+        Boolean ret=this.deviceTeamItemMapper.insertBatch(deviceTeamItemPoList)>0;
+        if(ret){
+            return true;
         }
-        return null;
+        else {
+            return false;
+        }
     }
 
-
+    public List<CustomerUserPo> queryUser(Integer customerId){
+        List<CustomerUserPo> customerUserPoList=this.customerUserMapper.selectByCustomerId(customerId);
+        return customerUserPoList;
+    }
     /**
      * 2018-08-18
      * sixiaojun
@@ -417,27 +452,23 @@ public class DeviceOperateService {
         return null;
     }
 
-    public List<DeviceTeamPo> queryTeamInfoByUser(String openId) {
+    public List<DeviceTeamPo> queryTeamInfoByUser(String openId){
         //首先查询该用户是否有自定义组
-        DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByUserOpenId(openId);
-        List<DeviceTeamPo> deviceTeamPoList = new ArrayList<>();
-        DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
-        CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(openId);
-        if (null == deviceTeamItemPo) {
+        List<DeviceTeamPo> deviceTeamPoList=this.deviceTeamMapper.selectByUserOpenId(openId);
+        DeviceTeamPo deviceTeamPo=new DeviceTeamPo();
+        CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(openId);
+        if(0 == deviceTeamPoList.size()){
+            deviceTeamPoList.clear();
             //若没有自定义组则加载默认组
-            WxConfigPo wxConfigPo = this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
+            WxConfigPo wxConfigPo=this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
             deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
             deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
             deviceTeamPoList.add(deviceTeamPo);
-        } else {
-            //若存在自定义组则加载用户的自定义组
-            deviceTeamPo.setMasterUserId(customerUserPo.getId());
-            deviceTeamPoList = this.deviceTeamMapper.selectTeamList(deviceTeamPo);
         }
         return deviceTeamPoList;
     }
 
-    public CustomerUserPo isUserExist(String openId) {
+    public CustomerUserPo isUserExist(String openId){
         return this.customerUserMapper.selectByOpenId(openId);
     }
 
@@ -480,6 +511,7 @@ public class DeviceOperateService {
                     insertPo.setWxQrticket(wxQrticket);
                     insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
                     insertPo.setCreateTime(System.currentTimeMillis());
+                    insertPo.setLastUpdateTime(System.currentTimeMillis());
 
                     deviceIdPoolPos.add(insertPo);
                 } else {

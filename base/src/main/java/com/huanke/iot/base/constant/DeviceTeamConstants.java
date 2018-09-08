@@ -25,4 +25,23 @@ public interface DeviceTeamConstants {
      * 设备组类型：自成组
      */
     int DEVICE_TEAM_TYPE_SELF = 3;
+
+    /**
+     * 终端组
+     */
+    int DEVICE_TEAM_STATUS_TERMINAL = 1;
+
+    /**
+     * 自称组
+     */
+    int DEVICE_TEAM_STATUS_TRUSTEE = 2;
+
+    /**
+     * 存在联动设备
+     */
+    int DEVICE_TEAM_LINKAGE_YES = 1;
+    /**
+     * 不存在联动设备
+     */
+    int DEVICE_TEAM_LINKAGE_NO = 2;
 }
