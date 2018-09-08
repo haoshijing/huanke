@@ -169,8 +169,7 @@ public class DeviceOperateController {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设别列表设备mac地址 "+devicePo.getMac()+" 已被分配",false);
         }
         else {
-            Boolean ret=deviceService.assignDeviceToCustomer(deviceAssignToCustomerRequest);
-            return new ApiResponse<>(RetCode.OK,"分配成功",ret);
+            return deviceService.assignDeviceToCustomer(deviceAssignToCustomerRequest);
         }
     }
     /**
