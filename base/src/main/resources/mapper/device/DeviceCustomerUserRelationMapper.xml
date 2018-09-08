@@ -77,6 +77,8 @@
         FROM
         <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
+        AND
+        parentOpenId is null
         limit 1
     </select>
 

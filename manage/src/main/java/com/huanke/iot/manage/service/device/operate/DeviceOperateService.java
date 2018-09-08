@@ -163,7 +163,8 @@ public class DeviceOperateService {
             deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
             if (null != deviceCustomerRelationPo) {
                 Integer customerId = deviceCustomerRelationPo.getCustomerId();
-                deviceQueryVo.setOwner(customerMapper.selectById(customerId).getName());
+                deviceQueryVo.setCustomerId(customerId);
+                deviceQueryVo.setCustomerName(customerMapper.selectById(customerId).getName());
                 deviceQueryVo.setModelName(deviceModelMapper.selectByCustomerId(customerId).getName());
             }
             deviceQueryVo.setModelId(devicePo.getModelId());
@@ -171,9 +172,9 @@ public class DeviceOperateService {
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
-            if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
-                deviceQueryVo.setGroupId(deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
-                deviceQueryVo.setGroupName(deviceGroupMapper.selectByDeviceId(devicePo.getId()).getName());
+            if (null != this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
+                deviceQueryVo.setGroupId(this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
+                deviceQueryVo.setGroupName(this.deviceGroupMapper.selectByDeviceId(devicePo.getId()).getName());
             } else {
                 deviceQueryVo.setGroupId(-1);
                 deviceQueryVo.setGroupName("无集群");
@@ -181,7 +182,12 @@ public class DeviceOperateService {
             deviceQueryVo.setId(devicePo.getId());
             deviceQueryVo.setCreateTime(devicePo.getCreateTime());
             deviceQueryVo.setLastUpdateTime(devicePo.getLastUpdateTime());
-            deviceQueryVo.setBindCustomer("测试用户1");
+            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+            if(null != deviceCustomerUserRelationPo) {
+                CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(deviceCustomerUserRelationPo.getOpenId());
+                deviceQueryVo.setUserOpenId(customerUserPo.getOpenId());
+                deviceQueryVo.setUserName(customerUserPo.getNickname());
+            }
             deviceQueryVo.setLocation(devicePo.getLocation());
             return deviceQueryVo;
         }).collect(Collectors.toList());

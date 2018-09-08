@@ -20,7 +20,7 @@ public interface DeviceCustomerUserRelationMapper extends BaseMapper<DeviceCusto
 
     Integer updateBatch(List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList);
 
-    List<DeviceCustomerUserRelationPo> selectByDeviceId(Integer deviceId);
+    DeviceCustomerUserRelationPo selectByDeviceId(Integer deviceId);
 
     List<DeviceCustomerUserRelationPo> selectByOpenId(String openId);
 

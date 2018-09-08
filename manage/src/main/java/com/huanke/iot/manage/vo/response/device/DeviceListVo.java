@@ -13,10 +13,13 @@ public class DeviceListVo {
      * mac地址
      */
     private String mac;
+
+    private Integer customerId;
+
     /**
      * 归属
      */
-    private String owner;
+    private String customerName;
 
     private Integer typeId;
     private String deviceType;
@@ -58,7 +61,9 @@ public class DeviceListVo {
 
     private Long lastUpdateTime;
 
-    private String bindCustomer;
+    private String userOpenId;
+
+    private String userName;
 
     private String location;
 
