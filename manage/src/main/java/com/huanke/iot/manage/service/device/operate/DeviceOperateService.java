@@ -427,18 +427,17 @@ public class DeviceOperateService {
 
 //
                     //更新 设备的绑定状态 为 未绑定
-                    DevicePo unbindDevice = new DevicePo();
-                    unbindDevice.setId(deviceId);
-                    unbindDevice.setBindStatus(DeviceConstant.BIND_STATUS_NO);
-                    unbindDevice.setBindTime(null);
-                    unbindDevice.setLastUpdateTime(System.currentTimeMillis());
+                    DevicePo unbindDevicePo = new DevicePo();
+                    unbindDevicePo.setId(deviceId);
+                    unbindDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+                    unbindDevicePo.setBindTime(null);
+                    unbindDevicePo.setLastUpdateTime(System.currentTimeMillis());
 
-                    deviceMapper.updateById(unbindDevice);
+                    deviceMapper.updateById(unbindDevicePo);
 
                 });
             }
 //            deviceMapper.updateBindStatus(deviceVos);
-
 
             return new ApiResponse<>(RetCode.OK, "解绑成功");
         } catch (Exception e) {
@@ -448,6 +447,71 @@ public class DeviceOperateService {
 
     }
 
+    /**
+     * 设备禁用
+     *
+     * @return
+     */
+    public ApiResponse<Boolean> updateDeivceDisble(DeviceUnbindRequest unbindRequest) {//设备禁用 todo
+
+        try {
+            List<DeviceUnbindRequest.deviceVo> deviceVos = unbindRequest.deviceVos;
+            if (deviceVos != null && deviceVos.size() > 0) {
+                deviceVos.stream().forEach(deviceVo -> {
+                    Integer deviceId = deviceVo.deviceId;
+                    String mac = deviceVo.mac;
+//                    DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
+
+                    //更新 设备的启用状态 为 禁用
+                    DevicePo updateDevicePo = new DevicePo();
+                    updateDevicePo.setId(deviceId);
+                    updateDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
+                    updateDevicePo.setLastUpdateTime(System.currentTimeMillis());
+
+                    deviceMapper.updateById(updateDevicePo);
+
+                });
+            }
+            return new ApiResponse<>(RetCode.OK, "禁用成功");
+        } catch (Exception e) {
+            log.error("设备禁用失败-{}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备禁用失败");
+        }
+
+    }
+
+    /**
+     * 设备启用
+     *
+     * @return
+     */
+    public ApiResponse<Boolean> updateDeivceEnable(DeviceUnbindRequest unbindRequest) {//设备启用 todo
+
+        try {
+            List<DeviceUnbindRequest.deviceVo> deviceVos = unbindRequest.deviceVos;
+            if (deviceVos != null && deviceVos.size() > 0) {
+                deviceVos.stream().forEach(deviceVo -> {
+                    Integer deviceId = deviceVo.deviceId;
+                    String mac = deviceVo.mac;
+//                    DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
+
+                    //更新 设备的启用状态 启用
+                    DevicePo updateDevicePo = new DevicePo();
+                    updateDevicePo.setId(deviceId);
+                    updateDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_YES);
+                    updateDevicePo.setLastUpdateTime(System.currentTimeMillis());
+
+                    deviceMapper.updateById(updateDevicePo);
+
+                });
+            }
+            return new ApiResponse<>(RetCode.OK, "启用成功");
+        } catch (Exception e) {
+            log.error("设备启用失败-{}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备启用失败");
+        }
+
+    }
 
     public List<CustomerUserPo> queryUser(Integer customerId) {
         List<CustomerUserPo> customerUserPoList = this.customerUserMapper.selectByCustomerId(customerId);
