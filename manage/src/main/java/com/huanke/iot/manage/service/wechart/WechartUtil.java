@@ -28,8 +28,8 @@ public class WechartUtil {
     private StringRedisTemplate stringRedisTemplate;
 
 
-    public String getAccessToken(String appId,String appSecret,String publicId,boolean getFromSever) {
-        String accessTokenKey = ACCESSS_TOKEN_PREIX+publicId;
+    public String getAccessToken(String appId,String appSecret,String customerId,boolean getFromSever) {
+        String accessTokenKey = ACCESSS_TOKEN_PREIX+customerId;
         boolean needFromServer = getFromSever;
         if (!needFromServer) {
             String storeAccessToken = stringRedisTemplate.opsForValue().get(accessTokenKey);
@@ -65,7 +65,7 @@ public class WechartUtil {
         }
         return "";
     }
-    public JSONObject obtainAuthAccessToken(String appId,String appSecret,String publicId,String code){
+    public JSONObject obtainAuthAccessToken(String appId,String appSecret,String customerId,String code){
         String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+appSecret+"&code="+code+"&grant_type=authorization_code";
         log.info("obtainAuthAccessToken url = {}",url);
         try {
@@ -93,20 +93,20 @@ public class WechartUtil {
         return null;
     }
 
-    public  String getJsApi(String appId,String appSecret,String publicId){
-        String jsapiKey = JSAPI_PREIX+publicId;
-        String ticketKey  = TICKET_PREFIX + publicId;
+    public  String getJsApi(String appId,String appSecret,String customerId){
+        String jsapiKey = JSAPI_PREIX+customerId;
+        String ticketKey  = TICKET_PREFIX + customerId;
         String jsapi  = stringRedisTemplate.opsForValue().get(jsapiKey);
         if(StringUtils.isNotEmpty(jsapi)){
             return jsapi;
         }
-        String apiResult = obtainRemoteJsapi(appId,appSecret,publicId);
+        String apiResult = obtainRemoteJsapi(appId,appSecret,customerId);
         log.info("apiResult result = {}", apiResult);
         JSONObject json = JSONObject.parseObject(apiResult);
         int errorCode = json.getInteger("errcode");
         if (errorCode == 42001) {
-            getAccessToken(appId,appSecret,publicId,true);
-            apiResult = obtainRemoteTicket(appId,appSecret,publicId);
+            getAccessToken(appId,appSecret,customerId,true);
+            apiResult = obtainRemoteTicket(appId,appSecret,customerId);
             json = JSONObject.parseObject(apiResult);
         }
         if (json.containsKey("ticket")) {
@@ -121,9 +121,9 @@ public class WechartUtil {
         return "";
     }
 
-    private String obtainRemoteJsapi(String appId,String appSecret,String publicId) {
+    private String obtainRemoteJsapi(String appId,String appSecret,String customerId) {
         String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" +
-                getAccessToken(appId,appSecret,publicId,false) + "&type=jsapi";
+                getAccessToken(appId,appSecret,customerId,false) + "&type=jsapi";
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
@@ -198,8 +198,8 @@ public class WechartUtil {
         }
     }
 
-    private String obtainRemoteTicket(String appId,String appSecret,String publicId) {
-        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + getAccessToken(appId,appSecret,publicId,false) + "&type=wx_card";
+    private String obtainRemoteTicket(String appId,String appSecret,String customerId) {
+        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + getAccessToken(appId,appSecret,customerId,false) + "&type=wx_card";
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));

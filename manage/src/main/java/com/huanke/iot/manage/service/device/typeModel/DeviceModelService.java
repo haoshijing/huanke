@@ -193,9 +193,12 @@ public class DeviceModelService {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "客户公众号信息不存在");
             }
 
-            ret = deviceOperateService.createWxDeviceIdPools(customerId, productId, addCount);
+            DeviceModelPo queryDeviceModel = deviceModelMapper.selectByProductId(productId);
+            if(null==queryDeviceModel){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "产品主键不存在");
+            }
+            return  deviceOperateService.createWxDeviceIdPools(customerId, productId, addCount);
 
-            return new ApiResponse<>(ret);
         } catch (Exception e) {
             ret = false;
             log.error("createWxDeviceIdPools.error = {}", e);
