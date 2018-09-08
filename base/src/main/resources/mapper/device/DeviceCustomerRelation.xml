@@ -64,12 +64,12 @@
         limit 1
     </select>
 
-    <select id="selectByWxDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
+    <select id="selectByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerRelationPo">
         select
         *
         FROM
         <include refid="tableName"/>
-        WHERE id = #{id} limit 1
+        WHERE customerId = #{customerId}
     </select>
 
     <delete id="deleteDeviceById" parameterType="java.lang.Integer">

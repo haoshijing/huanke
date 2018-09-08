@@ -192,7 +192,6 @@
             1 = 1
             <if test="param.mac != null and param.mac != ''">
                 AND mac = #{param.mac}
-
             </if>
             <if test="param.saNo != null and param.saNo != ''">
                 AND saNo = #{param.saNo}
@@ -304,7 +303,6 @@
         </set>
         where
         1= 1
-        <if test="id != null"> and id = #{id}</if>
         <if test="wxDeviceId != null and wxDeviceId != ''"> and wxDeviceId = #{wxDeviceId}</if>
     </update>
 

@@ -7,6 +7,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.manage.service.device.team.DeviceTeamService;
+import com.huanke.iot.manage.vo.request.device.operate.QueryInfoByCustomerRequest;
 import com.huanke.iot.manage.vo.request.device.team.*;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import io.swagger.annotations.ApiOperation;
@@ -33,11 +34,11 @@ public class DeviceTeamController {
         if (!isCustomerExist){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamCreateOrUpdateRequest.getCreateUserOpenId()+" 不存在");
         }
-        //接着判断当前设备列表中的customer归属和当前的用户所在的customer是否一致
-        DevicePo deviceStatus=this.deviceTeamService.queryDeviceStatus(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),teamCreateOrUpdateRequest.getCreateUserOpenId());
-        if(null != deviceStatus){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设备列表中mac地址 "+deviceStatus.getMac()+" 尚未分配，请联系管理员");
-        }
+//        //接着判断当前设备列表中的customer归属和当前的用户所在的customer是否一致
+//        DevicePo deviceStatus=this.deviceTeamService.queryDeviceStatus(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),teamCreateOrUpdateRequest.getCreateUserOpenId());
+//        if(null != deviceStatus){
+//            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设备列表中mac地址 "+deviceStatus.getMac()+" 尚未分配，请联系管理员");
+//        }
         //若设备列表中无设备则仅创建新组，不添加设备
         if(null == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()){
             return new ApiResponse<>(this.deviceTeamService.createTeam(teamCreateOrUpdateRequest).getId());
@@ -109,6 +110,18 @@ public class DeviceTeamController {
         }
         catch (Exception e){
             return new ApiResponse<>(RetCode.ERROR,"二维码生成错误");
+        }
+    }
+
+    @ApiOperation("查询当前客户下的可绑定设备信息")
+    @RequestMapping(value = "/queryDeviceInfo",method = RequestMethod.POST)
+    public ApiResponse<List<DevicePo>> queryDeviceInfo(@RequestBody  QueryInfoByCustomerRequest queryInfoByCustomerRequest){
+        List<DevicePo> devicePoList=this.deviceTeamService.queryDevicesByCustomer(queryInfoByCustomerRequest);
+        if(0 == devicePoList.size()){
+            return new ApiResponse<>(RetCode.OK,"当前客户下无可用设备",null);
+        }
+        else {
+            return new ApiResponse<>(RetCode.OK,"查询成功",devicePoList);
         }
     }
 }

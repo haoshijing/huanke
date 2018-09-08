@@ -15,6 +15,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamScenePo;
 import com.huanke.iot.manage.common.util.QRCodeUtil;
+import com.huanke.iot.manage.vo.request.device.operate.QueryInfoByCustomerRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamDeviceCreateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
@@ -52,6 +53,9 @@ public class DeviceTeamService {
 
     @Autowired
     private DeviceCustomerRelationMapper deviceCustomerRelationMapper;
+
+    @Autowired
+    private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
 
 
 
@@ -147,6 +151,7 @@ public class DeviceTeamService {
             deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
             devicePoList.add(devicePo);
             deviceTeamItemPoList.add(deviceTeamItemPo);
+            deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
         }
         //如果当前组中存在联动设备，则设定组为联动组
         if(deviceLinkAge){
@@ -161,6 +166,7 @@ public class DeviceTeamService {
         deviceTeamMapper.updateById(deviceTeamPo);
         //进行设备名称的批量更新
         this.deviceMapper.updateBatch(devicePoList);
+        this.deviceCustomerUserRelationMapper.insertBatch(deviceCustomerUserRelationPoList);
         //进行设备的批量绑定
         Boolean ret=this.deviceTeamItemMapper.insertBatch(deviceTeamItemPoList)>0;
         if(ret){
@@ -238,14 +244,26 @@ public class DeviceTeamService {
      */
     public CustomerUserPo trusteeTeam(TeamTrusteeRequest teamTrusteeRequest){
         DeviceTeamPo deviceTeamPo=this.deviceTeamMapper.selectById(teamTrusteeRequest.getId());
+        //根据masterUserId查询现持有者
+        CustomerUserPo currentOwner=this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
         CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(teamTrusteeRequest.getOpenId());
         deviceTeamPo.setMasterUserId(customerUserPo.getId());
         //设置的组状态为托管组
         deviceTeamPo.setTeamStatus(DeviceTeamConstants.DEVICE_TEAM_STATUS_TRUSTEE);
-
+        //变更当前设备和用户的绑定关系表，将组托管给另一个用户后同时需要改变设备与用户的绑定关系
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList=this.deviceCustomerUserRelationMapper.selectByOpenId(currentOwner.getOpenId());
+        List<DeviceCustomerUserRelationPo> updatePos=new ArrayList<>();
+        if(0 !=deviceCustomerUserRelationPoList.size()){
+            deviceCustomerUserRelationPoList.stream().forEach(deviceCustomerUserRelationPo -> {
+                deviceCustomerUserRelationPo.setOpenId(teamTrusteeRequest.getOpenId());
+                deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
+                updatePos.add(deviceCustomerUserRelationPo);
+            });
+        }
         if(teamTrusteeRequest.getDeleteCreator()){
             deviceTeamPo.setCreateUserId(null);
         }
+        this.deviceCustomerUserRelationMapper.updateBatch(updatePos);
         Boolean ret=this.deviceTeamMapper.updateById(deviceTeamPo)>0;
         if(ret){
             //成功返回被托管用户的相关信息
@@ -324,8 +342,22 @@ public class DeviceTeamService {
         }
     }
 
-    public List<DevicePo> queryDevicesByUser (){
-        return null;
+    public List<DevicePo> queryDevicesByCustomer(QueryInfoByCustomerRequest queryInfoByCustomerRequest){
+        List<DeviceCustomerRelationPo> deviceCustomerRelationPoList=this.deviceCustomerRelationMapper.selectByCustomerId(queryInfoByCustomerRequest.getCustomerId());
+        List<DevicePo> devicePoList=new ArrayList<>();
+        if(null !=deviceCustomerRelationPoList){
+            deviceCustomerRelationPoList.stream().forEach(deviceCustomerRelation->{
+                //首先查询当前设备有没有被绑定
+                if(null == this.deviceCustomerUserRelationMapper.selectByDeviceId(deviceCustomerRelation.getDeviceId())){
+                    DevicePo devicePo=this.deviceMapper.selectById(deviceCustomerRelation.getDeviceId());
+                    devicePoList.add(devicePo);
+                }
+            });
+            return  devicePoList;
+        }
+        else {
+            return null;
+        }
     }
 
 

@@ -218,8 +218,8 @@ public class DeviceOperateController {
 
     @ApiOperation("查询当前客户下的用户列表")
     @RequestMapping(value = "/queryUsers",method = RequestMethod.POST)
-    public ApiResponse<List<CustomerUserPo>> queryUsers(@RequestBody QueryUsersRequest queryUsersRequest){
-        List<CustomerUserPo> customerUserPoList=this.deviceService.queryUser(queryUsersRequest.getCustomerId());
+    public ApiResponse<List<CustomerUserPo>> queryUsers(@RequestBody QueryInfoByCustomerRequest queryInfoByCustomerRequest){
+        List<CustomerUserPo> customerUserPoList=this.deviceService.queryUser(queryInfoByCustomerRequest.getCustomerId());
         if(0 != customerUserPoList.size()){
             return new ApiResponse<>(RetCode.OK,"查询成功",customerUserPoList);
         }

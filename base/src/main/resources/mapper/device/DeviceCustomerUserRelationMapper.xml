@@ -71,6 +71,23 @@
         AND deviceId = #{deviceId}
     </select>
 
+    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        limit 1
+    </select>
+
+    <select id="selectByOpenId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE openId = #{openId}
+    </select>
+
     <delete id="deleteRelationByJoinId">
         delete from <include refid="tableName"/>
         WHERE openId = #{openId}
@@ -117,6 +134,25 @@
         set status = #{status} , lastUpdateTime = #{lastUpdateTime}
         WHERE openId = #{openId} and deviceId = #{deviceId}
     </select>
+
+    <!--批量更新-->
+    <update id="updateBatch" parameterType="java.util.List">
+        update
+        <include refid="tableName"/>
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="openId =case" suffix="end,">
+                <foreach collection="list" item="deviceCustomerUser" index="index">
+                    <if test="deviceCustomerUser.openId !=null">
+                        when id=#{deviceCustomerUser.id} then #{deviceCustomerUser.openId}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
 
     <select id="queryRelationCount" parameterType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo" resultType="java.lang.Integer">
         select count(1) FROM
