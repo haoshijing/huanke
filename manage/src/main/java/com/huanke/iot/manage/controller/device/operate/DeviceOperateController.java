@@ -228,6 +228,17 @@ public class DeviceOperateController {
 
     }
 
+    @ApiOperation("解绑")
+    @RequestMapping(value = "/untieDeviceToUser",method = RequestMethod.POST)
+    public ApiResponse<Boolean> untieDeviceToUser(@RequestBody DeviceUnbindRequest deviceUnbindRequest){
+        if(deviceUnbindRequest!=null&&deviceUnbindRequest.deviceVos!=null&&deviceUnbindRequest.deviceVos.size()>0){
+
+            return deviceService.untieDeviceToUser(deviceUnbindRequest);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"解绑设备列表不可为空");
+
+        }
+    }
 
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){

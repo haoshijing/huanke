@@ -20,11 +20,14 @@ public interface DeviceCustomerUserRelationMapper extends BaseMapper<DeviceCusto
 
     Integer updateBatch(List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList);
 
-    DeviceCustomerUserRelationPo selectByDeviceId(Integer deviceId);
+    List<DeviceCustomerUserRelationPo> selectByDeviceId(Integer deviceId);
 
     List<DeviceCustomerUserRelationPo> selectByOpenId(String openId);
 
     void updateStatus(DeviceCustomerUserRelationPo updatePo);
 
     Integer queryRelationCount(DeviceCustomerUserRelationPo deviceCustomerUserRelationPo);
+
+    int deleteRealationByDeviceId(Integer iDeviceId);
+
 }

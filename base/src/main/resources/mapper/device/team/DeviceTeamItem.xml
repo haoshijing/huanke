@@ -32,7 +32,7 @@
     </insert>
 
     <!-- 批量插入数条记录 -->
-    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -58,7 +58,8 @@
         </foreach>
     </insert>
 
-    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+    <select id="selectByDeviceId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
         *
         FROM
@@ -66,7 +67,17 @@
         WHERE deviceId = #{deviceId}
     </select>
 
-    <select id="selectByUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+    <select id="selectItemsByDeviceId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
         *
         FROM
@@ -74,7 +85,8 @@
         WHERE userId = #{userId}
     </select>
 
-    <select id="selectByUserOpenId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+    <select id="selectByUserOpenId" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
         t_device_team_item.*
         FROM
@@ -85,7 +97,8 @@
         t_device_team_item.userId = t_customer_user.id
     </select>
 
-    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+    <select id="selectByTeamId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
         *
         FROM
@@ -110,9 +123,16 @@
     </select>
 
     <update id="updateStatus">
-        update <include refid="tableName"/>
+        update
+        <include refid="tableName"/>
         set status = #{status}
         where userId = #{userId}
         and deviceId = #{deviceId}
     </update>
+
+    <delete id="deleteItemsByDeviceId">
+        delete from
+        <include refid="tableName"/>
+        where deviceId = #{deviceId}
+    </delete>
 </mapper>

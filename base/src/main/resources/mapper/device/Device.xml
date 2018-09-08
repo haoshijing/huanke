@@ -78,7 +78,7 @@
     </insert>
 
     <!-- 批量插入数条记录 -->
-    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -165,7 +165,8 @@
         <include refid="tableName"/>
         WHERE mac = #{mac} limit 1
     </select>
-    <select id="selectDeviceCustomerRelationByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectDeviceCustomerRelationByMac" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         t_device.*
         FROM
@@ -226,7 +227,8 @@
         </where>
     </select>
 
-    <select id="selectByWxDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectByWxDeviceId" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
         FROM
@@ -303,7 +305,78 @@
         </set>
         where
         1= 1
-        <if test="wxDeviceId != null and wxDeviceId != ''"> and wxDeviceId = #{wxDeviceId}</if>
+        <if test="wxDeviceId != null and wxDeviceId != ''">and wxDeviceId = #{wxDeviceId}</if>
+    </update>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
+
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="name != null  and name!='' ">
+                name = #{name},
+            </if>
+            <if test="wxDeviceId != null and wxDeviceId!='' ">
+                wxDeviceId = #{wxDeviceId},
+            </if>
+            <if test="wxDevicelicence != null and wxDevicelicence!='' ">
+                wxDevicelicence = #{wxDevicelicence},
+            </if>
+            <if test="wxQrticket != null and wxQrticket!='' ">
+                wxQrticket = #{wxQrticket},
+            </if>
+            <if test="imei != null and imei != '' ">
+                imei = #{imei},
+            </if>
+            <if test="imsi != null and imsi != ''">
+                imsi = #{imsi},
+            </if>
+            <if test="saNo != null and saNo != '' ">
+                saNo = #{saNo},
+            </if>
+            <if test="typeId != null">
+                typeId = #{typeId},
+            </if>
+            <if test="modelId != null">
+                modelId = #{modelId},
+            </if>
+            <if test="productId != null and productId!='' ">
+                productId = #{productId},
+            </if>
+            <if test="onlineStatus != null">
+                onlineStatus = #{onlineStatus},
+            </if>
+            <if test="bindStatus != null">
+                bindStatus = #{bindStatus},
+            </if>
+            <if test="bindTime != null">
+                bindTime = #{bindTime},
+            </if>
+            <if test="enableStatus != null">
+                enableStatus = #{enableStatus},
+            </if>
+            <if test="workStatus != null">
+                workStatus = #{workStatus},
+            </if>
+            <if test="ip != null and ip != '' ">
+                ip = #{ip},
+            </if>
+            <if test="speedConfig != null">
+                speedConfig = #{speedConfig},
+            </if>
+            <if test="version != null and version != '' ">
+                version = #{version},
+            </if>
+            <if test="location != null and location != '' ">
+                location = #{location},
+            </if>
+            <if test="lastUpdateTime != null">
+                lastUpdateTime = #{lastUpdateTime},
+            </if>
+        </set>
+        where
+        1= 1
+        id = #{id}
     </update>
 
     <!--批量更新-->
@@ -388,8 +461,24 @@
         deviceId = #{deviceId}
     </update>
 
+    <update id="updateBindStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
+        update
+        <include refid="tableName"/>
+        <set>
+            bindStatus = #{bindStatus}
+            bindTime = #{bindTime}
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        WHERE id  = #{id}
+        <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    </update>
+
     <update id="updateOnlyDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
-        update  <include refid="tableName"/>  set wxDeviceId = #{wxDeviceId} where id = #{id}
+        update
+        <include refid="tableName"/>
+        set wxDeviceId = #{wxDeviceId} where id = #{id}
     </update>
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
@@ -406,7 +495,7 @@
     </delete>
 
     <!--批量删除-->
-    <delete id="deleteDeviceBatch" parameterType = "java.util.List">
+    <delete id="deleteDeviceBatch" parameterType="java.util.List">
         delete from
         <include refid="tableName"/>
         where id in

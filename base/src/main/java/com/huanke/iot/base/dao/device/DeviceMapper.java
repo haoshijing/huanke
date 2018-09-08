@@ -33,6 +33,8 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     Integer updateBatch(List<DevicePo> devicePoList);
 
+    Integer updateBindStatus(DevicePo devicePo);
+
     Integer deleteDeviceBatch(List<DevicePo> devicePoList);
 
     Integer getCustomerId(DevicePo devicePo);
