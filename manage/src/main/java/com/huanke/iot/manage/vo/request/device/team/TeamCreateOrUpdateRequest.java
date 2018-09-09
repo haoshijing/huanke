@@ -6,12 +6,19 @@ import java.util.List;
 
 @Data
 public class TeamCreateOrUpdateRequest {
+
+    private Integer id;
     //组名
     private String name;
+
+    private String teamIcon;
+
+    private String remark;
+
     //创建人的微信名称
     private String createUserOpenId;
+
     //组缩略图
-    private String teamIcon;
     //安卓场景的介绍封面
     private String teamCover;
 

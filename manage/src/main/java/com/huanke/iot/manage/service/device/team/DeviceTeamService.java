@@ -22,6 +22,7 @@ import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,6 +103,47 @@ public class DeviceTeamService {
             this.deviceTeamSceneMapper.insertBatch(deviceTeamScenePoList);
         }
         Boolean ret=this.deviceTeamMapper.insert(deviceTeamPo)>0;
+        if(ret){
+            return deviceTeamPo;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * 更新设备组 （只能更新组 基础信息 与设备，不能更改所有人）
+     * @param teamCreateOrUpdateRequest
+     * @return
+     */
+    public DeviceTeamPo updateTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
+        List<DeviceTeamScenePo> deviceTeamScenePoList = new ArrayList<>();
+
+        DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(teamCreateOrUpdateRequest.getId());
+        if(deviceTeamPo!=null){
+
+            deviceTeamPo.setName(teamCreateOrUpdateRequest.getName());
+            deviceTeamPo.setIcon(teamCreateOrUpdateRequest.getTeamIcon());
+            deviceTeamPo.setVideoCover(teamCreateOrUpdateRequest.getTeamCover());
+            deviceTeamPo.setSceneDescription(teamCreateOrUpdateRequest.getSceneDescription());
+            deviceTeamPo.setRemark(teamCreateOrUpdateRequest.getRemark());
+        }
+        deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
+        //向team表中插入相关数据
+
+        if(0 != teamCreateOrUpdateRequest.getImgOrVideoList().size()){
+            teamCreateOrUpdateRequest.getImgOrVideoList().stream().forEach(imgVideo -> {
+                DeviceTeamScenePo deviceTeamScenePo = new DeviceTeamScenePo();
+                deviceTeamScenePo.setTeamId(deviceTeamPo.getId());
+                deviceTeamScenePo.setImgVideo(imgVideo.getImgVideo());
+                deviceTeamScenePo.setCreateTime(System.currentTimeMillis());
+                deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
+                deviceTeamScenePoList.add(deviceTeamScenePo);
+            });
+            //进行场景图册和视频册的批量更新
+            this.deviceTeamSceneMapper.insertBatch(deviceTeamScenePoList);
+        }
+        Boolean ret=this.deviceTeamMapper.updateById(deviceTeamPo)>0;
         if(ret){
             return deviceTeamPo;
         }

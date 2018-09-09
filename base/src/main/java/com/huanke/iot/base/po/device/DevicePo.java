@@ -63,7 +63,7 @@ public class DevicePo {
     private String ip;
     private String speedConfig;
     private String version;
-    private int status;
+    private Integer status;
     private String hardVersion;
     private String communicationVersion;
     private String softVersion;

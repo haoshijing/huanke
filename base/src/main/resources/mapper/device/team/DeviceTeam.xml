@@ -87,8 +87,23 @@
         update
         <include refid="tableName"/>
         <set>
-            <if test="name != null">
+            <if test="name != null and name !='' ">
                 name = #{name},
+            </if>
+            <if test="icon != null and icon !='' ">
+                icon = #{icon},
+            </if>
+            <if test="videoUrl != null and videoUrl !='' ">
+                videoUrl = #{videoUrl},
+            </if>
+            <if test="remark != null and remark !='' ">
+                remark = #{remark},
+            </if>
+            <if test="sceneDescription != null and sceneDescription !='' ">
+                sceneDescription = #{sceneDescription},
+            </if>
+            <if test="videoCover != null and videoCover !='' ">
+                videoCover = #{videoCover},
             </if>
             <if test="status != null">
                 status = #{status},
