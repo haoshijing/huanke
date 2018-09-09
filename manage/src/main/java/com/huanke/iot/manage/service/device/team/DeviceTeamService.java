@@ -1,8 +1,10 @@
 package com.huanke.iot.manage.service.device.team;
 
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.constant.DeviceTeamConstants;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.*;
@@ -21,6 +23,7 @@ import com.huanke.iot.manage.vo.request.device.team.TeamDeviceCreateRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
 import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,40 +119,72 @@ public class DeviceTeamService {
      * @param teamCreateOrUpdateRequest
      * @return
      */
-    public DeviceTeamPo updateTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
+    public ApiResponse<Boolean> updateTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
         List<DeviceTeamScenePo> deviceTeamScenePoList = new ArrayList<>();
 
-        DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(teamCreateOrUpdateRequest.getId());
-        if(deviceTeamPo!=null){
+        try {
+            DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(teamCreateOrUpdateRequest.getId());
+            if(deviceTeamPo!=null){
 
-            deviceTeamPo.setName(teamCreateOrUpdateRequest.getName());
-            deviceTeamPo.setIcon(teamCreateOrUpdateRequest.getTeamIcon());
-            deviceTeamPo.setVideoCover(teamCreateOrUpdateRequest.getTeamCover());
-            deviceTeamPo.setSceneDescription(teamCreateOrUpdateRequest.getSceneDescription());
-            deviceTeamPo.setRemark(teamCreateOrUpdateRequest.getRemark());
-        }
-        deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
-        //向team表中插入相关数据
+                deviceTeamPo.setName(teamCreateOrUpdateRequest.getName());
+                deviceTeamPo.setIcon(teamCreateOrUpdateRequest.getTeamIcon());
+                deviceTeamPo.setVideoCover(teamCreateOrUpdateRequest.getTeamCover());
+                deviceTeamPo.setSceneDescription(teamCreateOrUpdateRequest.getSceneDescription());
+                deviceTeamPo.setRemark(teamCreateOrUpdateRequest.getRemark());
+            }
+            deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
+            //向team表中插入相关数据
+            Boolean ret = this.deviceTeamMapper.updateById(deviceTeamPo)>0;
 
-        if(0 != teamCreateOrUpdateRequest.getImgOrVideoList().size()){
-            teamCreateOrUpdateRequest.getImgOrVideoList().stream().forEach(imgVideo -> {
-                DeviceTeamScenePo deviceTeamScenePo = new DeviceTeamScenePo();
-                deviceTeamScenePo.setTeamId(deviceTeamPo.getId());
-                deviceTeamScenePo.setImgVideo(imgVideo.getImgVideo());
-                deviceTeamScenePo.setCreateTime(System.currentTimeMillis());
-                deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
-                deviceTeamScenePoList.add(deviceTeamScenePo);
-            });
-            //进行场景图册和视频册的批量更新
-            this.deviceTeamSceneMapper.insertBatch(deviceTeamScenePoList);
+            //删除组的场景表 并重新插入
+            deviceTeamSceneMapper.deleteByTeamId(deviceTeamPo.getId());
+
+            if(teamCreateOrUpdateRequest.getImgOrVideoList()!=null&&teamCreateOrUpdateRequest.getImgOrVideoList().size()>0){
+                teamCreateOrUpdateRequest.getImgOrVideoList().stream().forEach(imgVideo -> {
+                    DeviceTeamScenePo deviceTeamScenePo = new DeviceTeamScenePo();
+                    deviceTeamScenePo.setTeamId(deviceTeamPo.getId());
+                    deviceTeamScenePo.setImgVideo(imgVideo.getImgVideo());
+                    deviceTeamScenePo.setCreateTime(System.currentTimeMillis());
+                    deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
+                    deviceTeamScenePoList.add(deviceTeamScenePo);
+                });
+                //进行场景图册和视频册的批量更新
+                this.deviceTeamSceneMapper.insertBatch(deviceTeamScenePoList);
+            }
+
+
+            //若设备列表中无设备则仅创建新组，不添加设备
+//            if(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()!=null&&teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList().size()>0){
+//
+//                //首先查询设备列表中是否已有设备在其他组中
+//                DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
+//                if(null != devicePo){
+//                    return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在");
+//                }
+//                DeviceTeamPo deviceTeamPo=this.deviceTeamService.queryTeamByName(teamCreateOrUpdateRequest.getName());
+//                //若已存在该组名，则直接添加设备
+//                if(null != deviceTeamPo){
+//                    //向组中添加设备
+//                    this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),deviceTeamPo);
+//                    //添加成功后返回teamId
+//                    return new ApiResponse<>(RetCode.OK,"添加成功",deviceTeamPo.getId());
+//                }
+//                else {
+//                    //首先创建组
+//                    DeviceTeamPo resultPo=this.deviceTeamService.createTeam(teamCreateOrUpdateRequest);
+//                    //向组中添加设备
+//                    this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),resultPo);
+//                    //添加成功后返回teamId
+//                    return new ApiResponse<>(RetCode.OK,"添加成功",resultPo.getId());
+//                }            }
+
+            return  new ApiResponse<>(RetCode.OK,"更新设备组成功");
+        }catch (Exception e){
+            log.error("更新设备组-{}", e);
+            return new ApiResponse<>(RetCode.ERROR, "更新设备组");
         }
-        Boolean ret=this.deviceTeamMapper.updateById(deviceTeamPo)>0;
-        if(ret){
-            return deviceTeamPo;
-        }
-        else {
-            return null;
-        }
+
+
     }
 
     /**

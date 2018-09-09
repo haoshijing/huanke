@@ -352,7 +352,6 @@ public class DeviceOperateService {
                 ApiResponse<Boolean> result = createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(), deviceAssignToCustomerRequest.getProductId(), addCount);
                 if (result == null || RetCode.PARAM_ERROR == result.getCode()) {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg(), false);
-                } else {
                 }
             }
 
@@ -373,23 +372,27 @@ public class DeviceOperateService {
                 DeviceIdPoolPo queryPoolPo = new DeviceIdPoolPo();
                 queryPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
                 //每次查找当前池中未使用第一条license
-                DeviceIdPoolPo resultPo = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset).get(0);
-                //记录本次使用的pool状态为已占用
-                resultPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_YES);
-                deviceIdPoolPoList.add(resultPo);
-                offset++;
-                //在设备表中更新deviceModelId字段，将设备与设备型号表关联
-                DevicePo devicePo = new DevicePo();
-                devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
-                devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
-                devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
-                devicePo.setWxDeviceId(resultPo.getWxDeviceId());
-                devicePo.setWxDevicelicence(resultPo.getWxDeviceLicence());
-                devicePo.setWxQrticket(resultPo.getWxQrticket());
-                //刷新最新更新时间
-                devicePo.setLastUpdateTime(System.currentTimeMillis());
-                //记录本次需要更新的设备
-                devicePoList.add(devicePo);
+                List<DeviceIdPoolPo> poolPoList = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset);
+                if(poolPoList!=null&&poolPoList.size()>0) {
+                    DeviceIdPoolPo resultPo = poolPoList.get(0);
+
+                    //记录本次使用的pool状态为已占用
+                    resultPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_YES);
+                    deviceIdPoolPoList.add(resultPo);
+                    offset++;
+                    //在设备表中更新deviceModelId字段，将设备与设备型号表关联
+                    DevicePo devicePo = new DevicePo();
+                    devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
+                    devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
+                    devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
+                    devicePo.setWxDeviceId(resultPo.getWxDeviceId());
+                    devicePo.setWxDevicelicence(resultPo.getWxDeviceLicence());
+                    devicePo.setWxQrticket(resultPo.getWxQrticket());
+                    //刷新最新更新时间
+                    devicePo.setLastUpdateTime(System.currentTimeMillis());
+                    //记录本次需要更新的设备
+                    devicePoList.add(devicePo);
+                }
             }
             //device_customer_relation表中进行批量插入
             this.deviceCustomerRelationMapper.insertBatch(deviceCustomerRelationPoList);
