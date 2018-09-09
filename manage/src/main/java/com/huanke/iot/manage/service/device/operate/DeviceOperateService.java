@@ -182,9 +182,9 @@ public class DeviceOperateService {
             deviceQueryVo.setId(devicePo.getId());
             deviceQueryVo.setCreateTime(devicePo.getCreateTime());
             deviceQueryVo.setLastUpdateTime(devicePo.getLastUpdateTime());
-            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
-            if(null != deviceCustomerUserRelationPo) {
-                CustomerUserPo customerUserPo=this.customerUserMapper.selectByOpenId(deviceCustomerUserRelationPo.getOpenId());
+            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+            if (null != deviceCustomerUserRelationPo) {
+                CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(deviceCustomerUserRelationPo.getOpenId());
                 deviceQueryVo.setUserOpenId(customerUserPo.getOpenId());
                 deviceQueryVo.setUserName(customerUserPo.getNickname());
             }
@@ -219,6 +219,65 @@ public class DeviceOperateService {
         });
         //返回本次删除的设备总数
         return deviceLists.size();
+    }
+
+
+    /**
+     * 删除设备及与设备相关的信息
+     * 删除设备需 先解除 绑定关系、组关系、群关系、解除客户分配关系（召回）、最后删除
+     * 2018-08-21
+     * sixiaojun
+     *
+     * @param deviceVo
+     * @return
+     */
+    public ApiResponse<Boolean> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) {
+
+        try {
+            Integer deviceId = deviceVo.deviceId;
+            String mac = deviceVo.mac;
+            //解除 用户绑定关系、组关系
+            ApiResponse<Boolean> result = untieOneDeviceToUser(deviceVo);
+            //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
+            if(RetCode.OK==result.getCode()){
+                //删除 该设备的群绑定关系
+                this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
+                //解除客户分配关系
+                deviceCustomerRelationMapper.deleteDeviceById(deviceId);
+
+                //更改 设备信息
+                DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
+                if(queryDevicePo!=null){
+
+                    // 删除该设备的 微信deviceid
+                    queryDevicePo.setWxDeviceId(null);
+                    queryDevicePo.setWxDevicelicence(null);
+                    queryDevicePo.setWxQrticket(null);
+
+                    //设定绑定状态为未绑定
+                    queryDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+                    //设定工作状态为空闲
+                    queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
+                    //设定在线状态为离线
+                    queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
+                    //设定启用状态为禁用
+                    queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
+
+                    queryDevicePo.setStatus(CommonConstant.STATUS_DEL);
+
+                    queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
+
+                    deviceMapper.updateById(queryDevicePo);
+                }
+
+            }else{
+                return result;
+            }
+            return new ApiResponse<>(RetCode.OK, "删除成功");
+        } catch (Exception e) {
+            log.error("设备删除失败-{}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备删除失败");
+        }
     }
 
     /**
@@ -392,9 +451,53 @@ public class DeviceOperateService {
         }
     }
 
+    /**
+     * 设备解绑(单个)
+     *
+     * @return
+     */
+    public ApiResponse<Boolean> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
+
+        try {
+            Integer deviceId = deviceVo.deviceId;
+            String mac = deviceVo.mac;
+            if(null==deviceId||deviceId<=0||StringUtils.isBlank(mac)){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "参数不可为空");
+            }
+
+            //查询该设备详情 进行验证
+            DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
+
+            if(null==queryDevicePo){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "当前设备不存在");
+            }else if(!mac.equals(queryDevicePo.getMac())){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
+            }
+            //删除 该设备的用户绑定关系
+            deviceCustomerUserRelationMapper.deleteRealationByDeviceId(deviceId);
+
+            //删除 该设备的 组关系
+            deviceTeamItemMapper.deleteItemsByDeviceId(deviceId);
+
+            //更新 设备的绑定状态 为 未绑定
+            DevicePo unbindDevicePo = new DevicePo();
+            unbindDevicePo.setId(deviceId);
+            unbindDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+            unbindDevicePo.setBindTime(null);
+            unbindDevicePo.setLastUpdateTime(System.currentTimeMillis());
+
+            deviceMapper.updateById(unbindDevicePo);
+
+            return new ApiResponse<>(RetCode.OK, "解绑成功");
+        } catch (Exception e) {
+            log.error("设备解绑失败-{}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备解绑失败");
+        }
+
+    }
 
     /**
-     * 设备解绑
+     * 设备解绑(批量)
      *
      * @return
      */
@@ -615,7 +718,7 @@ public class DeviceOperateService {
         Boolean ret = true;
         CustomerPo customerPo = customerMapper.selectById(customerId);
         //获取数据
-        if(customerPo!=null){
+        if (customerPo != null) {
             String appId = customerPo.getAppid();
             String appSecret = customerPo.getAppsecret();
             int correctCount = 0;
@@ -657,7 +760,7 @@ public class DeviceOperateService {
                     return new ApiResponse<>(RetCode.ERROR, "获取微信DeviceId失败");
                 }
 
-            }else{
+            } else {
                 return new ApiResponse<>(RetCode.ERROR, "客户不存在");
             }
         }

@@ -28,6 +28,6 @@ public interface DeviceCustomerUserRelationMapper extends BaseMapper<DeviceCusto
 
     Integer queryRelationCount(DeviceCustomerUserRelationPo deviceCustomerUserRelationPo);
 
-    int deleteRealationByDeviceId(Integer iDeviceId);
+    int deleteRealationByDeviceId(Integer deviceId);
 
 }

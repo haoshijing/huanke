@@ -18,13 +18,11 @@ import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.vo.response.device.DeviceListVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -145,6 +143,23 @@ public class DeviceOperateController {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"请先选中设备再删除");
         }
         return new ApiResponse<>(RetCode.OK,"删除成功",deviceService.deleteDevice(deviceList));
+    }
+
+    /**
+     * 删除设备
+     * sixiaojun
+     * 2018-08-20
+     * @param deviceVo
+     * @return
+     */
+    @ApiOperation("删除选中设备")
+    @DeleteMapping(value = "/deleteOneDevice")
+    public ApiResponse<Boolean> deleteOneDevice(@RequestBody DeviceUnbindRequest.deviceVo deviceVo){
+        if(null == deviceVo.deviceId||deviceVo.deviceId<=0|| StringUtils.isBlank(deviceVo.mac)){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数不可为空");
+        }
+
+        return deviceService.deleteOneDevice(deviceVo);
     }
 
     /**

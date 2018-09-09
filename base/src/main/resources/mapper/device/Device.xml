@@ -349,14 +349,14 @@
             <if test="bindStatus != null">
                 bindStatus = #{bindStatus},
             </if>
-            <if test="bindTime != null">
-                bindTime = #{bindTime},
-            </if>
             <if test="enableStatus != null">
                 enableStatus = #{enableStatus},
             </if>
             <if test="workStatus != null">
                 workStatus = #{workStatus},
+            </if>
+            <if test="status != null">
+                status = #{status},
             </if>
             <if test="ip != null and ip != '' ">
                 ip = #{ip},
@@ -370,6 +370,7 @@
             <if test="location != null and location != '' ">
                 location = #{location},
             </if>
+            bindTime = #{bindTime}
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime}
             </if>
