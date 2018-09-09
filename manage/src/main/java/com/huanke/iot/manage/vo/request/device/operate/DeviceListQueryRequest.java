@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.device.operate;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -9,12 +10,35 @@ import lombok.Data;
  **/
 @Data
 public class DeviceListQueryRequest {
+
+
     /**
-     * 分页
+     * 设备id
      */
-    private Integer page;
+    private String name;
+
     /**
-     * 每页显示数量
+     * 设备mac地址
      */
-    private Integer limit;
+    private String mac;
+    private String saNo;
+
+    //设备 类型、型号
+    private Integer typeId;
+    private Integer modelId;
+
+
+    //绑定状态
+    private Integer bindStatus;
+    //在线状态
+    private Integer onlineStatus;
+    //启用状态
+    private Integer enableStatus;
+    //工作状态 或 租赁状态
+    private Integer workStatus;
+
+    private int status = CommonConstant.STATUS_YES;
+
+    private Integer page = 1;
+    private Integer limit = 20;
 }

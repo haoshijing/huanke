@@ -140,14 +140,14 @@ public class DeviceOperateService {
      * @return list
      */
     public List<DeviceListVo> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) {
-        //当期要查询的页
-        Integer currentPage = deviceListQueryRequest.getPage();
-        //每页显示的数量
+
+        Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
-        //偏移量
-        Integer offset = (currentPage - 1) * limit;
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         DevicePo queryPo = new DevicePo();
+        if(deviceListQueryRequest!=null){
+            BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
+        }
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceCustomerRelationPo deviceCustomerRelationPo;
@@ -172,6 +172,7 @@ public class DeviceOperateService {
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
+            deviceQueryVo.setStatus(devicePo.getStatus());
             if (null != this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
                 deviceQueryVo.setGroupId(this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
                 deviceQueryVo.setGroupName(this.deviceGroupMapper.selectByDeviceId(devicePo.getId()).getName());
@@ -280,6 +281,49 @@ public class DeviceOperateService {
         }
     }
 
+    /**
+     * 设备恢复（单个）
+     * @param deviceVo
+     * @return
+     */
+    public ApiResponse<Boolean> recoverDevice(DeviceUnbindRequest.deviceVo deviceVo) {
+        try {
+
+            Integer deviceId = deviceVo.deviceId;
+            String mac = deviceVo.mac;
+            if(null==deviceId||deviceId<=0||StringUtils.isBlank(mac)){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "参数不可为空");
+            }
+
+            //查询该设备详情 进行验证
+            DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
+
+            if(null==queryDevicePo){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "当前设备不存在");
+            }else if(!mac.equals(queryDevicePo.getMac())){
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
+            }
+
+            //设定绑定状态为未绑定
+            queryDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+            //设定工作状态为空闲
+            queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
+            queryDevicePo.setStatus(CommonConstant.STATUS_YES);
+            //设定在线状态为离线
+            queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
+            //设定启用状态为禁用
+            queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
+            queryDevicePo.setCreateTime(System.currentTimeMillis());
+            queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
+
+            deviceMapper.updateById(queryDevicePo);
+            return new ApiResponse<>(RetCode.OK, "设备恢复成功");
+
+        }catch (Exception e){
+            log.error("设备恢复失败-{}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备恢复失败");
+        }
+    }
     /**
      * 将设备列表中的设备分配给设备型号，并与当前客户关联
      * 2018-08-21

@@ -67,5 +67,6 @@ public class DeviceListVo {
 
     private String location;
 
+    private Integer status;
 
 }

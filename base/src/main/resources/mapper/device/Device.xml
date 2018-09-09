@@ -190,7 +190,7 @@
         select * from
         <include refid="tableName"/>
         <where>
-            1 = 1
+            1=1
             <if test="param.mac != null and param.mac != ''">
                 AND mac = #{param.mac}
             </if>
@@ -202,6 +202,18 @@
             </if>
             <if test="param.onlineStatus != null">
                 AND onlineStatus = #{param.onlineStatus}
+            </if>
+            <if test="param.bindStatus != null">
+                AND bindStatus = #{param.bindStatus}
+            </if>
+            <if test="param.enableStatus != null">
+                AND enableStatus = #{param.enableStatus}
+            </if>
+            <if test="param.workStatus != null">
+                AND workStatus = #{param.workStatus}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
             </if>
         </where>
         limit #{offset},#{limit}
@@ -211,6 +223,7 @@
         select count(1) from
         <include refid="tableName"/>
         <where>
+            1=1
             <if test="param.mac != null and param.mac != ''">
                 AND mac = #{param.mac}
             </if>
@@ -222,6 +235,18 @@
             </if>
             <if test="param.onlineStatus != null">
                 AND onlineStatus = #{param.onlineStatus}
+            </if>
+            <if test="param.bindStatus != null">
+                AND bindStatus = #{param.bindStatus}
+            </if>
+            <if test="param.enableStatus != null">
+                AND enableStatus = #{param.enableStatus}
+            </if>
+            <if test="param.workStatus != null">
+                AND workStatus = #{param.workStatus}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
             </if>
 
         </where>
@@ -370,7 +395,7 @@
             <if test="location != null and location != '' ">
                 location = #{location},
             </if>
-            bindTime = #{bindTime}
+            bindTime = #{bindTime},
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime}
             </if>

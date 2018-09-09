@@ -89,3 +89,4 @@
             #{item.id,jdbcType=BIGINT}
         </foreach>
     </delete>
+</mapper>

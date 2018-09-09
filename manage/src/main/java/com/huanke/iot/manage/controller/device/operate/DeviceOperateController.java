@@ -161,6 +161,22 @@ public class DeviceOperateController {
 
         return deviceService.deleteOneDevice(deviceVo);
     }
+  /**
+     * 删除设备
+     * caik
+     * 2018-08-20
+     * @param deviceVo
+     * @return
+     */
+    @ApiOperation("恢复设备")
+    @PutMapping(value = "/recoverDevice")
+    public ApiResponse<Boolean> recoverDevice(@RequestBody DeviceUnbindRequest.deviceVo deviceVo){
+        if(null == deviceVo.deviceId||deviceVo.deviceId<=0|| StringUtils.isBlank(deviceVo.mac)){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数不可为空");
+        }
+
+        return deviceService.recoverDevice(deviceVo);
+    }
 
     /**
      * 将选中设备分配给客户
