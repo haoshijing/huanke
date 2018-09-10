@@ -139,7 +139,6 @@
         t_customer_user.openId = #{openId}
         AND
         t_device_team.masterUserId = t_customer_user.id
-        limit 1
     </select>
 
     <select id="selectTeamList" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamPo"

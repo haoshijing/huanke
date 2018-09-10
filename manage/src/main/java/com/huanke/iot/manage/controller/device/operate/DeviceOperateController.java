@@ -70,27 +70,25 @@ public class DeviceOperateController {
      * 添加新设备
      * @param deviceCreateOrUpdateRequests
      * @return 成功返回true，失败返回false
-     * 接口要求的形式为：
-     * {"deviceCreateOrUpdateRequests":[{"name":"shebei23","deviceTypeId":1,"mac":"0x-2201-22223","createTime":20180815},{"name":"shebei24","deviceTypeId":1,"mac":"0x-2201-22224","createTime":20180815}]}
      * @throws Exception
      */
     @ApiOperation("添加新设备")
     @RequestMapping(value = "/createDevice",method = RequestMethod.POST)
-    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests) throws Exception{
+    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests){
         List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList=deviceCreateOrUpdateRequests.getDeviceList();
         DevicePo devicePo;
         if(null == deviceList || 0== deviceList.size()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不可为空",null);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不可为空");
         }
         //查询设备列表中是否存在相同mac地址的设备
         devicePo=deviceService.queryDeviceByMac(deviceList);
         if(null != devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址 "+devicePo.getMac()+" 已存在",null);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址 "+devicePo.getMac()+" 已存在");
         }
         //查询设备列表中是否存在相同名称的设备
         devicePo=deviceService.queryDeviceByName(deviceList);
         if(null != devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中设备名称 "+devicePo.getName()+" 已存在",null);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中设备名称 "+devicePo.getName()+" 已存在");
         }
         else {
             try{
@@ -256,9 +254,13 @@ public class DeviceOperateController {
         if(null == customerUserPo){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"用户openId "+ teamInfoQueryRequest.getOpenId()+" 不存在");
         }
-        else {
-            return new ApiResponse<>(this.deviceService.queryTeamInfoByUser(teamInfoQueryRequest.getOpenId()));
+        try {
+            return this.deviceService.queryTeamInfoByUser(teamInfoQueryRequest.getOpenId());
+        }catch (Exception e){
+            log.error("用户设备组查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"用户设备组查询异常");
         }
+
     }
 
     @ApiOperation("将选中设备绑定给用户")
