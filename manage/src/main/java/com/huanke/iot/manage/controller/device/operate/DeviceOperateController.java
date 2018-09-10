@@ -4,10 +4,10 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceAssignToCustomerRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceListQueryRequest;
+import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.manage.vo.request.device.operate.*;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
@@ -15,17 +15,15 @@ import com.huanke.iot.manage.service.gateway.MqttSendService;
 //import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
-import com.huanke.iot.manage.vo.response.device.DeviceListVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -78,25 +76,29 @@ public class DeviceOperateController {
      */
     @ApiOperation("添加新设备")
     @RequestMapping(value = "/createDevice",method = RequestMethod.POST)
-    public ApiResponse<Boolean> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests) throws Exception{
+    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests) throws Exception{
         List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList=deviceCreateOrUpdateRequests.getDeviceList();
         DevicePo devicePo;
         if(null == deviceList){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不可为空",false);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不可为空",null);
         }
         //查询设备列表中是否存在相同mac地址的设备
         devicePo=deviceService.queryDeviceByMac(deviceList);
         if(null != devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址 "+devicePo.getMac()+" 已存在",false);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址 "+devicePo.getMac()+" 已存在",null);
         }
         //查询设备列表中是否存在相同名称的设备
         devicePo=deviceService.queryDeviceByName(deviceList);
         if(null != devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中设备名称 "+devicePo.getName()+" 已存在",false);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中设备名称 "+devicePo.getName()+" 已存在",null);
         }
         else {
-            Boolean ret = deviceService.createDevice(deviceList);
-            return new ApiResponse<>(RetCode.OK,"创建成功",ret);
+            try{
+                return this.deviceService.createDevice(deviceCreateOrUpdateRequests.getDeviceList());
+            }catch (Exception e){
+                log.error("设备添加异常");
+                return new ApiResponse<>(RetCode.ERROR,"设备新增异常:"+e.getMessage(),null);
+            }
         }
     }
 
@@ -110,12 +112,11 @@ public class DeviceOperateController {
     @ApiOperation("分页查询设备")
     @RequestMapping(value = "/queryDevice",method = RequestMethod.POST)
     public ApiResponse<List<DeviceListVo>> queryAllDevice(@RequestBody DeviceListQueryRequest deviceListQueryRequest) throws Exception{
-        List<DeviceListVo> deviceQueryVos=deviceService.queryDeviceByPage(deviceListQueryRequest);
-        if(0 == deviceQueryVos.size()){
-            return new ApiResponse<>(RetCode.OK,"查询成功，设备列表中无设备");
-        }
-        else {
-            return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
+        try{
+            return this.deviceService.queryDeviceByPage(deviceListQueryRequest);
+        }catch (Exception e){
+            log.error("设备查询错误");
+            return new ApiResponse<>(RetCode.ERROR,"设备查询异常:"+e.getMessage(),null);
         }
     }
 
@@ -128,7 +129,12 @@ public class DeviceOperateController {
     @ApiOperation("获取设备总数")
     @RequestMapping(value = "/queryCount",method = RequestMethod.GET)
     public ApiResponse<Integer> queryCount(){
-        return new ApiResponse<>(RetCode.OK,"查询成功",deviceService.selectCount());
+        try {
+            return this.deviceService.selectCount();
+        }catch (Exception e){
+            log.error("设备总数查询错误");
+            return new ApiResponse<>(RetCode.ERROR,"设备总数查询异常:",null);
+        }
     }
 
     /**
@@ -143,9 +149,47 @@ public class DeviceOperateController {
     public ApiResponse<Integer> deleteDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest){
         List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList=deviceCreateOrUpdateRequest.getDeviceList();
         if(null == deviceList){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"请先选中设备再删除");
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请先选中设备再删除",null);
         }
-        return new ApiResponse<>(RetCode.OK,"删除成功",deviceService.deleteDevice(deviceList));
+        try {
+            return this.deviceService.deleteDevice(deviceCreateOrUpdateRequest.getDeviceList());
+        }catch (Exception e){
+            log.error("设备删除异常");
+            return new ApiResponse<>(RetCode.ERROR,"设备删除异常:"+e.getMessage(),null);
+        }
+    }
+
+    /**
+     * 删除设备
+     * sixiaojun
+     * 2018-08-20
+     * @param deviceVo
+     * @return
+     */
+    @ApiOperation("删除单个设备")
+    @DeleteMapping(value = "/deleteOneDevice")
+    public ApiResponse<Boolean> deleteOneDevice(@RequestBody DeviceUnbindRequest.deviceVo deviceVo){
+        if(null == deviceVo.deviceId||deviceVo.deviceId<=0|| StringUtils.isBlank(deviceVo.mac)){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数不可为空");
+        }
+
+        return deviceService.deleteOneDevice(deviceVo);
+    }
+  /**
+     * 删除设备
+     * caik
+     * 2018-08-20
+     * @param deviceVo
+     * @return
+     */
+    @ApiOperation("恢复设备")
+    @PutMapping(value = "/recoverDevice")
+    public ApiResponse<Boolean> recoverDevice(@RequestBody DeviceUnbindRequest.deviceVo deviceVo){
+        if(null == deviceVo.deviceId||deviceVo.deviceId<=0|| StringUtils.isBlank(deviceVo.mac)){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数不可为空");
+        }
+
+        return deviceService.recoverDevice(deviceVo);
     }
 
     /**
@@ -159,19 +203,24 @@ public class DeviceOperateController {
     @RequestMapping(value = "/assignDeviceToCustomer",method = RequestMethod.POST)
     public ApiResponse<Boolean> assignDeviceToCustomer(@RequestBody DeviceAssignToCustomerRequest deviceAssignToCustomerRequest){
         List<DeviceQueryRequest.DeviceQueryList> deviceList=deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
-        if(0 == deviceList.size()){
+        if(null == deviceList ||0 == deviceList.size()){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"请选中设备",false);
         }
         else if(null == deviceAssignToCustomerRequest.getCustomerId()||0 == deviceAssignToCustomerRequest.getCustomerId()){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"请选择客户",false);
         }
-        else if(null != deviceService.isDeviceHasCustomer(deviceList)){
-            DevicePo devicePo=deviceService.isDeviceHasCustomer(deviceList);
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设别列表设备 "+devicePo.getName()+" 已被分配",false);
-        }
         else {
-            Boolean ret=deviceService.assignDeviceToCustomer(deviceAssignToCustomerRequest);
-            return new ApiResponse<>(RetCode.OK,"分配成功",ret);
+            try {
+                DevicePo devicePo = this.deviceService.isDeviceHasCustomer(deviceList);
+                if(null != devicePo){
+                    return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设备列表中 "+devicePo.getMac()+" 已被分配");
+                }
+                return deviceService.assignDeviceToCustomer(deviceAssignToCustomerRequest);
+            }
+            catch (Exception e){
+                log.error("设备分配错误");
+                return new ApiResponse<>(RetCode.ERROR,"设备分配异常:"+e.getMessage(),false);
+            }
         }
     }
     /**
@@ -188,13 +237,99 @@ public class DeviceOperateController {
         if(0 == deviceList.size()){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"请选中设备",false);
         }
-        else if(null == deviceService.isDeviceHasCustomer(deviceList)){
-            DevicePo devicePo=deviceService.isDeviceHasCustomer(deviceList);
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设别列表设备 "+devicePo.getName()+" 尚未被分配",false);
+        else {
+            try {
+                DevicePo devicePo=deviceService.isDeviceHasCustomer(deviceList);
+                if(null == devicePo) {
+                    return new ApiResponse<>(RetCode.PARAM_ERROR, "当前设别列表设备 " + devicePo.getName() + " 尚未被分配", false);
+                }
+                return this.deviceService.callBackDeviceFromCustomer(deviceList);
+            }catch (Exception e){
+                log.error("设备召回失败");
+                return new ApiResponse<>(RetCode.ERROR,"设备召回异常:"+e.getMessage(),false);
+            }
+        }
+    }
+
+    @ApiOperation("根据用户的openId查询用户的组信息")
+    @RequestMapping(value = "/queryTeamInfo",method = RequestMethod.POST)
+    public ApiResponse<List<DeviceTeamPo>> queryTeamInfo(@RequestBody TeamInfoQueryRequest teamInfoQueryRequest){
+        CustomerUserPo customerUserPo=this.deviceService.isUserExist(teamInfoQueryRequest.getOpenId());
+        if(null == customerUserPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"用户openId "+ teamInfoQueryRequest.getOpenId()+" 不存在");
         }
         else {
-            Boolean ret=deviceService.callBackDeviceFromCustomer(deviceList);
-            return new ApiResponse<>(RetCode.OK,"召回成功",ret);
+            return new ApiResponse<>(this.deviceService.queryTeamInfoByUser(teamInfoQueryRequest.getOpenId()));
+        }
+    }
+
+    @ApiOperation("将选中设备绑定给用户")
+    @RequestMapping(value = "/bindDeviceToUser",method = RequestMethod.POST)
+    public ApiResponse<Boolean> bindDeviceToUser(@RequestBody DeviceBindToUserRequest deviceBindToUserRequest){
+        List<DeviceQueryRequest.DeviceQueryList> deviceLists=deviceBindToUserRequest.getDeviceQueryRequest().getDeviceList();
+        if(null == deviceLists || 0 == deviceLists.size()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请选择设备",false);
+        }
+        if(null == deviceBindToUserRequest.getOpenId() || StringUtils.isEmpty(deviceBindToUserRequest.getOpenId())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请指定一个用户",false);
+        }
+        if(null == deviceBindToUserRequest.getTeamId() || 0 == deviceBindToUserRequest.getTeamId()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请指定一个组",false);
+        }
+        try {
+            return this.deviceService.bindDeviceToUser(deviceBindToUserRequest);
+        }catch (Exception e){
+            log.error("设备绑定错误");
+            return new ApiResponse<>(RetCode.ERROR,"设备绑定异常",false);
+        }
+    }
+
+    @ApiOperation("查询当前客户下的用户列表")
+    @RequestMapping(value = "/queryUsers",method = RequestMethod.POST)
+    public ApiResponse<List<CustomerUserPo>> queryUsers(@RequestBody QueryInfoByCustomerRequest queryInfoByCustomerRequest){
+        List<CustomerUserPo> customerUserPoList=this.deviceService.queryUser(queryInfoByCustomerRequest.getCustomerId());
+        if(0 != customerUserPoList.size()){
+            return new ApiResponse<>(RetCode.OK,"查询成功",customerUserPoList);
+        }
+        else {
+            return new ApiResponse<>(RetCode.OK,"当前客户下无用户数据",null);
+        }
+
+    }
+
+    @ApiOperation("解绑")
+    @RequestMapping(value = "/untieDeviceToUser",method = RequestMethod.POST)
+    public ApiResponse<Boolean> untieDeviceToUser(@RequestBody DeviceUnbindRequest deviceUnbindRequest){
+        if(deviceUnbindRequest!=null&&deviceUnbindRequest.deviceVos!=null&&deviceUnbindRequest.deviceVos.size()>0){
+
+            return deviceService.untieDeviceToUser(deviceUnbindRequest);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"解绑设备列表不可为空");
+
+        }
+    }
+
+    @ApiOperation("禁用")
+    @RequestMapping(value = "/updateDeivceDisble",method = RequestMethod.PUT)
+    public ApiResponse<Boolean> updateDeivceDisble(@RequestBody DeviceUnbindRequest devices){
+        if(devices!=null&&devices.deviceVos!=null&&devices.deviceVos.size()>0){
+
+            return deviceService.updateDeivceDisble(devices);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"禁用设备列表不可为空");
+
+        }
+    }
+
+    @ApiOperation("启用")
+    @RequestMapping(value = "/updateDeivceEnable",method = RequestMethod.PUT)
+    public ApiResponse<Boolean> updateDeivceEnable(@RequestBody DeviceUnbindRequest devices){
+        if(devices!=null&&devices.deviceVos!=null&&devices.deviceVos.size()>0){
+
+            return deviceService.updateDeivceEnable(devices);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"启用设备列表不可为空");
+
         }
     }
 

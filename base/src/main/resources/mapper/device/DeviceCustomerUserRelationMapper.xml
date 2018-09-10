@@ -15,19 +15,52 @@
         openId,
         parentOpenId,
         deviceId,
+        defineName,
         status,
-        createTime
+        createTime,
+        lastUpdateTime
         )
         VALUES (
         #{customerId},
         #{openId},
         #{parentOpenId},
         #{deviceId},
+        #{defineName},
         #{status},
-        #{createTime}
+        #{createTime},
+        #{lastUpdateTime},
         )
     </insert>
 
+
+    <!-- 批量插入数条记录 -->
+    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        customerId,
+        openId,
+        parentOpenId,
+        deviceId,
+        defineName,
+        status,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES
+        <foreach collection="list" item="deviceCustomerUser" separator=",">
+            (
+            #{deviceCustomerUser.customerId},
+            #{deviceCustomerUser.openId},
+            #{deviceCustomerUser.parentOpenId},
+            #{deviceCustomerUser.deviceId},
+            #{deviceCustomerUser.defineName},
+            #{deviceCustomerUser.status},
+            #{deviceCustomerUser.createTime},
+            #{deviceCustomerUser.lastUpdateTime}
+            )
+        </foreach>
+    </insert>
 
     <select id="findAllByDeviceCustomerUserRelationPo" parameterType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
         select
@@ -37,6 +70,25 @@
         WHERE openId = #{openId}
         AND deviceId = #{deviceId}
         AND status = 1
+    </select>
+
+    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        AND
+        parentOpenId is null
+        limit 1
+    </select>
+
+    <select id="selectByOpenId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE openId = #{openId}
     </select>
 
     <delete id="deleteRelationByJoinId">
@@ -86,6 +138,25 @@
         WHERE openId = #{openId} and deviceId = #{deviceId}
     </select>
 
+    <!--批量更新-->
+    <update id="updateBatch" parameterType="java.util.List">
+        update
+        <include refid="tableName"/>
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="openId =case" suffix="end,">
+                <foreach collection="list" item="deviceCustomerUser" index="index">
+                    <if test="deviceCustomerUser.openId !=null">
+                        when id=#{deviceCustomerUser.id} then #{deviceCustomerUser.openId}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
     <select id="queryRelationCount" parameterType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo" resultType="java.lang.Integer">
         select count(1) FROM
         <include refid="tableName"/>
@@ -102,5 +173,10 @@
         </if>
     </select>
 
+    <delete id="deleteRealationByDeviceId">
+        delete from
+        <include refid="tableName"/>
+        where deviceId = #{deviceId}
+    </delete>
 
 </mapper>

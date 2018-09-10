@@ -15,6 +15,7 @@
         mac,
         wxDeviceId,
         wxDevicelicence,
+        wxQrticket,
         imei,
         imsi,
         saNo,
@@ -47,6 +48,7 @@
         #{mac},
         #{wxDeviceId},
         #{wxDevicelicence},
+        #{wxQrticket},
         #{imei},
         #{imsi},
         #{saNo},
@@ -76,7 +78,7 @@
     </insert>
 
     <!-- 批量插入数条记录 -->
-    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -84,6 +86,7 @@
         mac,
         wxDeviceId,
         wxDevicelicence,
+        wxQrticket,
         imei,
         imsi,
         saNo,
@@ -117,6 +120,7 @@
             #{device.mac},
             #{device.wxDeviceId},
             #{device.wxDevicelicence},
+            #{device.wxQrticket},
             #{device.imei},
             #{device.imsi},
             #{device.saNo},
@@ -161,7 +165,8 @@
         <include refid="tableName"/>
         WHERE mac = #{mac} limit 1
     </select>
-    <select id="selectDeviceCustomerRelationByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectDeviceCustomerRelationByMac" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         t_device.*
         FROM
@@ -185,10 +190,9 @@
         select * from
         <include refid="tableName"/>
         <where>
-            1 = 1
+            1=1
             <if test="param.mac != null and param.mac != ''">
                 AND mac = #{param.mac}
-
             </if>
             <if test="param.saNo != null and param.saNo != ''">
                 AND saNo = #{param.saNo}
@@ -198,6 +202,18 @@
             </if>
             <if test="param.onlineStatus != null">
                 AND onlineStatus = #{param.onlineStatus}
+            </if>
+            <if test="param.bindStatus != null">
+                AND bindStatus = #{param.bindStatus}
+            </if>
+            <if test="param.enableStatus != null">
+                AND enableStatus = #{param.enableStatus}
+            </if>
+            <if test="param.workStatus != null">
+                AND workStatus = #{param.workStatus}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
             </if>
         </where>
         limit #{offset},#{limit}
@@ -207,6 +223,7 @@
         select count(1) from
         <include refid="tableName"/>
         <where>
+            1=1
             <if test="param.mac != null and param.mac != ''">
                 AND mac = #{param.mac}
             </if>
@@ -219,11 +236,24 @@
             <if test="param.onlineStatus != null">
                 AND onlineStatus = #{param.onlineStatus}
             </if>
+            <if test="param.bindStatus != null">
+                AND bindStatus = #{param.bindStatus}
+            </if>
+            <if test="param.enableStatus != null">
+                AND enableStatus = #{param.enableStatus}
+            </if>
+            <if test="param.workStatus != null">
+                AND workStatus = #{param.workStatus}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
 
         </where>
     </select>
 
-    <select id="selectByWxDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectByWxDeviceId" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
         FROM
@@ -239,22 +269,25 @@
         update
         <include refid="tableName"/>
         <set>
-            <if test="name != null">
+            <if test="name != null  and name!='' ">
                 name = #{name},
             </if>
-            <if test="wxDeviceId != null">
+            <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
             </if>
-            <if test="wxDevicelicence != null">
+            <if test="wxDevicelicence != null and wxDevicelicence!='' ">
                 wxDevicelicence = #{wxDevicelicence},
             </if>
-            <if test="imei != null">
+            <if test="wxQrticket != null and wxQrticket!='' ">
+                wxQrticket = #{wxQrticket},
+            </if>
+            <if test="imei != null and imei != '' ">
                 imei = #{imei},
             </if>
-            <if test="imsi != null">
+            <if test="imsi != null and imsi != ''">
                 imsi = #{imsi},
             </if>
-            <if test="saNo != null">
+            <if test="saNo != null and saNo != '' ">
                 saNo = #{saNo},
             </if>
             <if test="typeId != null">
@@ -281,16 +314,16 @@
             <if test="workStatus != null">
                 workStatus = #{workStatus},
             </if>
-            <if test="ip != null">
+            <if test="ip != null and ip != '' ">
                 ip = #{ip},
             </if>
             <if test="speedConfig != null">
                 speedConfig = #{speedConfig},
             </if>
-            <if test="version != null">
+            <if test="version != null and version != '' ">
                 version = #{version},
             </if>
-            <if test="location != null">
+            <if test="location != null and location != '' ">
                 location = #{location},
             </if>
             <if test="lastUpdateTime != null">
@@ -299,8 +332,79 @@
         </set>
         where
         1= 1
-        <if test="id != null"> and id = #{id}</if>
-        <if test="wxDeviceId != null and wxDeviceId != ''"> and wxDeviceId = #{wxDeviceId}</if>
+        <if test="wxDeviceId != null and wxDeviceId != ''">and wxDeviceId = #{wxDeviceId}</if>
+    </update>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
+
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="name != null  and name!='' ">
+                name = #{name},
+            </if>
+            <if test="wxDeviceId != null and wxDeviceId!='' ">
+                wxDeviceId = #{wxDeviceId},
+            </if>
+            <if test="wxDevicelicence != null and wxDevicelicence!='' ">
+                wxDevicelicence = #{wxDevicelicence},
+            </if>
+            <if test="wxQrticket != null and wxQrticket!='' ">
+                wxQrticket = #{wxQrticket},
+            </if>
+            <if test="imei != null and imei != '' ">
+                imei = #{imei},
+            </if>
+            <if test="imsi != null and imsi != ''">
+                imsi = #{imsi},
+            </if>
+            <if test="saNo != null and saNo != '' ">
+                saNo = #{saNo},
+            </if>
+            <if test="typeId != null">
+                typeId = #{typeId},
+            </if>
+            <if test="modelId != null">
+                modelId = #{modelId},
+            </if>
+            <if test="productId != null and productId!='' ">
+                productId = #{productId},
+            </if>
+            <if test="onlineStatus != null">
+                onlineStatus = #{onlineStatus},
+            </if>
+            <if test="bindStatus != null">
+                bindStatus = #{bindStatus},
+            </if>
+            <if test="enableStatus != null">
+                enableStatus = #{enableStatus},
+            </if>
+            <if test="workStatus != null">
+                workStatus = #{workStatus},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="ip != null and ip != '' ">
+                ip = #{ip},
+            </if>
+            <if test="speedConfig != null">
+                speedConfig = #{speedConfig},
+            </if>
+            <if test="version != null and version != '' ">
+                version = #{version},
+            </if>
+            <if test="location != null and location != '' ">
+                location = #{location},
+            </if>
+            bindTime = #{bindTime},
+            <if test="lastUpdateTime != null">
+                lastUpdateTime = #{lastUpdateTime}
+            </if>
+        </set>
+        where
+        1= 1
+        and id = #{id}
     </update>
 
     <!--批量更新-->
@@ -317,30 +421,22 @@
             </trim>
             <trim prefix="modelId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.modelId !=null">
-                        when id=#{device.id} then #{device.modelId}
-                    </if>
+                    when id=#{device.id} then #{device.modelId}
                 </foreach>
             </trim>
             <trim prefix="productId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.productId !=null and device.productId !='' ">
-                        when id=#{device.id} then #{device.productId}
-                    </if>
+                    when id=#{device.id} then #{device.productId}
                 </foreach>
             </trim>
             <trim prefix="wxDeviceId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.wxDeviceId !=null">
-                        when id=#{device.id} then #{device.wxDeviceId}
-                    </if>
+                    when id=#{device.id} then #{device.wxDeviceId}
                 </foreach>
             </trim>
             <trim prefix="wxDevicelicence =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.wxDevicelicence !=null">
-                        when id=#{device.id} then #{device.wxDevicelicence}
-                    </if>
+                    when id=#{device.id} then #{device.wxDevicelicence}
                 </foreach>
             </trim>
             <trim prefix="bindStatus =case" suffix="end,">
@@ -352,9 +448,7 @@
             </trim>
             <trim prefix="bindTime =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.bindTime !=null">
-                        when id=#{device.id} then #{device.bindTime}
-                    </if>
+                    when id=#{device.id} then #{device.bindTime}
                 </foreach>
             </trim>
             <trim prefix="lastUpdateTime =case" suffix="end,">
@@ -395,8 +489,24 @@
         deviceId = #{deviceId}
     </update>
 
+    <update id="updateBindStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
+        update
+        <include refid="tableName"/>
+        <set>
+            bindStatus = #{bindStatus}
+            bindTime = #{bindTime}
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        WHERE id  = #{id}
+        <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    </update>
+
     <update id="updateOnlyDeviceId" parameterType="com.huanke.iot.base.po.device.DevicePo">
-        update  <include refid="tableName"/>  set wxDeviceId = #{wxDeviceId} where id = #{id}
+        update
+        <include refid="tableName"/>
+        set wxDeviceId = #{wxDeviceId} where id = #{id}
     </update>
     <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
@@ -413,7 +523,7 @@
     </delete>
 
     <!--批量删除-->
-    <delete id="deleteDeviceBatch" parameterType = "java.util.List">
+    <delete id="deleteDeviceBatch" parameterType="java.util.List">
         delete from
         <include refid="tableName"/>
         where id in

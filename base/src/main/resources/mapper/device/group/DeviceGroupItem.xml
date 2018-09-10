@@ -48,4 +48,11 @@
         WHERE deviceId = #{deviceId}
         AND userId = #{userId}
     </delete>
+
+    <delete id="deleteItemsByDeviceId">
+        delete from
+        <include refid="tableName"/>
+        where deviceId = #{deviceId}
+    </delete>
+
 </mapper>

@@ -14,7 +14,9 @@ public class DeviceModelPo {
     private String name;
     private String modelNo;
     private Integer typeId; //类型id
+    private String typeName; //类型id
     private Integer customerId;
+    private String customerName;
     private String productId;
     private Integer formatId;
     private String icon;

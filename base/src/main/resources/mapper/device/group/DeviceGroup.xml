@@ -87,6 +87,19 @@
         <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
+
+    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
+        select
+        t_device_group.*
+        FROM
+        t_device_group.*,t_device_group_item
+        WHERE
+         t_device_group_item.deviceId = #{deviceId}
+        AND
+        t_device_group.id = t_device_group_item.groupId
+        limit 1
+    </select>
+
     <select id="queryGroupCount" resultType="java.lang.Integer">
         select count(1) FROM
         <include refid="tableName"/>

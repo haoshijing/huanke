@@ -21,4 +21,7 @@ public interface DeviceGroupItemMapper extends BaseMapper<DeviceGroupItemPo> {
     Integer deleteDeviceById(Integer deviceId);
 
     boolean deleteByJoinId(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId);
+
+    int deleteItemsByDeviceId(Integer iDeviceId);
+
 }

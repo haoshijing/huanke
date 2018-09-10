@@ -14,6 +14,7 @@ public class DeviceCustomerUserRelationPo {
     private String openId;
     private String parentOpenId;
     private Integer deviceId;
+    private String defineName;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;

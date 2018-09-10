@@ -46,6 +46,14 @@
     </select>
 
     <!--查询列白哦-->
+    <select id="selectByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        select *
+        from <include refid="tableName"/>
+        where customerId = #{customerId}
+        limit 1
+    </select>
+
+    <!--查询列白哦-->
     <select id="selectByUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
         select *
         from <include refid="tableName"/>

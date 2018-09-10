@@ -79,6 +79,7 @@
     </select>
 
 
+
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.WxConfigPo">
         select
         *

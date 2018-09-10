@@ -64,4 +64,9 @@
         WHERE teamId = #{teamId}
     </select>
 
+    <delete id="deleteByTeamId" >
+        delete from
+        <include refid="tableName"/>
+        where teamId = #{teamId}
+    </delete>
 </mapper>

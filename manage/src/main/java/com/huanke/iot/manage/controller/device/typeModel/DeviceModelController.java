@@ -3,6 +3,7 @@ package com.huanke.iot.manage.controller.device.typeModel;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
+import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
@@ -133,10 +134,10 @@ public class DeviceModelController {
         }
     }
 
-    @ApiOperation("根据设备类型主键集合，查询所有设备型号")
-    @PostMapping(value = "/createWxDeviceIds}")
-    public ApiResponse<Boolean> createWxDeviceIdPools(@PathVariable("customerId") Integer customerId, @PathVariable("productId")String productId,@PathVariable("addCount") Integer addCount) {
-        return  deviceModelService.createWxDeviceIdPools(customerId,productId,addCount);
+    @ApiOperation("增加设备配额")
+    @PostMapping(value = "/createWxDeviceIds")
+    public ApiResponse<Boolean> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
+        return  deviceModelService.createWxDeviceIdPools(devicePoolRequest);
     }
 //    /**
 //     * 添加型号的版式配置

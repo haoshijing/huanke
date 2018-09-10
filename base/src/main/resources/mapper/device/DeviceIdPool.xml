@@ -7,12 +7,15 @@
         t_deviceid_pool
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
-        INSERT INTO <include refid="tableName"/>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        INSERT INTO
+        <include refid="tableName"/>
         (
         customerId,
         wxDeviceId,
         wxDeviceLicence,
+        wxQrticket,
         status,
         createTime
         )
@@ -20,32 +23,35 @@
         #{customerId},
         #{wxDeviceId},
         #{wxDeviceLicence},
+        #{wxQrticket},
         #{status},
         #{createTime}
         )
     </insert>
 
     <!-- 批量插入数条记录 -->
-    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
         INSERT INTO
         <include refid="tableName"/>
         (
         customerId,
+        productId,
         wxDeviceId,
         wxDeviceLicence,
+        wxQrticket,
         status,
-        createTime,
-        lastUpdateTime
+        createTime
         )
         VALUES
         <foreach collection="list" item="deviceIdpool" separator=",">
             (
             #{deviceIdpool.customerId},
+            #{deviceIdpool.productId},
             #{deviceIdpool.wxDeviceId},
             #{deviceIdpool.wxDeviceLicence},
+            #{deviceIdpool.wxQrticket},
             #{deviceIdpool.status},
-            #{deviceIdpool.createTime},
-            #{deviceIdpool.lastUpdateTime}
+            #{deviceIdpool.createTime}
             )
         </foreach>
     </insert>
@@ -84,6 +90,9 @@
             <if test="param.wxDeviceLicence != null  and param.wxDeviceLicence != ''  ">
                 AND wxDeviceLicence = #{param.wxDeviceLicence}
             </if>
+            <if test="param.wxQrticket != null  and param.wxQrticket != ''  ">
+                AND wxQrticket = #{param.wxQrticket}
+            </if>
             <if test="param.status != null">
                 AND status = #{param.status}
             </if>
@@ -91,6 +100,37 @@
         limit #{offset},#{limit}
     </select>
 
+    <!--批量更新-->
+    <update id="updateBatch" parameterType="java.util.List">
+        update
+        <include refid="tableName"/>
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="status =case" suffix="end,">
+                <foreach collection="list" item="deviceIdPool" index="index">
+                    <if test="deviceIdPool.status !=null">
+                        when id=#{deviceIdPool.id} then #{deviceIdPool.status}
+                    </if>
+                    <if test="deviceIdPool.lastUpdateTime !=null">
+                        when id=#{device.lastUpdateTime} then #{device.lastUpdateTime}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+
+    <select id="selectByWxDeviceId" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE wxDeviceId = #{wxDeviceId} limit 1
+    </select>
 
     <delete id="deleteById" parameterType="java.lang.Integer">
         delete from

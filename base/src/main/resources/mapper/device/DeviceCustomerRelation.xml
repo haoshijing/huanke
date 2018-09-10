@@ -64,11 +64,29 @@
         limit 1
     </select>
 
+    <select id="selectByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerRelationPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+    </select>
+
     <delete id="deleteDeviceById" parameterType="java.lang.Integer">
         delete from
         <include refid="tableName"/>
         <where>
             deviceId = #{deviceId}
         </where>
+    </delete>
+
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType = "java.util.List">
+        delete from
+        <include refid="tableName"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
     </delete>
 </mapper>

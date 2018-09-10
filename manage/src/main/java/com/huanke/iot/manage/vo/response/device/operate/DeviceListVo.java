@@ -1,5 +1,6 @@
-package com.huanke.iot.manage.vo.response.device;
+package com.huanke.iot.manage.vo.response.device.operate;
 
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 @Data
@@ -12,21 +13,24 @@ public class DeviceListVo {
      * mac地址
      */
     private String mac;
+
+    private Integer customerId;
+
     /**
      * 归属
      */
-    private String owner;
+    private String customerName;
 
     private Integer typeId;
     private String deviceType;
     /**
      * 绑定状态
      */
-    private String bindStatus;
+    private Integer bindStatus;
     /**
      * 启用状态
      */
-    private String enableStatus;
+    private Integer enableStatus;
     /**
      * 集群id
      */
@@ -38,11 +42,11 @@ public class DeviceListVo {
     /**
      * 工作状态
      */
-    private String WorkStatus;
+    private Integer WorkStatus;
     /**
      * 在线状态
      */
-    private String onlineStatus;
+    private Integer onlineStatus;
 
     private Integer id;
 
@@ -57,9 +61,12 @@ public class DeviceListVo {
 
     private Long lastUpdateTime;
 
-    private String bindCustomer;
+    private String userOpenId;
+
+    private String userName;
 
     private String location;
 
+    private Integer status;
 
 }

@@ -21,6 +21,8 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
 
     DeviceGroupPo queryByName(DeviceGroupPo deviceGroupPo);
 
+    DeviceGroupPo selectByDeviceId(Integer deviceId);
+
     DeviceGroupPo selectById(Integer id);
 
 }

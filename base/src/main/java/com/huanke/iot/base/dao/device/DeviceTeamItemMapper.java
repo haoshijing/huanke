@@ -17,7 +17,13 @@ public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
     DeviceTeamItemPo selectByDeviceId(Integer deviceId);
 
-    DeviceTeamItemPo selectByTeamId(Integer teamId);
+    List<DeviceTeamItemPo> selectByUserOpenId(String openId);
+
+    List<DeviceTeamItemPo> selectItemsByDeviceId(Integer deviceId);
+
+    DeviceTeamItemPo selectByUserId(Integer userId);
+
+    int deleteItemsByDeviceId(Integer iDeviceId);
 
     int deleteByJoinId(@Param("deviceId") Integer iDeviceId, @Param("deviceId") Integer userId);
 
