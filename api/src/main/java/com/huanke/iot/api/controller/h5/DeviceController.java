@@ -74,7 +74,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping("/newQueryDetailByDeviceId")
-    public ApiResponse<DeviceAbilitysVo> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
+    public ApiResponse<List<DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
         String deviceId = request.getDeviceId();
         List<Integer> abilityIds = request.getAbilityIds();
         if(deviceId == null || abilityIds.isEmpty()){
