@@ -2,6 +2,7 @@ package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.BaseRequest;
+import com.huanke.iot.api.controller.h5.req.DeviceAbilitysRequest;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.req.DeviceRequest;
 import com.huanke.iot.api.controller.h5.response.*;
@@ -66,6 +67,21 @@ public class DeviceController extends BaseController {
     public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
         return new ApiResponse<>(deviceDetailVo);
+    }
+
+    /**
+     * 新版首页查询我的设备
+     * @return
+     */
+    @RequestMapping("/newQueryDetailByDeviceId")
+    public ApiResponse<DeviceAbilitysVo> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
+        String deviceId = request.getDeviceId();
+        List<Integer> abilityIds = request.getAbilityIds();
+        if(deviceId == null || abilityIds.isEmpty()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
+        }
+        List<DeviceAbilitysVo> deviceAbilityVos = deviceDataService.queryDetailAbilitysValue(deviceId, abilityIds);
+        return new ApiResponse<>(deviceAbilityVos);
     }
 
     @RequestMapping("/editDevice")

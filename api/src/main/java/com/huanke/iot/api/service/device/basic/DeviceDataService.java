@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
+import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
+import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
@@ -14,6 +16,7 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
+import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
@@ -23,6 +26,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
@@ -41,6 +45,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -70,6 +75,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceAblityMapper deviceAblityMapper;
+
+    @Autowired
+    private DeviceAblityOptionMapper deviceAblityOptionMapper;
 
     @Autowired
     private CustomerUserMapper customerUserMapper;
@@ -369,6 +377,49 @@ public class DeviceDataService {
             deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
         }
         return ret;
+    }
+
+    /**
+     * 查询设备功能项值
+     *
+     * @param abilityIds
+     * @return
+     */
+    public List<DeviceAbilitysVo> queryDetailAbilitysValue(String deviceId, List<Integer> abilityIds) {
+        List<DeviceAbilitysVo> deviceAbilitysVoList = new ArrayList<>();
+        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
+        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
+        for (Integer abilityId : abilityIds) {
+            DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(abilityId);
+            String dirValue = deviceAblityPo.getDirValue();
+            Integer ablityType = deviceAblityPo.getAblityType();
+
+            DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilitysVo();
+            deviceAbilitysVo.setId(abilityId);
+            deviceAbilitysVo.setAblityType(ablityType);
+            deviceAbilitysVo.setDirValue(dirValue);
+            switch (ablityType){
+                case DeviceAbilityTypeContants.ability_type_text:
+                    deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
+                    deviceAbilitysVo.setUnit(deviceAblityPo.getRemark());
+                    break;
+                case DeviceAbilityTypeContants.ability_type_single:
+                    List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(abilityId);
+                    dataItem.setValue(getData(controlDatas, wind));
+                    break;
+                case DeviceAbilityTypeContants.ability_type_checkbox:
+
+                    break;
+                case DeviceAbilityTypeContants.ability_type_threshhold:
+
+                    break;
+                case DeviceAbilityTypeContants.ability_type_threshholdselect:
+
+                    break;
+            }
+            deviceAbilitysVoList.add(deviceAbilitysVo);
+        }
+        return deviceAbilitysVoList;
     }
 
 
