@@ -7,8 +7,10 @@
         t_deviceid_pool
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
-        INSERT INTO <include refid="tableName"/>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        INSERT INTO
+        <include refid="tableName"/>
         (
         customerId,
         wxDeviceId,
@@ -28,7 +30,7 @@
     </insert>
 
     <!-- 批量插入数条记录 -->
-    <insert id="insertBatch"  useGeneratedKeys="true" keyProperty="id" parameterType="List">
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -108,7 +110,9 @@
                     <if test="deviceIdPool.status !=null">
                         when id=#{deviceIdPool.id} then #{deviceIdPool.status}
                     </if>
-                    lastUpdateTime = #{lastUpdateTime}
+                    <if test="deviceIdPool.lastUpdateTime !=null">
+                        when id=#{device.lastUpdateTime} then #{device.lastUpdateTime}
+                    </if>
                 </foreach>
             </trim>
         </trim>
@@ -119,7 +123,8 @@
     </update>
 
 
-    <select id="selectByWxDeviceId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+    <select id="selectByWxDeviceId" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
         select
         *
         FROM
