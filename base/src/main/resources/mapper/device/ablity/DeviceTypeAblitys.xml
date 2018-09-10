@@ -65,6 +65,17 @@
         WHERE typeId = #{typeId}
     </select>
 
+    <select id="selectByAblityId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo">
+        select
+        *
+        FROM
+        t_device_type ,t_device_type_ablitys
+
+        WHERE t_device_type_ablitys.ablityId = #{ablityId}
+        and t_device_type_ablitys.typeId = t_device_type.id
+        and t_device_type.status = 1
+    </select>
+
     <select id="selectList" resultType="com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo">
         select * from
         <include refid="tableName"/>

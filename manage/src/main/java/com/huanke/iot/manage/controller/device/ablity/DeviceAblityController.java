@@ -76,8 +76,7 @@ public class DeviceAblityController {
     @ApiOperation("根据Id删除功能")
     @DeleteMapping(value = "/deleteAblity/{id}")
     public ApiResponse<Boolean> deleteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
-        Boolean ret =  deviceAblityService.deleteAblity(ablityId);
-        return new ApiResponse<>(ret);
+        return  deviceAblityService.deleteAblity(ablityId);
     }
 
     /**
