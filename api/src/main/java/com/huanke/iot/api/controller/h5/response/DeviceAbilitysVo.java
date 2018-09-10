@@ -22,7 +22,7 @@ public class DeviceAbilitysVo {
 
     @Data
     public static class abilityOption{
-        private Integer dirValue;
+        private String dirValue;
         private Integer isSelect;
     }
 }

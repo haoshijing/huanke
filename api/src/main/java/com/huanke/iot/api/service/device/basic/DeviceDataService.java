@@ -398,24 +398,36 @@ public class DeviceDataService {
             deviceAbilitysVo.setId(abilityId);
             deviceAbilitysVo.setAblityType(ablityType);
             deviceAbilitysVo.setDirValue(dirValue);
-            switch (ablityType){
+            switch (ablityType) {
                 case DeviceAbilityTypeContants.ability_type_text:
                     deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
                     deviceAbilitysVo.setUnit(deviceAblityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_single:
-                    List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(abilityId);
-                    dataItem.setValue(getData(controlDatas, wind));
-                    break;
                 case DeviceAbilityTypeContants.ability_type_checkbox:
-
+                    List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(abilityId);
+                    String optionValue = getData(controlDatas, dirValue);
+                    List<DeviceAbilitysVo.abilityOption> abilityOptionList = new ArrayList<>();
+                    for (DeviceAblityOptionPo deviceAblityOptionPo : deviceAblityOptionPos) {
+                        DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
+                        abilityOption.setDirValue(deviceAblityOptionPo.getOptionValue());
+                        if(optionValue.equals(deviceAblityOptionPo.getOptionValue())){
+                            abilityOption.setIsSelect(1);
+                        }else{
+                            abilityOption.setIsSelect(0);
+                        }
+                        abilityOptionList.add(abilityOption);
+                    }
+                    deviceAbilitysVo.setAbilityOptionList(abilityOptionList);
                     break;
                 case DeviceAbilityTypeContants.ability_type_threshhold:
-
+                    deviceAbilitysVo.setCurrValue(getData(controlDatas, dirValue));
+                    deviceAbilitysVo.setUnit(deviceAblityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_threshholdselect:
 
                     break;
+
             }
             deviceAbilitysVoList.add(deviceAbilitysVo);
         }
