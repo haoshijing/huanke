@@ -745,7 +745,7 @@ public class DeviceOperateService {
         return null;
     }
 
-    public List<DeviceTeamPo> queryTeamInfoByUser(String openId) {
+    public ApiResponse<List<DeviceTeamPo>> queryTeamInfoByUser(String openId) throws Exception{
         //首先查询该用户是否有自定义组
         List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectByUserOpenId(openId);
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
@@ -758,7 +758,7 @@ public class DeviceOperateService {
             deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
             deviceTeamPoList.add(deviceTeamPo);
         }
-        return deviceTeamPoList;
+        return new ApiResponse<>(RetCode.OK,"查询用户组成功",deviceTeamPoList);
     }
 
     public CustomerUserPo isUserExist(String openId) {

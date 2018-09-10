@@ -80,17 +80,17 @@ public class DeviceOperateController {
         List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList=deviceCreateOrUpdateRequests.getDeviceList();
         DevicePo devicePo;
         if(null == deviceList || 0== deviceList.size()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不可为空",null);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不可为空");
         }
         //查询设备列表中是否存在相同mac地址的设备
         devicePo=deviceService.queryDeviceByMac(deviceList);
         if(null != devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址 "+devicePo.getMac()+" 已存在",null);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中mac地址 "+devicePo.getMac()+" 已存在");
         }
         //查询设备列表中是否存在相同名称的设备
         devicePo=deviceService.queryDeviceByName(deviceList);
         if(null != devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中设备名称 "+devicePo.getName()+" 已存在",null);
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前列表中设备名称 "+devicePo.getName()+" 已存在");
         }
         else {
             try{
@@ -256,9 +256,13 @@ public class DeviceOperateController {
         if(null == customerUserPo){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"用户openId "+ teamInfoQueryRequest.getOpenId()+" 不存在");
         }
-        else {
-            return new ApiResponse<>(this.deviceService.queryTeamInfoByUser(teamInfoQueryRequest.getOpenId()));
+        try {
+            return this.deviceService.queryTeamInfoByUser(teamInfoQueryRequest.getOpenId());
+        }catch (Exception e){
+            log.error("用户设备组查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"用户设备组查询异常");
         }
+
     }
 
     @ApiOperation("将选中设备绑定给用户")
