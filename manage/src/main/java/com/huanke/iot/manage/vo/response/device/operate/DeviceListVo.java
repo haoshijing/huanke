@@ -1,4 +1,4 @@
-package com.huanke.iot.manage.vo.response.device;
+package com.huanke.iot.manage.vo.response.device.operate;
 
 import io.swagger.models.auth.In;
 import lombok.Data;

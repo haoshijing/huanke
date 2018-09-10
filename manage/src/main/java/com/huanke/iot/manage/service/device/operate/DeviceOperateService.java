@@ -21,10 +21,10 @@ import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
-import com.huanke.iot.manage.vo.response.device.DeviceListVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -39,7 +39,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,7 +100,8 @@ public class DeviceOperateService {
      * @param deviceLists
      * @return
      */
-    public Boolean createDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) {
+    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) throws Exception{
+        List<DeviceAddSuccessVo> deviceAddSuccessVoList=new ArrayList<>();
         List<DevicePo> devicePoList = deviceLists.stream().map(device -> {
             DevicePo insertPo = new DevicePo();
             insertPo.setName(device.getName());
@@ -120,14 +120,21 @@ public class DeviceOperateService {
             insertPo.setBirthTime(device.getBirthTime());
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setLastUpdateTime(System.currentTimeMillis());
+
+
             return insertPo;
         }).collect(Collectors.toList());
         //批量插入
         Boolean ret = deviceMapper.insertBatch(devicePoList) > 0;
         if (ret) {
-            return true;
+            devicePoList.stream().forEach(devicePo -> {
+                DeviceAddSuccessVo deviceAddSuccessVo=new DeviceAddSuccessVo();
+                deviceAddSuccessVo.setDeviceId(devicePo.getId());
+                deviceAddSuccessVoList.add(deviceAddSuccessVo);
+            });
+            return new ApiResponse<>(RetCode.OK,"添加成功",deviceAddSuccessVoList);
         } else {
-            return false;
+            return new ApiResponse<>(RetCode.OK,"添加失败",null);
         }
     }
 
@@ -139,7 +146,7 @@ public class DeviceOperateService {
      * @param deviceListQueryRequest
      * @return list
      */
-    public List<DeviceListVo> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) {
+    public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
 
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
@@ -150,6 +157,9 @@ public class DeviceOperateService {
         }
         queryPo.setStatus(null);
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
+        if(0 == devicePos.size() || null == devicePos){
+            return new ApiResponse<>(RetCode.OK,"暂无设备",null);
+        }
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceCustomerRelationPo deviceCustomerRelationPo;
             DeviceListVo deviceQueryVo = new DeviceListVo();
@@ -193,7 +203,7 @@ public class DeviceOperateService {
             deviceQueryVo.setLocation(devicePo.getLocation());
             return deviceQueryVo;
         }).collect(Collectors.toList());
-        return deviceQueryVos;
+        return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
     }
 
     /**
@@ -205,9 +215,8 @@ public class DeviceOperateService {
      * @param deviceLists
      * @return
      */
-    public Integer deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) {
+    public ApiResponse<Integer> deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) throws Exception{
         deviceLists.stream().forEach(device -> {
-
             //先从设备表中删除该mac地址的设备
             DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
             if (deviceMapper.deleteDevice(devicePo) > 0) {
@@ -220,7 +229,7 @@ public class DeviceOperateService {
             }
         });
         //返回本次删除的设备总数
-        return deviceLists.size();
+        return new ApiResponse<>(RetCode.OK,"删除成功",deviceLists.size());
     }
 
 
@@ -333,7 +342,7 @@ public class DeviceOperateService {
      * @param deviceAssignToCustomerRequest
      * @return
      */
-    public ApiResponse<Boolean> assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest) {
+    public ApiResponse<Boolean> assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest) throws Exception{
         Boolean ret = true;
         //获取设备列表
         List<DeviceQueryRequest.DeviceQueryList> deviceList = deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
@@ -414,7 +423,7 @@ public class DeviceOperateService {
      * @param deviceQueryRequests
      * @return
      */
-    public Boolean callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests) {
+    public ApiResponse<Boolean> callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests) throws Exception{
         List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
@@ -442,9 +451,9 @@ public class DeviceOperateService {
         this.deviceIdPoolMapper.updateBatch(deviceIdPoolPoList);
         Boolean ret = this.deviceCustomerRelationMapper.deleteBatch(deviceCustomerRelationPoList) > 0;
         if (ret) {
-            return true;
+            return new ApiResponse<>(RetCode.OK,"设备召回成功",true);
         } else {
-            return false;
+            return new ApiResponse<>(RetCode.OK,"设备召回失败",false);
         }
     }
 
@@ -454,7 +463,7 @@ public class DeviceOperateService {
      * @param deviceBindToUserRequest
      * @return
      */
-    public Boolean bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest) {
+    public ApiResponse<Boolean> bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest) throws Exception{
         List<DeviceTeamItemPo> deviceTeamItemPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = new ArrayList<>();
@@ -493,9 +502,9 @@ public class DeviceOperateService {
         //进行设备的批量绑定
         Boolean ret = this.deviceTeamItemMapper.insertBatch(deviceTeamItemPoList) > 0;
         if (ret) {
-            return true;
+            return new ApiResponse<>(RetCode.OK,"绑定成功",true);
         } else {
-            return false;
+            return new ApiResponse<>(RetCode.ERROR,"绑定失败",false);
         }
     }
 
@@ -679,9 +688,9 @@ public class DeviceOperateService {
      * @param
      * @return
      */
-    public Integer selectCount() {
+    public ApiResponse<Integer> selectCount() throws Exception{
         DevicePo queryDevicePo = new DevicePo();
-        return deviceMapper.selectCount(queryDevicePo);
+        return new ApiResponse<>(RetCode.OK,"查询总数成功",deviceMapper.selectCount(queryDevicePo));
     }
 
     /**
@@ -722,14 +731,13 @@ public class DeviceOperateService {
      * @param deviceList
      * @return
      */
-    public DevicePo isDeviceHasCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceList) {
+    public DevicePo isDeviceHasCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceList) throws Exception{
         for (DeviceQueryRequest.DeviceQueryList device : deviceList) {
             DevicePo devicePo = deviceMapper.selectDeviceCustomerRelationByMac(device.getMac());
             //如果当前设备已被分配则返回错误
             if (null != devicePo) {
                 return devicePo;
             }
-
         }
         return null;
     }
