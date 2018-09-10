@@ -107,12 +107,12 @@
         <trim prefix="set" suffixOverrides=",">
             <trim prefix="status =case" suffix="end,">
                 <foreach collection="list" item="deviceIdPool" index="index">
-                    <if test="deviceIdPool.status !=null">
-                        when id=#{deviceIdPool.id} then #{deviceIdPool.status}
-                    </if>
-                    <if test="deviceIdPool.lastUpdateTime !=null">
-                        when id=#{device.lastUpdateTime} then #{device.lastUpdateTime}
-                    </if>
+                    when id=#{deviceIdPool.id} then #{deviceIdPool.status}
+                </foreach>
+            </trim>
+            <trim prefix="lastUpdateTime =case" suffix="end,">
+                <foreach collection="list" item="deviceIdPool" index="index">
+                    when id=#{deviceIdPool.id} then #{deviceIdPool.lastUpdateTime}
                 </foreach>
             </trim>
         </trim>
