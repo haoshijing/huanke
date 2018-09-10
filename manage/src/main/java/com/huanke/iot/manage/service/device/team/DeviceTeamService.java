@@ -88,6 +88,7 @@ public class DeviceTeamService {
         deviceTeamPo.setStatus(1);
         //设置组的状态为终端组
         deviceTeamPo.setTeamStatus(DeviceTeamConstants.DEVICE_TEAM_STATUS_TERMINAL);
+        deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
         deviceTeamPo.setSceneDescription(teamCreateOrUpdateRequest.getSceneDescription());
         deviceTeamPo.setCreateTime(System.currentTimeMillis());
         deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
@@ -235,11 +236,11 @@ public class DeviceTeamService {
         }
         //如果当前组中存在联动设备，则设定组为联动组
         if(deviceLinkAge){
-            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_LINKAGE_YES);
+            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_LINK);
         }
         //否则为普通终端组
         else {
-            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_LINKAGE_NO);
+            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
         }
         deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
         //更新当前组的组类型

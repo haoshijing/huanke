@@ -28,13 +28,14 @@ public class DeviceTeamController {
     @ApiOperation("创建新的组，并向其中添加设备")
     @RequestMapping(value = "/createNewTeam",method = RequestMethod.POST)
     public ApiResponse<Integer> createNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
+        List<TeamDeviceCreateRequest> deviceList=teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList();
         //首先查询当前用户是否存在
         Boolean isCustomerExist=this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId());
         if (!isCustomerExist){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamCreateOrUpdateRequest.getCreateUserOpenId()+" 不存在");
         }
         //若设备列表中无设备则仅创建新组，不添加设备
-        if(0 == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList().size()){
+        if(null == deviceList ||0 == deviceList.size()){
             return new ApiResponse<>(this.deviceTeamService.createTeam(teamCreateOrUpdateRequest).getId());
         }
         else {
