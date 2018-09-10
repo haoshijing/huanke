@@ -70,13 +70,11 @@ public class DeviceOperateController {
      * 添加新设备
      * @param deviceCreateOrUpdateRequests
      * @return 成功返回true，失败返回false
-     * 接口要求的形式为：
-     * {"deviceCreateOrUpdateRequests":[{"name":"shebei23","deviceTypeId":1,"mac":"0x-2201-22223","createTime":20180815},{"name":"shebei24","deviceTypeId":1,"mac":"0x-2201-22224","createTime":20180815}]}
      * @throws Exception
      */
     @ApiOperation("添加新设备")
     @RequestMapping(value = "/createDevice",method = RequestMethod.POST)
-    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests) throws Exception{
+    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequests){
         List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList=deviceCreateOrUpdateRequests.getDeviceList();
         DevicePo devicePo;
         if(null == deviceList || 0== deviceList.size()){
