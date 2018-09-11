@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -37,4 +38,8 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     Integer deleteDeviceBatch(List<DevicePo> devicePoList);
 
     Integer getCustomerId(DevicePo devicePo);
+
+    List<DevicePo> selectChildDeviceListByHostDeviceId(Integer hostDeviceId);
+
+    DevicePo getByHostDeviceIdAndTypeId(@Param("hostDeviceId") Integer hostDeviceId, @Param("childId") String childId);
 }

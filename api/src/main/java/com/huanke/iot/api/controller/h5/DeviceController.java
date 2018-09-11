@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,6 +68,18 @@ public class DeviceController extends BaseController {
     public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
         return new ApiResponse<>(deviceDetailVo);
+    }
+
+    @RequestMapping("/getLocation/{deviceId}")
+    public ApiResponse<LocationVo> queryDeviceLocation(@PathVariable("deviceId") Integer deviceId) {
+        LocationVo locationVo = deviceService.queryDeviceLocation(deviceId);
+        return new ApiResponse<>(locationVo);
+    }
+
+    @RequestMapping("/getWeather/{deviceId}")
+    public ApiResponse<WeatherVo> queryDeviceWeather(@PathVariable("deviceId") Integer deviceId) {
+        WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
+        return new ApiResponse<>(weatherVo);
     }
 
     /**

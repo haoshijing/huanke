@@ -7,6 +7,8 @@ import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceSpeedConfigVo;
+import com.huanke.iot.api.controller.h5.response.LocationVo;
+import com.huanke.iot.api.controller.h5.response.WeatherVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.constant.CommonConstant;
@@ -315,4 +317,55 @@ public class DeviceService {
     }
 
 
+    public void deleteById(Integer childDeviceId) {
+        deviceMapper.deleteById(childDeviceId);
+    }
+
+    public LocationVo queryDeviceLocation(Integer deviceId) {
+        LocationVo locationVo = new LocationVo();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        if (StringUtils.isEmpty(devicePo.getLocation())) {
+            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+            if (locationJson != null) {
+                if (locationJson.containsKey("content")) {
+                    JSONObject content = locationJson.getJSONObject("content");
+                    if (content != null) {
+                        if (content.containsKey("address_detail")) {
+                            JSONObject addressDetail = content.getJSONObject("address_detail");
+                            if (addressDetail != null) {
+                                locationVo.setProvince(addressDetail.getString("province"));
+                                locationVo.setCity(addressDetail.getString("city"));
+                                locationVo.setArea(locationVo.getCity());
+                                locationVo.setLocation(locationVo.getProvince() + "," + locationVo.getCity());
+                            }
+                        }
+
+                    }
+                }
+            }
+        } else {
+            String[] locationArray = devicePo.getLocation().split(",");
+            locationVo.setArea(Joiner.on(" ").join(locationArray));
+            locationVo.setLocation(devicePo.getLocation());
+        }
+        return locationVo;
+    }
+
+    public WeatherVo queryDeviceWeather(Integer deviceId) {
+        WeatherVo weatherVo = new WeatherVo();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), false);
+        if (weatherJson != null) {
+            if (weatherJson.containsKey("result")) {
+                JSONObject result = weatherJson.getJSONObject("result");
+                if (result != null) {
+                    weatherVo.setOuterHum(result.getString("humidity"));
+                    weatherVo.setOuterPm(result.getString("aqi"));
+                    weatherVo.setOuterTem(result.getString("temperature_curr"));
+                    weatherVo.setWeather(result.getString("weather_curr"));
+                }
+            }
+        }
+        return weatherVo;
+    }
 }

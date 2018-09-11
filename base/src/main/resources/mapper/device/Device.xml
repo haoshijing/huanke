@@ -538,4 +538,27 @@
         where wxDeviceId = #{wxDeviceId}
     </select>
 
+    <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * from
+        <include refid="tableName"/>
+        WHERE hostDeviceId = #{hostDeviceId}
+        AND status = 1
+    </select>
+
+    <update id="deleteById" parameterType="java.lang.Integer">
+        update
+        <include refid="tableName"/>
+        <set>
+            status = 2
+        </set>
+        WHERE id  = #{id}
+    </update>
+
+    <select id="getByHostDeviceIdAndTypeId" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * from
+        <include refid="tableName"/>
+        WHERE hostDeviceId = #{hostDeviceId}
+        AND childId = #{childId}
+        limit 1
+    </select>
 </mapper>

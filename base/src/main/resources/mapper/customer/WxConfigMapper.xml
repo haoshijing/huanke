@@ -93,7 +93,7 @@
         where id = #{id}
     </delete>
 
-    <select id="getByJoinId">
+    <select id="getByJoinId" resultType="com.huanke.iot.base.po.customer.WxConfigPo">
         SELECT * FROM
         <include refid="tableName"/>
         WHERE customerId = #{customerId}
