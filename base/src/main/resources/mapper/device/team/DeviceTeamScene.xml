@@ -69,4 +69,14 @@
         <include refid="tableName"/>
         where teamId = #{teamId}
     </delete>
+
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from
+        <include refid="tableName"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item.teamId,jdbcType=BIGINT}
+        </foreach>
+    </delete>
 </mapper>

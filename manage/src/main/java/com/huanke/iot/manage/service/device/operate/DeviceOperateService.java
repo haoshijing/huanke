@@ -745,6 +745,12 @@ public class DeviceOperateService {
         return null;
     }
 
+    /**
+     * 查询当前用户下租的信息，若无组则加载自定义组
+     * @param openId
+     * @return
+     * @throws Exception
+     */
     public ApiResponse<List<DeviceTeamPo>> queryTeamInfoByUser(String openId) throws Exception{
         //首先查询该用户是否有自定义组
         List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectByUserOpenId(openId);

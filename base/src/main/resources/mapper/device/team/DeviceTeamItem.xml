@@ -130,9 +130,26 @@
         and deviceId = #{deviceId}
     </update>
 
+    <update id="updateStatusById" parameterType="java.lang.Integer">
+        update
+        <include refid="tableName"/>
+        set status = #{status}
+        where id = #{id}
+    </update>
+
     <delete id="deleteItemsByDeviceId">
         delete from
         <include refid="tableName"/>
         where deviceId = #{deviceId}
+    </delete>
+
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from
+        <include refid="tableName"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item.teamId,jdbcType=BIGINT}
+        </foreach>
     </delete>
 </mapper>

@@ -108,6 +108,21 @@ public class DeviceTeamController {
             return new ApiResponse<>(RetCode.ERROR,"托管失败");
         }
     }
+
+    @ApiOperation("删除选中的组")
+    @RequestMapping(value = "/deleteOneTeam",method = RequestMethod.POST)
+    public ApiResponse<Boolean> deleteOneTeam(@RequestBody  TeamDeleteRequest teamDeleteRequest){
+        if(null == teamDeleteRequest || 1 > teamDeleteRequest.getTeamId()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请先选择一个组");
+        }
+        try {
+            return this.deviceTeamService.deleteOneTeam(teamDeleteRequest);
+        }catch (Exception e){
+            log.error("组删除异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"组删除异常");
+        }
+    }
+
     @ApiOperation("生成托管二维码")
     @RequestMapping(value = "/createTrusteeQrCode",method = RequestMethod.POST)
     public ApiResponse<String> createTrusteeQrCode(@RequestBody TrusteeQrCodeRequest trusteeQrCodeRequest){

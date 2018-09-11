@@ -30,6 +30,8 @@ public interface DeviceTeamMapper  extends BaseMapper<DeviceTeamPo> {
 
     Integer updateTeamStatus(@Param("userId") Integer userId,@Param("teamId") Integer teamId, @Param("status") Integer status);
 
+    Integer updateStatusById(@Param("id") Integer id,@Param("status") Integer status);
+
     int updateDeviceTeamItem(@Param("userId") Integer userId,
                               @Param("currentTeamId") Integer currentTeamId,
                               @Param("newTeamId") int newTeamId);
