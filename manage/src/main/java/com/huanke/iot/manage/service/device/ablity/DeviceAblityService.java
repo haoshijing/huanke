@@ -48,7 +48,7 @@ public class DeviceAblityService {
      * @param ablityRequest
      * @return
      */
-    @Transactional
+//    @Transactional
     public ApiResponse<Integer> createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) {
 
         int effectCount = 0;
@@ -96,8 +96,6 @@ public class DeviceAblityService {
                         deviceAblityOptionMapper.updateById(deviceAblityOptionPo);
                     }else{
 
-                        List a = null;
-                        Map b = (Map)a.get(0);
                         deviceAblityOptionPo.setCreateTime(System.currentTimeMillis());
                         deviceAblityOptionMapper.insert(deviceAblityOptionPo);
 
@@ -107,9 +105,10 @@ public class DeviceAblityService {
             }
             return new ApiResponse<>(deviceAblityPo.getId());
 
-        }catch (Exception e){
+        }catch (RuntimeException e){
             log.error("保存功能项失败 = {}",e);
-            return new ApiResponse<>(RetCode.ERROR,"保存功能项失败");
+            throw new RuntimeException(e);
+//            return new ApiResponse<>(RetCode.ERROR,"保存功能项失败");
         }
 
     }

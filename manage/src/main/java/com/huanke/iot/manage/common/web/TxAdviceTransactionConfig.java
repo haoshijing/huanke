@@ -48,7 +48,6 @@ public class TxAdviceTransactionConfig {
         txMap.put("obtain*", readOnlyTx);
 
         txMap.put("*", requiredTx);
-        txMap.put("create*", requiredTx);
         source.setNameMap(txMap);
 
         TransactionInterceptor txAdvice = new TransactionInterceptor(transactionManager, source);

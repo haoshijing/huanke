@@ -42,8 +42,14 @@ public class DeviceAblityController {
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
         }
-        ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
-        return result;
+        try{
+            ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
+            return result;
+
+        }catch (Exception e){
+            return new ApiResponse<>(RetCode.ERROR,"保存功能项失败");
+        }
+
     }
 
 
