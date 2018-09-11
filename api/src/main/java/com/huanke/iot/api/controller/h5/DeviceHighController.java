@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.req.HighTokenRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
+import com.huanke.iot.api.controller.h5.response.DeviceTypeVo;
 import com.huanke.iot.api.service.device.basic.DeviceHighService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.base.api.ApiResponse;
@@ -68,7 +69,18 @@ public class DeviceHighController {
     }
 
     /**
-     * 删除高级设置token
+     * 返回客户类型列表
+     * @return
+     */
+    @RequestMapping("typeList/{customerId}")
+    public Object typeList(@PathVariable("customerId") Integer customerId){
+        log.info("返回客户类型列表：customerId={}", customerId);
+        List<DeviceTypeVo> deviceTypeVoList = deviceHighService.getTypeListByCustomerId(customerId);
+        return new ApiResponse<>(deviceTypeVoList);
+    }
+
+    /**
+     * 添加从设备
      * @return
      */
     @RequestMapping("addChildDevice")

@@ -2,11 +2,16 @@ package com.huanke.iot.api.service.device.basic;
 
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
+import com.huanke.iot.api.controller.h5.response.DeviceTypeVo;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -32,6 +37,10 @@ public class DeviceHighService {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private DeviceMapper deviceMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private DeviceTypeMapper deviceTypeMapper;
 
     public String getHighToken(Integer customerId, String password) throws Exception {
         WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(customerId, password);
@@ -56,11 +65,11 @@ public class DeviceHighService {
         Integer typeId = request.getTypeId();
 
         DevicePo devicePo = deviceMapper.getByHostDeviceIdAndTypeId(hostDeviceId, childId);
-        if(devicePo != null){
-            if (devicePo.getStatus().equals(CommonConstant.STATUS_YES)){
+        if (devicePo != null) {
+            if (devicePo.getStatus().equals(CommonConstant.STATUS_YES)) {
                 throw new Exception("设备地址已存在");
             }
-        }else{
+        } else {
             devicePo = new DevicePo();
         }
         devicePo.setName(childDeviceName);
@@ -75,10 +84,10 @@ public class DeviceHighService {
     }
 
     private void addOrUpdate(DevicePo devicePo) {
-        if(devicePo.getId() == null){
+        if (devicePo.getId() == null) {
             devicePo.setCreateTime(System.currentTimeMillis());
             deviceMapper.insert(devicePo);
-        }else{
+        } else {
             devicePo.setLastUpdateTime(System.currentTimeMillis());
             deviceMapper.updateById(devicePo);
         }
@@ -86,6 +95,7 @@ public class DeviceHighService {
 
     /**
      * 从设备列表
+     *
      * @param hostDeviceId
      * @return
      */
@@ -100,5 +110,20 @@ public class DeviceHighService {
             childDeviceVos.add(childDeviceVo);
         }
         return childDeviceVos;
+    }
+
+    public List<DeviceTypeVo> getTypeListByCustomerId(Integer customerId) {
+        List<DeviceTypeVo> deviceTypeVoList = new ArrayList<>();
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        String typeIds = customerPo.getTypeIds();
+        String[] types = typeIds.split(",");
+        for (String typeId : types) {
+            DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(Integer.valueOf(typeId));
+            deviceTypeVo.setId(Integer.valueOf(typeId));
+            deviceTypeVo.setName(deviceTypePo.getName());
+            deviceTypeVoList.add(deviceTypeVo);
+        }
+        return deviceTypeVoList;
     }
 }
