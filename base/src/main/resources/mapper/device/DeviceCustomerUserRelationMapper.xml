@@ -90,6 +90,17 @@
         WHERE openId = #{openId}
     </select>
 
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
+        select
+        t_device_customer_user_relation.*
+        FROM
+        t_device_customer_user_relation,t_customer_user
+        WHERE
+        t_customer_user.id = #{userId}
+        AND
+        t_device_customer_user_relation.openId = t_customer_user.openId
+    </select>
+
     <delete id="deleteRelationByJoinId">
         delete from <include refid="tableName"/>
         WHERE openId = #{openId}
@@ -176,6 +187,16 @@
         delete from
         <include refid="tableName"/>
         where deviceId = #{deviceId}
+    </delete>
+
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from
+        <include refid="tableName"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item.deviceId,jdbcType=BIGINT}
+        </foreach>
     </delete>
 
 </mapper>

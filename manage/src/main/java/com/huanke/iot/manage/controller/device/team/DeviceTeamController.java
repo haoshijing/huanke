@@ -42,7 +42,7 @@ public class DeviceTeamController {
             //首先查询设备列表中是否已有设备在其他组中
             DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
             if(null != devicePo){
-                return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在");
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在其他组中");
             }
             DeviceTeamPo deviceTeamPo=this.deviceTeamService.queryTeamByName(teamCreateOrUpdateRequest.getName());
             //若已存在该组名，则直接添加设备
@@ -69,6 +69,11 @@ public class DeviceTeamController {
         //首先查询当前用户是否存在
         if (null==teamCreateOrUpdateRequest||null==teamCreateOrUpdateRequest.getId()||teamCreateOrUpdateRequest.getId()<0){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
+        }
+        //查询设备列表中是否已有设备在其他组中
+        DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
+        if(null != devicePo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在其他组中");
         }
         //更新组信息
         return deviceTeamService.updateTeam(teamCreateOrUpdateRequest);
@@ -108,6 +113,21 @@ public class DeviceTeamController {
             return new ApiResponse<>(RetCode.ERROR,"托管失败");
         }
     }
+
+    @ApiOperation("删除选中的组")
+    @RequestMapping(value = "/deleteOneTeam",method = RequestMethod.POST)
+    public ApiResponse<Boolean> deleteOneTeam(@RequestBody  TeamDeleteRequest teamDeleteRequest){
+        if(null == teamDeleteRequest || 1 > teamDeleteRequest.getTeamId()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"请先选择一个组");
+        }
+        try {
+            return this.deviceTeamService.deleteOneTeam(teamDeleteRequest);
+        }catch (Exception e){
+            log.error("组删除异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"组删除异常");
+        }
+    }
+
     @ApiOperation("生成托管二维码")
     @RequestMapping(value = "/createTrusteeQrCode",method = RequestMethod.POST)
     public ApiResponse<String> createTrusteeQrCode(@RequestBody TrusteeQrCodeRequest trusteeQrCodeRequest){
