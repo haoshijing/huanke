@@ -75,7 +75,7 @@ public class DeviceController extends BaseController {
      */
     @RequestMapping("/newQueryDetailByDeviceId")
     public ApiResponse<List<DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
-        String deviceId = request.getDeviceId();
+        Integer deviceId = request.getDeviceId();
         List<Integer> abilityIds = request.getAbilityIds();
         if(deviceId == null || abilityIds.isEmpty()){
             return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
@@ -190,4 +190,5 @@ public class DeviceController extends BaseController {
     public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
     }
+
 }

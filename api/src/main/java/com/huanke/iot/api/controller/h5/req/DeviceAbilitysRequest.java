@@ -15,6 +15,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class DeviceAbilitysRequest {
-    private String deviceId;
+    private Integer deviceId;
     private List<Integer> abilityIds;
 }

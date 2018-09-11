@@ -38,8 +38,6 @@ public class DeviceFormatService {
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
-    private WxFormatMapper wxFormatMapper;
-    @Autowired
     private WxFormatItemMapper wxFormatItemMapper;
     @Autowired
     private DeviceModelMapper deviceModelMapper;
@@ -61,9 +59,9 @@ public class DeviceFormatService {
     private WxFormatPageMapper wxFormatPageMapper;
 
 
-    public DeviceModelVo getModelVo(String wxDeviceId, Integer pageNo) {
+    public DeviceModelVo getModelVo(Integer deviceId, Integer pageNo) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         Integer typeId = devicePo.getTypeId();
         Integer modelId = devicePo.getModelId();
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);

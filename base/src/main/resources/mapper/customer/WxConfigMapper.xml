@@ -92,4 +92,13 @@
         delete from <include refid="tableName"/>
         where id = #{id}
     </delete>
+
+    <select id="getByJoinId">
+        SELECT * FROM
+        <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+        AND password = #{password}
+        AND status = 1
+        limit 1
+    </select>
 </mapper>

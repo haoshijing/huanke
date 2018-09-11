@@ -30,10 +30,10 @@ public class DeviceFormatController {
      */
     @RequestMapping("/getModelVo")
     public ApiResponse<DeviceModelVo> getModelVo(@Valid @RequestBody DeviceFormatRequest request) {
-        String wxDeviceId = request.getWxDeviceId();
+        Integer deviceId = request.getDeviceId();
         Integer pageId = request.getPageNo();
-        log.info("获取h5页面配置项及功能项，wxDeviceId={},pageId={}", wxDeviceId, pageId);
-        DeviceModelVo deviceModelVo = deviceFormatService.getModelVo(wxDeviceId, pageId);
+        log.info("获取h5页面配置项及功能项，deviceId={},pageId={}", deviceId, pageId);
+        DeviceModelVo deviceModelVo = deviceFormatService.getModelVo(deviceId, pageId);
         return new ApiResponse<>(deviceModelVo);
     }
 

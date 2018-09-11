@@ -385,7 +385,7 @@ public class DeviceDataService {
      * @param abilityIds
      * @return
      */
-    public List<DeviceAbilitysVo> queryDetailAbilitysValue(String deviceId, List<Integer> abilityIds) {
+    public List<DeviceAbilitysVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds) {
         List<DeviceAbilitysVo> deviceAbilitysVoList = new ArrayList<>();
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
