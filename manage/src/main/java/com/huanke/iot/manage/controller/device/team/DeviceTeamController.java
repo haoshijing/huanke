@@ -42,7 +42,7 @@ public class DeviceTeamController {
             //首先查询设备列表中是否已有设备在其他组中
             DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
             if(null != devicePo){
-                return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在");
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在其他组中");
             }
             DeviceTeamPo deviceTeamPo=this.deviceTeamService.queryTeamByName(teamCreateOrUpdateRequest.getName());
             //若已存在该组名，则直接添加设备
@@ -69,6 +69,11 @@ public class DeviceTeamController {
         //首先查询当前用户是否存在
         if (null==teamCreateOrUpdateRequest||null==teamCreateOrUpdateRequest.getId()||teamCreateOrUpdateRequest.getId()<0){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
+        }
+        //查询设备列表中是否已有设备在其他组中
+        DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
+        if(null != devicePo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在其他组中");
         }
         //更新组信息
         return deviceTeamService.updateTeam(teamCreateOrUpdateRequest);
