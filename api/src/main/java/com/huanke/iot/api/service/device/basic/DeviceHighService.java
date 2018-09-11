@@ -2,16 +2,14 @@ package com.huanke.iot.api.service.device.basic;
 
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
-import com.huanke.iot.api.controller.h5.response.DeviceTypeVo;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +36,8 @@ public class DeviceHighService {
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
+    private DeviceModelMapper deviceModelMapper;
+    @Autowired
     private CustomerMapper customerMapper;
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
@@ -62,7 +62,8 @@ public class DeviceHighService {
         String childDeviceName = request.getDeviceName();
         Integer hostDeviceId = request.getHostDeviceId();
         String childId = request.getChildId();
-        Integer typeId = request.getTypeId();
+        Integer modelId = request.getModelId();
+        Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
 
         DevicePo devicePo = deviceMapper.getByHostDeviceIdAndTypeId(hostDeviceId, childId);
         if (devicePo != null) {
@@ -75,6 +76,7 @@ public class DeviceHighService {
         devicePo.setName(childDeviceName);
         devicePo.setChildId(childId);
         devicePo.setHostDeviceId(hostDeviceId);
+        devicePo.setModelId(modelId);
         devicePo.setTypeId(typeId);
         devicePo.setLastUpdateTime(System.currentTimeMillis());
         devicePo.setStatus(CommonConstant.STATUS_YES);
@@ -110,20 +112,5 @@ public class DeviceHighService {
             childDeviceVos.add(childDeviceVo);
         }
         return childDeviceVos;
-    }
-
-    public List<DeviceTypeVo> getTypeListByCustomerId(Integer customerId) {
-        List<DeviceTypeVo> deviceTypeVoList = new ArrayList<>();
-        CustomerPo customerPo = customerMapper.selectById(customerId);
-        String typeIds = customerPo.getTypeIds();
-        String[] types = typeIds.split(",");
-        for (String typeId : types) {
-            DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
-            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(Integer.valueOf(typeId));
-            deviceTypeVo.setId(Integer.valueOf(typeId));
-            deviceTypeVo.setName(deviceTypePo.getName());
-            deviceTypeVoList.add(deviceTypeVo);
-        }
-        return deviceTypeVoList;
     }
 }

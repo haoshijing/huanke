@@ -4,13 +4,12 @@ import lombok.Data;
 
 /**
  * 描述:
- * 设备类型
  *
  * @author onlymark
- * @create 2018-09-11 下午6:30
+ * @create 2018-09-11 下午9:26
  */
 @Data
-public class DeviceTypeVo {
+public class DeviceModelTypeVo {
     private Integer id;
     private String name;
 }

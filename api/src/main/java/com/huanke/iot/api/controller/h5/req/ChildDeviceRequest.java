@@ -15,5 +15,5 @@ public class ChildDeviceRequest {
     private Integer hostDeviceId;
     private String childId;
     private String deviceName;
-    private Integer typeId;
+    private Integer modelId;
 }

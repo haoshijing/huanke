@@ -15,6 +15,7 @@ import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
@@ -62,12 +63,13 @@ public class DeviceFormatService {
     public DeviceModelVo getModelVo(Integer deviceId, Integer pageNo) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
-        Integer typeId = devicePo.getTypeId();
         Integer modelId = devicePo.getModelId();
+        DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
+        Integer typeId = deviceModelPo.getTypeId();
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);
         deviceModelVo.setFormatId(formatId);
         deviceModelVo.setModelId(modelId);
-        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(formatId, pageNo);
+        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, pageNo);
         Integer modelFormatId = deviceModelFormatPo.getId();
         deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
         //查型号版式配置项

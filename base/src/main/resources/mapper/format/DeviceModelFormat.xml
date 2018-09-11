@@ -103,12 +103,9 @@
         <include refid="tableName"/>
         WHERE
         1=1
-        <if test="formatId != null">
-            AND formatId = #{formatId}
-        </if>
-        <if test="pageId != null">
-            AND pageId = #{pageId}
-        </if>
+        AND modelId = #{modelId}
+        AND formatId = #{formatId}
+        AND pageId = #{pageId}
         AND status = 1
     </select>
 </mapper>

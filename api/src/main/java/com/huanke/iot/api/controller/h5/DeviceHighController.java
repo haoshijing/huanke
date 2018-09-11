@@ -4,8 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.req.HighTokenRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
-import com.huanke.iot.api.controller.h5.response.DeviceTypeVo;
+import com.huanke.iot.api.controller.h5.response.DeviceModelTypeVo;
 import com.huanke.iot.api.service.device.basic.DeviceHighService;
+import com.huanke.iot.api.service.device.basic.DeviceModelService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
@@ -36,6 +37,8 @@ public class DeviceHighController {
     private DeviceHighService deviceHighService;
     @Autowired
     private DeviceService deviceService;
+    @Autowired
+    private DeviceModelService deviceModelService;
 
     /**
      * 获取高级设置token
@@ -72,11 +75,11 @@ public class DeviceHighController {
      * 返回客户类型列表
      * @return
      */
-    @RequestMapping("typeList/{customerId}")
-    public Object typeList(@PathVariable("customerId") Integer customerId){
-        log.info("返回客户类型列表：customerId={}", customerId);
-        List<DeviceTypeVo> deviceTypeVoList = deviceHighService.getTypeListByCustomerId(customerId);
-        return new ApiResponse<>(deviceTypeVoList);
+    @RequestMapping("modelList/{customerId}")
+    public Object modelList(@PathVariable("customerId") Integer customerId){
+        log.info("返回客户型号列表：customerId={}", customerId);
+        List<DeviceModelTypeVo> deviceModelTypeVoList = deviceModelService.selectByCustomerId(customerId);
+        return new ApiResponse<>(deviceModelTypeVoList);
     }
 
     /**
