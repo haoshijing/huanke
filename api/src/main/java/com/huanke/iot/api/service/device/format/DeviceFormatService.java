@@ -8,10 +8,7 @@ import com.huanke.iot.base.dao.device.ablity.DeviceTypeAblitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
-import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
-import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
-import com.huanke.iot.base.dao.format.WxFormatItemMapper;
-import com.huanke.iot.base.dao.format.WxFormatMapper;
+import com.huanke.iot.base.dao.format.*;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
@@ -21,6 +18,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
+import com.huanke.iot.base.po.format.WxFormatPagePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +57,11 @@ public class DeviceFormatService {
     private DeviceModelAblityOptionMapper deviceModelAblityOptionMapper;
     @Autowired
     private DeviceTypeAblitysMapper deviceTypeAblitysMapper;
+    @Autowired
+    private WxFormatPageMapper wxFormatPageMapper;
 
 
-    public DeviceModelVo getModelVo(String wxDeviceId, Integer pageId) {
+    public DeviceModelVo getModelVo(String wxDeviceId, Integer pageNo) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
         DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
         Integer typeId = devicePo.getTypeId();
@@ -69,18 +69,21 @@ public class DeviceFormatService {
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);
         deviceModelVo.setFormatId(formatId);
         deviceModelVo.setModelId(modelId);
-        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(formatId, pageId);
+        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(formatId, pageNo);
         Integer modelFormatId = deviceModelFormatPo.getId();
         deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
         //查型号版式配置项
         List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
-        List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByJoinId(formatId, pageId);
+        WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectByJoinId(formatId, pageNo);
+        deviceModelVo.setPageName(wxFormatPagePo.getName());
+        List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByJoinId(formatId, wxFormatPagePo.getId());
         for (WxFormatItemPo wxFormatItemPo : wxFormatItemPos) {
             DeviceModelVo.FormatItems formatItems = new DeviceModelVo.FormatItems();
             DeviceModelFormatItemPo deviceModelFormatItemPo = deviceModelFormatItemMapper.selectByJoinId(modelFormatId, wxFormatItemPo.getId());
             formatItems.setItemId(wxFormatItemPo.getId());
             formatItems.setShowName(deviceModelFormatItemPo.getShowName());
             formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
+            formatItems.setAbilityId(deviceModelFormatItemPo.getAblityId());
             formatItemsList.add(formatItems);
         }
         deviceModelVo.setFormatItemsList(formatItemsList);
@@ -91,6 +94,7 @@ public class DeviceFormatService {
             Integer abilityId = deviceTypeAblitysPo.getAblityId();
 
             DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
+            abilitys.setAbilityId(abilityId);
             DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(abilityId);
             abilitys.setAbilityName(deviceAblityPo.getAblityName());
             DeviceModelAblityPo deviceModelAblityPo = deviceModelAblityMapper.getByJoinId(modelId, abilityId);

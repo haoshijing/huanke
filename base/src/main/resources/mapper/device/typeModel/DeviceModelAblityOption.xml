@@ -121,7 +121,7 @@
     <select id="getOptionsByJoinId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo">
         select * from <include refid="tableName"/>
         <where>
-
+            status = 1
             <if test = "modelAblityId != null">
                 and modelAblityId = #{modelAblityId}
             </if>

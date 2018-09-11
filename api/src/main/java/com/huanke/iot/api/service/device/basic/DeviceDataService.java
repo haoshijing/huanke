@@ -427,6 +427,8 @@ public class DeviceDataService {
                 case DeviceAbilityTypeContants.ability_type_threshholdselect:
 
                     break;
+                default:
+                    break;
 
             }
             deviceAbilitysVoList.add(deviceAbilitysVo);

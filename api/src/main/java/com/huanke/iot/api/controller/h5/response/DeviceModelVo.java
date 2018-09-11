@@ -8,6 +8,7 @@ import java.util.List;
 public class DeviceModelVo {
     private Integer formatId;
     private String formatShowName;
+    private String pageName;
     private Integer modelId;
     private List<Abilitys> abilitysList;
     private List<FormatItems> formatItemsList;
@@ -43,5 +44,6 @@ public class DeviceModelVo {
         private Integer itemId;
         private String showName;
         private Integer showStatus;
+        private Integer abilityId;
     }
 }

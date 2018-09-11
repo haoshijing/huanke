@@ -11,5 +11,5 @@ public class DeviceFormatRequest {
     @NotNull
     private String wxDeviceId;
     @NotNull
-    private Integer pageId;
+    private Integer pageNo;
 }

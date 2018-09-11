@@ -114,4 +114,20 @@
         formatId = #{formatId}
     </update>
 
+    <select id="selectByJoinId" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        1=1
+        <if test=" pageNo !=null ">
+            and pageNo = #{pageNo}
+        </if>
+        <if test=" formatId !=null ">
+            and formatId = #{formatId}
+        </if>
+        and status = 1
+    </select>
+
 </mapper>
