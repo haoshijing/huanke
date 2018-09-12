@@ -23,6 +23,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,7 +50,7 @@ public class DeviceAblityService {
      * @return
      */
 //    @Transactional
-    public ApiResponse<Integer> createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) {
+    public ApiResponse<Integer> createOrUpdate(DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception {
 
         int effectCount = 0;
         Boolean ret = false;
@@ -71,6 +72,7 @@ public class DeviceAblityService {
                 deviceAblityPo.setCreateTime(System.currentTimeMillis());
                 ret = deviceAblityMapper.insert(deviceAblityPo) > 0;
             }
+
             //判断 该功能里的选项是否为空，若不为空则进行保存
             if (ablityRequest.getDeviceAblityOptions() != null && ablityRequest.getDeviceAblityOptions().size() > 0) {
 
@@ -259,7 +261,7 @@ public class DeviceAblityService {
      * @param ablityId
      * @return
      */
-    public ApiResponse<Boolean> deleteAblity(Integer ablityId) {
+    public ApiResponse<Boolean> deleteAblity(Integer ablityId) throws Exception {
 
         //如果是开发环境
         if("dev".equals(env)){
@@ -267,6 +269,7 @@ public class DeviceAblityService {
         }else{
             System.out.println("345");
         }
+
 
         //首先进行判断该 功能是否存在。
         DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(ablityId);

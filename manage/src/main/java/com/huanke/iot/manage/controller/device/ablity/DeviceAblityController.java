@@ -37,7 +37,7 @@ public class DeviceAblityController {
      */
     @ApiOperation("添加新功能")
     @PostMapping(value = "/createDeviceAblity")
-    public ApiResponse<Integer> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
+    public ApiResponse<Integer> createDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) {
         if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
                 StringUtils.isEmpty(ablityRequest.getDirValue())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
@@ -59,15 +59,21 @@ public class DeviceAblityController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @ApiOperation("修改新功能")
+    @ApiOperation("修改功能")
     @PutMapping(value = "/updateDeviceAblity")
     public ApiResponse<Integer> updateDeviceAblity(@RequestBody DeviceAblityCreateOrUpdateRequest ablityRequest) throws Exception{
-        if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
-                StringUtils.isEmpty(ablityRequest.getDirValue())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
+        try{
+            if(StringUtils.isBlank(ablityRequest.getAblityName()) ||
+                    StringUtils.isEmpty(ablityRequest.getDirValue())){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"功能名称或指令不能为空");
+            }
+            ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
+            return result;
+        }catch(Exception e){
+            return new ApiResponse<>(RetCode.ERROR,"修改功能项失败");
+
         }
-        ApiResponse<Integer> result =  deviceAblityService.createOrUpdate(ablityRequest);
-        return result;
+
     }
 
 
