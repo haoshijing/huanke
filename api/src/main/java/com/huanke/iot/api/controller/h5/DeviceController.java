@@ -1,13 +1,11 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huanke.iot.api.controller.h5.req.BaseRequest;
-import com.huanke.iot.api.controller.h5.req.DeviceAbilitysRequest;
-import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
-import com.huanke.iot.api.controller.h5.req.DeviceRequest;
+import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.response.*;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
+import com.huanke.iot.api.service.device.team.DeviceTeamService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
@@ -22,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +42,9 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private DeviceDataService deviceDataService;
+
+    @Autowired
+    private DeviceTeamService deviceTeamService;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -99,11 +100,11 @@ public class DeviceController extends BaseController {
 
     @RequestMapping("/editDevice")
     public ApiResponse<Boolean> editDevice(@RequestBody DeviceRequest request) {
-        String wxDeviceId = request.getWxDeviceId();
+        Integer deviceId = request.getDeviceId();
         String deviceName = request.getDeviceName();
         Integer userId = getCurrentUserId();
-        log.info("编辑设备，wxDeviceId={}，deviceName={}，userId={}", wxDeviceId, deviceName, userId);
-        boolean ret = deviceService.editDevice(userId, wxDeviceId, deviceName);
+        log.info("编辑设备，deviceId={}，deviceName={}，userId={}", deviceId, deviceName, userId);
+        boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);
     }
 
@@ -121,27 +122,29 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/share")
-    public ApiResponse<Boolean> shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
+    public Object shareDevice(@RequestBody ShareRequest request) throws InvocationTargetException, IllegalAccessException {
+    //public Object shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
         Integer userId = getCurrentUserId();
-        Boolean shareOk = deviceDataService.shareDevice(masterOpenId, userId, deviceId, token);
+
+        Object shareOk = deviceDataService.shareDevice(userId, request);
         return new ApiResponse<>(shareOk);
     }
 
     @RequestMapping("/deleteDevice")
-    public ApiResponse<Boolean> deleteDevice(@RequestBody BaseRequest<String> request){
-        String wxDeviceId = request.getValue();
+    public ApiResponse<Boolean> deleteDevice(@RequestBody BaseRequest<Integer> request){
+        Integer deviceId = request.getValue();
         Integer userId = getCurrentUserId();
-        log.info("删除设备，wxDeviceId={}，userId={}", wxDeviceId, userId);
-        Boolean ret = deviceDataService.deleteDevice(userId,wxDeviceId);
+        log.info("删除设备，deviceId={}，userId={}", deviceId, userId);
+        Boolean ret = deviceDataService.deleteDevice(userId,deviceId);
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/clearRelation")
+    /*@RequestMapping("/clearRelation")
     public ApiResponse<Boolean> clearRelation(String deviceId, String joinOpenId) {
         Integer userId = getCurrentUserId();
         Boolean clearOk = deviceDataService.clearRelation(joinOpenId, userId, deviceId);
         return new ApiResponse<>(clearOk);
-    }
+    }*/
 
     @RequestMapping("/updateDeviceLocation")
     public ApiResponse<Boolean> updateDeviceLocation(String deviceId,String location){
@@ -153,12 +156,12 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(clearOk);
     }
 
-    @RequestMapping("/shareList")
+    /*@RequestMapping("/shareList")
     public ApiResponse<List<DeviceShareVo>> shareList(String deviceId) {
         Integer userId = getCurrentUserId();
         List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId, deviceId);
         return new ApiResponse<>(deviceShareVos);
-    }
+    }*/
 
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {

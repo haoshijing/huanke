@@ -130,9 +130,17 @@
         and deviceId = #{deviceId}
     </update>
 
-    <delete id="deleteItemsByDeviceId">
+    <delete id="deleteItemsByDeviceId" parameterType="java.lang.Integer">
         delete from
         <include refid="tableName"/>
         where deviceId = #{deviceId}
     </delete>
+
+    <delete id="deleteByJoinId">
+        delete from
+        <include refid="tableName"/>
+        where deviceId = #{deviceId}
+        and userId = #{userId}
+    </delete>
+
 </mapper>

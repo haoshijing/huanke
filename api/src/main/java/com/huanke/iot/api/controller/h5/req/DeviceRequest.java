@@ -15,6 +15,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class DeviceRequest {
     @NotNull
-    private String wxDeviceId;
+    private Integer deviceId;
     private String deviceName;
 }

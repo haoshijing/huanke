@@ -18,7 +18,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -59,7 +58,7 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/editDevice")
-    public ApiResponse<Boolean> editDevice(String deviceId, String deviceName) {
+    public ApiResponse<Boolean> editDevice(Integer deviceId, String deviceName) {
         Integer userId = getCurrentUserIdForApp();
         boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);

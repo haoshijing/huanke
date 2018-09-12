@@ -35,4 +35,6 @@ public interface DeviceTeamMapper  extends BaseMapper<DeviceTeamPo> {
                               @Param("newTeamId") int newTeamId);
 
     Integer queryTeamCount(@Param("userId") Integer userId, @Param("teamName") String teamName);
+
+    List<DeviceTeamPo> selectByMasterUserId(Integer userId);
 }

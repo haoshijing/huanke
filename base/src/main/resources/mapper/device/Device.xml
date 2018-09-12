@@ -535,7 +535,7 @@
     <select id="getCustomerId" parameterType="com.huanke.iot.base.po.device.DevicePo" resultType="java.lang.Integer">
         select customerId
         from t_device_customer_relation
-        where wxDeviceId = #{wxDeviceId}
+        where deviceId = #{id}
     </select>
 
     <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">

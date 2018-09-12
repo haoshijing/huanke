@@ -205,27 +205,26 @@ public class DeviceService {
     }
 
 
-    public boolean editDevice(Integer userId, String wxDeviceId, String deviceName) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
+    public boolean editDevice(Integer userId, Integer deviceId, String deviceName) {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
-            log.error("找不到设备，wxDeviceId={}", wxDeviceId);
+            log.error("找不到设备，deviceId={}", deviceId);
             return false;
         }
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
-        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
-        deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
-        deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
-        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
-        int count = deviceCustomerUserRelationPos.size();
-        if (count == 0) {
-            log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", wxDeviceId, customerUserPo.getOpenId());
+        DeviceCustomerUserRelationPo querydeviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        querydeviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+        querydeviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(querydeviceCustomerUserRelationPo);
+        if(deviceCustomerUserRelationPo == null){
+            log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", deviceId, customerUserPo.getOpenId());
             return false;
         }
         //
         DevicePo updatePo = new DevicePo();
-        updatePo.setWxDeviceId(wxDeviceId);
+        updatePo.setId(deviceId);
         updatePo.setName(deviceName);
-        return deviceMapper.updateByDeviceId(updatePo) > 0;
+        return deviceMapper.updateById(updatePo) > 0;
     }
 
     public Boolean setSpeedConfig(SpeedConfigRequest request) {

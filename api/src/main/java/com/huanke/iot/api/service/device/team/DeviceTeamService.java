@@ -46,6 +46,8 @@ public class DeviceTeamService {
             deviceTeamPo.setCreateTime(System.currentTimeMillis());
             deviceTeamPo.setMasterUserId(userId);
             deviceTeamPo.setName(teamName);
+            deviceTeamPo.setTeamType(3);
+            deviceTeamPo.setTeamStatus(0);
             deviceTeamPo.setStatus(CommonConstant.STATUS_YES);
             deviceTeamMapper.insert(deviceTeamPo);
             teamId = deviceTeamPo.getId();
@@ -120,5 +122,9 @@ public class DeviceTeamService {
         updatePo.setLastUpdateTime(System.currentTimeMillis());
         int ret = deviceTeamMapper.updateById(updatePo);
         return ret > 0;
+    }
+
+    public List<DeviceTeamPo> selectByUserId(Integer userId) {
+        return deviceTeamMapper.selectByMasterUserId(userId);
     }
 }

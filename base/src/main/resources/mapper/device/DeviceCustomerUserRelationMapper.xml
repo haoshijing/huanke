@@ -28,7 +28,7 @@
         #{defineName},
         #{status},
         #{createTime},
-        #{lastUpdateTime},
+        #{lastUpdateTime}
         )
     </insert>
 
@@ -70,6 +70,7 @@
         WHERE openId = #{openId}
         AND deviceId = #{deviceId}
         AND status = 1
+        limit 1
     </select>
 
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
@@ -95,6 +96,11 @@
         delete from <include refid="tableName"/>
         WHERE openId = #{openId}
         AND deviceId = #{deviceId}
+    </delete>
+
+    <delete id="deleteRelationByDeviceId" parameterType="java.lang.Integer">
+        delete from <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
     </delete>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">

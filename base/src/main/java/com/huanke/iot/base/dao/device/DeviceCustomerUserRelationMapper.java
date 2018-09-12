@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface DeviceCustomerUserRelationMapper extends BaseMapper<DeviceCustomerUserRelationPo>{
 
-    List<DeviceCustomerUserRelationPo> findAllByDeviceCustomerUserRelationPo(DeviceCustomerUserRelationPo deviceCustomerUserRelationPo);
+    DeviceCustomerUserRelationPo findAllByDeviceCustomerUserRelationPo(DeviceCustomerUserRelationPo deviceCustomerUserRelationPo);
 
     int deleteRelationByJoinId(@Param("openId") String openId, @Param("deviceId") Integer deviceId);
 
@@ -30,4 +30,5 @@ public interface DeviceCustomerUserRelationMapper extends BaseMapper<DeviceCusto
 
     int deleteRealationByDeviceId(Integer deviceId);
 
+    int deleteRelationByDeviceId(Integer deviceId);
 }

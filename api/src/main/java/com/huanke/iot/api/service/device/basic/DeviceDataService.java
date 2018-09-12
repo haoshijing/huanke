@@ -6,11 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
-import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
-import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
-import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
-import com.huanke.iot.api.controller.h5.response.SensorDataVo;
+import com.huanke.iot.api.controller.h5.req.ShareRequest;
+import com.huanke.iot.api.controller.h5.response.*;
 import com.huanke.iot.api.gateway.MqttSendService;
+import com.huanke.iot.api.service.device.team.DeviceTeamService;
 import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
@@ -45,6 +44,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +100,9 @@ public class DeviceDataService {
     @Autowired
     private LocationUtils locationUtils;
 
+    @Autowired
+    private DeviceTeamService deviceTeamService;
+
     @Value("${unit}")
     private Integer unit;
 
@@ -115,13 +118,17 @@ public class DeviceDataService {
 
     private static final String TOKEN_PREFIX = "token.";
 
-    public Boolean shareDevice(String master, Integer toId, String deviceIdStr, String token) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
+    @Transactional
+    public Object shareDevice(Integer toId, ShareRequest request) throws InvocationTargetException, IllegalAccessException {
+        Integer deviceId = request.getDeviceId();
+        String master = request.getMasterOpenId();
+        String token = request.getToken();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        String deviceIdStr = devicePo.getWxDeviceId();
         if (devicePo == null) {
-            log.error("找不到设备，deviceIdStr={}", deviceIdStr);
+            log.error("找不到设备，deviceId={}", deviceId);
             return false;
         }
-        Integer deviceId = devicePo.getId();
         //通过设备查customerId
         Integer customerId = deviceMapper.getCustomerId(devicePo);
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(master);
@@ -142,65 +149,58 @@ public class DeviceDataService {
         DeviceTeamItemPo queryTeamItemPo = new DeviceTeamItemPo();
         queryTeamItemPo.setDeviceId(deviceId);
         queryTeamItemPo.setUserId(customerUserPo.getId());
+        queryTeamItemPo.setStatus(1);
         Integer itemCount = deviceTeamMapper.queryItemCount(queryTeamItemPo);
         if (itemCount == 0) {
             log.error("用户组下无设备");
             return false;
         }
 
+        /*List<DeviceTeamPo> deviceTeamPoList = deviceTeamService.selectByUserId(toId);
+        if (!deviceTeamPoList.isEmpty()) {
+            List<DeviceTeamVo> deviceTeamVoList = new ArrayList<>();
+            for (DeviceTeamPo deviceTeamPo : deviceTeamPoList) {
+                DeviceTeamVo deviceTeamVo = new DeviceTeamVo();
+                deviceTeamVo.setId(deviceTeamPo.getId());
+                deviceTeamVo.setName(deviceTeamPo.getName());
+                deviceTeamVo.setIcon(deviceTeamPo.getIcon());
+                deviceTeamVoList.add(deviceTeamVo);
+            }
+            return deviceTeamVoList;
+        }*/
+
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
         deviceTeamPo.setName(defaultTeamName);
         deviceTeamPo.setMasterUserId(toId);
-        Integer defaultTeamId = 0;
-        Integer defaultTeamCount = deviceTeamMapper.queryTeamCount(toId, "默认组");
-        if (defaultTeamCount == 0) {
-            DeviceTeamPo defaultTeam = new DeviceTeamPo();
-            defaultTeam.setName("默认组");
-            defaultTeam.setMasterUserId(toId);
-            defaultTeam.setCreateTime(System.currentTimeMillis());
-            deviceTeamMapper.insert(defaultTeam);
-            defaultTeamId = defaultTeam.getId();
-        } else {
-            defaultTeamId = deviceTeamMapper.selectList(deviceTeamPo, 1, 0).get(0).getId();
-        }
+        deviceTeamPo.setStatus(1);
+        deviceTeamPo.setCreateTime(System.currentTimeMillis());
+        deviceTeamPo.setTeamStatus(1);
+        deviceTeamPo.setTeamType(3);
+        deviceTeamPo.setCreateUserId(toId);
+        deviceTeamPo.setCustomerId(customerId);
+        deviceTeamMapper.insert(deviceTeamPo);
+        Integer defaultTeamId = deviceTeamPo.getId();
+
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         queryItemPo.setDeviceId(deviceId);
         queryItemPo.setUserId(toId);
-        Integer count = deviceTeamMapper.queryItemCount(queryItemPo);
-        if (count == 0) {
-            DeviceTeamItemPo insertDeviceTeamItemPo = queryItemPo;
-            insertDeviceTeamItemPo.setTeamId(defaultTeamId);
-            insertDeviceTeamItemPo.setStatus(1);
-            insertDeviceTeamItemPo.setUserId(toId);
-            insertDeviceTeamItemPo.setCreateTime(System.currentTimeMillis());
-            deviceTeamItemMapper.insert(insertDeviceTeamItemPo);
-        } else {
-            deviceTeamItemMapper.updateStatus(deviceId, toId, 1);
-        }
+        queryItemPo.setTeamId(defaultTeamId);
+        queryItemPo.setStatus(1);
+        queryItemPo.setUserId(toId);
+        queryItemPo.setCreateTime(System.currentTimeMillis());
+        deviceTeamItemMapper.insert(queryItemPo);
 
-        DeviceCustomerUserRelationPo queryPo = new DeviceCustomerUserRelationPo();
-        queryPo.setDeviceId(deviceId);
         CustomerUserPo customerUserPo1 = customerUserMapper.selectById(toId);
-        queryPo.setOpenId(customerUserPo1.getOpenId());
-        Integer relationCount = deviceCustomerUserRelationMapper.selectCount(queryPo);
-        if (relationCount == 0) {
-            DeviceCustomerUserRelationPo deviceRelationPo = new DeviceCustomerUserRelationPo();
-            deviceRelationPo.setDeviceId(deviceId);
-            deviceRelationPo.setOpenId(customerUserPo1.getOpenId());
-            deviceRelationPo.setParentOpenId(customerUserPo.getOpenId());
-            deviceRelationPo.setCustomerId(customerId);
-            deviceRelationPo.setStatus(1);
-            deviceRelationPo.setCreateTime(System.currentTimeMillis());
-            deviceCustomerUserRelationMapper.insert(deviceRelationPo);
-        } else {
-            DeviceCustomerUserRelationPo updatePo = new DeviceCustomerUserRelationPo();
-            updatePo.setOpenId(customerUserPo1.getOpenId());
-            updatePo.setStatus(1);
-            updatePo.setLastUpdateTime(System.currentTimeMillis());
-            updatePo.setDeviceId(deviceId);
-            deviceCustomerUserRelationMapper.updateStatus(updatePo);
-        }
+        DeviceCustomerUserRelationPo deviceRelationPo = new DeviceCustomerUserRelationPo();
+        deviceRelationPo.setDeviceId(deviceId);
+        deviceRelationPo.setOpenId(customerUserPo1.getOpenId());
+        deviceRelationPo.setParentOpenId(customerUserPo.getOpenId());
+        deviceRelationPo.setCustomerId(customerId);
+        deviceRelationPo.setStatus(1);
+        deviceRelationPo.setCreateTime(System.currentTimeMillis());
+        deviceCustomerUserRelationMapper.insert(deviceRelationPo);
+
         return true;
     }
 
@@ -232,7 +232,7 @@ public class DeviceDataService {
         if (deviceTeamPo.getMasterUserId() != userId) {
             return false;
         }
-        return deleteDevice(customerUserPo.getId(), deviceIdStr);
+        return deleteDevice(customerUserPo.getId(), deviceId);
 
     }
 
@@ -337,11 +337,11 @@ public class DeviceDataService {
     }
 
     @Transactional
-    public Boolean deleteDevice(Integer userId, String deviceId) {
-        if (StringUtils.isEmpty(deviceId)) {
+    public Boolean deleteDevice(Integer userId, Integer deviceId) {
+        if (deviceId == null) {
             return false;
         }
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
             return false;
         }
@@ -350,20 +350,16 @@ public class DeviceDataService {
         Integer iDeviceId = devicePo.getId();
 
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
-        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
-        deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
-        deviceCustomerUserRelationPo.setDeviceId(iDeviceId);
-        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
-        if (deviceCustomerUserRelationPos.isEmpty()) {
+        DeviceCustomerUserRelationPo querydeviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        querydeviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+        querydeviceCustomerUserRelationPo.setDeviceId(iDeviceId);
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(querydeviceCustomerUserRelationPo);
+        if (deviceCustomerUserRelationPo == null) {
             return false;
         }
-        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemMapper.selectByDeviceId(iDeviceId);
-        DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(deviceTeamItemPo.getTeamId());
-        if (!deviceTeamPo.getMasterUserId().equals(userId)) {
-            ret = deviceCustomerUserRelationMapper.deleteRelationByJoinId(customerUserPo.getOpenId(), iDeviceId) > 0;
-            ret = ret && deviceTeamItemMapper.deleteByJoinId(iDeviceId, userId) > 0;
-            deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
-        } else {
+
+        if (deviceCustomerUserRelationPo.getParentOpenId() == null) {
+            //主控制人
             //回收到池子中
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
             deviceIdPoolPo.setCustomerId(deviceMapper.getCustomerId(devicePo));
@@ -372,9 +368,13 @@ public class DeviceDataService {
             deviceIdPoolPo.setStatus(1);
             deviceIdPoolPo.setCreateTime(System.currentTimeMillis());
             deviceIdPoolMapper.insert(deviceIdPoolPo);
+            ret = deviceCustomerUserRelationMapper.deleteRelationByDeviceId(iDeviceId) > 0;
+            ret = ret && deviceTeamItemMapper.deleteItemsByDeviceId(iDeviceId) > 0;
+            //deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
+        } else {
             ret = deviceCustomerUserRelationMapper.deleteRelationByJoinId(customerUserPo.getOpenId(), iDeviceId) > 0;
             ret = ret && deviceTeamItemMapper.deleteByJoinId(iDeviceId, userId) > 0;
-            deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
+            //deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
         }
         return ret;
     }
@@ -395,6 +395,7 @@ public class DeviceDataService {
             Integer ablityType = deviceAblityPo.getAblityType();
 
             DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilitysVo();
+            deviceAbilitysVo.setAbilityName(deviceAblityPo.getAblityName());
             deviceAbilitysVo.setId(abilityId);
             deviceAbilitysVo.setAblityType(ablityType);
             deviceAbilitysVo.setDirValue(dirValue);
@@ -411,9 +412,9 @@ public class DeviceDataService {
                     for (DeviceAblityOptionPo deviceAblityOptionPo : deviceAblityOptionPos) {
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                         abilityOption.setDirValue(deviceAblityOptionPo.getOptionValue());
-                        if(optionValue.equals(deviceAblityOptionPo.getOptionValue())){
+                        if (optionValue.equals(deviceAblityOptionPo.getOptionValue())) {
                             abilityOption.setIsSelect(1);
-                        }else{
+                        } else {
                             abilityOption.setIsSelect(0);
                         }
                         abilityOptionList.add(abilityOption);

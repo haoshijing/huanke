@@ -15,6 +15,7 @@ import java.util.List;
 public class DeviceAbilitysVo {
     private Integer id;
     private String dirValue;
+    private String abilityName;
     private Integer ablityType;
     private String currValue;
     private String unit;

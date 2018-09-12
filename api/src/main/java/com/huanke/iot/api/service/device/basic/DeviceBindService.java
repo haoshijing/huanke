@@ -130,7 +130,7 @@ public class DeviceBindService {
             deviceMapper.updateById(updatePo);
             userId = customerUserPo.getId();
             //删除对应的设备
-            deviceDataService.deleteDevice(userId,deviceId);
+            deviceDataService.deleteDevice(userId,devicePo.getId());
         }
     }
 }
