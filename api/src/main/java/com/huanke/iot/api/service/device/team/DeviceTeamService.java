@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.team;
 import com.alibaba.druid.util.StringUtils;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -45,14 +46,14 @@ public class DeviceTeamService {
             deviceTeamPo.setCreateTime(System.currentTimeMillis());
             deviceTeamPo.setMasterUserId(userId);
             deviceTeamPo.setName(teamName);
-            deviceTeamPo.setStatus(1);
+            deviceTeamPo.setStatus(CommonConstant.STATUS_YES);
             deviceTeamMapper.insert(deviceTeamPo);
             teamId = deviceTeamPo.getId();
         } else {
             teamId = queryTeamPo.getId();
             DeviceTeamPo updatePo = new DeviceTeamPo();
             updatePo.setName(newRequest.getTeamName());
-            updatePo.setStatus(1);
+            updatePo.setStatus(CommonConstant.STATUS_YES);
             updatePo.setId(teamId);
             updatePo.setLastUpdateTime(System.currentTimeMillis());
             int ret = deviceTeamMapper.updateById(updatePo);
@@ -70,6 +71,7 @@ public class DeviceTeamService {
 
     public Boolean deleteTeam(Integer userId, Integer teamId) {
         DeviceTeamPo teamPo = deviceTeamMapper.selectById(teamId);
+        //判断是否默认组
         if (teamPo != null && StringUtils.equals(teamPo.getName(), "默认组")) {
             return false;
         }

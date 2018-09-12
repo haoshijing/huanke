@@ -26,7 +26,6 @@ public class DeviceTimerController extends BaseController{
         return new ApiResponse<>(ret);
     }
 
-
     @RequestMapping("/queryTimerList")
     public ApiResponse<List<DeviceTimerVo>> queryTimerList(String deviceIdStr,Integer timerType){
 

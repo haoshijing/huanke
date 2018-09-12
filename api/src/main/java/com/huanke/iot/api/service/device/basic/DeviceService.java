@@ -5,7 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.Constants;
-import com.huanke.iot.api.controller.h5.response.*;
+import com.huanke.iot.api.controller.h5.response.DeviceListVo;
+import com.huanke.iot.api.controller.h5.response.DeviceSpeedConfigVo;
+import com.huanke.iot.api.controller.h5.response.LocationVo;
+import com.huanke.iot.api.controller.h5.response.WeatherVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.constant.CommonConstant;
@@ -13,6 +16,7 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
@@ -52,6 +56,9 @@ public class DeviceService {
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
 
 
     @Autowired
@@ -139,7 +146,9 @@ public class DeviceService {
                         DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getId());
                         deviceItemPo.setWxDevicdId(devicePo.getWxDeviceId());
-                        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getTypeId());
+                        Integer modelId = devicePo.getModelId();
+                        Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+                        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
                         deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
                         if (deviceTypePo != null) {
@@ -212,6 +221,7 @@ public class DeviceService {
             log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", wxDeviceId, customerUserPo.getOpenId());
             return false;
         }
+        //
         DevicePo updatePo = new DevicePo();
         updatePo.setWxDeviceId(wxDeviceId);
         updatePo.setName(deviceName);

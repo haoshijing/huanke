@@ -49,9 +49,9 @@ public class DeviceTimerJob {
             deviceTimerPos.forEach(deviceTimerPo -> {
                 Integer deviceId = deviceTimerPo.getDeviceId();
                 if (deviceTimerPo.getTimerType() == 1) {
-                    sendFunc(deviceId, FuncTypeEnums.TIMER_OEPN.getCode());
+                    sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 1);
                 } else {
-                    sendFunc(deviceId, FuncTypeEnums.TIMER_CLOSE.getCode());
+                    sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
                 }
                 DeviceTimerPo updatePo = new DeviceTimerPo();
                 updatePo.setId(deviceTimerPo.getId());
@@ -67,7 +67,12 @@ public class DeviceTimerJob {
         }
     }
 
-    public String sendFunc(Integer deviceId,String funcId) {
+    @Scheduled(cron = "0/10 * * * * ?")
+    public void doWork1(){
+        System.out.println(System.currentTimeMillis());
+    }
+
+    public String sendFunc(Integer deviceId,String funcId, Integer funcValue) {
             String topic = "/down/control/" + deviceId;
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
@@ -83,6 +88,7 @@ public class DeviceTimerJob {
             funcListMessage.setMsg_id(requestId);
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(funcId);
+            funcItemMessage.setValue(String.valueOf(funcValue));
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
             return requestId;

@@ -187,7 +187,7 @@
     <update id="updateDeviceGroupId">
         update t_device_team_item
         set teamId = #{newTeamId}
-        where masterUserId = #{userId} and deviceId =
+        where userId = #{userId} and deviceId =
         #{deviceId}
     </update>
 
