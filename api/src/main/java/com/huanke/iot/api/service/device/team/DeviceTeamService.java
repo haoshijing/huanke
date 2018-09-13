@@ -1,12 +1,14 @@
 package com.huanke.iot.api.service.device.team;
 
-import com.alibaba.druid.util.StringUtils;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +33,14 @@ public class DeviceTeamService {
     DeviceMapper deviceMapper;
 
     @Transactional
-    public Integer createDeviceTeam(Integer userId, DeviceTeamNewRequest newRequest) {
+    public Object createDeviceTeam(Integer userId, DeviceTeamNewRequest newRequest) {
         String teamName = newRequest.getTeamName();
         DeviceTeamPo queryPo = new DeviceTeamPo();
         queryPo.setName(teamName);
         queryPo.setMasterUserId(userId);
         DeviceTeamPo queryTeamPo = deviceTeamMapper.queryByName(queryPo);
         if (queryTeamPo != null && queryTeamPo.getStatus() == 1) {
-            return 0;
+            return new ApiResponse<>(RetCode.ERROR, "该设备组已存在");
         }
         Integer teamId = 0;
         if (queryTeamPo == null) {
@@ -56,6 +58,8 @@ public class DeviceTeamService {
             DeviceTeamPo updatePo = new DeviceTeamPo();
             updatePo.setName(newRequest.getTeamName());
             updatePo.setStatus(CommonConstant.STATUS_YES);
+            updatePo.setTeamType(3);
+            updatePo.setTeamStatus(0);
             updatePo.setId(teamId);
             updatePo.setLastUpdateTime(System.currentTimeMillis());
             int ret = deviceTeamMapper.updateById(updatePo);
@@ -66,34 +70,26 @@ public class DeviceTeamService {
             deviceTeamRequest.setDeviceIds(newRequest.getDeviceIds());
             deviceTeamRequest.setTeamId(teamId);
             updateDeviceTeam(userId, deviceTeamRequest);
-            return 1;
         }
-        return 0;
+        return new ApiResponse<>();
     }
 
-    public Boolean deleteTeam(Integer userId, Integer teamId) {
+    public Object deleteTeam(Integer userId, Integer teamId) {
         DeviceTeamPo teamPo = deviceTeamMapper.selectById(teamId);
         //判断是否默认组
-        if (teamPo != null && StringUtils.equals(teamPo.getName(), "默认组")) {
-            return false;
+
+        DeviceTeamItemPo queryTeamItem = new DeviceTeamItemPo();
+        queryTeamItem.setStatus(CommonConstant.STATUS_YES);
+        queryTeamItem.setTeamId(teamId);
+        Integer count = deviceTeamMapper.queryItemCount(queryTeamItem);
+        if(count > 0){
+            return new ApiResponse<>(RetCode.ERROR, "该组下有设备，无法删除");
         }
         Boolean updateRet = deviceTeamMapper.updateTeamStatus(userId, teamId, 2) > 0;
-        if (updateRet) {
-            DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
-            deviceTeamPo.setName("默认组");
-            deviceTeamPo.setMasterUserId(userId);
-            deviceTeamPo.setStatus(1);
-            List<DeviceTeamPo> deviceTeamPos = deviceTeamMapper.selectList(deviceTeamPo, 1, 0);
-            Integer defaultTeamId = 0;
 
-            if (deviceTeamPos.size() > 0) {
-                defaultTeamId = deviceTeamPos.get(0).getId();
-            }
-            deviceTeamMapper.updateDeviceTeamItem(userId, teamId, defaultTeamId);
-        }
-        return updateRet;
+        return new ApiResponse<>(updateRet);
     }
-
+    @Transactional
     public Boolean updateDeviceTeam(Integer userId, DeviceTeamRequest deviceTeamRequest) {
         final Integer teamId = deviceTeamRequest.getTeamId();
         deviceTeamRequest.getDeviceIds().forEach((deviceId) -> {

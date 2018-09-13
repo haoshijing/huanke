@@ -1,5 +1,6 @@
 package com.huanke.iot.api.controller.h5;
 
+import com.huanke.iot.api.controller.h5.req.BaseRequest;
 import com.huanke.iot.api.controller.h5.req.UpdateDeviceTeamRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
@@ -26,17 +27,19 @@ public class DeviceTeamController extends BaseController {
     DeviceTeamService deviceTeamService;
 
     @RequestMapping("/createTeam")
-    public ApiResponse<Integer> createDeviceTeam(@RequestBody DeviceTeamNewRequest deviceTeamNewRequest) {
+    public Object createDeviceTeam(@RequestBody DeviceTeamNewRequest deviceTeamNewRequest) {
         Integer userId = getCurrentUserId();
-        Integer teamId = deviceTeamService.createDeviceTeam(userId, deviceTeamNewRequest);
-        return new ApiResponse<>(teamId);
+        Object result = deviceTeamService.createDeviceTeam(userId, deviceTeamNewRequest);
+        return result;
     }
 
     @RequestMapping("/deleteTeam")
-    public ApiResponse<Boolean> delDeviceTeam(Integer teamId) {
+    public Object delDeviceTeam(@RequestBody BaseRequest<Integer> request) {
+        Integer teamId = request.getValue();
         Integer userId = getCurrentUserId();
-        Boolean ret = deviceTeamService.deleteTeam(userId, teamId);
-        return new ApiResponse<>(ret);
+        log.info("删除组操作：userId={}, teamId={}", userId, teamId);
+        Object result = deviceTeamService.deleteTeam(userId, teamId);
+        return result;
     }
 
     @RequestMapping("/updateDeviceTeam")

@@ -11,5 +11,5 @@ import java.util.List;
 @Data
 public class DeviceTeamNewRequest {
     private String teamName;
-    private List<String> deviceIds;
+    private List<String> wxDeviceIds;
 }
