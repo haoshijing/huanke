@@ -58,7 +58,7 @@ public class DeviceHighService {
      *
      * @param request
      */
-    public void addChildDevice(ChildDeviceRequest request) throws Exception {
+    public Integer addChildDevice(ChildDeviceRequest request) throws Exception {
         String childDeviceName = request.getDeviceName();
         Integer hostDeviceId = request.getHostDeviceId();
         String childId = request.getChildId();
@@ -82,10 +82,10 @@ public class DeviceHighService {
         devicePo.setStatus(CommonConstant.STATUS_YES);
         DevicePo hostDevice = deviceMapper.selectById(hostDeviceId);
         devicePo.setModelId(hostDevice.getModelId());
-        addOrUpdate(devicePo);
+        return addOrUpdate(devicePo);
     }
 
-    private void addOrUpdate(DevicePo devicePo) {
+    private Integer addOrUpdate(DevicePo devicePo) {
         if (devicePo.getId() == null) {
             devicePo.setCreateTime(System.currentTimeMillis());
             deviceMapper.insert(devicePo);
@@ -93,6 +93,7 @@ public class DeviceHighService {
             devicePo.setLastUpdateTime(System.currentTimeMillis());
             deviceMapper.updateById(devicePo);
         }
+        return devicePo.getId();
     }
 
     /**

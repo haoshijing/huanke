@@ -89,13 +89,14 @@ public class DeviceHighController {
     @RequestMapping("addChildDevice")
     public Object addChildDevice(@RequestBody ChildDeviceRequest request){
         log.info("添加从设备：request={}", JSON.toJSONString(request));
+        Integer deviceId;
         try {
-            deviceHighService.addChildDevice(request);
+            deviceId = deviceHighService.addChildDevice(request);
         } catch (Exception e) {
             log.error( e.getMessage());
             return new ApiResponse<>(RetCode.ERROR, "设备地址已存在");
         }
-        return new ApiResponse<>();
+        return new ApiResponse<>(deviceId);
     }
 
     /**
