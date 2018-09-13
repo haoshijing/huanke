@@ -46,7 +46,12 @@ public class DeviceTypeController {
         if (StringUtils.isBlank(typeRrequest.getName())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "类型名称不能为空");
         }
-        return deviceTypeService.createOrUpdate(typeRrequest);
+        try {
+            return deviceTypeService.createOrUpdate(typeRrequest);
+        } catch (Exception e) {
+            log.error("添加新类型失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"添加类型失败");
+        }
     }
 
 
@@ -66,7 +71,13 @@ public class DeviceTypeController {
         if (StringUtils.isBlank(typeRrequest.getName())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "类型名称不能为空");
         }
-        return deviceTypeService.createOrUpdate(typeRrequest);
+
+        try {
+            return deviceTypeService.createOrUpdate(typeRrequest);
+        }catch (Exception e) {
+            log.error("修改类型失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"修改类型失败");
+        }
     }
 
     /**
@@ -79,7 +90,14 @@ public class DeviceTypeController {
     @ApiOperation("删除类型-逻辑删除")
     @DeleteMapping(value = "/deleteDeviceTypeById/{id}")
     public ApiResponse<Boolean> deleteDeviceTypeById(@PathVariable("id") Integer typeId) throws Exception {
-        Boolean ret = deviceTypeService.deleteDeviceType(typeId);
+
+        Boolean ret = null;
+        try {
+            ret = deviceTypeService.deleteDeviceType(typeId);
+        } catch (Exception e) {
+            log.error("删除类型失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"删除类型失败");
+        }
         return new ApiResponse<>(ret);
     }
 
@@ -94,7 +112,13 @@ public class DeviceTypeController {
     @ApiOperation("删除类型-物理删除")
     @DeleteMapping(value = "/destoryDeviceType/{id}")
     public ApiResponse<Boolean> destoryDeviceType(@PathVariable("id") Integer typeId) throws Exception {
-        Boolean ret = deviceTypeService.destoryDeviceType(typeId);
+        Boolean ret = null;
+        try {
+            ret = deviceTypeService.destoryDeviceType(typeId);
+        } catch (Exception e) {
+            log.error("删除类型失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"删除类型失败");
+        }
         return new ApiResponse<>(ret);
     }
 

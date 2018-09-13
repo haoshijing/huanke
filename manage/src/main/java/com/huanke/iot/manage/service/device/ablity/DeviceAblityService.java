@@ -43,6 +43,7 @@ public class DeviceAblityService {
 
     @Value("${env}")
     private String env;
+
     /**
      * 新增 功能
      *
@@ -55,14 +56,14 @@ public class DeviceAblityService {
         int effectCount = 0;
         Boolean ret = false;
         DeviceAblityPo deviceAblityPo = new DeviceAblityPo();
-        try{
+        try {
             BeanUtils.copyProperties(ablityRequest, deviceAblityPo);
             //如果有id则为更新 否则为新增
             if (ablityRequest.getId() != null && ablityRequest.getId() > 0) {
                 //如果 状态不是删除，则全部默认为正常
-                if(CommonConstant.STATUS_DEL.equals(deviceAblityPo.getStatus())){
+                if (CommonConstant.STATUS_DEL.equals(deviceAblityPo.getStatus())) {
 //                deviceAblityPo.setStatus(CommonConstant.STATUS_YES);
-                }else{
+                } else {
                     deviceAblityPo.setStatus(CommonConstant.STATUS_YES);
                 }
                 deviceAblityPo.setLastUpdateTime(System.currentTimeMillis());
@@ -85,18 +86,18 @@ public class DeviceAblityService {
                     deviceAblityOptionPo.setMaxVal(deviceAblityOptionRequest.getMinVal());
                     deviceAblityOptionPo.setStatus(CommonConstant.STATUS_YES);
                     //如果 该选项有id 则为更新 ，否则为新增
-                    if(deviceAblityOptionRequest.getId()!=null&&deviceAblityOptionRequest.getId()>0){
+                    if (deviceAblityOptionRequest.getId() != null && deviceAblityOptionRequest.getId() > 0) {
                         deviceAblityOptionPo.setId(deviceAblityOptionRequest.getId());
                         deviceAblityOptionPo.setLastUpdateTime(System.currentTimeMillis());
 
                         //只有当前台传的状态完全等于 删除的时候，才会更新状态为删除。否则仍然为正常状态
-                        if(CommonConstant.STATUS_DEL.equals(deviceAblityOptionRequest.getStatus())){
+                        if (CommonConstant.STATUS_DEL.equals(deviceAblityOptionRequest.getStatus())) {
                             deviceAblityOptionPo.setStatus(CommonConstant.STATUS_DEL);
-                        }else{
+                        } else {
                             deviceAblityOptionPo.setStatus(CommonConstant.STATUS_YES);
                         }
                         deviceAblityOptionMapper.updateById(deviceAblityOptionPo);
-                    }else{
+                    } else {
 
                         deviceAblityOptionPo.setCreateTime(System.currentTimeMillis());
                         deviceAblityOptionMapper.insert(deviceAblityOptionPo);
@@ -107,8 +108,8 @@ public class DeviceAblityService {
             }
             return new ApiResponse<>(deviceAblityPo.getId());
 
-        }catch (RuntimeException e){
-            log.error("保存功能项失败 = {}",e);
+        } catch (RuntimeException e) {
+            log.error("保存功能项失败 = {}", e);
             throw new RuntimeException(e);
 //            return new ApiResponse<>(RetCode.ERROR,"保存功能项失败");
         }
@@ -179,10 +180,10 @@ public class DeviceAblityService {
      * @param ablityType
      * @return
      */
-    public List<DeviceTypeAblitysVo> selectListByType(Integer typeId,Integer ablityType) {
+    public List<DeviceTypeAblitysVo> selectListByType(Integer typeId, Integer ablityType) {
 
         //查询 功能列表
-        List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceAblityMapper.selectAblitysByType(typeId,ablityType);
+        List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceAblityMapper.selectAblitysByType(typeId, ablityType);
 
         List<DeviceTypeAblitysVo> deviceTypeAblitysVos = deviceTypeAblitysPos.stream().map(deviceTypeAblitysPo -> {
             DeviceTypeAblitysVo deviceTypeAblitysVo = new DeviceTypeAblitysVo();
@@ -213,6 +214,7 @@ public class DeviceAblityService {
 
         return deviceTypeAblitysVos;
     }
+
     /**
      * 根据主键查询 功能
      *
@@ -224,7 +226,7 @@ public class DeviceAblityService {
         DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(typeId);
 
         DeviceAblityVo deviceAblityVo = new DeviceAblityVo();
-        if(deviceAblityPo!=null){
+        if (deviceAblityPo != null) {
             deviceAblityVo.setAblityName(deviceAblityPo.getAblityName());
             deviceAblityVo.setDirValue(deviceAblityPo.getDirValue());
             deviceAblityVo.setWriteStatus(deviceAblityPo.getWriteStatus());
@@ -254,6 +256,7 @@ public class DeviceAblityService {
         }
         return deviceAblityVo;
     }
+
     /**
      * 删除 该功能 需判断 是否有类型 进行了引用，如果有，则不允许删除
      * 并同时删除该功能下 所有的选项
@@ -264,38 +267,42 @@ public class DeviceAblityService {
     public ApiResponse<Boolean> deleteAblity(Integer ablityId) throws Exception {
 
         //如果是开发环境
-        if("dev".equals(env)){
+        if ("dev".equals(env)) {
             System.out.println("123");
-        }else{
+        } else {
             System.out.println("345");
         }
+        try {
+            //首先进行判断该 功能是否存在。
+            DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(ablityId);
+            if (deviceAblityPo != null) {
 
-
-        //首先进行判断该 功能是否存在。
-        DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(ablityId);
-        if(deviceAblityPo!=null){
-
-            //根据功能项主键 查询是否有类型 进行了配置使用，如果有，则不允许删除。
-            if(!"dev".equals(env)){
-                List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceAblitysMapper.selectByAblityId(ablityId);
-                if(deviceTypeAblitysPos!=null&&deviceTypeAblitysPos.size()>0){
-                    return new ApiResponse<>(RetCode.PARAM_ERROR,"该功能项已被设备类型所引用，不可删除");
+                //根据功能项主键 查询是否有类型 进行了配置使用，如果有，则不允许删除。
+                if (!"dev".equals(env)) {
+                    List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceAblitysMapper.selectByAblityId(ablityId);
+                    if (deviceTypeAblitysPos != null && deviceTypeAblitysPos.size() > 0) {
+                        return new ApiResponse<>(RetCode.PARAM_ERROR, "该功能项已被设备类型所引用，不可删除");
+                    }
                 }
-            }
 
-            Boolean ret = false;
-            //先删除 该 功能
-            ret = deviceAblityMapper.deleteById(ablityId) > 0;
-            //再删除 选项表中 的选项
-            ret = ret && deviceAblityMapper.deleteOptionByAblityId(ablityId) > 0;
-            if(!"dev".equals(env)){
-                return new ApiResponse<>(RetCode.OK,"删除成功");
-            }else{
-                return new ApiResponse<>(RetCode.OK,"删除成功-存在类型引用。");
+                Boolean ret = false;
+                //先删除 该 功能
+                ret = deviceAblityMapper.deleteById(ablityId) > 0;
+                //再删除 选项表中 的选项
+                ret = ret && deviceAblityMapper.deleteOptionByAblityId(ablityId) > 0;
+                if (!"dev".equals(env)) {
+                    return new ApiResponse<>(RetCode.OK, "删除成功");
+                } else {
+                    return new ApiResponse<>(RetCode.OK, "删除成功-存在类型引用。");
+                }
+            } else {
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "该功能项不存在");
             }
-        }else{
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"该功能项不存在");
+        } catch (Exception e) {
+            log.error("删除能力项失败= {}",e);
+            throw new RuntimeException(e);
         }
+
 
     }
 
