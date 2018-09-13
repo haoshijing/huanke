@@ -147,7 +147,7 @@ public class DeviceOperateService {
      * @return list
      */
     public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
-
+        //todo 显示从设备
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
