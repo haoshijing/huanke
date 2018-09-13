@@ -237,4 +237,12 @@
         </if>
     </select>
 
+    <select id="verifyTeam">
+        select count(1) FROM
+        <include refid="tableName"/>
+        where masterUserId = #{userId}
+        and id = #{teamId}
+        and status = 1
+    </select>
+
 </mapper>

@@ -1,5 +1,6 @@
 package com.huanke.iot.api.controller.h5;
 
+import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.h5.req.BaseRequest;
 import com.huanke.iot.api.controller.h5.req.UpdateDeviceTeamRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
@@ -39,6 +40,14 @@ public class DeviceTeamController extends BaseController {
         Integer userId = getCurrentUserId();
         log.info("删除组操作：userId={}, teamId={}", userId, teamId);
         Object result = deviceTeamService.deleteTeam(userId, teamId);
+        return result;
+    }
+
+    @RequestMapping("/addTeamDevices")
+    public Object addTeamDevices(@RequestBody DeviceTeamRequest deviceTeamRequest) {
+        Integer userId = getCurrentUserId();
+        log.info("添加组设备:userId={}, request={}", userId, JSON.toJSON(deviceTeamRequest));
+        Object result = deviceTeamService.addTeamDevices(userId, deviceTeamRequest);
         return result;
     }
 

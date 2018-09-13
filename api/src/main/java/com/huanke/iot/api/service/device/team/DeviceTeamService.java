@@ -6,6 +6,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
@@ -25,9 +26,12 @@ import java.util.List;
 @Repository
 @Slf4j
 public class DeviceTeamService {
-    
+
     @Autowired
     DeviceTeamMapper deviceTeamMapper;
+
+    @Autowired
+    DeviceTeamItemMapper deviceTeamItemMapper;
 
     @Autowired
     DeviceMapper deviceMapper;
@@ -63,7 +67,7 @@ public class DeviceTeamService {
             updatePo.setId(teamId);
             updatePo.setLastUpdateTime(System.currentTimeMillis());
             int ret = deviceTeamMapper.updateById(updatePo);
-            log.info("ret = {}",ret);
+            log.info("ret = {}", ret);
         }
         if (!CollectionUtils.isEmpty(newRequest.getWxDeviceIds())) {
             DeviceTeamRequest deviceTeamRequest = new DeviceTeamRequest();
@@ -82,13 +86,14 @@ public class DeviceTeamService {
         queryTeamItem.setStatus(CommonConstant.STATUS_YES);
         queryTeamItem.setTeamId(teamId);
         Integer count = deviceTeamMapper.queryItemCount(queryTeamItem);
-        if(count > 0){
+        if (count > 0) {
             return new ApiResponse<>(RetCode.ERROR, "该组下有设备，无法删除");
         }
         Boolean updateRet = deviceTeamMapper.updateTeamStatus(userId, teamId, 2) > 0;
 
         return new ApiResponse<>(updateRet);
     }
+
     @Transactional
     public Boolean updateDeviceTeam(Integer userId, DeviceTeamRequest deviceTeamRequest) {
         final Integer teamId = deviceTeamRequest.getTeamId();
@@ -122,5 +127,24 @@ public class DeviceTeamService {
 
     public List<DeviceTeamPo> selectByUserId(Integer userId) {
         return deviceTeamMapper.selectByMasterUserId(userId);
+    }
+
+    public Object addTeamDevices(Integer userId, DeviceTeamRequest deviceTeamRequest) {
+        Integer teamId = deviceTeamRequest.getTeamId();
+        Integer count = deviceTeamMapper.verifyTeam(userId, teamId);
+        if (count < 1) {
+            return new ApiResponse<>(RetCode.ERROR, "该用户无此组");
+        }
+        List<String> wxDeviceIds = deviceTeamRequest.getDeviceIds();
+        for (String wxDeviceId : wxDeviceIds) {
+            DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
+            deviceTeamItemPo.setTeamId(teamId);
+            deviceTeamItemPo.setUserId(userId);
+            deviceTeamItemPo.setDeviceId(deviceMapper.selectByWxDeviceId(wxDeviceId).getId());
+            deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+            deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
+            deviceTeamItemMapper.insert(deviceTeamItemPo);
+        }
+        return new ApiResponse<>();
     }
 }
