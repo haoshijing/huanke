@@ -65,9 +65,9 @@ public class DeviceTeamService {
             int ret = deviceTeamMapper.updateById(updatePo);
             log.info("ret = {}",ret);
         }
-        if (!CollectionUtils.isEmpty(newRequest.getDeviceIds())) {
+        if (!CollectionUtils.isEmpty(newRequest.getWxDeviceIds())) {
             DeviceTeamRequest deviceTeamRequest = new DeviceTeamRequest();
-            deviceTeamRequest.setDeviceIds(newRequest.getDeviceIds());
+            deviceTeamRequest.setDeviceIds(newRequest.getWxDeviceIds());
             deviceTeamRequest.setTeamId(teamId);
             updateDeviceTeam(userId, deviceTeamRequest);
         }
