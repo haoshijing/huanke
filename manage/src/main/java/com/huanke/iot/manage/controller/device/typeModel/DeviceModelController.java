@@ -37,13 +37,19 @@ public class DeviceModelController {
     @ApiOperation("添加新型号")
     @RequestMapping(value = "/createDeviceModel",method = RequestMethod.POST)
     public ApiResponse<Integer> createDeviceModel(@RequestBody DeviceModelCreateOrUpdateRequest modelRequest) throws Exception{
-        if(StringUtils.isBlank(modelRequest.getName()) ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"型号名称不能为空");
+        ApiResponse<Integer> result = null;
+        try {
+            if(StringUtils.isBlank(modelRequest.getName()) ){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"型号名称不能为空");
+            }
+            if(modelRequest.getCustomerId()==null ){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"客户主键不能为空");
+            }
+            result = deviceModelService.createOrUpdate(modelRequest);
+        } catch (Exception e) {
+            log.error("添加新型号失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"添加新型号失败");
         }
-        if(modelRequest.getCustomerId()==null ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"客户主键不能为空");
-        }
-        ApiResponse<Integer> result =   deviceModelService.createOrUpdate(modelRequest);
         return result;
     }
 
@@ -57,14 +63,20 @@ public class DeviceModelController {
     @ApiOperation("修改设备型号")
     @PutMapping(value = "/updateDeviceModel")
     public ApiResponse<Integer> updateDeviceModel(@RequestBody DeviceModelCreateOrUpdateRequest modelRequest) throws Exception{
-        if(modelRequest.getId()==null||modelRequest.getId()<=0){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"型号主键不存在");
-        }
-        if(StringUtils.isBlank(modelRequest.getName()) ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"型号名称不能为空");
-        }
 
-        ApiResponse<Integer> result =   deviceModelService.createOrUpdate(modelRequest);
+        ApiResponse<Integer> result = null;
+        try {
+            if(modelRequest.getId()==null||modelRequest.getId()<=0){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"型号主键不存在");
+            }
+            if(StringUtils.isBlank(modelRequest.getName()) ){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"型号名称不能为空");
+            }
+            result = deviceModelService.createOrUpdate(modelRequest);
+        } catch (Exception e) {
+            log.error("修改设备型号失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"修改设备型号失败");
+        }
 
         return result;
     }
@@ -118,7 +130,13 @@ public class DeviceModelController {
     @ApiOperation("根据id 删除 型号")
     @DeleteMapping(value = "/deleteModelById/{id}")
     public ApiResponse<Boolean> deleteModelById(@PathVariable("id") Integer modelId) throws Exception{
-        Boolean ret =  deviceModelService.deleteModelById(modelId);
+        Boolean ret = null;
+        try {
+            ret = deviceModelService.deleteModelById(modelId);
+        } catch (Exception e) {
+            log.error("删除设备型号失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"删除设备型号失败");
+        }
         return new ApiResponse<>(ret);
     }
 
@@ -137,7 +155,12 @@ public class DeviceModelController {
     @ApiOperation("增加设备配额")
     @PostMapping(value = "/createWxDeviceIds")
     public ApiResponse<Boolean> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
-        return  deviceModelService.createWxDeviceIdPools(devicePoolRequest);
+        try {
+            return  deviceModelService.createWxDeviceIdPools(devicePoolRequest);
+        } catch (Exception e) {
+            log.error("增加设备配额失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"增加设备配额失败");
+        }
     }
 //    /**
 //     * 添加型号的版式配置

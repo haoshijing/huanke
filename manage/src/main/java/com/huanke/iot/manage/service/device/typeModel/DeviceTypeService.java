@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,6 +99,8 @@ public class DeviceTypeService {
             deviceTypeMapper.insert(deviceTypePo);
         }
 
+        List list = new ArrayList();
+        list.get(0);
         //先删除 已保存的功能集 ，再保存 类型的功能集
         deviceTypeAblitysMapper.deleteByTypeId(deviceTypePo.getId());
 
