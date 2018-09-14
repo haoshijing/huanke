@@ -11,4 +11,6 @@ public interface DeviceTimerMapper extends BaseMapper<DeviceTimerPo>{
     Integer cancelTimer(DeviceTimerPo updatePo);
 
     List<DeviceTimerPo> queryTimers(Long t);
+
+    List<DeviceTimerPo> queryIdeaTimers(Integer dayOfWeek);
 }

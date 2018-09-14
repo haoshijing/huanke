@@ -2,6 +2,7 @@ package com.huanke.iot.api.controller.h5;
 
 import com.huanke.iot.api.controller.h5.req.DeviceTimerRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceTimerVo;
+import com.huanke.iot.api.controller.h5.response.DictVo;
 import com.huanke.iot.api.service.device.timer.DeviceTimerService;
 import com.huanke.iot.base.api.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/h5/api")
 public class DeviceTimerController extends BaseController{
+    @RequestMapping("/timerType")
+    public List<DictVo> timerType(){
+        List<DictVo> dictVoList = deviceTimerService.getTimeTypes();
+        return dictVoList;
+    }
 
     @Autowired
     private DeviceTimerService deviceTimerService;
