@@ -83,12 +83,11 @@ public class DeviceTeamController {
     @ApiOperation("查询组列表")
     @RequestMapping(value = "/queryTeamList",method = RequestMethod.POST)
     public ApiResponse<List<DeviceTeamVo>> queryTeamList(@RequestBody TeamListQueryRequest teamListQueryRequest){
-        List<DeviceTeamVo> deviceTeamVoList=this.deviceTeamService.queryTeamList(teamListQueryRequest);
-        if(0 == deviceTeamVoList.size()){
-            return new ApiResponse<>(RetCode.OK,"当期设备列表中无设备",deviceTeamVoList);
-        }
-        else {
-            return new ApiResponse<>(deviceTeamVoList);
+        try{
+            return this.deviceTeamService.queryTeamList(teamListQueryRequest);
+        }catch (Exception e){
+            log.error("查询组异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"查询组失败");
         }
     }
     @ApiOperation("查询组的数量")

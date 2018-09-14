@@ -241,7 +241,7 @@ public class DeviceTeamService {
      * @param teamListQueryRequest
      * @return
      */
-    public List<DeviceTeamVo> queryTeamList(TeamListQueryRequest teamListQueryRequest){
+    public ApiResponse<List<DeviceTeamVo>> queryTeamList(TeamListQueryRequest teamListQueryRequest) throws Exception{
         //当期要查询的页
         Integer currentPage = teamListQueryRequest.getPage();
         //每页显示的数量
@@ -291,7 +291,10 @@ public class DeviceTeamService {
             deviceTeamVo.setImgVideosList(imgVideosList);
             return deviceTeamVo;
         }).collect(Collectors.toList());
-        return  deviceTeamVoList;
+        if(null == deviceTeamVoList || 0 == deviceTeamVoList.size()){
+            return new ApiResponse<>(RetCode.OK,"暂无数据",null);
+        }
+        return  new ApiResponse<>(RetCode.OK,"查询组列表成功",deviceTeamVoList);
     }
 
     /**
