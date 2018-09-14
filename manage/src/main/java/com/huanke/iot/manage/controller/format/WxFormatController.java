@@ -35,10 +35,17 @@ public class WxFormatController {
     @ApiOperation("添加新版式")
     @RequestMapping(value = "/createWxFormat",method = RequestMethod.POST)
     public ApiResponse<Integer> createWxFormat(@RequestBody WxFormatVo wxFormatVo) throws Exception{
+
         if(StringUtils.isBlank(wxFormatVo.getName()) ){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"版式名称不能为空");
         }
-        ApiResponse<Integer> result =   wxFormatService.createOrUpdate(wxFormatVo);
+        ApiResponse<Integer> result = null;
+        try {
+            result = wxFormatService.createOrUpdate(wxFormatVo);
+        } catch (Exception e) {
+            log.error("添加版式失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"添加版式失败");
+        }
         return  result;
     }
 
@@ -52,13 +59,20 @@ public class WxFormatController {
     @ApiOperation("修改版式")
     @PutMapping(value = "/updateWxFormat")
     public ApiResponse<Integer> updateDeviceModel(@RequestBody WxFormatVo wxFormatVo) throws Exception{
-        if(wxFormatVo.getId()==null||wxFormatVo.getId()<=0){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"版式主键不存在");
+
+        ApiResponse<Integer> result = null;
+        try {
+            if(wxFormatVo.getId()==null||wxFormatVo.getId()<=0){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"版式主键不存在");
+            }
+            if(StringUtils.isBlank(wxFormatVo.getName()) ){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"版式名称不能为空");
+            }
+            result = wxFormatService.createOrUpdate(wxFormatVo);
+        } catch (Exception e) {
+            log.error("修改版式失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"修改版式失败");
         }
-        if(StringUtils.isBlank(wxFormatVo.getName()) ){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"版式名称不能为空");
-        }
-        ApiResponse<Integer> result =   wxFormatService.createOrUpdate(wxFormatVo);
         return  result;
     }
 
@@ -106,14 +120,20 @@ public class WxFormatController {
     /**
      * 删除 该能力
      * 删除 能力表中的数据 并删除 选项表中 跟该能力相关的选项
-     * @param ablityId
+     * @param formatId
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @ApiOperation("根据Id删除功能")
+    @ApiOperation("根据Id删除版式")
     @DeleteMapping(value = "/deleteById/{id}")
-    public ApiResponse<Boolean> deleteDeviceAblitySet(@PathVariable("id") Integer ablityId) throws Exception{
-        ApiResponse<Boolean> result =  wxFormatService.deleteById(ablityId);
+    public ApiResponse<Boolean> deleteById(@PathVariable("id") Integer formatId) throws Exception{
+        ApiResponse<Boolean> result = null;
+        try {
+            result = wxFormatService.deleteById(formatId);
+        } catch (Exception e) {
+            log.error("删除版式失败={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"删除版式失败");
+        }
         return result;
     }
 }

@@ -7,6 +7,7 @@ import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.service.device.group.DeviceGroupService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/deviceGroup")
+@Slf4j
 public class DeviceGroupController {
 
     @Autowired
@@ -34,34 +36,39 @@ public class DeviceGroupController {
     @ApiOperation("创建新集群并向其中添加设备，从设备列表进入，添加已经选中的设备")
     @RequestMapping(value = "/addNewGroupAndDevice",method = RequestMethod.POST)
     public  ApiResponse<Boolean> addNewGroupAndDevice(@RequestBody GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception{
-        //集群名不可为空
-        if(!StringUtils.isNotEmpty(groupCreateOrUpdateRequest.getName())){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"集群名不可为空");
-        }
-        //客户id不可为空
-        if(null == groupCreateOrUpdateRequest.getCustomerId()||0 == groupCreateOrUpdateRequest.getCustomerId()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"客户不可为空");
-        }
-        //若集群列表中已存在当前名称集群,则直接添加设备
-        if(null != deviceGroupService.queryIdByName(groupCreateOrUpdateRequest)){
-            //查询已存在集群的相关信息
-            DeviceGroupPo deviceGroupPo= deviceGroupService.queryIdByName(groupCreateOrUpdateRequest);
-            //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群或什么也不做
-            if(null != groupCreateOrUpdateRequest.getDeviceQueryRequest()) {
-                deviceGroupService.addDeviceToGroup(groupCreateOrUpdateRequest,deviceGroupPo);
+        try {
+            //集群名不可为空
+            if(!StringUtils.isNotEmpty(groupCreateOrUpdateRequest.getName())){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"集群名不可为空");
             }
-            return new ApiResponse<>(RetCode.OK,"集群成功",true);
-        }
-        else {
-            //首先创建集群,并返回新增集群的相关信息
-            DeviceGroupPo deviceGroupPo= deviceGroupService.createGroup(groupCreateOrUpdateRequest);
-            //集群创建成功后获取集群ID，向其中添加选中的设备
+            //客户id不可为空
+            if(null == groupCreateOrUpdateRequest.getCustomerId()||0 == groupCreateOrUpdateRequest.getCustomerId()){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"客户不可为空");
+            }
+            //若集群列表中已存在当前名称集群,则直接添加设备
+            if(null != deviceGroupService.queryIdByName(groupCreateOrUpdateRequest)){
+                //查询已存在集群的相关信息
+                DeviceGroupPo deviceGroupPo= deviceGroupService.queryIdByName(groupCreateOrUpdateRequest);
+                //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群或什么也不做
+                if(null != groupCreateOrUpdateRequest.getDeviceQueryRequest()) {
+                    deviceGroupService.addDeviceToGroup(groupCreateOrUpdateRequest,deviceGroupPo);
+                }
+                return new ApiResponse<>(RetCode.OK,"集群成功",true);
+            }
+            else {
+                //首先创建集群,并返回新增集群的相关信息
+                DeviceGroupPo deviceGroupPo= deviceGroupService.createGroup(groupCreateOrUpdateRequest);
+                //集群创建成功后获取集群ID，向其中添加选中的设备
 
-            //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群
-            if(null != groupCreateOrUpdateRequest.getDeviceQueryRequest()) {
-                deviceGroupService.addDeviceToGroup(groupCreateOrUpdateRequest,deviceGroupPo);
+                //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群
+                if(null != groupCreateOrUpdateRequest.getDeviceQueryRequest()) {
+                    deviceGroupService.addDeviceToGroup(groupCreateOrUpdateRequest,deviceGroupPo);
+                }
+                return new ApiResponse<>(RetCode.OK,"集群成功",true);
             }
-            return new ApiResponse<>(RetCode.OK,"集群成功",true);
+        } catch (Exception e) {
+            log.error("添加群失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "添加群失败");
         }
     }
 
@@ -75,14 +82,19 @@ public class DeviceGroupController {
     @RequestMapping(value = "/queryGroupByDevice",method = RequestMethod.POST)
     public  ApiResponse<DeviceGroupPo> queryGroupByDevice(@RequestBody DeviceQueryRequest deviceQueryRequest) throws Exception{
         DeviceGroupPo deviceGroupPo=null;
-        List<DeviceQueryRequest.DeviceQueryList> deviceLists=deviceQueryRequest.getDeviceList();
-        if(null != deviceLists) {
-            if(deviceGroupService.isGroupConflict(deviceLists)){
-                return new ApiResponse<>(RetCode.ERROR,"设备列表中存在多个集群");
+        try {
+            List<DeviceQueryRequest.DeviceQueryList> deviceLists=deviceQueryRequest.getDeviceList();
+            if(null != deviceLists) {
+                if(deviceGroupService.isGroupConflict(deviceLists)){
+                    return new ApiResponse<>(RetCode.ERROR,"设备列表中存在多个集群");
+                }
+                else {
+                    deviceGroupPo=deviceGroupService.queryGroupName(deviceLists);
+                }
             }
-            else {
-                deviceGroupPo=deviceGroupService.queryGroupName(deviceLists);
-            }
+        } catch (Exception e) {
+            log.error("集群失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "集群失败");
         }
         return new ApiResponse(RetCode.OK,"查询成功",deviceGroupPo);
     }

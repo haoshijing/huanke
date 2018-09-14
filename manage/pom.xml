@@ -78,7 +78,11 @@
             <artifactId>aliyun-java-sdk-ecs</artifactId>
             <version>3.0.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.10</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
@@ -114,29 +118,29 @@
                 </executions>
             </plugin>
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<source>1.8</source>-->
-                    <!--<target>1.8</target>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-compiler-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<source>1.8</source>-->
+            <!--<target>1.8</target>-->
+            <!--</configuration>-->
             <!--</plugin>-->
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<useUniqueVersions>false</useUniqueVersions>-->
-                            <!--<classpathPrefix>lib/</classpathPrefix>-->
-                            <!--<mainClass>com.huanke.iot.manage.ManageStarter</mainClass>-->
-                        <!--</manifest>-->
-                        <!--<manifestEntries>-->
-                            <!--<version>${project.version}</version>-->
-                        <!--</manifestEntries>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-jar-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<archive>-->
+            <!--<manifest>-->
+            <!--<addClasspath>true</addClasspath>-->
+            <!--<useUniqueVersions>false</useUniqueVersions>-->
+            <!--<classpathPrefix>lib/</classpathPrefix>-->
+            <!--<mainClass>com.huanke.iot.manage.ManageStarter</mainClass>-->
+            <!--</manifest>-->
+            <!--<manifestEntries>-->
+            <!--<version>${project.version}</version>-->
+            <!--</manifestEntries>-->
+            <!--</archive>-->
+            <!--</configuration>-->
             <!--</plugin>-->
         </plugins>
     </build>

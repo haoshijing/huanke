@@ -11,7 +11,11 @@ import java.util.List;
  **/
 public interface DeviceTeamSceneMapper extends BaseMapper<DeviceTeamScenePo> {
     Integer insertBatch(List<DeviceTeamScenePo> deviceTeamScenePoList);
+
+
     List<DeviceTeamScenePo> selectImgVideoList(@Param("teamId") Integer teamId);
 
     Integer deleteByTeamId(Integer teamId);
+
+    Integer deleteBatch(List<DeviceTeamScenePo> deviceTeamScenePoList);
 }

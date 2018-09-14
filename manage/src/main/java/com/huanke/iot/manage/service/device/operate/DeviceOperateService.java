@@ -147,7 +147,7 @@ public class DeviceOperateService {
      * @return list
      */
     public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
-
+        //todo 显示从设备
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
@@ -745,12 +745,18 @@ public class DeviceOperateService {
         return null;
     }
 
-    public List<DeviceTeamPo> queryTeamInfoByUser(String openId) {
+    /**
+     * 查询当前用户下租的信息，若无组则加载自定义组
+     * @param openId
+     * @return
+     * @throws Exception
+     */
+    public ApiResponse<List<DeviceTeamPo>> queryTeamInfoByUser(String openId) throws Exception{
         //首先查询该用户是否有自定义组
         List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectByUserOpenId(openId);
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(openId);
-        if (0 == deviceTeamPoList.size()) {
+        if (null ==deviceTeamPoList || 0 == deviceTeamPoList.size()) {
             deviceTeamPoList.clear();
             //若没有自定义组则加载默认组
             WxConfigPo wxConfigPo = this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
@@ -758,7 +764,7 @@ public class DeviceOperateService {
             deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
             deviceTeamPoList.add(deviceTeamPo);
         }
-        return deviceTeamPoList;
+        return new ApiResponse<>(RetCode.OK,"查询用户组成功",deviceTeamPoList);
     }
 
     public CustomerUserPo isUserExist(String openId) {

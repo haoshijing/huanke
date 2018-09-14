@@ -139,7 +139,6 @@
         t_customer_user.openId = #{openId}
         AND
         t_device_team.masterUserId = t_customer_user.id
-        limit 1
     </select>
 
     <select id="selectByMasterUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
@@ -190,6 +189,25 @@
         </if>
     </select>
 
+    <!--批量更新-->
+    <update id="updateBatch" parameterType="java.util.List">
+        update
+        <include refid="tableName"/>
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="status =case" suffix="end,">
+                <foreach collection="list" item="team" index="index">
+                    <if test="team.status !=null">
+                        when id=#{team.id} then #{team.status}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
     <update id="updateDeviceGroupId">
         update t_device_team_item
         set teamId = #{newTeamId}
@@ -202,6 +220,13 @@
         <include refid="tableName"/>
         set status = #{status} where masterUserId = #{userId}
         and id = #{teamId}
+    </update>
+
+    <update id="updateStatusById" parameterType="java.lang.Integer">
+        update
+        <include refid="tableName"/>
+        set status = #{status}
+        where id = #{id}
     </update>
 
     <update id="updateDeviceTeamItem">

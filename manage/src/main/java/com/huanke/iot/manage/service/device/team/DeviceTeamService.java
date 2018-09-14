@@ -18,10 +18,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamScenePo;
 import com.huanke.iot.manage.common.util.QRCodeUtil;
 import com.huanke.iot.manage.vo.request.device.operate.QueryInfoByCustomerRequest;
-import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.team.TeamDeviceCreateRequest;
-import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
-import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
+import com.huanke.iot.manage.vo.request.device.team.*;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -85,9 +82,10 @@ public class DeviceTeamService {
         deviceTeamPo.setCreateUserId(customerUserPo.getId());
         deviceTeamPo.setMasterUserId(customerUserPo.getId());
         //设置该组的使用状态为正常
-        deviceTeamPo.setStatus(1);
+        deviceTeamPo.setStatus(CommonConstant.STATUS_YES);
         //设置组的状态为终端组
         deviceTeamPo.setTeamStatus(DeviceTeamConstants.DEVICE_TEAM_STATUS_TERMINAL);
+        deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
         deviceTeamPo.setSceneDescription(teamCreateOrUpdateRequest.getSceneDescription());
         deviceTeamPo.setCreateTime(System.currentTimeMillis());
         deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
@@ -98,6 +96,7 @@ public class DeviceTeamService {
                 DeviceTeamScenePo deviceTeamScenePo = new DeviceTeamScenePo();
                 deviceTeamScenePo.setTeamId(deviceTeamPo.getId());
                 deviceTeamScenePo.setImgVideo(imgVideo.getImgVideo());
+                deviceTeamScenePo.setStatus(CommonConstant.STATUS_YES);
                 deviceTeamScenePo.setCreateTime(System.currentTimeMillis());
                 deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
                 deviceTeamScenePoList.add(deviceTeamScenePo);
@@ -151,33 +150,11 @@ public class DeviceTeamService {
                 //进行场景图册和视频册的批量更新
                 this.deviceTeamSceneMapper.insertBatch(deviceTeamScenePoList);
             }
-
-
-            //若设备列表中无设备则仅创建新组，不添加设备
-//            if(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList()!=null&&teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList().size()>0){
-//
-//                //首先查询设备列表中是否已有设备在其他组中
-//                DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
-//                if(null != devicePo){
-//                    return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在");
-//                }
-//                DeviceTeamPo deviceTeamPo=this.deviceTeamService.queryTeamByName(teamCreateOrUpdateRequest.getName());
-//                //若已存在该组名，则直接添加设备
-//                if(null != deviceTeamPo){
-//                    //向组中添加设备
-//                    this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),deviceTeamPo);
-//                    //添加成功后返回teamId
-//                    return new ApiResponse<>(RetCode.OK,"添加成功",deviceTeamPo.getId());
-//                }
-//                else {
-//                    //首先创建组
-//                    DeviceTeamPo resultPo=this.deviceTeamService.createTeam(teamCreateOrUpdateRequest);
-//                    //向组中添加设备
-//                    this.deviceTeamService.addDeviceToTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),resultPo);
-//                    //添加成功后返回teamId
-//                    return new ApiResponse<>(RetCode.OK,"添加成功",resultPo.getId());
-//                }            }
-
+            List<TeamDeviceCreateRequest> deviceList= teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList();
+            //如果有新增设备，则进行设备的新增设备操作
+            if(null != deviceList && 0 < deviceList.size()){
+                addDeviceToTeam(deviceList,deviceTeamPo);
+            }
             return  new ApiResponse<>(RetCode.OK,"更新设备组成功");
         }catch (Exception e){
             log.error("更新设备组-{}", e);
@@ -235,11 +212,11 @@ public class DeviceTeamService {
         }
         //如果当前组中存在联动设备，则设定组为联动组
         if(deviceLinkAge){
-            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_LINKAGE_YES);
+            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_LINK);
         }
         //否则为普通终端组
         else {
-            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_LINKAGE_NO);
+            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
         }
         deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
         //更新当前组的组类型
@@ -264,7 +241,7 @@ public class DeviceTeamService {
      * @param teamListQueryRequest
      * @return
      */
-    public List<DeviceTeamVo> queryTeamList(TeamListQueryRequest teamListQueryRequest){
+    public ApiResponse<List<DeviceTeamVo>> queryTeamList(TeamListQueryRequest teamListQueryRequest) throws Exception{
         //当期要查询的页
         Integer currentPage = teamListQueryRequest.getPage();
         //每页显示的数量
@@ -294,7 +271,7 @@ public class DeviceTeamService {
             deviceTeamVo.setOwnerNickName(customerUserPo.getNickname());
             deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
             deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
-            //组的使用状态，1-正常，2-不正常
+            //组的使用状态，1-正常，2-删除
             deviceTeamVo.setStatus(deviceTeamPo.getStatus());
             //获取组的状态，终端组或是托管组
             deviceTeamVo.setTeamStatus(deviceTeamPo.getTeamStatus());
@@ -314,7 +291,10 @@ public class DeviceTeamService {
             deviceTeamVo.setImgVideosList(imgVideosList);
             return deviceTeamVo;
         }).collect(Collectors.toList());
-        return  deviceTeamVoList;
+        if(null == deviceTeamVoList || 0 == deviceTeamVoList.size()){
+            return new ApiResponse<>(RetCode.OK,"暂无数据",null);
+        }
+        return  new ApiResponse<>(RetCode.OK,"查询组列表成功",deviceTeamVoList);
     }
 
     /**
@@ -354,6 +334,56 @@ public class DeviceTeamService {
         }
     }
 
+    public ApiResponse<Boolean> deleteOneTeam(TeamDeleteRequest teamDeleteRequest) throws Exception{
+        //首先查询改组中是否有绑定的设备，若存在，需要先进行解绑
+        List<DeviceTeamItemPo> deviceTeamItemPoList=this.deviceTeamItemMapper.selectByTeamId(teamDeleteRequest.getTeamId());
+        if(null != deviceTeamItemPoList && 0 < deviceTeamItemPoList.size()){
+            //当存在设备时才进行下面操作
+            List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList=new ArrayList<>();
+            List<DevicePo> devicePoList=new ArrayList<>();
+            //根据组中的deviceId查询与用户、客户的绑定关系
+            deviceTeamItemPoList.stream().forEach(deviceTeamItemPo -> {
+                DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(deviceTeamItemPo.getDeviceId());
+                DevicePo devicePo=this.deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
+                devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+                devicePo.setBindTime(null);
+                devicePo.setLastUpdateTime(System.currentTimeMillis());
+                deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
+                devicePoList.add(devicePo);
+            });
+            //首先删除设备与组的绑定
+            this.deviceTeamItemMapper.deleteBatch(deviceTeamItemPoList);
+            //删除设备与用户、客户的绑定关系
+            this.deviceCustomerUserRelationMapper.deleteBatch(deviceCustomerUserRelationPoList);
+            //批量更新设备信息
+            this.deviceMapper.updateBatch(devicePoList);
+        }
+        //进行组的删除
+        DeviceTeamPo deviceTeamPo=this.deviceTeamMapper.selectById(teamDeleteRequest.getTeamId());
+        //更新组的状态
+        deviceTeamPo.setStatus(CommonConstant.STATUS_DEL);
+        List<DeviceTeamScenePo> deviceTeamScenePoList=this.deviceTeamSceneMapper.selectImgVideoList(teamDeleteRequest.getTeamId());
+        //删除场景信息
+        if(null != deviceTeamItemPoList && 0 < deviceTeamItemPoList.size()) {
+            this.deviceTeamSceneMapper.deleteBatch(deviceTeamScenePoList);
+        }
+        //更新组的状态为删除
+        Boolean ret = this.deviceTeamMapper.updateById(deviceTeamPo) > 0;
+        if(ret){
+            return new ApiResponse<>(RetCode.OK,"删除组成功",ret);
+        }
+        else {
+            return new ApiResponse<>(RetCode.ERROR,"删除组失败",ret);
+        }
+    }
+
+
+    /**
+     * 创建托管二维码
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
     public String createQrCode(@RequestBody  Integer teamId)throws Exception{
         //根据当前传入的teamId查询到当前customer的appId等相关信息
         CustomerPo customerPo=this.customerMapper.selectByTeamId(teamId);
@@ -422,6 +452,11 @@ public class DeviceTeamService {
         }
     }
 
+    /**
+     * 查询客户已分配的设备
+     * @param queryInfoByCustomerRequest
+     * @return
+     */
     public List<DevicePo> queryDevicesByCustomer(QueryInfoByCustomerRequest queryInfoByCustomerRequest){
         List<DeviceCustomerRelationPo> deviceCustomerRelationPoList=this.deviceCustomerRelationMapper.selectByCustomerId(queryInfoByCustomerRequest.getCustomerId());
         List<DevicePo> devicePoList=new ArrayList<>();
