@@ -54,7 +54,7 @@ public class DeviceTimerController extends BaseController{
         Integer userId = getCurrentUserId();
         String wxDeviceId = request.getWxDeviceId();
         Integer type = request.getType();
-        if(wxDeviceId.equals("") || wxDeviceId == null || type == null){
+        if(wxDeviceId.equals("") || wxDeviceId == null){
             return new ApiResponse<>(RetCode.PARAM_ERROR, "参数错误");
         }
         log.info("查询定时列表：userId={}, wxDeviceId={}, type={}", userId, wxDeviceId, type);
