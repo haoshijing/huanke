@@ -47,11 +47,11 @@ public class DeviceTimerService {
         Integer type = request.getType();
 
         if (afterTime <= 0) {
-            return false;
+            return 0;
         }
         DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
         if (devicePo == null) {
-            return false;
+            return 0;
         }
         DeviceTimerPo deviceTimerPo = new DeviceTimerPo();
         deviceTimerPo.setTimerType(timerType);
