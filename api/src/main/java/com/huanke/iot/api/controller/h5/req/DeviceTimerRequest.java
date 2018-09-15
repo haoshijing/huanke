@@ -3,6 +3,8 @@ package com.huanke.iot.api.controller.h5.req;
 import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class DeviceTimerRequest {
     private Integer id;
@@ -18,5 +20,5 @@ public class DeviceTimerRequest {
     private Integer hour;
     private Integer minute;
     private Integer second;
-    private Integer dayOfWeek;
+    private List<Integer> daysOfWeek;
 }

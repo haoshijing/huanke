@@ -103,7 +103,7 @@
     </update>
 
 
-    <select id="selectByType" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectByType" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.config.DictPo">
         select * from
         <include refid="tableName"/>
         where type = #{type}

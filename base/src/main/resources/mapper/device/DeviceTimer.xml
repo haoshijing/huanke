@@ -18,7 +18,6 @@
         status,
         executeRet,
         type,
-        dayOfWeek,
         hour,
         minute,
         second,
@@ -34,7 +33,6 @@
         #{status},
         #{executeRet},
         #{type},
-        #{dayOfWeek},
         #{hour},
         #{minute},
         #{second},
@@ -53,10 +51,6 @@
     <select id = "selectTimerList" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
         select * from <include refid="tableName" />
         <where>
-            <if test = "timerType != null">
-                AND timerType = #{timerType}
-
-            </if>
             <if test = "userId != null">
                 AND userId =#{userId}
             </if>
@@ -83,10 +77,11 @@
     </select>
 
     <select id="queryIdeaTimers" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
-        select * from <include refid="tableName"/>
-        where dayOfWeek = #{dayOfWeek}
-        and type = 2
-        and status = 1
+        select tdt.* from t_device_timer tdt,t_device_timer_day tdtd
+        where tdtd.dayOfWeek = #{dayOfWeek}
+        and tdt.type = 2
+        and tdt.status = 1
+        and tdt.id = tdtd.timeId
     </select>
     
     <update id="updateById">

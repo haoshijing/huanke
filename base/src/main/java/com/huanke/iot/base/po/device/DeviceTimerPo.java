@@ -13,7 +13,6 @@ public class DeviceTimerPo {
     private Long executeTime;
     private Integer status = CommonConstant.STATUS_YES;
     private Integer executeRet;
-    private Integer dayOfWeek;
     private Integer hour;
     private Integer minute;
     private Integer second;

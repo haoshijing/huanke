@@ -75,7 +75,7 @@ public class DeviceTeamService {
             deviceTeamRequest.setTeamId(teamId);
             updateDeviceTeam(userId, deviceTeamRequest);
         }
-        return new ApiResponse<>();
+        return new ApiResponse<>(teamId);
     }
 
     public Object deleteTeam(Integer userId, Integer teamId) {
