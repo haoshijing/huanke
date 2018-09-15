@@ -38,8 +38,9 @@ public class DeviceTimerController extends BaseController{
         Integer hour = request.getHour();
         Integer minute = request.getMinute();
         Integer second = request.getSecond();
+        Long afterTime = request.getAfterTime();
         if(type == TimerConstants.TIMER_TYPE_IDEA){
-            if(daysOfWeek.isEmpty() || hour == null || minute == null || second == null){
+            if(afterTime == null || daysOfWeek.isEmpty() || hour == null || minute == null || second == null){
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "参数错误", 0);
             }
         }

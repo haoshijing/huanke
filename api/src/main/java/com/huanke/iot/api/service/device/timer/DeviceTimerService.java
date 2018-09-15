@@ -64,10 +64,10 @@ public class DeviceTimerService {
         deviceTimerPo.setHour(request.getHour());
         deviceTimerPo.setMinute(request.getMinute());
         deviceTimerPo.setSecond(request.getSecond());
-        Integer ret = deviceTimerMapper.insert(deviceTimerPo);
         if (type == TimerConstants.TIMER_TYPE_ONCE_TIME) {
             deviceTimerPo.setExecuteTime(System.currentTimeMillis() + afterTime);
         }
+        deviceTimerMapper.insert(deviceTimerPo);
         if (type == TimerConstants.TIMER_TYPE_IDEA) {
             List<Integer> daysOfWeek = request.getDaysOfWeek();
             for (Integer dayOfWeek : daysOfWeek) {
@@ -98,12 +98,14 @@ public class DeviceTimerService {
                 deviceTimerPo -> {
                     DeviceTimerVo deviceTimerVo = new DeviceTimerVo();
                     deviceTimerVo.setName(deviceTimerPo.getName());
-                    Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
-                    if (t < 0) {
-                        t = 0L;
+                    if(deviceTimerPo.getType() == TimerConstants.TIMER_TYPE_ONCE_TIME){
+                        Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
+                        if (t < 0) {
+                            t = 0L;
+                        }
+                        deviceTimerVo.setRemainTime(t);
                     }
                     deviceTimerVo.setId(deviceTimerPo.getId());
-                    deviceTimerVo.setRemainTime(t);
                     deviceTimerVo.setTimerType(deviceTimerPo.getTimerType());
                     deviceTimerVo.setStatus(deviceTimerPo.getStatus());
                     deviceTimerVo.setType(deviceTimerPo.getType());
