@@ -32,7 +32,7 @@ public class DeviceTimerController extends BaseController{
     @Autowired
     private DeviceTimerService deviceTimerService;
     @RequestMapping("/addTimer")
-    public ApiResponse<Boolean> addTimer(@RequestBody DeviceTimerRequest request){
+    public ApiResponse<Integer> addTimer(@RequestBody DeviceTimerRequest request){
         List<Integer> daysOfWeek = request.getDaysOfWeek();
         Integer type = request.getType();
         Integer hour = request.getHour();
@@ -40,13 +40,13 @@ public class DeviceTimerController extends BaseController{
         Integer second = request.getSecond();
         if(type == TimerConstants.TIMER_TYPE_IDEA){
             if(daysOfWeek.isEmpty() || hour == null || minute == null || second == null){
-                return new ApiResponse<>(false);
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "参数错误", 0);
             }
         }
         Integer userId = getCurrentUserId();
         request.setUserId(userId);
-        Boolean ret = deviceTimerService.insertTimer(request);
-        return new ApiResponse<>(ret);
+        Integer timeId = deviceTimerService.insertTimer(request);
+        return new ApiResponse<>(timeId);
     }
 
     @RequestMapping("/queryTimerList")

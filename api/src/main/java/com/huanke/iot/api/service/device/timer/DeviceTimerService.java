@@ -39,7 +39,7 @@ public class DeviceTimerService {
     private DictMapper dictMapper;
 
     @Transactional
-    public Boolean insertTimer(DeviceTimerRequest request) {
+    public Integer insertTimer(DeviceTimerRequest request) {
         String name = request.getName();
         Long afterTime = request.getAfterTime();
         String deviceIdStr = request.getDeviceId();
@@ -78,7 +78,7 @@ public class DeviceTimerService {
                 deviceTimerDayMapper.insert(deviceTimerDayPo);
             }
         }
-        return ret > 0;
+        return devicePo.getId();
     }
 
 
@@ -109,7 +109,7 @@ public class DeviceTimerService {
                     deviceTimerVo.setHour(deviceTimerPo.getHour());
                     deviceTimerVo.setMinute(deviceTimerPo.getMinute());
                     deviceTimerVo.setSecond(deviceTimerPo.getSecond());
-                    if (type == TimerConstants.TIMER_TYPE_IDEA){
+                    if (type != null && type == TimerConstants.TIMER_TYPE_IDEA){
                         List<Integer> daysOfWeek = deviceTimerDayMapper.selectDaysOfWeekByTimeId(deviceTimerPo.getId());
                         deviceTimerVo.setDaysOfWeek(daysOfWeek);
                     }
