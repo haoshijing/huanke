@@ -787,9 +787,12 @@ public class DeviceOperateService {
             deviceTeamPoList.clear();
             //若没有自定义组则加载默认组
             WxConfigPo wxConfigPo = this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
-            deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
-            deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
-            deviceTeamPoList.add(deviceTeamPo);
+            if(wxConfigPo!=null){
+                deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
+                deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
+                deviceTeamPoList.add(deviceTeamPo);
+            }
+
         }
         return new ApiResponse<>(RetCode.OK,"查询用户组成功",deviceTeamPoList);
     }

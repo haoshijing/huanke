@@ -73,8 +73,17 @@
             <if test = "param.masterUserId != null and param.masterUserId != 0">
                 AND masterUserId = #{param.masterUserId}
             </if>
+            <if test = "param.createUserId != null and param.createUserId != 0">
+                AND createUserId = #{param.createUserId}
+            </if>
+            <if test = "param.customerId != null and param.customerId != 0">
+                AND customerId = #{param.customerId}
+            </if>
             <if test="param.status != null">
                 AND status = #{param.status}
+            </if>
+            <if test="param.teamType != null">
+                AND teamType = #{param.teamType}
             </if>
             <if test = "param.name != null">
                 and name = #{param.name}

@@ -4,6 +4,12 @@ import lombok.Data;
 
 @Data
 public class TeamListQueryRequest {
-    private Integer page;
-    private Integer limit;
+    private String name;
+    private Integer createUserId;
+    private Integer masterUserId;
+    private Integer customerId;
+    private Integer status;
+    private Integer teamType;
+    private Integer page = 1;
+    private Integer limit = 20;
 }

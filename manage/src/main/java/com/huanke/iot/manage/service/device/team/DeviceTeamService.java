@@ -250,6 +250,13 @@ public class DeviceTeamService {
         Integer offset = (currentPage - 1) * limit;
         //查询整个列表，因此先建一个空的deviceTeamPo模型
         DeviceTeamPo queryPo=new DeviceTeamPo();
+        queryPo.setName(teamListQueryRequest.getName());
+        queryPo.setTeamType(teamListQueryRequest.getTeamType());
+        queryPo.setMasterUserId(teamListQueryRequest.getMasterUserId());
+        queryPo.setCreateUserId(teamListQueryRequest.getCreateUserId());
+        queryPo.setStatus(teamListQueryRequest.getStatus());
+        queryPo.setCustomerId(teamListQueryRequest.getCustomerId());
+
         List<DeviceTeamPo> deviceTeamPoList=this.deviceTeamMapper.selectList(queryPo,limit,offset);
         List<DeviceTeamVo> deviceTeamVoList=deviceTeamPoList.stream().map(deviceTeamPo -> {
             CustomerUserPo customerUserPo;
