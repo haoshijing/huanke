@@ -50,7 +50,7 @@ public class AuthController {
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         if(StringUtils.isEmpty(code)){
-            String redirect_uri = request.getRequestURL().toString();
+            String redirect_uri = request.getRequestURL().toString().replace("127.0.0.1", "dev.hcocloud.com");
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
                     + URLEncoder.encode(redirect_uri, "UTF-8")+ "?customerId=" + customerId +"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
             System.out.println("fullredirectUrl->" + fullRedirectUrl);
