@@ -30,7 +30,7 @@ public class UserService {
     private WechartUtil wechartUtil;
 
     @Async("taskExecutor")
-    public void  addOrUpdateUser(String accessToken, String openId){
+    public void  addOrUpdateUser(String accessToken, String openId, Integer customerId){
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
         CustomerUserPo dbCustomerUserPo = new CustomerUserPo();
 
@@ -47,6 +47,7 @@ public class UserService {
             dbCustomerUserPo.setUnionid(userInfo.getString("unionid"));
             dbCustomerUserPo.setSex(userInfo.getInteger("sex"));
             dbCustomerUserPo.setNickname(userInfo.getString("nickname"));
+            dbCustomerUserPo.setCustomerId(customerId);
             dbCustomerUserPo.setLastVisitTime(System.currentTimeMillis());
             dbCustomerUserPo.setLastUpdateTime(System.currentTimeMillis());
         }

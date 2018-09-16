@@ -84,7 +84,7 @@ public class AuthController {
             log.info("isOk = {}",isOk);
         }
         if(isOk){
-            userService.addOrUpdateUser(access_token,openId);
+            userService.addOrUpdateUser(access_token,openId, customerId);
         }
         return new ApiResponse<>(openId);
     }
