@@ -263,14 +263,19 @@ public class DeviceTeamService {
                 customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getCreateUserId());
                 deviceTeamVo.setCreateUserNickName(customerUserPo.getNickname());
                 deviceTeamVo.setCreateUserOpenId(customerUserPo.getOpenId());
+                deviceTeamVo.setCreateUserId(customerUserPo.getId());
                 deviceTeamVo.setCreateTime(deviceTeamPo.getCreateTime());
             }
             //获取当前管理员的相关信息
             customerUserPo=this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
             deviceTeamVo.setOwnerOpenId(customerUserPo.getOpenId());
+            deviceTeamVo.setOwnerOpenId(customerUserPo.getOpenId());
             deviceTeamVo.setOwnerNickName(customerUserPo.getNickname());
             deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
             deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
+
+            deviceTeamVo.setOwnerUserId(deviceTeamPo.getMasterUserId());
+            deviceTeamVo.setCreateUserId(deviceTeamPo.getCreateUserId());
             //组的使用状态，1-正常，2-删除
             deviceTeamVo.setStatus(deviceTeamPo.getStatus());
             //获取组的状态，终端组或是托管组

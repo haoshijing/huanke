@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.vo.response.device.team;
 
 import com.huanke.iot.base.constant.CommonConstant;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.util.List;
@@ -13,8 +14,10 @@ public class DeviceTeamVo {
     private String icon;
     private String createUserNickName;
     private String createUserOpenId;
+    private Integer createUserId;
     private Long createTime;
     private String ownerOpenId;
+    private Integer ownerUserId;
     private String ownerNickName;
     private String cover;
     private List<ImgVideos> imgVideosList;
