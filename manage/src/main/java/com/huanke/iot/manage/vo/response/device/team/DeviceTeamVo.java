@@ -16,9 +16,9 @@ public class DeviceTeamVo {
     private String createUserOpenId;
     private Integer createUserId;
     private Long createTime;
-    private String ownerOpenId;
-    private Integer ownerUserId;
-    private String ownerNickName;
+    private String masterOpenId;
+    private Integer masterUserId;
+    private String masterNickName;
     private String cover;
     private List<ImgVideos> imgVideosList;
     private String sceneDescription;

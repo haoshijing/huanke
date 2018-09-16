@@ -175,6 +175,12 @@
     </delete>
 
 
+    <delete id="deleteByTeamId" >
+        delete from
+        <include refid="tableName"/>
+        where teamId = #{teamId}
+    </delete>
+
     <!--批量删除-->
     <delete id="deleteBatch" parameterType="java.util.List">
         delete from

@@ -276,13 +276,13 @@ public class DeviceTeamService {
             }
             //获取当前管理员的相关信息
             customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
-            deviceTeamVo.setOwnerOpenId(customerUserPo.getOpenId());
-            deviceTeamVo.setOwnerOpenId(customerUserPo.getOpenId());
-            deviceTeamVo.setOwnerNickName(customerUserPo.getNickname());
+            deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
+            deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
+            deviceTeamVo.setMasterNickName(customerUserPo.getNickname());
             deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
             deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
 
-            deviceTeamVo.setOwnerUserId(deviceTeamPo.getMasterUserId());
+            deviceTeamVo.setMasterUserId(deviceTeamPo.getMasterUserId());
             deviceTeamVo.setCreateUserId(deviceTeamPo.getCreateUserId());
             //组的使用状态，1-正常，2-删除
             deviceTeamVo.setStatus(deviceTeamPo.getStatus());
@@ -365,21 +365,22 @@ public class DeviceTeamService {
                 devicePoList.add(devicePo);
             });
             //首先删除设备与组的绑定
-            this.deviceTeamItemMapper.deleteBatch(deviceTeamItemPoList);
+            this.deviceTeamItemMapper.deleteByTeamId(teamDeleteRequest.getTeamId());
             //删除设备与用户、客户的绑定关系
             this.deviceCustomerUserRelationMapper.deleteBatch(deviceCustomerUserRelationPoList);
             //批量更新设备信息
             this.deviceMapper.updateBatch(devicePoList);
         }
+//        List<DeviceTeamScenePo> deviceTeamScenePoList = this.deviceTeamSceneMapper.selectImgVideoList(teamDeleteRequest.getTeamId());
+        //删除场景信息
+//        if (null != deviceTeamItemPoList && 0 < deviceTeamItemPoList.size()) {
+//        }
+        this.deviceTeamSceneMapper.deleteByTeamId(teamDeleteRequest.getTeamId());
         //进行组的删除
         DeviceTeamPo deviceTeamPo = this.deviceTeamMapper.selectById(teamDeleteRequest.getTeamId());
         //更新组的状态
         deviceTeamPo.setStatus(CommonConstant.STATUS_DEL);
-        List<DeviceTeamScenePo> deviceTeamScenePoList = this.deviceTeamSceneMapper.selectImgVideoList(teamDeleteRequest.getTeamId());
-        //删除场景信息
-        if (null != deviceTeamItemPoList && 0 < deviceTeamItemPoList.size()) {
-            this.deviceTeamSceneMapper.deleteBatch(deviceTeamScenePoList);
-        }
+
         //更新组的状态为删除
         Boolean ret = this.deviceTeamMapper.updateById(deviceTeamPo) > 0;
         if (ret) {
