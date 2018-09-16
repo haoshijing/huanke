@@ -99,8 +99,6 @@ public class DeviceTypeService {
             deviceTypeMapper.insert(deviceTypePo);
         }
 
-        List list = new ArrayList();
-        list.get(0);
         //先删除 已保存的功能集 ，再保存 类型的功能集
         deviceTypeAblitysMapper.deleteByTypeId(deviceTypePo.getId());
 

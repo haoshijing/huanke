@@ -72,7 +72,8 @@ public class CustomerService {
         //先验证二级域名是否重复 如果重复 不允许添加
         if (StringUtils.isNotBlank(customerVo.getSLD())) {
             CustomerPo queryCustomer = customerMapper.selectBySLD(customerVo.getSLD());
-            if (queryCustomer != null&&queryCustomer.getId().equals(customerPo.getId())) {
+            //当库中存在 该二级域名的客户，且id 和 保存的不一致时。不允许添加
+            if (queryCustomer != null&&!queryCustomer.getId().equals(customerVo.getId())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在该二级域名");
             }
         }

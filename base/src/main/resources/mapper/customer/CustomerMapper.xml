@@ -126,6 +126,7 @@
         tc.loginname,
         tc.remark
         from <include refid="tableName"/>
+        where status = 1
         limit #{limit} offset #{offset}
     </select>
 
@@ -160,7 +161,7 @@
         *
         FROM
         <include refid="tableName"/>
-        WHERE SLD = #{SLD} limit 1
+        WHERE SLD = #{SLD} and status = 1 limit 1
     </select>
 
 
