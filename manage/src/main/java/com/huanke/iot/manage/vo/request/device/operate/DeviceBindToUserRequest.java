@@ -7,5 +7,6 @@ import lombok.Data;
 public class DeviceBindToUserRequest {
     private String openId;
     private Integer teamId;
+    private String teamName;
     private DeviceQueryRequest deviceQueryRequest;
 }

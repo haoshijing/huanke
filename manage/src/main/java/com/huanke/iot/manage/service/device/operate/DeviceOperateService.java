@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
+import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
@@ -120,7 +121,6 @@ public class DeviceOperateService {
             insertPo.setBirthTime(device.getBirthTime());
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setLastUpdateTime(System.currentTimeMillis());
-
 
             return insertPo;
         }).collect(Collectors.toList());
@@ -470,8 +470,31 @@ public class DeviceOperateService {
         List<DeviceTeamItemPo> deviceTeamItemPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = new ArrayList<>();
-        DeviceTeamPo deviceTeamPo = this.deviceTeamMapper.selectById(deviceBindToUserRequest.getTeamId());
-        CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
+        DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
+        if(null==customerUserPo){
+            return  new ApiResponse<>(RetCode.PARAM_ERROR,"该用户openid不正确");
+        }
+        //如果该设备组的id为-1 ，认定为 没有该组。则新增组
+        if(DeviceConstant.HAS_TEAM_NO.equals(deviceBindToUserRequest.getTeamId())){
+
+            deviceTeamPo.setName(deviceBindToUserRequest.getTeamName());
+            deviceTeamPo.setMasterUserId(customerUserPo.getId());
+            deviceTeamPo.setStatus(CommonConstant.STATUS_YES);
+            deviceTeamPo.setCreateTime(System.currentTimeMillis());
+            //设置组的状态为终端组
+            deviceTeamPo.setTeamStatus(DeviceTeamConstants.DEVICE_TEAM_STATUS_TERMINAL);
+            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
+            deviceTeamPo.setCreateTime(System.currentTimeMillis());
+
+            deviceTeamPo.setCreateUserId(customerUserPo.getId());
+            deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
+            deviceTeamMapper.insert(deviceTeamPo);
+        }else{
+            deviceTeamPo = this.deviceTeamMapper.selectById(deviceBindToUserRequest.getTeamId());
+        }
+
+        Integer deviceTeamId = deviceTeamPo.getId();
         List<DeviceQueryRequest.DeviceQueryList> bindDeviceList = deviceBindToUserRequest.getDeviceQueryRequest().getDeviceList();
 
         if(bindDeviceList!=null&&bindDeviceList.size()>0){
@@ -485,7 +508,7 @@ public class DeviceOperateService {
                 devicePo.setBindTime(System.currentTimeMillis());
                 devicePo.setLastUpdateTime(System.currentTimeMillis());
                 deviceTeamItemPo.setDeviceId(devicePo.getId());
-                deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
+                deviceTeamItemPo.setTeamId(deviceTeamId);
                 deviceTeamItemPo.setUserId(customerUserPo.getId());
                 deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
                 deviceTeamItemPo.setCreateTime(System.currentTimeMillis());

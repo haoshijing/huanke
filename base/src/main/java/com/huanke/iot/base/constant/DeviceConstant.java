@@ -38,5 +38,7 @@ public class DeviceConstant {
     public static  final Integer WXDEVICEID_DEF_COUNT = 200; // 设备id池 默认增加配额。
     public static  final Integer WXDEVICEID_MAX_COUNT = 2000; // 设备id池 增加配额最大限制。
 
+    public static  final Integer HAS_TEAM_NO = -1; // -1 该用户不存在设设备组
+
 
 }

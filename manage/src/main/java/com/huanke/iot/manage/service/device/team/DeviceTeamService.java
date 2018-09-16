@@ -91,7 +91,7 @@ public class DeviceTeamService {
         deviceTeamPo.setLastUpdateTime(System.currentTimeMillis());
         //向team表中插入相关数据
 
-        if(0 != teamCreateOrUpdateRequest.getImgOrVideoList().size()){
+        if(teamCreateOrUpdateRequest.getImgOrVideoList()!=null&&teamCreateOrUpdateRequest.getImgOrVideoList().size()>0){
             teamCreateOrUpdateRequest.getImgOrVideoList().stream().forEach(imgVideo -> {
                 DeviceTeamScenePo deviceTeamScenePo = new DeviceTeamScenePo();
                 deviceTeamScenePo.setTeamId(deviceTeamPo.getId());
