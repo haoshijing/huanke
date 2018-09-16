@@ -1,6 +1,7 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.h5.req.BaseRequest;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
@@ -12,6 +13,7 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +35,15 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping("/user/appid")
+    public Object getAppId(@RequestBody BaseRequest<Integer> request){
+        Integer customerId = request.getValue();
+        if(customerId == null){
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "请传入value");
+        }
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        return new ApiResponse<>(customerPo.getAppid());
+    }
 
 
     @RequestMapping("/user/auth")

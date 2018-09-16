@@ -37,6 +37,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
 
         ApiResponse apiResponse = new ApiResponse(RetCode.TICKET_ERROR,"没有获取到openId");
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+        response.setContentType("text/html;charset=utf-8");
         response.getWriter().print(JSON.toJSONString(apiResponse));
         return false;
     }
