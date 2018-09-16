@@ -473,31 +473,35 @@ public class DeviceOperateService {
         DeviceTeamPo deviceTeamPo = this.deviceTeamMapper.selectById(deviceBindToUserRequest.getTeamId());
         CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
         List<DeviceQueryRequest.DeviceQueryList> bindDeviceList = deviceBindToUserRequest.getDeviceQueryRequest().getDeviceList();
-        bindDeviceList.stream().forEach(bindDevice -> {
-            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
-            DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
-            DevicePo devicePo = this.deviceMapper.selectByMac(bindDevice.getMac());
-            //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
-            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
-            //设定绑定时间
-            devicePo.setBindTime(System.currentTimeMillis());
-            devicePo.setLastUpdateTime(System.currentTimeMillis());
-            deviceTeamItemPo.setDeviceId(devicePo.getId());
-            deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
-            deviceTeamItemPo.setUserId(customerUserPo.getId());
-            deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
-            deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
-            deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
-            deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
-            deviceCustomerUserRelationPo.setCustomerId(customerUserPo.getId());
-            deviceCustomerUserRelationPo.setOpenId(deviceBindToUserRequest.getOpenId());
-            deviceCustomerUserRelationPo.setStatus(CommonConstant.STATUS_YES);
-            deviceCustomerUserRelationPo.setCreateTime(System.currentTimeMillis());
-            deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
-            devicePoList.add(devicePo);
-            deviceTeamItemPoList.add(deviceTeamItemPo);
-            deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
-        });
+
+        if(bindDeviceList!=null&&bindDeviceList.size()>0){
+            bindDeviceList.stream().forEach(bindDevice -> {
+                DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+                DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
+                DevicePo devicePo = this.deviceMapper.selectByMac(bindDevice.getMac());
+                //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
+                devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
+                //设定绑定时间
+                devicePo.setBindTime(System.currentTimeMillis());
+                devicePo.setLastUpdateTime(System.currentTimeMillis());
+                deviceTeamItemPo.setDeviceId(devicePo.getId());
+                deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
+                deviceTeamItemPo.setUserId(customerUserPo.getId());
+                deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+                deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
+                deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
+                deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+                deviceCustomerUserRelationPo.setCustomerId(customerUserPo.getId());
+                deviceCustomerUserRelationPo.setOpenId(deviceBindToUserRequest.getOpenId());
+                deviceCustomerUserRelationPo.setStatus(CommonConstant.STATUS_YES);
+                deviceCustomerUserRelationPo.setCreateTime(System.currentTimeMillis());
+                deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
+                devicePoList.add(devicePo);
+                deviceTeamItemPoList.add(deviceTeamItemPo);
+                deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
+            });
+        }
+
         //进行设备名称的批量更新
         this.deviceMapper.updateBatch(devicePoList);
         //进行设备、客户、用户关系的绑定
