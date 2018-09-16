@@ -31,8 +31,8 @@ public class DeviceTeamController {
         List<TeamDeviceCreateRequest> deviceList=teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList();
         //首先查询当前用户是否存在
         try {
-            Boolean isCustomerExist=this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId());
-            if (!isCustomerExist){
+            CustomerUserPo customerUserPo = this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId());
+            if (customerUserPo==null){
                 return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamCreateOrUpdateRequest.getCreateUserOpenId()+" 不存在");
             }
             //若设备列表中无设备则仅创建新组，不添加设备
@@ -41,7 +41,7 @@ public class DeviceTeamController {
             }
             else {
                 //首先查询设备列表中是否已有设备在其他组中
-                DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
+                DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),customerUserPo.getOpenId());
                 if(null != devicePo){
                     return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在其他组中");
                 }
@@ -77,7 +77,7 @@ public class DeviceTeamController {
                 return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
             }
             //查询设备列表中是否已有设备在其他组中
-            DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList());
+            DevicePo devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList(),teamCreateOrUpdateRequest.getMasterUserOpenId());
             if(null != devicePo){
                 return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在其他组中");
             }
@@ -112,7 +112,8 @@ public class DeviceTeamController {
     public ApiResponse<Integer> trusteeTeam(@RequestBody TeamTrusteeRequest teamTrusteeRequest){
         //首先查询要托管的用户是否存在
         try {
-            if (!this.deviceTeamService.queryCustomerUser(teamTrusteeRequest.getOpenId())){
+            CustomerUserPo queryCustomerUserPo = this.deviceTeamService.queryCustomerUser(teamTrusteeRequest.getOpenId());
+            if (queryCustomerUserPo==null){
                 return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamTrusteeRequest.getOpenId()+" 不存在");
             }
             CustomerUserPo customerUserPo=this.deviceTeamService.trusteeTeam(teamTrusteeRequest);

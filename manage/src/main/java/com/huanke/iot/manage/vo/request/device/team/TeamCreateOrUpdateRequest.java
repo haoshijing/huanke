@@ -18,6 +18,9 @@ public class TeamCreateOrUpdateRequest {
     //创建人的微信名称
     private String createUserOpenId;
 
+    //创建人的微信名称
+    private String masterUserOpenId;
+
     //组缩略图
     //安卓场景的介绍封面
     private String teamCover;

@@ -18,6 +18,7 @@
         sex,
         province,
         city,
+        status,
         createTime,
         lastUpdateTime,
         mac
@@ -31,6 +32,7 @@
         #{sex},
         #{province},
         #{city},
+        #{status},
         #{createTime},
         #{lastUpdateTime},
         #{mac}
@@ -92,6 +94,9 @@
             </if>
             <if test="province != null ">
                 province = #{province},
+            </if>
+            <if test="status != null ">
+                status = #{status},
             </if>
             <if test="city != null ">
                 city = #{city},
