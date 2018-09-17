@@ -59,7 +59,7 @@ public class DeviceTimerService {
     public Integer insertTimer(DeviceTimerRequest request) {
         String name = request.getName();
         Long afterTime = request.getAfterTime();
-        String deviceIdStr = request.getDeviceId();
+        String deviceIdStr = request.getWxDeviceId();
         Integer timerType = request.getTimerType();
         Integer type = request.getType();
         DeviceTimerPo deviceTimerPo = new DeviceTimerPo();

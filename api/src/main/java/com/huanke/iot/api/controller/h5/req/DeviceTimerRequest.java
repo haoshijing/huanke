@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class DeviceTimerRequest {
     private Integer id;
-    private String deviceId;
+    private String wxDeviceId;
     private Long afterTime;
     private String name;
     private Integer status = CommonConstant.STATUS_YES;

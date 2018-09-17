@@ -37,7 +37,6 @@ public class DeviceTimerController extends BaseController{
         Integer type = request.getType();
         Integer hour = request.getHour();
         Integer minute = request.getMinute();
-        Integer second = request.getSecond();
         Long afterTime = request.getAfterTime();
         if(type == TimerConstants.TIMER_TYPE_IDEA){
             if(afterTime == null || daysOfWeek.isEmpty() || hour == null || minute == null){
