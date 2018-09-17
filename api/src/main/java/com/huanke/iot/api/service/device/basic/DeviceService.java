@@ -315,11 +315,11 @@ public class DeviceService {
         return deviceSpeedConfigVo;
     }
 
-    public Boolean editDeviceLoc(Integer userId, String deviceId, String location) {
+    public Boolean editDeviceLoc(Integer userId, Integer deviceId, String location) {
         DevicePo devicePo = new DevicePo();
-        devicePo.setWxDeviceId(deviceId);
+        devicePo.setId(deviceId);
         devicePo.setLocation(location);
-        return deviceMapper.updateByDeviceId(devicePo) > 0;
+        return deviceMapper.updateById(devicePo) > 0;
     }
 
 

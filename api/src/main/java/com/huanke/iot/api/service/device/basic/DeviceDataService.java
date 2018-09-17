@@ -880,4 +880,17 @@ public class DeviceDataService {
         }
         return (int) (((tbl_aqi[i + 1] - tbl_aqi[i]) / (tbl_pm2_5[i + 1] - tbl_pm2_5[i]) * (pm2_5 - tbl_pm2_5[i]) + tbl_aqi[i]));
     }
+
+    public boolean verifyUser(Integer userId, Integer deviceId){
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        String wxOpenId = customerUserPo.getOpenId();
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        deviceCustomerUserRelationPo.setOpenId(wxOpenId);
+        deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        Integer count = deviceCustomerUserRelationMapper.queryRelationCount(deviceCustomerUserRelationPo);
+        if(count > 0){
+            return true;
+        }
+        return false;
+    }
 }
