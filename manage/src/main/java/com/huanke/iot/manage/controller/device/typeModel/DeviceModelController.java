@@ -154,7 +154,7 @@ public class DeviceModelController {
 
     @ApiOperation("增加设备配额")
     @PostMapping(value = "/createWxDeviceIds")
-    public ApiResponse<Boolean> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
+    public ApiResponse<Integer> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
         try {
             return  deviceModelService.createWxDeviceIdPools(devicePoolRequest);
         } catch (Exception e) {
