@@ -22,6 +22,7 @@ import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
@@ -176,9 +177,12 @@ public class DeviceOperateService {
                 Integer customerId = deviceCustomerRelationPo.getCustomerId();
                 deviceQueryVo.setCustomerId(customerId);
                 deviceQueryVo.setCustomerName(customerMapper.selectById(customerId).getName());
-                deviceQueryVo.setModelName(deviceModelMapper.selectByCustomerId(customerId).getName());
             }
             deviceQueryVo.setModelId(devicePo.getModelId());
+            DeviceModelPo queryDeviceModel = deviceModelMapper.selectById(devicePo.getModelId());
+            if(queryDeviceModel!=null){
+                deviceQueryVo.setModelName(queryDeviceModel.getName());
+            }
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());

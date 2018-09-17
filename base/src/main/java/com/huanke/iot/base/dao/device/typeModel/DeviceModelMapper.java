@@ -13,8 +13,6 @@ public interface DeviceModelMapper extends BaseMapper<DeviceModelPo> {
 
     DeviceModelPo selectById(DeviceModelPo queryDeviceModelPo);
 
-    DeviceModelPo selectByCustomerId(Integer customerId);
-
     DeviceModelPo selectByProductId(String productId);
 
     List<DeviceModelPo> selectByTypeId(Integer typeId);
