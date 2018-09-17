@@ -126,8 +126,11 @@ public class DeviceModelService {
                     deviceModelPo.setStatus(CommonConstant.STATUS_YES);
                     deviceModelMapper.insert(deviceModelPo);
 
-                    //增加wxdeviceid配额 //todo 默认增加 200
-                    deviceOperateService.createWxDeviceIdPools(deviceModelPo.getCustomerId(), deviceModelPo.getProductId(), DeviceConstant.WXDEVICEID_DEF_COUNT);
+                    //增加wxdeviceid配额 //todo 默认增加 100
+                    ApiResponse<Integer> addPoolResult = deviceOperateService.createWxDeviceIdPools(deviceModelPo.getCustomerId(), deviceModelPo.getProductId(), DeviceConstant.WXDEVICEID_DEF_COUNT);
+                    if ( RetCode.ERROR == addPoolResult.getCode()) {
+                        log.error("增加配额失败={}","错误提示："+addPoolResult.getMsg(),"错误代码："+addPoolResult.getCode()," 成功增加："+addPoolResult.getData());
+                    }
                 }
 
 
@@ -154,10 +157,9 @@ public class DeviceModelService {
         } catch (Exception e) {
             log.error("保存型号出错！", e);
             ret = false;
-            return new ApiResponse<>(RetCode.PARAM_ERROR, "保存型号出错");
+//            return new ApiResponse<>(RetCode.PARAM_ERROR, "保存型号出错");
+            throw new RuntimeException("保存型号出错");
         }
-//        return new ApiResponse<>(deviceModelPo.getId());
-//        Boolean formatRet = createOrUpdateModelFormat(d);
     }
 
 
@@ -169,7 +171,7 @@ public class DeviceModelService {
      * @param devicePoolRequest
      * @return
      */
-    public ApiResponse<Boolean> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
+    public ApiResponse<Integer> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
         Boolean ret = true;
         try {
             Integer addCount = devicePoolRequest.getAddCount();

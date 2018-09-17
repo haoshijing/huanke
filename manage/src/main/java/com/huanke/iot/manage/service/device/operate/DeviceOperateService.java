@@ -362,7 +362,7 @@ public class DeviceOperateService {
             if (deviceList.size() > devicePoolCount) {
                 Integer addCount = deviceList.size() - devicePoolCount;
                 //获取数据
-                ApiResponse<Boolean> result = createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(), deviceAssignToCustomerRequest.getProductId(), addCount);
+                ApiResponse<Integer> result = createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(), deviceAssignToCustomerRequest.getProductId(), addCount);
                 if (result == null || RetCode.PARAM_ERROR == result.getCode()) {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg(), false);
                 }
@@ -813,22 +813,22 @@ public class DeviceOperateService {
      * @param addCount
      * @return
      */
-    public ApiResponse<Boolean> createWxDeviceIdPools(Integer customerId, String productId, Integer addCount) {
+    public ApiResponse<Integer> createWxDeviceIdPools(Integer customerId, String productId, Integer addCount) {
         Boolean ret = true;
         CustomerPo customerPo = customerMapper.selectById(customerId);
+        int correctCount = 0;
         //获取数据
         if (customerPo != null) {
             String appId = customerPo.getAppid();
             String appSecret = customerPo.getAppsecret();
-            int correctCount = 0;
             if (null != addCount && addCount > 0) {
                 List<DeviceIdPoolPo> deviceIdPoolPos = new ArrayList<>();
 
                 for (int m = 0; m < addCount; m++) {
                     ApiResponse<JSONObject> result = obtainDeviceInfo(appId, appSecret, customerId.toString(), productId);
                     //当第一个就开始 出现错误时，则直接返回结果
-                    if (m == 0 && RetCode.PARAM_ERROR == result.getCode()) {
-                        return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg());
+                    if (m == 0 && RetCode.ERROR == result.getCode()) {
+                        return new ApiResponse<>(RetCode.ERROR, result.getMsg(),correctCount);
                     }
                     JSONObject jsonObject = result.getData();
                     if (jsonObject != null) {
@@ -848,9 +848,12 @@ public class DeviceOperateService {
                         insertPo.setLastUpdateTime(System.currentTimeMillis());
 
                         deviceIdPoolPos.add(insertPo);
+
+                        correctCount++;
                     } else {
-                        log.info("createWxDeviceIdPool.jsonObject = {}", false);
+                        log.error("createWxDeviceIdPool.jsonObject = {}", false);
                     }
+
                 }
 
                 if (deviceIdPoolPos != null && deviceIdPoolPos.size() > 0) {
@@ -865,7 +868,7 @@ public class DeviceOperateService {
         }
 
 
-        return new ApiResponse<>(ret);
+        return new ApiResponse<>(correctCount);
     }
 
     /**
