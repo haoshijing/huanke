@@ -173,6 +173,8 @@ public class DeviceDataService {
         String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
         deviceTeamPo.setName(defaultTeamName);
         deviceTeamPo.setMasterUserId(toId);
+        deviceTeamPo.setCreateUserId(toId);
+        deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
         deviceTeamPo.setStatus(1);
         deviceTeamPo.setCreateTime(System.currentTimeMillis());
         deviceTeamPo.setTeamStatus(1);
