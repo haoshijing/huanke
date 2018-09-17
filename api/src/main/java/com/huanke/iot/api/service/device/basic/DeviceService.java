@@ -145,7 +145,7 @@ public class DeviceService {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
                         DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getId());
-                        deviceItemPo.setWxDevicdId(devicePo.getWxDeviceId());
+                        deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
                         Integer modelId = devicePo.getModelId();
                         Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
