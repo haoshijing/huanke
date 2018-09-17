@@ -40,7 +40,7 @@ public class DeviceTimerController extends BaseController{
         Integer second = request.getSecond();
         Long afterTime = request.getAfterTime();
         if(type == TimerConstants.TIMER_TYPE_IDEA){
-            if(afterTime == null || daysOfWeek.isEmpty() || hour == null || minute == null || second == null){
+            if(afterTime == null || daysOfWeek.isEmpty() || hour == null || minute == null){
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "参数错误", 0);
             }
         }

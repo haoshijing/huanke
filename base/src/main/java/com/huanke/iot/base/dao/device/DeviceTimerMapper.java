@@ -13,4 +13,6 @@ public interface DeviceTimerMapper extends BaseMapper<DeviceTimerPo>{
     List<DeviceTimerPo> queryTimers(Long t);
 
     List<DeviceTimerPo> queryIdeaTimers(Integer dayOfWeek);
+
+    List<DeviceTimerPo> queryIdeaTypeTimers(int dayOfWeek);
 }

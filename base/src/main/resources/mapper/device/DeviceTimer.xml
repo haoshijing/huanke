@@ -83,6 +83,14 @@
         and tdt.status = 1
         and tdt.id = tdtd.timeId
     </select>
+
+    <select id="queryIdeaTypeTimers" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
+        select tdt.* from t_device_timer tdt,t_device_timer_day tdtd
+        where tdtd.dayOfWeek = #{dayOfWeek}
+        and tdt.type = 2
+        and tdt.status = 1
+        and tdt.id = tdtd.timeId
+    </select>
     
     <update id="updateById">
         update <include refid="tableName"/>

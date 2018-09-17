@@ -19,9 +19,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Repository
 @Slf4j
@@ -48,7 +45,7 @@ public class DeviceTimerJob {
     public void doWork() {
         try {
             Long t = System.currentTimeMillis();
-            log.info("start timer job t = {}", t);
+            log.info("start oncetimeType timer job t = {}", t);
             List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryTimers(t);
             deviceTimerPos.forEach(deviceTimerPo -> {
                 Integer deviceId = deviceTimerPo.getDeviceId();
@@ -65,7 +62,32 @@ public class DeviceTimerJob {
                 updatePo.setExecuteTime(System.currentTimeMillis());
                 deviceTimerMapper.updateById(updatePo);
             });
-            log.info("end timer job");
+            log.info("end oncetimeType timer job");
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void doWorkTimerTypeIdea() {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+            int hour = calendar.get(Calendar.HOUR);
+            int minute = calendar.get(Calendar.MINUTE);
+            log.info("start ideaType timer job dayOfWeek = {}", dayOfWeek);
+            List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryIdeaTypeTimers(dayOfWeek);
+            deviceTimerPos.forEach(deviceTimerPo -> {
+                if(deviceTimerPo.getHour() == hour && deviceTimerPo.getMinute() == minute){
+                    Integer deviceId = deviceTimerPo.getDeviceId();
+                    if (deviceTimerPo.getTimerType() == 1) {
+                        sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 1);
+                    } else {
+                        sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
+                    }
+                }
+            });
+            log.info("end ideaType timer job");
         } catch (Exception e) {
             log.error("", e);
         }
@@ -76,7 +98,7 @@ public class DeviceTimerJob {
         System.out.println(System.currentTimeMillis());
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    /*@Scheduled(cron = "0 0 0 * * ?")
     public void doWorkTypeIdea() {
         int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryIdeaTimers(dayOfWeek);
@@ -102,7 +124,7 @@ public class DeviceTimerJob {
                 }
             }, delay, TimeUnit.MILLISECONDS);
         }
-    }
+    }*/
 
     public String sendFunc(Integer deviceId, String funcId, Integer funcValue) {
         String topic = "/down/control/" + deviceId;
