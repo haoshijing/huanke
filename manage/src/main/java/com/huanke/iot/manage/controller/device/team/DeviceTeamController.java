@@ -100,6 +100,24 @@ public class DeviceTeamController {
             return new ApiResponse<>(RetCode.ERROR,"查询组失败");
         }
     }
+
+
+    /**
+     * 根据主键查询 组信息
+     * @param teamId
+     * @return 成功返回true，失败返回false
+     * @throws Exception
+     */
+    @ApiOperation("根据主键查询 组信息")
+    @GetMapping(value = "/queryTeamById/{id}")
+    public ApiResponse<DeviceTeamVo> queryTeamById(@PathVariable("id") Integer teamId) throws Exception{
+        try {
+            return  deviceTeamService.queryTeamById(teamId);
+        } catch (Exception e) {
+            return  new ApiResponse<>(RetCode.ERROR,"查询组信息失败");
+        }
+    }
+
     @ApiOperation("查询组的数量")
     @RequestMapping(value = "/queryTeamCount",method = RequestMethod.GET)
     public ApiResponse<Integer> queryTeamCount(){

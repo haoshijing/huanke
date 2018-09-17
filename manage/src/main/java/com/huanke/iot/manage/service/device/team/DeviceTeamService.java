@@ -310,6 +310,87 @@ public class DeviceTeamService {
         return new ApiResponse<>(RetCode.OK, "查询组列表成功", deviceTeamVoList);
     }
 
+
+    /**
+     * 查询设备组详情
+     * caik
+     * 2018-09-01
+     *
+     * @param teamId
+     * @return
+     */
+    public ApiResponse<DeviceTeamVo> queryTeamById(Integer teamId) throws Exception {
+
+        DeviceTeamPo deviceTeamPo = this.deviceTeamMapper.selectById(teamId);
+
+        if (null != deviceTeamPo) {
+            CustomerUserPo customerUserPo;
+            DeviceTeamVo deviceTeamVo = new DeviceTeamVo();
+            deviceTeamVo.setId(deviceTeamPo.getId());
+            deviceTeamVo.setName(deviceTeamPo.getName());
+            deviceTeamVo.setIcon(deviceTeamPo.getIcon());
+
+            //获取原始创始人的相关信息
+            //因为在托管时有是否删除创建人选项，所以此处需要一个逻辑判断
+            if (null != deviceTeamPo.getCreateUserId()) {
+                customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getCreateUserId());
+                deviceTeamVo.setCreateUserNickName(customerUserPo.getNickname());
+                deviceTeamVo.setCreateUserOpenId(customerUserPo.getOpenId());
+                deviceTeamVo.setCreateUserId(customerUserPo.getId());
+                deviceTeamVo.setCreateTime(deviceTeamPo.getCreateTime());
+            }
+
+            //获取当前管理员的相关信息
+            customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
+            deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
+            deviceTeamVo.setMasterNickName(customerUserPo.getNickname());
+            deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
+            deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
+
+            deviceTeamVo.setMasterUserId(deviceTeamPo.getMasterUserId());
+            deviceTeamVo.setCreateUserId(deviceTeamPo.getCreateUserId());
+            //组的使用状态，1-正常，2-删除
+            deviceTeamVo.setStatus(deviceTeamPo.getStatus());
+            //获取组的状态，终端组或是托管组
+            deviceTeamVo.setTeamStatus(deviceTeamPo.getTeamStatus());
+            //获取组的类型，用户组或是联动组
+            deviceTeamVo.setTeamType(deviceTeamPo.getTeamType());
+            deviceTeamVo.setRemark(deviceTeamPo.getRemark());
+
+            List<DeviceTeamScenePo> deviceTeamScenePoList = this.deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId());
+            List<DeviceTeamVo.ImgVideos> imgVideosList = deviceTeamScenePoList.stream().map(eachPo -> {
+                DeviceTeamVo.ImgVideos imgVideos = new DeviceTeamVo.ImgVideos();
+                imgVideos.setImgvideo(eachPo.getImgVideo());
+                return imgVideos;
+            }).collect(Collectors.toList());
+            deviceTeamVo.setImgVideosList(imgVideosList);
+
+            List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(deviceTeamPo.getId());
+            if(deviceTeamItemPos!=null&&deviceTeamItemPos.size()>0){
+                List<DeviceTeamVo.DeviceTeamItemVo> deviceTeamItemVos = deviceTeamItemPos.stream().map(deviceTeamItemPo ->{
+                    DeviceTeamVo.DeviceTeamItemVo deviceTeamItemVo = new DeviceTeamVo.DeviceTeamItemVo();
+                    deviceTeamItemVo.setId(deviceTeamItemPo.getId());
+                    deviceTeamItemVo.setDeviceId(deviceTeamItemPo.getDeviceId());
+                    deviceTeamItemVo.setLinkAgeStatus(deviceTeamItemPo.getLinkAgeStatus());
+                    deviceTeamItemVo.setStatus(deviceTeamItemPo.getStatus());
+                    deviceTeamItemVo.setTeamId(deviceTeamItemPo.getTeamId());
+                    deviceTeamItemVo.setUserId(deviceTeamItemPo.getUserId());
+                    return  deviceTeamItemVo;
+                }).collect(Collectors.toList());
+                deviceTeamVo.setDeviceTeamItemVos(deviceTeamItemVos);
+                deviceTeamVo.setDeviceCount(deviceTeamItemVos.size());
+            }else {
+                deviceTeamVo.setDeviceTeamItemVos(null);
+                deviceTeamVo.setDeviceCount(0);
+            }
+
+            return new ApiResponse<>(RetCode.OK, "查询组成功", deviceTeamVo);
+
+        }else{
+            return new ApiResponse<>(RetCode.OK, "不存在该组", null);
+        }
+    }
+
     /**
      * 托管组给指定用户（输入指定用户openId方式）
      *
@@ -445,7 +526,7 @@ public class DeviceTeamService {
         for (TeamDeviceCreateRequest teamDeviceCreateRequest : teamDeviceCreateRequestList) {
             DevicePo devicePo = this.deviceMapper.selectByMac(teamDeviceCreateRequest.getMac());
             //若查询到该设备已有组，则返回该设备
-            DeviceTeamItemPo  queryDeviceTeamItemPo= this.deviceTeamItemMapper.selectByJoinOpenId(devicePo.getId(), userOpenId);
+            DeviceTeamItemPo queryDeviceTeamItemPo = this.deviceTeamItemMapper.selectByJoinOpenId(devicePo.getId(), userOpenId);
             if (null != queryDeviceTeamItemPo) {
                 return devicePo;
             }

@@ -27,9 +27,37 @@ public class DeviceTeamVo {
     private Integer teamType;
     private String remark;
     private Integer deviceCount;
+
+    private List<DeviceTeamItemVo> deviceTeamItemVos;
+
+
     @Data
-    public static class ImgVideos{
+    public static class ImgVideos {
         private String imgvideo;
+    }
+
+    @Data
+    public static class DeviceTeamItemVo {
+        /**
+         * 设备编组id
+         */
+        private Integer id;
+        /**
+         * 设备id
+         */
+        private Integer deviceId;
+
+        private Integer userId;
+        /**
+         * 设备组id
+         */
+        private Integer teamId;
+
+        //设备的联动状态，1-联动，2-不联动
+        private Integer linkAgeStatus;
+
+        private Integer status = CommonConstant.STATUS_YES;
+
     }
 
 }
