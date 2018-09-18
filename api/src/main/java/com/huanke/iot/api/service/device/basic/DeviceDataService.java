@@ -123,6 +123,7 @@ public class DeviceDataService {
         Integer deviceId = request.getDeviceId();
         String master = request.getMasterOpenId();
         String token = request.getToken();
+        Integer teamId = request.getTeamId();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         String deviceIdStr = devicePo.getWxDeviceId();
         if (devicePo == null) {
@@ -168,26 +169,28 @@ public class DeviceDataService {
             }
             return deviceTeamVoList;
         }*/
+        if(teamId == null){
+            DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+            String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
+            deviceTeamPo.setName(defaultTeamName);
+            deviceTeamPo.setMasterUserId(toId);
+            deviceTeamPo.setCreateUserId(toId);
+            deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
+            deviceTeamPo.setStatus(1);
+            deviceTeamPo.setCreateTime(System.currentTimeMillis());
+            deviceTeamPo.setTeamStatus(1);
+            deviceTeamPo.setTeamType(3);
+            deviceTeamPo.setCreateUserId(toId);
+            deviceTeamPo.setCustomerId(customerId);
+            deviceTeamMapper.insert(deviceTeamPo);
+            teamId = deviceTeamPo.getId();
+        }
 
-        DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
-        String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
-        deviceTeamPo.setName(defaultTeamName);
-        deviceTeamPo.setMasterUserId(toId);
-        deviceTeamPo.setCreateUserId(toId);
-        deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
-        deviceTeamPo.setStatus(1);
-        deviceTeamPo.setCreateTime(System.currentTimeMillis());
-        deviceTeamPo.setTeamStatus(1);
-        deviceTeamPo.setTeamType(3);
-        deviceTeamPo.setCreateUserId(toId);
-        deviceTeamPo.setCustomerId(customerId);
-        deviceTeamMapper.insert(deviceTeamPo);
-        Integer defaultTeamId = deviceTeamPo.getId();
 
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         queryItemPo.setDeviceId(deviceId);
         queryItemPo.setUserId(toId);
-        queryItemPo.setTeamId(defaultTeamId);
+        queryItemPo.setTeamId(teamId);
         queryItemPo.setStatus(1);
         queryItemPo.setUserId(toId);
         queryItemPo.setCreateTime(System.currentTimeMillis());

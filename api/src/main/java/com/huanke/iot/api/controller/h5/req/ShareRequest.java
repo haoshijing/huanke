@@ -13,4 +13,5 @@ public class ShareRequest {
     private String masterOpenId;
     private Integer deviceId;
     private String token;
+    private Integer teamId;
 }
