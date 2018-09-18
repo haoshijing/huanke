@@ -5,6 +5,7 @@ import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.req.HighTokenRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
 import com.huanke.iot.api.controller.h5.response.DeviceModelTypeVo;
+import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceHighService;
 import com.huanke.iot.api.service.device.basic.DeviceModelService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
@@ -30,7 +31,7 @@ import java.util.List;
 @RequestMapping("/h5/high")
 @RestController
 @Slf4j
-public class DeviceHighController {
+public class DeviceHighController extends BaseController{
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
@@ -39,6 +40,8 @@ public class DeviceHighController {
     private DeviceService deviceService;
     @Autowired
     private DeviceModelService deviceModelService;
+    @Autowired
+    private DeviceDataService deviceDataService;
 
     /**
      * 获取高级设置token
@@ -88,6 +91,11 @@ public class DeviceHighController {
      */
     @RequestMapping("addChildDevice")
     public Object addChildDevice(@RequestBody ChildDeviceRequest request){
+        Integer userId = getCurrentUserId();
+        Integer hostDeviceId = request.getHostDeviceId();
+        if(!deviceDataService.verifyUser(userId, hostDeviceId)){
+            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
+        }
         log.info("添加从设备：request={}", JSON.toJSONString(request));
         Integer deviceId;
         try {
@@ -105,6 +113,10 @@ public class DeviceHighController {
      */
     @RequestMapping("childDeviceList/{hostDeviceId}")
     public Object childDeviceList(@PathVariable("hostDeviceId") Integer hostDeviceId){
+        Integer userId = getCurrentUserId();
+        if(!deviceDataService.verifyUser(userId, hostDeviceId)){
+            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
+        }
         log.info("从设备列表：hostDeviceId={}", hostDeviceId);
         List<ChildDeviceVo> childDeviceVoList = deviceHighService.childDeviceList(hostDeviceId);
         return new ApiResponse<>(childDeviceVoList);
@@ -116,6 +128,10 @@ public class DeviceHighController {
      */
     @RequestMapping("delChildDevice/{childDeviceId}")
     public Object delChildDevice(@PathVariable("childDeviceId") Integer childDeviceId){
+        Integer userId = getCurrentUserId();
+        if(!deviceDataService.verifyUser(userId, childDeviceId)){
+            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
+        }
         log.info("删除从设备：childDeviceId={}", childDeviceId);
         deviceService.deleteById(childDeviceId);
         return new ApiResponse<>();

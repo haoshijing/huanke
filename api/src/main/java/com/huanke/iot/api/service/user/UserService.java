@@ -72,6 +72,19 @@ public class UserService {
         return customerUserPo.getId();
     }
 
+    public CustomerUserPo getUserByTicket(String openId) {
+        String userIdStr = stringRedisTemplate.opsForValue().get(openId);
+        if(StringUtils.isNotEmpty(userIdStr)){
+            return null;
+        }
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
+        if(customerUserPo == null){
+            log.error(" openId = {} , user is null" ,openId);
+            return null;
+        }
+        return customerUserPo;
+    }
+
     public Integer getUserIdByIMei(String imei) {
 
 

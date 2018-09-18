@@ -6,6 +6,9 @@ import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +24,23 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
     private static final String TICKET = "Ticket";
     @Autowired
     private UserService userService;
+    @Autowired
+    private CustomerMapper customerMapper;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String openId = request.getHeader(TICKET);
         if(StringUtils.isNotEmpty(openId)){
-            Integer userId = userService.getUserIdByTicket(openId);
-            if(userId != 0){
+            CustomerUserPo userByTicket = userService.getUserByTicket(openId);
+            if(userByTicket != null){
                 UserRequestContext requestContext = UserRequestContextHolder.get();
-                requestContext.setCurrentId(userId);
+                requestContext.setCurrentId(userByTicket.getId());
+                CustomerPo customerPo = customerMapper.selectById(userByTicket.getCustomerId());
+
+                UserRequestContext.CustomerVo customerVo = new UserRequestContext.CustomerVo();
+                customerVo.setAppId(customerPo.getAppid());
+                customerVo.setCustomerId(customerPo.getId());
+                requestContext.setCustomerVo(customerVo);
                 return  true;
             }
 

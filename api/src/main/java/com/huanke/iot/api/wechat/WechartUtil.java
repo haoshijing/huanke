@@ -269,7 +269,7 @@ public class WechartUtil {
 
     private String getCurrentPublicId(){
         UserRequestContext context =  UserRequestContextHolder.get();
-        Integer customerId = context.getCurrentId();
+        Integer customerId = context.getCustomerVo().getCustomerId();
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String publicId = customerPo.getPublicId();
         return publicId;
