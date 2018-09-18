@@ -192,6 +192,7 @@ public class DeviceTeamService {
             devicePo.setLastUpdateTime(System.currentTimeMillis());
             deviceTeamItemPo.setDeviceId(devicePo.getId());
             deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
+            deviceTeamItemPo.setManageName(device.getManageName());
             deviceTeamItemPo.setUserId(customerUserPo.getId());
             deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
             deviceTeamItemPo.setLinkAgeStatus(device.getLinkAgeStatus());
@@ -202,7 +203,6 @@ public class DeviceTeamService {
             deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
             deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
             deviceCustomerUserRelationPo.setCustomerId(customerPo.getId());
-            deviceCustomerUserRelationPo.setDefineName(device.getManageName());
             deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
             deviceCustomerUserRelationPo.setStatus(CommonConstant.STATUS_YES);
             deviceCustomerUserRelationPo.setCreateTime(System.currentTimeMillis());
@@ -371,6 +371,11 @@ public class DeviceTeamService {
                     DeviceTeamVo.DeviceTeamItemVo deviceTeamItemVo = new DeviceTeamVo.DeviceTeamItemVo();
                     deviceTeamItemVo.setId(deviceTeamItemPo.getId());
                     deviceTeamItemVo.setDeviceId(deviceTeamItemPo.getDeviceId());
+                    //根据deviceId查询deviceName和mac
+                    DevicePo devicePo=this.deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
+                    deviceTeamItemVo.setDeviceName(devicePo.getName());
+                    deviceTeamItemVo.setDeviceMac(devicePo.getMac());
+                    deviceTeamItemPo.setManageName(deviceTeamItemPo.getManageName());
                     deviceTeamItemVo.setLinkAgeStatus(deviceTeamItemPo.getLinkAgeStatus());
                     deviceTeamItemVo.setStatus(deviceTeamItemPo.getStatus());
                     deviceTeamItemVo.setTeamId(deviceTeamItemPo.getTeamId());

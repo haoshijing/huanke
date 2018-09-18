@@ -47,6 +47,12 @@ public class DeviceTeamVo {
          */
         private Integer deviceId;
 
+        private String deviceName;
+
+        private String deviceMac;
+
+        private String manageName;
+
         private Integer userId;
         /**
          * 设备组id
