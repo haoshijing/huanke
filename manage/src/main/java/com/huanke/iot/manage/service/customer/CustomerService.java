@@ -395,11 +395,9 @@ public class CustomerService {
      * 根据二级域名查询 客户
      *
      * @param SLD
-     * @param loginname
      * @return
      */
-    public CustomerVo selectBySLD(String SLD,String loginname,boolean getFromSever) {
-        boolean needFromServer = getFromSever;
+    public CustomerVo selectBySLD(String SLD) {
         CustomerVo customerVo = new CustomerVo();
         CustomerPo customerPo = customerMapper.selectBySLD(SLD);
         if(null!=customerPo){
@@ -410,6 +408,23 @@ public class CustomerService {
         }
     }
 
+    /**
+     * 根据二级域名查询 客户的后台配置
+     *
+     * @param SLD
+     * @return
+     */
+    public CustomerVo.BackendLogo selectBackendConfigBySLD(String SLD) {
+        CustomerVo.BackendLogo backendLogo = new CustomerVo.BackendLogo();
+        BackendConfigPo backendConfigPo = backendConfigMapper.selectBackendConfigBySLD(SLD);
+        if(null!=backendConfigPo){
+            backendLogo.setLogo(backendConfigPo.getLogo());
+            backendLogo.setName(backendConfigPo.getName());
+            return backendLogo;
+        }else{
+            return  null;
+        }
+    }
 
 
 

@@ -8,4 +8,5 @@ import com.huanke.iot.base.po.customer.BackendConfigPo;
  */
 public interface BackendConfigMapper extends BaseMapper<BackendConfigPo> {
     BackendConfigPo selectConfigByCustomerId(Integer customerId);
+    BackendConfigPo selectBackendConfigBySLD(String SLD);
 }

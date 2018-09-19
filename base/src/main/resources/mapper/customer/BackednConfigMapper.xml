@@ -56,7 +56,13 @@
         WHERE customerId = #{customerId} limit 1
     </select>
 
-
+    <select id="selectBackendConfigBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.BackendConfigPo">
+        SELECT backend_config.* FROM
+        backend_config ,t_customer
+        WHERE t_customer.SLD = #{SLD}
+         and backend_config.customerId = t_customer.id
+         and t_customer.status = 1 limit 1
+    </select>
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.BackendConfigPo">
         select
         *

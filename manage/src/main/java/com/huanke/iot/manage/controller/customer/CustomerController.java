@@ -34,7 +34,7 @@ public class CustomerController {
     @Autowired
     private HttpServletRequest request;
 
- @Autowired
+    @Autowired
     private DeviceAblityService deviceAblityService;
 
     /**
@@ -122,24 +122,39 @@ public class CustomerController {
      * 根据二级域名查询客户详情
      *
      * @param SLD
-     * @param loginname
      * @return
      * @throws Exception
      */
     @ApiOperation("根据设备类型和功能项类型 查询功能列表")
-    @GetMapping(value = "/selectBySLD/{SLD}/{loginname}")
-    public ApiResponse<CustomerVo> selectBySLD(@PathVariable("SLD") String SLD, @PathVariable("loginname") String loginname) throws Exception{
-        if(StringUtils.isNotBlank(loginname)){
+    @GetMapping(value = "/selectBySLD/{SLD}")
+    public ApiResponse<CustomerVo> selectBySLD(@PathVariable("SLD") String SLD) throws Exception {
 //
-            CustomerVo customerVo = customerService.selectBySLD(SLD,loginname,false);
-            log.error("request.getServerName()={}",request.getServerName());
-            if(customerVo!=null){
-                return new ApiResponse<>(customerVo);
-            }else{
-                return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
-            }
-        }else{
-            return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
+        CustomerVo customerVo = customerService.selectBySLD(SLD);
+        if (customerVo != null) {
+            return new ApiResponse<>(customerVo);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
+        }
+
+//        return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
+    }
+
+    /**
+     * 根据二级域名查询客户详情
+     *
+     * @param SLD
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation("根据设备类型和功能项类型 查询功能列表")
+    @GetMapping(value = "/selectBackendConfigBySLD/{SLD}")
+    public ApiResponse<CustomerVo.BackendLogo> selectBackendConfigBySLD(@PathVariable("SLD") String SLD) throws Exception {
+//
+        CustomerVo.BackendLogo backendLogoVo = customerService.selectBackendConfigBySLD(SLD);
+        if (backendLogoVo != null) {
+            return new ApiResponse<>(backendLogoVo);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
         }
 
 //        return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
