@@ -4,9 +4,11 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
+import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,9 @@ public class CustomerController {
 
     @Autowired
     private HttpServletRequest request;
+
+ @Autowired
+    private DeviceAblityService deviceAblityService;
 
     /**
      * 添加客户信息
@@ -116,21 +121,28 @@ public class CustomerController {
     /**
      * 根据二级域名查询客户详情
      *
+     * @param SLD
      * @param loginname
      * @return
      * @throws Exception
      */
-    @ApiOperation("根据登录名以及二级域名 查询客户详情")
+    @ApiOperation("根据设备类型和功能项类型 查询功能列表")
     @GetMapping(value = "/selectBySLD/{SLD}/{loginname}")
-    public ApiResponse<CustomerVo> selectBySLD(@PathVariable("SLD") String SLD,@PathVariable("loginname") String loginname) throws Exception {
+    public ApiResponse<CustomerVo> selectBySLD(@PathVariable("SLD") String SLD, @PathVariable("loginname") String loginname) throws Exception{
         if(StringUtils.isNotBlank(loginname)){
-
+//
             CustomerVo customerVo = customerService.selectBySLD(SLD,loginname,false);
-            return new ApiResponse<>(customerVo);
+            log.error("request.getServerName()={}",request.getServerName());
+            if(customerVo!=null){
+                return new ApiResponse<>(customerVo);
+            }else{
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
+            }
         }else{
             return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
         }
 
+//        return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
     }
 
     @ApiOperation("根据Id删除客户")

@@ -402,8 +402,12 @@ public class CustomerService {
         boolean needFromServer = getFromSever;
         CustomerVo customerVo = new CustomerVo();
         CustomerPo customerPo = customerMapper.selectBySLD(SLD);
-        BeanUtils.copyProperties(customerPo, customerVo);
-        return customerVo;
+        if(null!=customerPo){
+            BeanUtils.copyProperties(customerPo, customerVo);
+            return customerVo;
+        }else{
+            return  null;
+        }
     }
 
 
