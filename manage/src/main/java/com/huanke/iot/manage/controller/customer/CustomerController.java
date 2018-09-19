@@ -121,23 +121,11 @@ public class CustomerController {
      * @throws Exception
      */
     @ApiOperation("根据登录名以及二级域名 查询客户详情")
-    @GetMapping(value = "/selectBySLD/{loginname}")
-    public ApiResponse<CustomerVo> selectById(@PathVariable("loginname") String loginname) throws Exception {
+    @GetMapping(value = "/selectBySLD/{SLD}/{loginname}")
+    public ApiResponse<CustomerVo> selectBySLD(@PathVariable("SLD") String SLD,@PathVariable("loginname") String loginname) throws Exception {
         if(StringUtils.isNotBlank(loginname)){
 
-            String url = request.getScheme()+"://"+ request.getServerName()+request.getRequestURI()+"?"+request.getQueryString();
-            System.out.println("获取全路径（协议类型：//域名/项目名/命名空间/action名称?其他参数）url="+url);
-            String url2=request.getScheme()+"://"+ request.getServerName();//+request.getRequestURI();
-            System.out.println("协议名：//域名="+url2);
-
-
-            System.out.println("获取项目名="+request.getContextPath());
-            System.out.println("获取参数="+request.getQueryString());
-            System.out.println("获取全路径="+request.getRequestURL());
-
-            log.error("request.getServerName()== {}",request.getServerName());
-            String sld = "www.com";
-            CustomerVo customerVo = customerService.selectBySLD(loginname,sld,false);
+            CustomerVo customerVo = customerService.selectBySLD(SLD,loginname,false);
             return new ApiResponse<>(customerVo);
         }else{
             return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");

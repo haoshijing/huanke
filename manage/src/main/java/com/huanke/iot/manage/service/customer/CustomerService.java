@@ -394,17 +394,19 @@ public class CustomerService {
     /**
      * 根据二级域名查询 客户
      *
+     * @param SLD
      * @param loginname
-     * @param sld
      * @return
      */
-    public CustomerVo selectBySLD(String loginname,String sld,boolean getFromSever) {
+    public CustomerVo selectBySLD(String SLD,String loginname,boolean getFromSever) {
         boolean needFromServer = getFromSever;
         CustomerVo customerVo = new CustomerVo();
-        CustomerPo customerPo = customerMapper.selectBySLD(sld);
+        CustomerPo customerPo = customerMapper.selectBySLD(SLD);
         BeanUtils.copyProperties(customerPo, customerVo);
         return customerVo;
     }
+
+
 
 
     public Boolean deleteCustomerById(Integer customerId) {
@@ -416,4 +418,6 @@ public class CustomerService {
         ret = customerMapper.updateStatusById(delCustomerPo) > 0;
         return ret;
     }
+
+
 }
