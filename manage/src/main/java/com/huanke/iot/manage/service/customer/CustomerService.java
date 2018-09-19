@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -46,6 +47,8 @@ public class CustomerService {
     @Autowired
     private WxBgImgMapper wxBgImgMapper;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     /**
      * 保存详情
      *
@@ -391,10 +394,12 @@ public class CustomerService {
     /**
      * 根据二级域名查询 客户
      *
+     * @param loginname
      * @param sld
      * @return
      */
-    public CustomerVo selectById(String sld) {
+    public CustomerVo selectBySLD(String loginname,String sld,boolean getFromSever) {
+        boolean needFromServer = getFromSever;
         CustomerVo customerVo = new CustomerVo();
         CustomerPo customerPo = customerMapper.selectBySLD(sld);
         BeanUtils.copyProperties(customerPo, customerVo);
@@ -403,7 +408,6 @@ public class CustomerService {
 
 
     public Boolean deleteCustomerById(Integer customerId) {
-
         Boolean ret = false;
         //先删除 该 功能
         CustomerPo delCustomerPo = new CustomerPo();

@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,9 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     /**
      * 添加客户信息
@@ -106,6 +111,38 @@ public class CustomerController {
     public ApiResponse<CustomerVo> selectById(@PathVariable("id") Integer id) throws Exception {
         CustomerVo customerVo = customerService.selectById(id);
         return new ApiResponse<>(customerVo);
+    }
+
+    /**
+     * 根据二级域名查询客户详情
+     *
+     * @param loginname
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation("根据登录名以及二级域名 查询客户详情")
+    @GetMapping(value = "/selectBySLD/{loginname}")
+    public ApiResponse<CustomerVo> selectById(@PathVariable("loginname") String loginname) throws Exception {
+        if(StringUtils.isNotBlank(loginname)){
+
+            String url = request.getScheme()+"://"+ request.getServerName()+request.getRequestURI()+"?"+request.getQueryString();
+            System.out.println("获取全路径（协议类型：//域名/项目名/命名空间/action名称?其他参数）url="+url);
+            String url2=request.getScheme()+"://"+ request.getServerName();//+request.getRequestURI();
+            System.out.println("协议名：//域名="+url2);
+
+
+            System.out.println("获取项目名="+request.getContextPath());
+            System.out.println("获取参数="+request.getQueryString());
+            System.out.println("获取全路径="+request.getRequestURL());
+
+            log.error("request.getServerName()== {}",request.getServerName());
+            String sld = "www.com";
+            CustomerVo customerVo = customerService.selectBySLD(loginname,sld,false);
+            return new ApiResponse<>(customerVo);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
+        }
+
     }
 
     @ApiOperation("根据Id删除客户")
