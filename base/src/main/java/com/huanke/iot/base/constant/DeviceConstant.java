@@ -24,11 +24,11 @@ public class DeviceConstant {
 
 
     /*能力类型*/
-    public static final Integer ABLITY_TYPE_TEXT = 1; //文本类
-    public static final Integer ABLITY_TYPE_RADIO = 2; //单选类
-    public static final Integer ABLITY_TYPE_SELECT = 3; //多选类
-    public static final Integer ABLITY_TYPE_NUMBER = 4; //阈值类
-    public static final Integer ABLITY_TYPE_SELECT_NUMBER = 5; //阈值选项类
+    public static final Integer ability_TYPE_TEXT = 1; //文本类
+    public static final Integer ability_TYPE_RADIO = 2; //单选类
+    public static final Integer ability_TYPE_SELECT = 3; //多选类
+    public static final Integer ability_TYPE_NUMBER = 4; //阈值类
+    public static final Integer ability_TYPE_SELECT_NUMBER = 5; //阈值选项类
 
     public static  final Integer WXDEVICEID_STATUS_YES = 1; // 已占用
     public static  final Integer WXDEVICEID_STATUS_NO = 0; // 未占用

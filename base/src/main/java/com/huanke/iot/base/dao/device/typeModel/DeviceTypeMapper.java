@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface DeviceTypeMapper extends BaseMapper<DeviceTypePo> {
 
-    Integer getabilitySetId(Integer typeId);
+    Integer getAbilitySetId(Integer typeId);
 
     Integer updateStatusById(@Param("id")Integer id, @Param("status")Integer status);
 

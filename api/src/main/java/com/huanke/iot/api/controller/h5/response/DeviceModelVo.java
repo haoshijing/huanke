@@ -23,7 +23,7 @@ public class DeviceModelVo {
         private Integer readStatus;
         private Integer runStatus;
         private String deviceValue;
-        private Integer ablityType;
+        private Integer abilityType;
         private Integer minVal;
         private Integer maxVal;
         private String remark;

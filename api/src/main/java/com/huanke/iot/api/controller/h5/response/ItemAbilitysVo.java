@@ -12,14 +12,14 @@ public class ItemAbilitysVo {
 
     @Data
     public static class Abilitys{
-        private String ablityName;
+        private String abilityName;
         private String definedName;
         private String dirValue;
         private Integer writeStatus;
         private Integer readStatus;
         private Integer runStatus;
         private String deviceValue;
-        private Integer ablityType;
+        private Integer abilityType;
         private Integer minVal;
         private Integer maxVal;
         private List<AbilityOption> abilityOptionList;

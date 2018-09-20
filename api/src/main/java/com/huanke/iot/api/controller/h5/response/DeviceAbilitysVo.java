@@ -16,7 +16,7 @@ public class DeviceAbilitysVo {
     private Integer id;
     private String dirValue;
     private String abilityName;
-    private Integer ablityType;
+    private Integer abilityType;
     private String currValue;
     private String unit;
     private List<abilityOption> abilityOptionList;
