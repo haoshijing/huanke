@@ -431,6 +431,7 @@ public class DeviceOperateService {
         List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
+
         if(deviceQueryRequests!=null&&deviceQueryRequests.size()>0){
             deviceQueryRequests.stream().forEach(device -> {
                         DevicePo devicePo = this.deviceMapper.selectByMac(device.getMac());
@@ -442,6 +443,15 @@ public class DeviceOperateService {
                         deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
                         deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
                         deviceIdPoolPoList.add(deviceIdPoolPo);
+                        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+                        //若存在绑定设备则先进行解绑
+                        if(null != deviceCustomerUserRelationPo){
+                            this.deviceCustomerUserRelationMapper.deleteRelationByDeviceId(devicePo.getId());
+                            this.deviceTeamItemMapper.deleteItemsByDeviceId(devicePo.getId());
+                            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+                            devicePo.setBindTime(null);
+                            devicePo.setLastUpdateTime(System.currentTimeMillis());
+                        }
                         //记录要更新的设备信息
                         devicePo.setModelId(null);
                         devicePo.setWxDeviceId(null);
@@ -564,6 +574,7 @@ public class DeviceOperateService {
             }else if(!mac.equals(queryDevicePo.getMac())){
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
             }
+
             //删除 该设备的用户绑定关系
             deviceCustomerUserRelationMapper.deleteRealationByDeviceId(deviceId);
 
@@ -783,11 +794,11 @@ public class DeviceOperateService {
      * @throws Exception
      */
     public ApiResponse<List<DeviceTeamPo>> queryTeamInfoByUser(String openId) throws Exception{
-        //首先查询该用户是否有自定义组
+        //加载该用户名下未删除的自定义组
         List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectByUserOpenId(openId);
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(openId);
-        if (null ==deviceTeamPoList || 0 == deviceTeamPoList.size()) {
+        if (null == deviceTeamPoList || 0 == deviceTeamPoList.size()) {
             deviceTeamPoList.clear();
             //若没有自定义组则加载默认组
             WxConfigPo wxConfigPo = this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());

@@ -148,6 +148,8 @@
         t_customer_user.openId = #{openId}
         AND
         t_device_team.masterUserId = t_customer_user.id
+        AND
+        t_device_team.status = 1
     </select>
 
     <select id="selectByMasterUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamPo">
