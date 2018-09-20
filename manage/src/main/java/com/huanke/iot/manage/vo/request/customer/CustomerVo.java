@@ -27,13 +27,6 @@ public class CustomerVo {
     private AndroidConfig androidConfig;    //安卓配置
     private BackendConfig backendConfig;    //管理后台配置
 
-    /**
-     * 设备类型主键
-     */
-    @Data
-    public static class DeviceType {
-        private Integer typeId;
-    }
 
     /**
      * 后台配置
@@ -79,15 +72,6 @@ public class CustomerVo {
     }
 
     /**
-     * 设备 型号 的能力
-     */
-    @Data
-    public static class DeviceModelAbility {
-        private Integer ablityId;
-        private String definedName;
-    }
-
-    /**
      * 安卓配置
      */
     @Data
@@ -126,5 +110,14 @@ public class CustomerVo {
         private String imgVideo;    //图片或视频
         private String description;
         private Integer status = CommonConstant.STATUS_YES;
+    }
+
+    /**
+     * 二级域名的名称和logo
+     */
+    @Data
+    public static class BackendLogo {
+        private String logo;
+        private String name;
     }
 }

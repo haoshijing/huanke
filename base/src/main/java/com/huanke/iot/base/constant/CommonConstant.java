@@ -6,6 +6,8 @@ package com.huanke.iot.base.constant;
  */
 public class CommonConstant {
 
+    private static final String CUSTOMER_PREIX = "customerId.";
+
     public static final Integer STATUS_YES = 1; //正常
     public static final Integer STATUS_DEL = 2; //删除
 
