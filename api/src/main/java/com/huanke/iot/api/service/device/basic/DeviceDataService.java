@@ -530,7 +530,7 @@ public class DeviceDataService {
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceFuncVo.getDeviceId());
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceFuncVo.getWxDeviceId());
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;
