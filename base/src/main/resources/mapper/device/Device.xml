@@ -561,4 +561,18 @@
         AND childId = #{childId}
         limit 1
     </select>
+
+    <select id="queryChildDeviceCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        WHERE hostDeviceId = #{hostDeviceId}
+        and status = 1
+    </select>
+
+    <select id="queryChildDevice" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * from
+        <include refid="tableName"/>
+        WHERE hostDeviceId = #{hostDeviceId}
+        and status = 1
+    </select>
 </mapper>

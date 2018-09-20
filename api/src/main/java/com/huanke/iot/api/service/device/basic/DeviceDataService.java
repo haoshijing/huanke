@@ -7,7 +7,10 @@ import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.req.ShareRequest;
-import com.huanke.iot.api.controller.h5.response.*;
+import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
+import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
+import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
+import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.service.device.team.DeviceTeamService;
 import com.huanke.iot.api.util.FloatDataUtil;
@@ -23,7 +26,6 @@ import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
-import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
 import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
@@ -365,14 +367,6 @@ public class DeviceDataService {
 
         if (deviceCustomerUserRelationPo.getParentOpenId() == null) {
             //主控制人
-            //回收到池子中
-            DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
-            deviceIdPoolPo.setCustomerId(deviceMapper.getCustomerId(devicePo));
-            deviceIdPoolPo.setWxDeviceId(devicePo.getWxDeviceId());
-            deviceIdPoolPo.setWxDeviceLicence(devicePo.getWxDevicelicence());
-            deviceIdPoolPo.setStatus(1);
-            deviceIdPoolPo.setCreateTime(System.currentTimeMillis());
-            deviceIdPoolMapper.insert(deviceIdPoolPo);
             ret = deviceCustomerUserRelationMapper.deleteRelationByDeviceId(iDeviceId) > 0;
             ret = ret && deviceTeamItemMapper.deleteItemsByDeviceId(iDeviceId) > 0;
             //deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);

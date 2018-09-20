@@ -6,6 +6,7 @@ import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.customer.WxConfigPo;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,8 @@ public class DeviceHighService {
     private CustomerMapper customerMapper;
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+    @Autowired
+    private DeviceTeamItemMapper deviceTeamItemMapper;
 
     public String getHighToken(Integer customerId, String password) throws Exception {
         WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(customerId, password);
@@ -58,7 +62,8 @@ public class DeviceHighService {
      *
      * @param request
      */
-    public Integer addChildDevice(ChildDeviceRequest request) throws Exception {
+    @Transactional
+    public Integer addChildDevice(ChildDeviceRequest request, Integer userId) throws Exception {
         String childDeviceName = request.getDeviceName();
         Integer hostDeviceId = request.getHostDeviceId();
         String childId = request.getChildId();

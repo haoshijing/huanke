@@ -40,6 +40,10 @@ public class DeviceListVo {
          */
         private String wxDeviceId;
         /**
+         * 从设备数量
+         */
+        private Integer childDeviceCount;
+        /**
          * 设备名称
          */
         private String deviceName;

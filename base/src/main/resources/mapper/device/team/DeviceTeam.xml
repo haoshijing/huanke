@@ -145,6 +145,7 @@
         select * from  <include refid="tableName"/>
         where masterUserId = #{userId}
         and status = 1
+        ORDER BY id ASC
     </select>
 
     <select id="selectTeamList" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamPo"
