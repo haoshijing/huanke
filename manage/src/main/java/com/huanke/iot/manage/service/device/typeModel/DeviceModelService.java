@@ -415,6 +415,7 @@ public class DeviceModelService {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
         if (null != deviceModelPo) {
             deviceModelVo.setName(deviceModelPo.getName());
+            deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
             deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
@@ -424,7 +425,7 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon(deviceModelVo.getIcon());
+            deviceModelVo.setIcon(deviceModelPo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
 
             //型号的功能集
