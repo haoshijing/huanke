@@ -14,7 +14,7 @@
         formatId,
         pageId,
         name,
-        ablityType,
+        abilityType,
         status,
         createTime,
         lastUpdateTime
@@ -23,7 +23,7 @@
         #{formatId},
         #{pageId},
         #{name},
-        #{ablityType},
+        #{abilityType},
         #{status},
         #{createTime},
         #{lastUpdateTime}

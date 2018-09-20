@@ -286,7 +286,7 @@ public class WxFormatService {
             WxFormatVo.WxFormatItemVo wxFormatItemVo = new WxFormatVo.WxFormatItemVo();
             wxFormatItemVo.setName(wxFormatItemPo.getName());
             wxFormatItemVo.setId(wxFormatItemPo.getId());
-            wxFormatItemVo.setAblityType(wxFormatItemPo.getAblityType());
+            wxFormatItemVo.setAbilityType(wxFormatItemPo.getAbilityType());
             wxFormatItemVo.setStatus(wxFormatItemPo.getStatus());
             return wxFormatItemVo;
         }).collect(Collectors.toList());

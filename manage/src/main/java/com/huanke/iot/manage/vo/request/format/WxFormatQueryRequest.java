@@ -29,7 +29,7 @@ public class WxFormatQueryRequest {
         private Integer formatId;
         private Integer pageId;
         private String name;
-        private Integer ablityType;
+        private Integer abilityType;
         private Integer status = CommonConstant.STATUS_YES;
 
     }

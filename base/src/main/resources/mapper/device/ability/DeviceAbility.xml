@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper">
+
+    <sql id="tableName">
+        t_device_ability
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        abilityName,
+        dirValue,
+        writeStatus,
+        readStatus,
+        runStatus,
+        configType,
+        abilityType,
+        minVal,
+        maxVal,
+        status,
+        remark,
+        createTime
+        )
+        VALUES (
+        #{abilityName},
+        #{dirValue},
+        #{writeStatus},
+        #{readStatus},
+        #{runStatus},
+        #{configType},
+        #{abilityType},
+        #{minVal},
+        #{maxVal},
+        #{status},
+        #{remark},
+        #{createTime}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.abilityName != null and param.abilityName != ''">
+                AND abilityName like CONCAT('%',CONCAT(#{param.abilityName},'%'))
+            </if>
+            <if test="param.dirValue != null and param.dirValue != ''">
+                AND dirValue = #{param.dirValue}
+            </if>
+            <if test="param.writeStatus != null">
+                AND writeStatus = #{param.writeStatus}
+            </if>
+            <if test="param.readStatus != null">
+                AND readStatus = #{param.readStatus}
+            </if>
+            <if test="param.runStatus != null">
+                AND runStatus = #{param.runStatus}
+            </if>
+            <if test="param.configType != null">
+                AND configType = #{param.configType}
+            </if>
+            <if test="param.abilityType != null">
+                AND abilityType = #{param.abilityType}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="abilityName != null and abilityName != ''">
+                abilityName = #{abilityName},
+            </if>
+            <if test="dirValue != null  and dirValue != ''">
+                dirValue = #{dirValue},
+            </if>
+            <if test="writeStatus != null">
+                writeStatus = #{writeStatus},
+            </if>
+            <if test="readStatus != null">
+                readStatus = #{readStatus},
+            </if>
+            <if test="runStatus != null">
+                runStatus = #{runStatus},
+            </if>
+            <if test="configType != null">
+                configType = #{configType},
+            </if>
+            <if test="abilityType != null">
+                abilityType = #{abilityType},
+            </if>
+            <if test="minVal != null">
+                minVal = #{minVal},
+            </if>
+            <if test="maxVal != null">
+                maxVal = #{maxVal},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteOptionByAbilityId">
+        delete from t_device_ability_option
+        where abilityId = #{abilityId}
+    </delete>
+
+    <!--<select id="selectAbilityListByTypeId" resultType="com.huanke.iot.base.po.device.alibity.DeviceAbilityPo">-->
+        <!--SELECT-->
+        <!--t_device_ability.*-->
+        <!--FROM-->
+        <!--t_device_type_ability_set,-->
+        <!--t_device_ability_set_relation,-->
+        <!--t_device_ability-->
+        <!--WHERE-->
+        <!--t_device_type_ability_set.abilitySetId = t_device_ability_set_relation.abilitySetId-->
+        <!--AND t_device_ability.id = t_device_ability_set_relation.abilityId-->
+
+        <!--<where>-->
+            <!--<if test = "typeId != null ">-->
+                <!--AND t_device_type_ability_set.typeId = #{typeId}-->
+            <!--</if>-->
+        <!--</where>-->
+    <!--</select>-->
+
+    <select id="selectAbilityListByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo">
+        SELECT
+        t_device_ability.abilityName,t_device_ability.abilityType, t_device_ability.minVal, t_device_ability.minVal,t_device_type_abilitys.*
+        FROM
+        t_device_type_abilitys,
+        t_device_type,
+        t_device_ability
+        WHERE
+        t_device_type.id = t_device_type_abilitys.typeId
+        AND t_device_ability.id = t_device_type_abilitys.abilityId
+        AND t_device_type.id = #{typeId}
+    </select>
+
+    <select id="selectAbilitysByType"  resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo">
+        SELECT
+        t_device_ability.abilityName,t_device_ability.abilityType, t_device_ability.minVal, t_device_ability.minVal,t_device_type_abilitys.*
+        FROM
+        t_device_type_abilitys,
+        t_device_type,
+        t_device_ability
+        WHERE
+        t_device_type.id = t_device_type_abilitys.typeId
+        AND t_device_ability.id = t_device_type_abilitys.abilityId
+        AND t_device_type.id = #{typeId}
+        AND t_device_ability.abilityType = #{abilityType}
+    </select>
+
+    <select id="getDirValuesByDeviceTypeId">
+        select dirValue from <include refid="tableName"/>
+        where id IN
+        (
+        select abilityId from t_device_type_abilitys
+        WHERE typeId = #{deviceTypeId}
+        )
+    </select>
+
+    <select id="selectDeviceAbilitysByTypeId" resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        select t1.* from t_device_ability t1
+        LEFT join t_device_type_abilitys t2
+        on t1.id = t2.abilityId
+        where t2.typeId = #{typeId}
+    </select>
+</mapper>

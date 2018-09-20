@@ -27,7 +27,7 @@ public class DeviceModelVo {
     private Integer status = CommonConstant.STATUS_YES;
     private String remark;
 
-    private List<DeviceModelAblityVo> deviceModelAblitys;
+    private List<DeviceModelAbilityVo> deviceModelAbilitys;
 
     private ModelFormatVo modelFormatVo;
 

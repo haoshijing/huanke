@@ -27,7 +27,7 @@ public class ModelFormatVo {
         private Integer id;
         private Integer modelFormatId;
         private Integer itemId;
-        private Integer ablityId;
+        private Integer abilityId;
         private Integer showStatus;
         private String showName;
         private Integer status;

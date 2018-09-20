@@ -13,7 +13,7 @@ public class WxFormatItemPo {
     private Integer formatId;
     private Integer pageId;
     private String name;
-    private Integer ablityType;
+    private Integer abilityType;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;

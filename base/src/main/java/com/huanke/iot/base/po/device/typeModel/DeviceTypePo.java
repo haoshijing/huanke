@@ -1,10 +1,7 @@
 package com.huanke.iot.base.po.device.typeModel;
 
 import com.huanke.iot.base.constant.CommonConstant;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author Caik

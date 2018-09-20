@@ -2,13 +2,10 @@ package com.huanke.iot.manage.controller.customer;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
-import com.huanke.iot.manage.service.device.ablity.DeviceAblityService;
+import com.huanke.iot.manage.service.device.ability.DeviceAbilityService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 客户
@@ -35,7 +30,7 @@ public class CustomerController {
     private HttpServletRequest request;
 
     @Autowired
-    private DeviceAblityService deviceAblityService;
+    private DeviceAbilityService deviceAbilityService;
 
     /**
      * 添加客户信息
