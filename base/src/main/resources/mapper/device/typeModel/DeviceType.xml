@@ -78,11 +78,11 @@
     </delete>
 
 
-    <select id="selectTypeAblitySetByTypeId" parameterType="java.lang.Integer"
+    <select id="selectTypeAbilitySetByTypeId" parameterType="java.lang.Integer"
             resultType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
         select
         *
-        FROM t_device_type_ablity_set
+        FROM t_device_type_ability_set
         WHERE typeId = #{typeId} limit 1
     </select>
 

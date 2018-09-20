@@ -17,6 +17,7 @@ public class CustomerUserPo {
     private Integer sex;
     private String province;
     private String city;
+    private Integer status;
     private Long createTime;
     private Long lastUpdateTime;
     private Long lastVisitTime;

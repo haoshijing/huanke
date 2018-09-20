@@ -3,23 +3,23 @@ package com.huanke.iot.manage.service.device.typeModel;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
-import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
-import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetMapper;
-import com.huanke.iot.base.dao.device.ablity.DeviceTypeAblitysMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAblitySetMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilitySetMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAbilitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
-import com.huanke.iot.base.po.device.alibity.DeviceAblitySetPo;
-import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceTypeAblitySetPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilitySetPo;
+import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypeAbilitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceTypeAblitysCreateRequest;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.ability.DeviceTypeAbilitysCreateRequest;
+import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAbilitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityOptionVo;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceTypeAblitysVo;
+import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityOptionVo;
+import com.huanke.iot.manage.vo.response.device.ability.DeviceTypeAbilitysVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -27,12 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//import com.huanke.iot.base.dao.device.ablity.DeviceAblitySetMapper;
+//import com.huanke.iot.base.dao.device.ability.DeviceAbilitySetMapper;
 
 /**
  * 设备类型 service
@@ -45,19 +44,19 @@ public class DeviceTypeService {
     private DeviceTypeMapper deviceTypeMapper;
 
     @Autowired
-    private DeviceTypeAblitySetMapper deviceTypeAblitySetMapper;
+    private DeviceTypeAbilitySetMapper deviceTypeAbilitySetMapper;
 
     @Autowired
-    private DeviceTypeAblitysMapper deviceTypeAblitysMapper;
+    private DeviceTypeAbilitysMapper deviceTypeAbilitysMapper;
 
     @Autowired
-    private DeviceAblityMapper deviceAblityMapper;
+    private DeviceAbilityMapper deviceAbilityMapper;
 
     @Autowired
-    private DeviceAblityOptionMapper deviceAblityOptionMapper;
+    private DeviceAbilityOptionMapper deviceAbilityOptionMapper;
 
     @Autowired
-    private DeviceAblitySetMapper deviceAblitySetMapper;
+    private DeviceAbilitySetMapper deviceAbilitySetMapper;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -99,20 +98,18 @@ public class DeviceTypeService {
             deviceTypeMapper.insert(deviceTypePo);
         }
 
-        List list = new ArrayList();
-        list.get(0);
         //先删除 已保存的功能集 ，再保存 类型的功能集
-        deviceTypeAblitysMapper.deleteByTypeId(deviceTypePo.getId());
+        deviceTypeAbilitysMapper.deleteByTypeId(deviceTypePo.getId());
 
-        List<DeviceTypeAblitysCreateRequest> deviceTypeAblitysCreateRequests = typeRequest.getDeviceTypeAblitys();
-        if (deviceTypeAblitysCreateRequests != null && deviceTypeAblitysCreateRequests.size() > 0) {
+        List<DeviceTypeAbilitysCreateRequest> deviceTypeAbilitysCreateRequests = typeRequest.getDeviceTypeAbilitys();
+        if (deviceTypeAbilitysCreateRequests != null && deviceTypeAbilitysCreateRequests.size() > 0) {
             //遍历功能集
-            deviceTypeAblitysCreateRequests.stream().forEach(deviceTypeAblitysCreateRequest -> {
-                DeviceTypeAblitysPo deviceTypeAblitysPo = new DeviceTypeAblitysPo();
-                deviceTypeAblitysPo.setAblityId(deviceTypeAblitysCreateRequest.getAblityId());
-                deviceTypeAblitysPo.setTypeId(deviceTypePo.getId());
+            deviceTypeAbilitysCreateRequests.stream().forEach(deviceTypeAbilitysCreateRequest -> {
+                DeviceTypeAbilitysPo deviceTypeAbilitysPo = new DeviceTypeAbilitysPo();
+                deviceTypeAbilitysPo.setAbilityId(deviceTypeAbilitysCreateRequest.getAbilityId());
+                deviceTypeAbilitysPo.setTypeId(deviceTypePo.getId());
 
-                deviceTypeAblitysMapper.insert(deviceTypeAblitysPo);
+                deviceTypeAbilitysMapper.insert(deviceTypeAbilitysPo);
 
             });
 
@@ -158,12 +155,12 @@ public class DeviceTypeService {
      * @param request
      * @return
      */
-    public ApiResponse<Boolean> createOrUpdateDeviceTypeAblitySet(DeviceTypeAblitySetCreateOrUpdateRequest request) {
+    public ApiResponse<Boolean> createOrUpdateDeviceTypeAbilitySet(DeviceTypeAbilitySetCreateOrUpdateRequest request) {
 
         int effectCount = 0;
         Boolean ret = false;
         // 主键 不能为空
-        if (request.getAblitySetId() == null || request.getAblitySetId() <= 0) {
+        if (request.getAbilitySetId() == null || request.getAbilitySetId() <= 0) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该功能集不存在");
         }
         if (request.getTypeId() == null || request.getTypeId() <= 0) {
@@ -172,37 +169,37 @@ public class DeviceTypeService {
 
         //保存前 先进行 验证 该类型 和该 功能集是否存在
         DeviceTypePo queryDeviceTypePo = deviceTypeMapper.selectById(request.getTypeId());
-        DeviceAblitySetPo queryDeviceAblitySetPo = deviceAblitySetMapper.selectById(request.getAblitySetId());
+        DeviceAbilitySetPo queryDeviceAbilitySetPo = deviceAbilitySetMapper.selectById(request.getAbilitySetId());
 
         if (null == queryDeviceTypePo) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该类型不存在");
         }
 
-        if (null == queryDeviceAblitySetPo) {
+        if (null == queryDeviceAbilitySetPo) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该功能集不存在");
         }
 
 
         //只有 类型与功能集都存在才会进行保存
-        DeviceTypeAblitySetPo deviceTypeAblitySetPo = new DeviceTypeAblitySetPo();
-        deviceTypeAblitySetPo.setAblitySetId(request.getAblitySetId());
-        deviceTypeAblitySetPo.setTypeId(request.getTypeId());
+        DeviceTypeAbilitySetPo deviceTypeAbilitySetPo = new DeviceTypeAbilitySetPo();
+        deviceTypeAbilitySetPo.setAbilitySetId(request.getAbilitySetId());
+        deviceTypeAbilitySetPo.setTypeId(request.getTypeId());
 
         //当主键存在的时候 说明是更新  否则是新增
         if (request.getId() != null && request.getId() > 0) {
-            deviceTypeAblitySetPo.setId(request.getId());
-            deviceTypeAblitySetPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceTypeAbilitySetPo.setId(request.getId());
+            deviceTypeAbilitySetPo.setLastUpdateTime(System.currentTimeMillis());
         } else {
             //当新增的时候 判断 该类型是否已经添加有功能集，如果有不允许添加
-            DeviceTypeAblitySetPo queryTypeAblitySetPo = deviceTypeAblitySetMapper.selectByTypeId(request.getTypeId());
-            if (queryTypeAblitySetPo != null) {
+            DeviceTypeAbilitySetPo queryTypeAbilitySetPo = deviceTypeAbilitySetMapper.selectByTypeId(request.getTypeId());
+            if (queryTypeAbilitySetPo != null) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "该类型已添加功能集，不可重复添加");
             }
 
-            deviceTypeAblitySetPo.setCreateTime(System.currentTimeMillis());
+            deviceTypeAbilitySetPo.setCreateTime(System.currentTimeMillis());
         }
 
-        ret = deviceTypeAblitySetMapper.insert(deviceTypeAblitySetPo) > 0;
+        ret = deviceTypeAbilitySetMapper.insert(deviceTypeAbilitySetPo) > 0;
 
         return new ApiResponse<>(ret);
     }
@@ -241,9 +238,9 @@ public class DeviceTypeService {
             }
 
             //查询该 类型的 功能集合
-            List<DeviceTypeAblitysVo> deviceTypeAblitysVos = selectAblitysByTypeId(deviceTypePo.getId());
+            List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = selectAbilitysByTypeId(deviceTypePo.getId());
 
-            deviceTypeVo.setDeviceTypeAblitys(deviceTypeAblitysVos);
+            deviceTypeVo.setDeviceTypeAbilitys(deviceTypeAbilitysVos);
             return deviceTypeVo;
         }).collect(Collectors.toList());
     }
@@ -273,9 +270,9 @@ public class DeviceTypeService {
             }
 
             //查询该 类型的 功能集合
-            List<DeviceTypeAblitysVo> deviceTypeAblitysVos = selectAblitysByTypeId(deviceTypePo.getId());
+            List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = selectAbilitysByTypeId(deviceTypePo.getId());
 
-            deviceTypeVo.setDeviceTypeAblitys(deviceTypeAblitysVos);
+            deviceTypeVo.setDeviceTypeAbilitys(deviceTypeAbilitysVos);
             return deviceTypeVo;
         }).collect(Collectors.toList());
     }
@@ -300,8 +297,8 @@ public class DeviceTypeService {
             deviceTypeVo.setSource(deviceTypePo.getSource());
             deviceTypeVo.setRemark(deviceTypePo.getRemark());
             deviceTypeVo.setId(deviceTypePo.getId());
-            List<DeviceTypeAblitysVo> deviceTypeAblitysVos = selectAblitysByTypeId(deviceTypePo.getId());
-            deviceTypeVo.setDeviceTypeAblitys(deviceTypeAblitysVos);
+            List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = selectAbilitysByTypeId(deviceTypePo.getId());
+            deviceTypeVo.setDeviceTypeAbilitys(deviceTypeAbilitysVos);
         }
         return deviceTypeVo;
     }
@@ -314,42 +311,42 @@ public class DeviceTypeService {
      * @return
      */
 
-    public List<DeviceTypeAblitysVo> selectAblitysByTypeId(Integer typeId) {
+    public List<DeviceTypeAbilitysVo> selectAbilitysByTypeId(Integer typeId) {
 
 
-        List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceAblityMapper.selectAblityListByTypeId(typeId);
-        List<DeviceTypeAblitysVo> deviceTypeAblitysVos = deviceTypeAblitysPos.stream().map(deviceTypeAblitysPo -> {
+        List<DeviceTypeAbilitysPo> deviceTypeAbilitysPos = deviceAbilityMapper.selectAbilityListByTypeId(typeId);
+        List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = deviceTypeAbilitysPos.stream().map(deviceTypeAbilitysPo -> {
 
-            DeviceTypeAblitysVo deviceTypeAblitysVo = new DeviceTypeAblitysVo();
-            if(deviceTypeAblitysPo!=null){
-                deviceTypeAblitysVo.setAblityId(deviceTypeAblitysPo.getAblityId());
-                deviceTypeAblitysVo.setAblityName(deviceTypeAblitysPo.getAblityName());
-                deviceTypeAblitysVo.setId(deviceTypeAblitysPo.getId());
-                deviceTypeAblitysVo.setTypeId(deviceTypeAblitysPo.getTypeId());
-                deviceTypeAblitysVo.setAblityType(deviceTypeAblitysPo.getAblityType());
+            DeviceTypeAbilitysVo deviceTypeAbilitysVo = new DeviceTypeAbilitysVo();
+            if(deviceTypeAbilitysPo!=null){
+                deviceTypeAbilitysVo.setAbilityId(deviceTypeAbilitysPo.getAbilityId());
+                deviceTypeAbilitysVo.setAbilityName(deviceTypeAbilitysPo.getAbilityName());
+                deviceTypeAbilitysVo.setId(deviceTypeAbilitysPo.getId());
+                deviceTypeAbilitysVo.setTypeId(deviceTypeAbilitysPo.getTypeId());
+                deviceTypeAbilitysVo.setAbilityType(deviceTypeAbilitysPo.getAbilityType());
 
-                List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceTypeAblitysPo.getAblityId());
-                if(deviceAblityOptionPos!=null&&deviceAblityOptionPos.size()>0){
-                    List<DeviceAblityOptionVo> deviceAblityOptionVos = deviceAblityOptionPos.stream().map(deviceAblityOptionPo -> {
-                        DeviceAblityOptionVo deviceAblityOptionVo = new DeviceAblityOptionVo();
+                List<DeviceAbilityOptionPo> deviceAbilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(deviceTypeAbilitysPo.getAbilityId());
+                if(deviceAbilityOptionPos!=null&&deviceAbilityOptionPos.size()>0){
+                    List<DeviceAbilityOptionVo> deviceAbilityOptionVos = deviceAbilityOptionPos.stream().map(deviceAbilityOptionPo -> {
+                        DeviceAbilityOptionVo deviceAbilityOptionVo = new DeviceAbilityOptionVo();
 
-                        deviceAblityOptionVo.setId(deviceAblityOptionPo.getId());
-                        deviceAblityOptionVo.setOptionName(deviceAblityOptionPo.getOptionName());
-                        deviceAblityOptionVo.setOptionValue(deviceAblityOptionPo.getOptionValue());
-                        deviceAblityOptionVo.setStatus(deviceAblityOptionPo.getStatus());
-                        return deviceAblityOptionVo;
+                        deviceAbilityOptionVo.setId(deviceAbilityOptionPo.getId());
+                        deviceAbilityOptionVo.setOptionName(deviceAbilityOptionPo.getOptionName());
+                        deviceAbilityOptionVo.setOptionValue(deviceAbilityOptionPo.getOptionValue());
+                        deviceAbilityOptionVo.setStatus(deviceAbilityOptionPo.getStatus());
+                        return deviceAbilityOptionVo;
                     }).collect(Collectors.toList());
 
-                    deviceTypeAblitysVo.setDeviceAblityOptions(deviceAblityOptionVos);
+                    deviceTypeAbilitysVo.setDeviceAbilityOptions(deviceAbilityOptionVos);
                 }
 
             }
 
-            return deviceTypeAblitysVo;
+            return deviceTypeAbilitysVo;
         }).collect(Collectors.toList());
 
 
-        return deviceTypeAblitysVos;
+        return deviceTypeAbilitysVos;
 
     }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {

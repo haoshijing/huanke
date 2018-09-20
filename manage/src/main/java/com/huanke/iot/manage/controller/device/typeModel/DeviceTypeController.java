@@ -2,13 +2,10 @@ package com.huanke.iot.manage.controller.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.manage.service.device.typeModel.DeviceTypeAblitySetService;
+import com.huanke.iot.manage.service.device.typeModel.DeviceTypeAbilitySetService;
 import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
-import com.huanke.iot.manage.vo.request.device.ablity.DeviceAblityCreateOrUpdateRequest;
-import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAblitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +28,7 @@ public class DeviceTypeController {
     private DeviceTypeService deviceTypeService;
 
     @Autowired
-    private DeviceTypeAblitySetService deviceTypeAblitySetService;
+    private DeviceTypeAbilitySetService deviceTypeAbilitySetService;
 
     /**
      * 添加新类型
@@ -130,9 +127,9 @@ public class DeviceTypeController {
 //     * @throws Exception
 //     */
 //    @ApiOperation("添加类型的功能集")
-//    @PostMapping(value = "/createDeviceTypeAblitySet")
-//    public ApiResponse<Boolean> createDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
-//        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
+//    @PostMapping(value = "/createDeviceTypeAbilitySet")
+//    public ApiResponse<Boolean> createDeviceTypeAbilitySet(@RequestBody DeviceTypeAbilitySetCreateOrUpdateRequest request) throws Exception{
+//        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAbilitySet(request);
 //        return result;
 //    }
 //
@@ -143,9 +140,9 @@ public class DeviceTypeController {
 //     * @throws Exception
 //     */
 //    @ApiOperation("修改类型的功能集")
-//    @PutMapping(value = "/updateDeviceTypeAblitySet")
-//    public ApiResponse<Boolean> updateDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
-//        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAblitySet(request);
+//    @PutMapping(value = "/updateDeviceTypeAbilitySet")
+//    public ApiResponse<Boolean> updateDeviceTypeAbilitySet(@RequestBody DeviceTypeAbilitySetCreateOrUpdateRequest request) throws Exception{
+//        ApiResponse<Boolean> result =  deviceTypeService.createOrUpdateDeviceTypeAbilitySet(request);
 //        return result;
 //    }
 //
@@ -156,10 +153,10 @@ public class DeviceTypeController {
 //     * @throws Exception
 //     */
 //    @ApiOperation("删除类型的功能集")
-//    @DeleteMapping(value = "/deleteDeviceTypeAblitySet/{id}")
-//    public ApiResponse<Boolean> deleteDeviceTypeAblitySet(@RequestBody DeviceTypeAblitySetCreateOrUpdateRequest request) throws Exception{
+//    @DeleteMapping(value = "/deleteDeviceTypeAbilitySet/{id}")
+//    public ApiResponse<Boolean> deleteDeviceTypeAbilitySet(@RequestBody DeviceTypeAbilitySetCreateOrUpdateRequest request) throws Exception{
 //        Boolean ret = false;
-//            ret =  deviceTypeAblitySetService.deleteById(request.getId());
+//            ret =  deviceTypeAbilitySetService.deleteById(request.getId());
 //        return new ApiResponse<>(ret);
 //    }
 
@@ -223,10 +220,10 @@ public class DeviceTypeController {
 //     * @return
 //     */
 //    @ApiOperation("根据类型主键 查询该类型的功能集合")
-//    @GetMapping(value = "/selectAblitysByTypeId/{typeId}")
-//    public ApiResponse<List<DeviceAblityVo>>  selectAblitysByTypeId(@PathVariable("typeId")Integer typeId){
+//    @GetMapping(value = "/selectAbilitysByTypeId/{typeId}")
+//    public ApiResponse<List<DeviceAbilityVo>>  selectAbilitysByTypeId(@PathVariable("typeId")Integer typeId){
 //
-//        List<DeviceAblityVo> deviceAblityVos = deviceTypeService.selectAblitysByTypeId(typeId);
-//        return new ApiResponse<>(deviceAblityVos);
+//        List<DeviceAbilityVo> deviceAbilityVos = deviceTypeService.selectAbilitysByTypeId(typeId);
+//        return new ApiResponse<>(deviceAbilityVos);
 //    }
 }

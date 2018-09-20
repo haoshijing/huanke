@@ -15,6 +15,7 @@
         userId,
         deviceId,
         teamId,
+        manageName,
         linkAgeStatus,
         status,
         createTime,
@@ -24,6 +25,7 @@
         #{userId},
         #{deviceId},
         #{teamId},
+        #{manageName},
         #{linkAgeStatus},
         #{status},
         #{createTime},
@@ -39,6 +41,7 @@
         userId,
         deviceId,
         teamId,
+        manageName,
         linkAgeStatus,
         status,
         createTime,
@@ -50,6 +53,7 @@
             #{teamItem.userId},
             #{teamItem.deviceId},
             #{teamItem.teamId},
+            #{teamItem.manageName},
             #{teamItem.linkAgeStatus},
             #{teamItem.status},
             #{teamItem.createTime},
@@ -65,6 +69,29 @@
         FROM
         <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
+    </select>
+
+    <select id="selectByJoinId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        and userId = #{userId}
+    </select>
+
+    <select id="selectByJoinOpenId"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        t_device_team_item ti,  t_customer_user cu
+        WHERE ti.deviceId = #{deviceId}
+        and cu.openId = #{userOpenId}
+        and ti.userId = cu.id
+        and ti.status=1
+        and cu.status = 1
     </select>
 
     <select id="selectItemsByDeviceId" parameterType="java.lang.Integer"
@@ -151,6 +178,12 @@
         and userId = #{userId}
     </delete>
 
+
+    <delete id="deleteByTeamId" >
+        delete from
+        <include refid="tableName"/>
+        where teamId = #{teamId}
+    </delete>
 
     <!--批量删除-->
     <delete id="deleteBatch" parameterType="java.util.List">

@@ -27,7 +27,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private String remark;
 //    private List<DeviceModelFormatConfigCreateRequest> deviceModelFormatConfigs;
 
-    private List<DeviceModelAblityRequest> deviceModelAblitys;
+    private List<DeviceModelAbilityRequest> deviceModelAbilitys;
 
     private DeviceModelFormatCreateRequest deviceModelFormat;
 
@@ -35,23 +35,23 @@ public class DeviceModelCreateOrUpdateRequest {
      * 型号的功能
      */
     @Data
-    public static class DeviceModelAblityRequest {
+    public static class DeviceModelAbilityRequest {
 
         private Integer id;
-        private Integer ablityId;
+        private Integer abilityId;
         private String definedName;
         private Integer minVal;
         private Integer maxVal;
         private Integer status = CommonConstant.STATUS_YES;
 
-        private List<DeviceModelAblityOptionRequest> deviceModelAblityOptions;
+        private List<DeviceModelAbilityOptionRequest> deviceModelAbilityOptions;
     }
 
     @Data
-    public static class DeviceModelAblityOptionRequest {
+    public static class DeviceModelAbilityOptionRequest {
 
         private Integer id;
-        private Integer ablityOptionId;
+        private Integer abilityOptionId;
         private String definedName;
         private Integer minVal;
         private Integer maxVal;

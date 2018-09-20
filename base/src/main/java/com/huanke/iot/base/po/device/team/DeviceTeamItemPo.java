@@ -19,6 +19,8 @@ public class DeviceTeamItemPo {
      */
     private Integer deviceId;
 
+    private String manageName;
+
     private Integer userId;
 
     /**

@@ -75,7 +75,7 @@
     <select id="selectConfigByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.WxConfigPo">
         SELECT * FROM
         <include refid="tableName"/>
-        WHERE customerId = #{customerId} limit 1
+        WHERE customerId = #{customerId}   and status = 1  limit 1
     </select>
 
 

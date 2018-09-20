@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -46,6 +47,8 @@ public class CustomerService {
     @Autowired
     private WxBgImgMapper wxBgImgMapper;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     /**
      * 保存详情
      *
@@ -72,7 +75,8 @@ public class CustomerService {
         //先验证二级域名是否重复 如果重复 不允许添加
         if (StringUtils.isNotBlank(customerVo.getSLD())) {
             CustomerPo queryCustomer = customerMapper.selectBySLD(customerVo.getSLD());
-            if (queryCustomer != null&&queryCustomer.getId().equals(customerPo.getId())) {
+            //当库中存在 该二级域名的客户，且id 和 保存的不一致时。不允许添加
+            if (queryCustomer != null&&!queryCustomer.getId().equals(customerVo.getId())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在该二级域名");
             }
         }
@@ -390,19 +394,41 @@ public class CustomerService {
     /**
      * 根据二级域名查询 客户
      *
-     * @param sld
+     * @param SLD
      * @return
      */
-    public CustomerVo selectById(String sld) {
+    public CustomerVo selectBySLD(String SLD) {
         CustomerVo customerVo = new CustomerVo();
-        CustomerPo customerPo = customerMapper.selectBySLD(sld);
-        BeanUtils.copyProperties(customerPo, customerVo);
-        return customerVo;
+        CustomerPo customerPo = customerMapper.selectBySLD(SLD);
+        if(null!=customerPo){
+            BeanUtils.copyProperties(customerPo, customerVo);
+            return customerVo;
+        }else{
+            return  null;
+        }
+    }
+
+    /**
+     * 根据二级域名查询 客户的后台配置
+     *
+     * @param SLD
+     * @return
+     */
+    public CustomerVo.BackendLogo selectBackendConfigBySLD(String SLD) {
+        CustomerVo.BackendLogo backendLogo = new CustomerVo.BackendLogo();
+        BackendConfigPo backendConfigPo = backendConfigMapper.selectBackendConfigBySLD(SLD);
+        if(null!=backendConfigPo){
+            backendLogo.setLogo(backendConfigPo.getLogo());
+            backendLogo.setName(backendConfigPo.getName());
+            return backendLogo;
+        }else{
+            return  null;
+        }
     }
 
 
-    public Boolean deleteCustomerById(Integer customerId) {
 
+    public Boolean deleteCustomerById(Integer customerId) {
         Boolean ret = false;
         //先删除 该 功能
         CustomerPo delCustomerPo = new CustomerPo();
@@ -411,4 +437,6 @@ public class CustomerService {
         ret = customerMapper.updateStatusById(delCustomerPo) > 0;
         return ret;
     }
+
+
 }

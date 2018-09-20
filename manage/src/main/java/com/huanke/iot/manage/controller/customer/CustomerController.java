@@ -2,19 +2,18 @@ package com.huanke.iot.manage.controller.customer;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.device.ability.DeviceAbilityService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
-import com.huanke.iot.manage.vo.response.device.ablity.DeviceAblityVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 客户
@@ -26,6 +25,12 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private DeviceAbilityService deviceAbilityService;
 
     /**
      * 添加客户信息
@@ -106,6 +111,48 @@ public class CustomerController {
     public ApiResponse<CustomerVo> selectById(@PathVariable("id") Integer id) throws Exception {
         CustomerVo customerVo = customerService.selectById(id);
         return new ApiResponse<>(customerVo);
+    }
+
+    /**
+     * 根据二级域名查询客户详情
+     *
+     * @param SLD
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation("根据设备类型和功能项类型 查询功能列表")
+    @GetMapping(value = "/selectBySLD/{SLD}")
+    public ApiResponse<CustomerVo> selectBySLD(@PathVariable("SLD") String SLD) throws Exception {
+//
+        CustomerVo customerVo = customerService.selectBySLD(SLD);
+        if (customerVo != null) {
+            return new ApiResponse<>(customerVo);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
+        }
+
+//        return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
+    }
+
+    /**
+     * 根据二级域名查询客户详情
+     *
+     * @param SLD
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation("根据设备类型和功能项类型 查询功能列表")
+    @GetMapping(value = "/selectBackendConfigBySLD/{SLD}")
+    public ApiResponse<CustomerVo.BackendLogo> selectBackendConfigBySLD(@PathVariable("SLD") String SLD) throws Exception {
+//
+        CustomerVo.BackendLogo backendLogoVo = customerService.selectBackendConfigBySLD(SLD);
+        if (backendLogoVo != null) {
+            return new ApiResponse<>(backendLogoVo);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
+        }
+
+//        return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
     }
 
     @ApiOperation("根据Id删除客户")

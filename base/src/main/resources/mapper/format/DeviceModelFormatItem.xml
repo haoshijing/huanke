@@ -14,7 +14,7 @@
         (
         modelFormatId,
         itemId,
-        ablityId,
+        abilityId,
         showStatus,
         showName,
         status,
@@ -23,7 +23,7 @@
         VALUES (
         #{modelFormatId},
         #{itemId},
-        #{ablityId},
+        #{abilityId},
         #{showStatus},
         #{showName},
         #{status},
@@ -50,8 +50,8 @@
             <if test="itemId != null">
                 itemId = #{itemId},
             </if>
-            <if test="ablityId != null">
-                ablityId = #{ablityId},
+            <if test="abilityId != null">
+                abilityId = #{abilityId},
             </if>
             <if test="showStatus != null">
                 showStatus = #{showStatus},

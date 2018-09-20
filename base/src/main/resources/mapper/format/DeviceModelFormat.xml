@@ -72,7 +72,7 @@
 
     <select id="obtainAbilityIdsByJoinId" resultType="java.lang.Integer">
         select
-        t_device_model_format_item.ablityId
+        t_device_model_format_item.abilityId
         FROM
         t_device_model_format,t_device_model_format_item
         WHERE

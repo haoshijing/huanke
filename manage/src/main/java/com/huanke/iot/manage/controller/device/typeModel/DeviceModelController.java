@@ -154,7 +154,7 @@ public class DeviceModelController {
 
     @ApiOperation("增加设备配额")
     @PostMapping(value = "/createWxDeviceIds")
-    public ApiResponse<Boolean> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
+    public ApiResponse<Integer> createWxDeviceIdPools(DevicePoolRequest devicePoolRequest) {
         try {
             return  deviceModelService.createWxDeviceIdPools(devicePoolRequest);
         } catch (Exception e) {
@@ -192,14 +192,14 @@ public class DeviceModelController {
 //
 //    /**
 //     * 添加 型号的能力
-//     * @param modelAblityRequest
+//     * @param modelAbilityRequest
 //     * @return 成功返回true，失败返回false
 //     * @throws Exception
 //     */
-//    @RequestMapping(value = "/createDeviceModelAblity",method = RequestMethod.POST)
-//    public ApiResponse<Boolean> createDeviceModelAblity(@RequestBody DeviceModelCreateOrUpdateRequest.DeviceModelAblityRequest modelAblityRequest) throws Exception{
+//    @RequestMapping(value = "/createDeviceModelAbility",method = RequestMethod.POST)
+//    public ApiResponse<Boolean> createDeviceModelAbility(@RequestBody DeviceModelCreateOrUpdateRequest.DeviceModelAbilityRequest modelAbilityRequest) throws Exception{
 //
-//        ApiResponse<Boolean> result =  deviceModelService.createDeviceModelAblity(modelAblityRequest);
+//        ApiResponse<Boolean> result =  deviceModelService.createDeviceModelAbility(modelAbilityRequest);
 //        return result;
 //    }
 }
