@@ -75,7 +75,7 @@ public class DeviceTimerJob {
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
             int hour = calendar.get(Calendar.HOUR);
             int minute = calendar.get(Calendar.MINUTE);
-            log.info("start ideaType timer job dayOfWeek = {}", dayOfWeek);
+            log.info("start ideaType timer job dayOfWeek = {}, hour={}, minute={}", dayOfWeek, hour, minute);
             List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryIdeaTypeTimers(dayOfWeek);
             deviceTimerPos.forEach(deviceTimerPo -> {
                 if(deviceTimerPo.getHour() == hour && deviceTimerPo.getMinute() == minute){

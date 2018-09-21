@@ -105,7 +105,6 @@ public class DeviceTimerService {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR, deviceTimerPo.getHour());
         calendar.set(Calendar.MINUTE, deviceTimerPo.getMinute());
-        calendar.set(Calendar.SECOND, deviceTimerPo.getSecond());
         if (!daysOfWeek.contains(dayOfWeek) || calendar.getTimeInMillis() < System.currentTimeMillis()) {
             return;
         }
