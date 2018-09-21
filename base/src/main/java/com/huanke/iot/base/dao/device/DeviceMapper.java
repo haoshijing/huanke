@@ -42,4 +42,8 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DevicePo> selectChildDeviceListByHostDeviceId(Integer hostDeviceId);
 
     DevicePo getByHostDeviceIdAndTypeId(@Param("hostDeviceId") Integer hostDeviceId, @Param("childId") String childId);
+
+    Integer queryChildDeviceCount(Integer hostDeviceId);
+
+    List<DevicePo> queryChildDevice(Integer hostDeviceId);
 }

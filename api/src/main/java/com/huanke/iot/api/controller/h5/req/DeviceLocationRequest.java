@@ -6,12 +6,10 @@ import lombok.Data;
  * 描述:
  *
  * @author onlymark
- * @create 2018-09-12 下午4:47
+ * @create 2018-09-17 下午6:12
  */
 @Data
-public class ShareRequest {
-    private String masterOpenId;
+public class DeviceLocationRequest {
     private Integer deviceId;
-    private String token;
-    private Integer teamId;
+    private String location;
 }

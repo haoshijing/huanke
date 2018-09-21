@@ -178,7 +178,6 @@
         select count(1) FROM
         <include refid="tableName"/>
         where 1=1
-        and
         <if test="customerId != null and customerId != 0">
             AND customerId = #{customerId}
         </if>

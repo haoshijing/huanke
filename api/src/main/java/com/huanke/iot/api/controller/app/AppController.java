@@ -79,24 +79,24 @@ public class AppController extends BaseController {
     public ApiResponse<Boolean> sendFuc(String deviceId,String funcId){
         DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
         if(StringUtils.equals("1", funcId)){
-            deviceFuncVo.setDeviceId(deviceId);
+            deviceFuncVo.setWxDeviceId(deviceId);
             deviceFuncVo.setFuncId("210");
             deviceFuncVo.setValue("0");
         }else if(StringUtils.equals("2",funcId)){
-            deviceFuncVo.setDeviceId(deviceId);
+            deviceFuncVo.setWxDeviceId(deviceId);
             deviceFuncVo.setFuncId("280");
             deviceFuncVo.setValue("1");
         }else if(StringUtils.equals("3",funcId)){
-            deviceFuncVo.setDeviceId(deviceId);
+            deviceFuncVo.setWxDeviceId(deviceId);
             deviceFuncVo.setFuncId("280");
             deviceFuncVo.setValue("2");
         }else if(StringUtils.equals("4",funcId)){
-            deviceFuncVo.setDeviceId(deviceId);
+            deviceFuncVo.setWxDeviceId(deviceId);
             deviceFuncVo.setFuncId("280");
             deviceFuncVo.setValue("3");
         }else if(StringUtils.equals("5",funcId) ||
                 StringUtils.equals("6",funcId)){
-            deviceFuncVo.setDeviceId(deviceId);
+            deviceFuncVo.setWxDeviceId(deviceId);
             deviceFuncVo.setFuncId("210");
             deviceFuncVo.setValue("1");
         }

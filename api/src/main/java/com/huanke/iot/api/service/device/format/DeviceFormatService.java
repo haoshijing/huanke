@@ -2,19 +2,22 @@ package com.huanke.iot.api.service.device.format;
 
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.base.dao.device.DeviceMapper;
-import com.huanke.iot.base.dao.device.ablity.DeviceAblityMapper;
-import com.huanke.iot.base.dao.device.ablity.DeviceAblityOptionMapper;
-import com.huanke.iot.base.dao.device.ablity.DeviceTypeAblitysMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceModelAblityOptionMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
-import com.huanke.iot.base.dao.format.*;
+import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
+import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
+import com.huanke.iot.base.dao.format.WxFormatItemMapper;
+import com.huanke.iot.base.dao.format.WxFormatPageMapper;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityOptionPo;
-import com.huanke.iot.base.po.device.alibity.DeviceAblityPo;
-import com.huanke.iot.base.po.device.alibity.DeviceTypeAblitysPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityOptionPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceModelAblityPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
+import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
@@ -47,15 +50,15 @@ public class DeviceFormatService {
     @Autowired
     private DeviceModelFormatItemMapper deviceModelFormatItemMapper;
     @Autowired
-    private DeviceAblityMapper deviceAblityMapper;
+    private DeviceAbilityMapper deviceabilityMapper;
     @Autowired
-    private DeviceAblityOptionMapper deviceAblityOptionMapper;
+    private DeviceAbilityOptionMapper deviceabilityOptionMapper;
     @Autowired
-    private DeviceModelAblityMapper deviceModelAblityMapper;
+    private DeviceModelAbilityMapper deviceModelabilityMapper;
     @Autowired
-    private DeviceModelAblityOptionMapper deviceModelAblityOptionMapper;
+    private DeviceModelAbilityOptionMapper deviceModelabilityOptionMapper;
     @Autowired
-    private DeviceTypeAblitysMapper deviceTypeAblitysMapper;
+    private DeviceTypeAbilitysMapper deviceTypeabilitysMapper;
     @Autowired
     private WxFormatPageMapper wxFormatPageMapper;
 
@@ -83,40 +86,40 @@ public class DeviceFormatService {
             formatItems.setItemId(wxFormatItemPo.getId());
             formatItems.setShowName(deviceModelFormatItemPo.getShowName());
             formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
-            formatItems.setAbilityId(deviceModelFormatItemPo.getAblityId());
+            formatItems.setAbilityId(deviceModelFormatItemPo.getAbilityId());
             formatItemsList.add(formatItems);
         }
         deviceModelVo.setFormatItemsList(formatItemsList);
         //查型号硬件功能项
         List<DeviceModelVo.Abilitys> abilitysList = new ArrayList<>();
-        List<DeviceTypeAblitysPo> deviceTypeAblitysPos = deviceTypeAblitysMapper.selectByTypeId(typeId);
-        for (DeviceTypeAblitysPo deviceTypeAblitysPo : deviceTypeAblitysPos) {
-            Integer abilityId = deviceTypeAblitysPo.getAblityId();
+        List<DeviceTypeAbilitysPo> deviceTypeabilitysPos = deviceTypeabilitysMapper.selectByTypeId(typeId);
+        for (DeviceTypeAbilitysPo deviceTypeabilitysPo : deviceTypeabilitysPos) {
+            Integer abilityId = deviceTypeabilitysPo.getAbilityId();
 
             DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
             abilitys.setAbilityId(abilityId);
-            DeviceAblityPo deviceAblityPo = deviceAblityMapper.selectById(abilityId);
-            abilitys.setAbilityName(deviceAblityPo.getAblityName());
-            DeviceModelAblityPo deviceModelAblityPo = deviceModelAblityMapper.getByJoinId(modelId, abilityId);
-            if(deviceModelAblityPo != null){
-                abilitys.setDefinedName(deviceModelAblityPo.getDefinedName());
+            DeviceAbilityPo deviceabilityPo = deviceabilityMapper.selectById(abilityId);
+            abilitys.setAbilityName(deviceabilityPo.getAbilityName());
+            DeviceModelAbilityPo deviceModelabilityPo = deviceModelabilityMapper.getByJoinId(modelId, abilityId);
+            if(deviceModelabilityPo != null){
+                abilitys.setDefinedName(deviceModelabilityPo.getDefinedName());
             }
-            BeanUtils.copyProperties(deviceAblityPo, abilitys);
+            BeanUtils.copyProperties(deviceabilityPo, abilitys);
             List<DeviceModelVo.AbilityOption> abilityOptionList = new ArrayList<>();
 
-            List<DeviceAblityOptionPo> deviceAblityOptionPos = deviceAblityOptionMapper.selectOptionsByAblityId(deviceAblityPo.getId());
+            List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceabilityOptionMapper.selectOptionsByAbilityId(deviceabilityPo.getId());
             //查功能项选项及别名
-            for (DeviceAblityOptionPo deviceAblityOptionPo : deviceAblityOptionPos) {
+            for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
                 DeviceModelVo.AbilityOption abilityOption = new DeviceModelVo.AbilityOption();
-                abilityOption.setOptionName(deviceAblityOptionPo.getOptionName());
-                abilityOption.setOptionValue(deviceAblityOptionPo.getOptionValue());
-                abilityOption.setMaxVal(deviceAblityOptionPo.getMaxVal());
-                abilityOption.setMinVal(deviceAblityOptionPo.getMinVal());
-                DeviceModelAblityOptionPo deviceModelAblityOptionPo = deviceModelAblityOptionMapper.getByJoinId(deviceModelAblityPo.getId(), deviceAblityOptionPo.getId());
-                if(deviceModelAblityOptionPo != null){
-                    abilityOption.setOptionDefinedName(deviceModelAblityOptionPo.getDefinedName());
-                    abilityOption.setMaxVal(deviceModelAblityOptionPo.getMaxVal());
-                    abilityOption.setMinVal(deviceModelAblityOptionPo.getMinVal());
+                abilityOption.setOptionName(deviceabilityOptionPo.getOptionName());
+                abilityOption.setOptionValue(deviceabilityOptionPo.getOptionValue());
+                abilityOption.setMaxVal(deviceabilityOptionPo.getMaxVal());
+                abilityOption.setMinVal(deviceabilityOptionPo.getMinVal());
+                DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelabilityOptionMapper.getByJoinId(deviceModelabilityPo.getId(), deviceabilityOptionPo.getId());
+                if(deviceModelabilityOptionPo != null){
+                    abilityOption.setOptionDefinedName(deviceModelabilityOptionPo.getDefinedName());
+                    abilityOption.setMaxVal(deviceModelabilityOptionPo.getMaxVal());
+                    abilityOption.setMinVal(deviceModelabilityOptionPo.getMinVal());
                 }
                 abilityOptionList.add(abilityOption);
             }

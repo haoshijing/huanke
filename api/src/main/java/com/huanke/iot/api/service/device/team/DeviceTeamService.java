@@ -5,9 +5,11 @@ import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
@@ -36,8 +38,13 @@ public class DeviceTeamService {
     @Autowired
     DeviceMapper deviceMapper;
 
+    @Autowired
+    CustomerUserMapper customerUserMapper;
+
     @Transactional
     public Object createDeviceTeam(Integer userId, DeviceTeamNewRequest newRequest) {
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        int customerId = customerUserPo.getCustomerId();
         String teamName = newRequest.getTeamName();
         DeviceTeamPo queryPo = new DeviceTeamPo();
         queryPo.setName(teamName);
@@ -51,6 +58,8 @@ public class DeviceTeamService {
             DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
             deviceTeamPo.setCreateTime(System.currentTimeMillis());
             deviceTeamPo.setMasterUserId(userId);
+            deviceTeamPo.setCreateUserId(userId);
+            deviceTeamPo.setCustomerId(customerId);
             deviceTeamPo.setName(teamName);
             deviceTeamPo.setTeamType(3);
             deviceTeamPo.setTeamStatus(0);
@@ -63,6 +72,8 @@ public class DeviceTeamService {
             updatePo.setName(newRequest.getTeamName());
             updatePo.setStatus(CommonConstant.STATUS_YES);
             updatePo.setTeamType(3);
+            updatePo.setCreateUserId(userId);
+            updatePo.setCustomerId(customerId);
             updatePo.setTeamStatus(0);
             updatePo.setId(teamId);
             updatePo.setLastUpdateTime(System.currentTimeMillis());
@@ -75,7 +86,7 @@ public class DeviceTeamService {
             deviceTeamRequest.setTeamId(teamId);
             updateDeviceTeam(userId, deviceTeamRequest);
         }
-        return new ApiResponse<>();
+        return new ApiResponse<>(teamId);
     }
 
     public Object deleteTeam(Integer userId, Integer teamId) {

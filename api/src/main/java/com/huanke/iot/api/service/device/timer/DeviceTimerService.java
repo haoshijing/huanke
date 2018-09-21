@@ -1,16 +1,37 @@
 package com.huanke.iot.api.service.device.timer;
 
+import com.alibaba.fastjson.JSON;
+import com.huanke.iot.api.constants.DictConstants;
 import com.huanke.iot.api.controller.h5.req.DeviceTimerRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceTimerVo;
+import com.huanke.iot.api.controller.h5.response.DictVo;
+import com.huanke.iot.api.gateway.MqttSendService;
+import com.huanke.iot.api.service.device.basic.DeviceDataService;
+import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.TimerConstants;
+import com.huanke.iot.base.dao.DictMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceTimerDayMapper;
 import com.huanke.iot.base.dao.device.DeviceTimerMapper;
+import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.enums.FuncTypeEnums;
+import com.huanke.iot.base.po.config.DictPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.DeviceTimerDayPo;
 import com.huanke.iot.base.po.device.DeviceTimerPo;
+import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Repository
@@ -20,75 +41,161 @@ public class DeviceTimerService {
     private DeviceTimerMapper deviceTimerMapper;
 
     @Autowired
+    private DeviceTimerDayMapper deviceTimerDayMapper;
+
+    @Autowired
     private DeviceMapper deviceMapper;
 
+    @Autowired
+    private DictMapper dictMapper;
 
-    public Boolean insertTimer(DeviceTimerRequest request) {
+    @Autowired
+    private DeviceOperLogMapper deviceOperLogMapper;
+
+    @Autowired
+    private MqttSendService mqttSendService;
+
+    @Transactional
+    public Integer insertTimer(DeviceTimerRequest request) {
         String name = request.getName();
         Long afterTime = request.getAfterTime();
-        String deviceIdStr = request.getDeviceId();
+        String deviceIdStr = request.getWxDeviceId();
         Integer timerType = request.getTimerType();
-
-        if(afterTime <= 0){
-            return false;
+        Integer type = request.getType();
+        DeviceTimerPo deviceTimerPo = new DeviceTimerPo();
+        if (type == TimerConstants.TIMER_TYPE_ONCE_TIME && afterTime <= 0) {
+            return 0;
         }
         DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
-        if(devicePo == null){
-            return  false;
+        if (devicePo == null) {
+            return 0;
         }
-        DeviceTimerPo deviceTimerPo = new DeviceTimerPo();
         deviceTimerPo.setTimerType(timerType);
         deviceTimerPo.setCreateTime(System.currentTimeMillis());
         deviceTimerPo.setLastUpdateTime(System.currentTimeMillis());
         deviceTimerPo.setDeviceId(devicePo.getId());
         deviceTimerPo.setName(name);
         deviceTimerPo.setUserId(request.getUserId());
-        deviceTimerPo.setExecuteTime(System.currentTimeMillis()+afterTime);
         deviceTimerPo.setStatus(1);
+        deviceTimerPo.setType(request.getType());
+        deviceTimerPo.setHour(request.getHour());
+        deviceTimerPo.setMinute(request.getMinute());
+        deviceTimerPo.setSecond(request.getSecond());
+        if (type == TimerConstants.TIMER_TYPE_ONCE_TIME) {
+            deviceTimerPo.setExecuteTime(System.currentTimeMillis() + afterTime);
+        }
+        deviceTimerMapper.insert(deviceTimerPo);
+        if (type == TimerConstants.TIMER_TYPE_IDEA) {
+            List<Integer> daysOfWeek = request.getDaysOfWeek();
+            for (Integer dayOfWeek : daysOfWeek) {
+                DeviceTimerDayPo deviceTimerDayPo = new DeviceTimerDayPo();
+                deviceTimerDayPo.setTimeId(deviceTimerPo.getId());
+                deviceTimerDayPo.setDayOfWeek(dayOfWeek);
+                deviceTimerDayPo.setCreateTime(System.currentTimeMillis());
+                deviceTimerDayPo.setStatus(CommonConstant.STATUS_YES);
+                deviceTimerDayMapper.insert(deviceTimerDayPo);
+            }
+            addTodayTimeWork(deviceTimerPo, daysOfWeek);
+        }
+        return deviceTimerPo.getId();
+    }
 
-        Integer ret = deviceTimerMapper.insert(deviceTimerPo);
-        return  ret >0;
+    public void addTodayTimeWork(DeviceTimerPo deviceTimerPo, List<Integer> daysOfWeek) {
+        int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR, deviceTimerPo.getHour());
+        calendar.set(Calendar.MINUTE, deviceTimerPo.getMinute());
+        if (!daysOfWeek.contains(dayOfWeek) || calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            return;
+        }
+
+        long delay = calendar.getTimeInMillis() - System.currentTimeMillis();
+        ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
+        executor.schedule(new Runnable() {
+            @Override
+            public void run() {
+                Integer deviceId = deviceTimerPo.getDeviceId();
+                if (deviceTimerPo.getTimerType() == 1) {
+                    sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 1);
+                } else {
+                    sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
+                }
+            }
+        }, delay, TimeUnit.MILLISECONDS);
+    }
+
+    public String sendFunc(Integer deviceId, String funcId, Integer funcValue) {
+        String topic = "/down/control/" + deviceId;
+        String requestId = UUID.randomUUID().toString().replace("-", "");
+        DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
+        deviceOperLogPo.setFuncId(funcId);
+        deviceOperLogPo.setDeviceId(deviceId);
+        deviceOperLogPo.setRequestId(requestId);
+        deviceOperLogPo.setOperType(4);
+        deviceOperLogPo.setOperUserId(0);
+        deviceOperLogPo.setCreateTime(System.currentTimeMillis());
+        deviceOperLogMapper.insert(deviceOperLogPo);
+        DeviceDataService.FuncListMessage funcListMessage = new DeviceDataService.FuncListMessage();
+        funcListMessage.setMsg_type("control");
+        funcListMessage.setMsg_id(requestId);
+        DeviceDataService.FuncItemMessage funcItemMessage = new DeviceDataService.FuncItemMessage();
+        funcItemMessage.setType(funcId);
+        funcItemMessage.setValue(String.valueOf(funcValue));
+        funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
+        mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
+        return requestId;
+
     }
 
 
-    public List<DeviceTimerVo> queryTimerList(Integer userId,String deviceIdStr, Integer timerType) {
+    public List<DeviceTimerVo> queryTimerList(Integer userId, String wxDeviceId, Integer type) {
 
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
-        if(devicePo == null){
+        DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
+        if (devicePo == null) {
             return Lists.newArrayList();
         }
         DeviceTimerPo queryPo = new DeviceTimerPo();
         queryPo.setUserId(userId);
-        queryPo.setTimerType(timerType);
+        queryPo.setType(type);
         queryPo.setDeviceId(devicePo.getId());
         List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.selectTimerList(queryPo);
         List<DeviceTimerVo> deviceTimerVos = deviceTimerPos.stream().map(
                 deviceTimerPo -> {
                     DeviceTimerVo deviceTimerVo = new DeviceTimerVo();
                     deviceTimerVo.setName(deviceTimerPo.getName());
-                    Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
-                    if(t <0 ){
-                        t = 0L;
+                    if (deviceTimerPo.getType() == TimerConstants.TIMER_TYPE_ONCE_TIME) {
+                        Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
+                        if (t < 0) {
+                            t = 0L;
+                        }
+                        deviceTimerVo.setRemainTime(t);
                     }
                     deviceTimerVo.setId(deviceTimerPo.getId());
-                    deviceTimerVo.setRemainTime(t);
                     deviceTimerVo.setTimerType(deviceTimerPo.getTimerType());
                     deviceTimerVo.setStatus(deviceTimerPo.getStatus());
+                    deviceTimerVo.setType(deviceTimerPo.getType());
+                    deviceTimerVo.setHour(deviceTimerPo.getHour());
+                    deviceTimerVo.setMinute(deviceTimerPo.getMinute());
+                    deviceTimerVo.setSecond(deviceTimerPo.getSecond());
+                    if (type != null && type == TimerConstants.TIMER_TYPE_IDEA) {
+                        List<Integer> daysOfWeek = deviceTimerDayMapper.selectDaysOfWeekByTimeId(deviceTimerPo.getId());
+                        deviceTimerVo.setDaysOfWeek(daysOfWeek);
+                    }
                     return deviceTimerVo;
                 }
         ).collect(Collectors.toList());
-        return  deviceTimerVos;
+        return deviceTimerVos;
     }
 
-    public Boolean updateTimerStatus(Integer userId,Integer timerId,Integer status){
+    public Boolean updateTimerStatus(Integer userId, Integer timerId, Integer status) {
 
         DeviceTimerPo timerPo = deviceTimerMapper.selectById(timerId);
-        if(timerPo != null){
-            if(!timerPo.getUserId().equals(userId)){
+        if (timerPo != null) {
+            if (!timerPo.getUserId().equals(userId)) {
                 return false;
             }
         }
-        if(status == timerPo.getStatus()){
+        if (status == timerPo.getStatus()) {
             return false;
         }
         DeviceTimerPo updatePo = new DeviceTimerPo();
@@ -99,33 +206,74 @@ public class DeviceTimerService {
         return deviceTimerMapper.updateById(updatePo) > 0;
     }
 
-    public DeviceTimerVo getById(Integer id){
+    public DeviceTimerVo getById(Integer id) {
         DeviceTimerPo deviceTimerPo = deviceTimerMapper.selectById(id);
-        if(deviceTimerPo != null){
+        if (deviceTimerPo != null) {
             DeviceTimerVo deviceTimerVo = new DeviceTimerVo();
             deviceTimerVo.setName(deviceTimerPo.getName());
             Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
-            if(t <0 ){
+            if (t < 0) {
                 t = 0L;
             }
             deviceTimerVo.setRemainTime(t);
             deviceTimerVo.setId(deviceTimerPo.getId());
             deviceTimerVo.setTimerType(deviceTimerPo.getTimerType());
             deviceTimerVo.setStatus(deviceTimerPo.getStatus());
+            deviceTimerVo.setType(deviceTimerPo.getType());
+            deviceTimerVo.setHour(deviceTimerPo.getHour());
+            deviceTimerVo.setMinute(deviceTimerPo.getMinute());
+            deviceTimerVo.setSecond(deviceTimerPo.getSecond());
+            if (deviceTimerPo.getType() == TimerConstants.TIMER_TYPE_IDEA) {
+                List<Integer> daysOfWeek = deviceTimerDayMapper.selectDaysOfWeekByTimeId(deviceTimerPo.getId());
+                deviceTimerVo.setDaysOfWeek(daysOfWeek);
+            }
             return deviceTimerVo;
         }
         return null;
     }
 
-    public Boolean editTimer(Integer userId,DeviceTimerRequest deviceTimerRequest) {
+    @Transactional
+    public Boolean editTimer(Integer userId, DeviceTimerRequest deviceTimerRequest) {
+        Integer type = deviceTimerRequest.getType();
         DeviceTimerPo updatePo = new DeviceTimerPo();
         updatePo.setId(deviceTimerRequest.getId());
         updatePo.setName(deviceTimerRequest.getName());
         updatePo.setStatus(deviceTimerRequest.getStatus());
         updatePo.setUserId(deviceTimerRequest.getUserId());
-        updatePo.setExecuteTime(deviceTimerRequest.getAfterTime()+System.currentTimeMillis());
+        updatePo.setExecuteTime(deviceTimerRequest.getAfterTime() + System.currentTimeMillis());
         updatePo.setLastUpdateTime(System.currentTimeMillis());
+        updatePo.setType(deviceTimerRequest.getType());
+        updatePo.setHour(deviceTimerRequest.getHour());
+        updatePo.setMinute(deviceTimerRequest.getMinute());
+        updatePo.setSecond(deviceTimerRequest.getSecond());
         deviceTimerRequest.setUserId(userId);
-        return deviceTimerMapper.updateById(updatePo) > 0;
+        boolean result = deviceTimerMapper.updateById(updatePo) > 0;
+        if (type == TimerConstants.TIMER_TYPE_ONCE_TIME) {
+            deviceTimerDayMapper.deleteByTimeId(deviceTimerRequest.getId());
+        } else if (type == TimerConstants.TIMER_TYPE_IDEA) {
+            deviceTimerDayMapper.deleteByTimeId(deviceTimerRequest.getId());
+            List<Integer> daysOfWeek = deviceTimerRequest.getDaysOfWeek();
+            for (Integer dayOfWeek : daysOfWeek) {
+                DeviceTimerDayPo deviceTimerDayPo = new DeviceTimerDayPo();
+                deviceTimerDayPo.setTimeId(deviceTimerRequest.getId());
+                deviceTimerDayPo.setDayOfWeek(dayOfWeek);
+                deviceTimerDayPo.setCreateTime(System.currentTimeMillis());
+                deviceTimerDayPo.setStatus(CommonConstant.STATUS_YES);
+                deviceTimerDayMapper.insert(deviceTimerDayPo);
+            }
+        }
+        return result;
+    }
+
+    public List<DictVo> getTimeTypes() {
+        List<DictVo> dictVoList = new ArrayList<>();
+        List<DictPo> dictPoList = dictMapper.selectByType(DictConstants.TIME_JOB_TYPE);
+        for (DictPo dictPo : dictPoList) {
+            DictVo dictVo = new DictVo();
+            dictVo.setLabel(dictPo.getLabel());
+            dictVo.setValue(dictPo.getValue());
+            dictVoList.add(dictVo);
+        }
+        return dictVoList;
     }
 }

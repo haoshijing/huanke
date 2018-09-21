@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper">
+
+    <sql id="tableName">
+        t_device_data_sensor
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.device.data.DeviceSensorPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        sensorType,
+        sensorValue,
+        deviceId,
+        createTime
+        )
+        VALUES (
+        #{sensorType},
+        #{sensorValue},
+        #{deviceId},
+        #{createTime}
+        )
+    </insert>
+
+    <select id="selectData" resultType="com.huanke.iot.base.po.device.data.DeviceSensorPo">
+
+        select sensorValue, sensorType ,createTime
+        from <include refid="tableName"/>
+        where createTime > #{statrTime} and sensorValue  <![CDATA[ <> 0      ]]>
+        <![CDATA[
+         and createTime <= #{endTime}
+           ]]>
+        and deviceId = #{deviceId}
+        order by createTime asc limit 1000
+
+    </select>
+
+    <select id="selectAvgData" resultType="java.lang.Integer">
+
+        select AVG(sensorValue)
+        from <include refid="tableName"/>
+        where createTime > #{startTime}
+        <![CDATA[
+         and createTime <= #{endTime}
+           ]]>
+        and sensorType = #{sensorType}
+        and deviceId = #{deviceId}
+
+    </select>
+
+    <delete id="clearData">
+        delete from <include refid="tableName"/> where    <![CDATA[
+         createTime <= #{lastTime}
+           ]]>
+    </delete>
+
+</mapper>

@@ -195,4 +195,15 @@
         </foreach>
     </delete>
 
+    <select id="selectbyJoinId" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        and userId = #{userId}
+        and status = 1
+        limit 1
+    </select>
+
 </mapper>

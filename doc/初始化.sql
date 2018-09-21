@@ -337,18 +337,18 @@ INSERT INTO `t_device` VALUES (9, 'string2', 'strin2', NULL, NULL, NULL, NULL, N
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_device_ablity
+-- Table structure for t_device_ability
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_ablity`;
-CREATE TABLE `t_device_ablity` (
+DROP TABLE IF EXISTS `t_device_ability`;
+CREATE TABLE `t_device_ability` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `ablityName` varchar(200) DEFAULT NULL COMMENT '能力名称',
+  `abilityName` varchar(200) DEFAULT NULL COMMENT '能力名称',
   `dirValue` varchar(1024) DEFAULT NULL COMMENT '通讯对应指令',
   `writeStatus` int(1) DEFAULT NULL COMMENT '是否可写',
   `readStatus` int(1) DEFAULT NULL COMMENT '是否可读',
   `runStatus` int(1) DEFAULT NULL COMMENT '是否可执行',
   `configType` int(1) DEFAULT NULL COMMENT '配置方式',
-  `ablityType` int(1) DEFAULT NULL COMMENT '能力类型：1-文本类、2-单选类、3-多选类、4-阈值类、5-选择阈值类',
+  `abilityType` int(1) DEFAULT NULL COMMENT '能力类型：1-文本类、2-单选类、3-多选类、4-阈值类、5-选择阈值类',
   `minVal` int(20) DEFAULT NULL COMMENT '最小值',
   `maxVal` int(20) DEFAULT NULL COMMENT '最大值',
   `remark` varchar(300) DEFAULT NULL COMMENT '备注',
@@ -359,26 +359,26 @@ CREATE TABLE `t_device_ablity` (
 ) AUTO_INCREMENT=24  COMMENT='设备能力表';
 
 -- ----------------------------
--- Records of t_device_ablity
+-- Records of t_device_ability
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_ablity` VALUES (15, '风速', '0xx', 1, 0, 1, 2, 123, NULL, NULL, '123123', NULL, 1535727952623, 1535867366548);
-INSERT INTO `t_device_ablity` VALUES (16, '123', '123', 1, 0, 1, 2, 123, NULL, NULL, '123', NULL, 1535728062625, NULL);
-INSERT INTO `t_device_ablity` VALUES (17, '负离子-', 'dirValue', 0, 0, 0, 1, 1, 9, 900, 'string', 0, 1535864469529, 1535864555688);
-INSERT INTO `t_device_ablity` VALUES (18, 'name', 'dirvalue', 1, 1, 1, 1, 1, NULL, NULL, 'remark', NULL, 1535865797558, NULL);
-INSERT INTO `t_device_ablity` VALUES (19, 'name1', '1dirvalue1', 1, 1, 1, 2, 2, NULL, NULL, 'remark1', NULL, 1535865820624, NULL);
-INSERT INTO `t_device_ablity` VALUES (20, 'name12', '1dirvalue12', 1, 1, 1, 4, 4, NULL, NULL, 'remark12', NULL, 1535865852167, NULL);
-INSERT INTO `t_device_ablity` VALUES (21, '3', '3', 1, 1, 0, 4, 4, NULL, NULL, '3', NULL, 1535865936791, NULL);
-INSERT INTO `t_device_ablity` VALUES (23, '34', '34', 1, 0, 1, 3, 3, NULL, NULL, '34', 1, 1535867899192, NULL);
+INSERT INTO `t_device_ability` VALUES (15, '风速', '0xx', 1, 0, 1, 2, 123, NULL, NULL, '123123', NULL, 1535727952623, 1535867366548);
+INSERT INTO `t_device_ability` VALUES (16, '123', '123', 1, 0, 1, 2, 123, NULL, NULL, '123', NULL, 1535728062625, NULL);
+INSERT INTO `t_device_ability` VALUES (17, '负离子-', 'dirValue', 0, 0, 0, 1, 1, 9, 900, 'string', 0, 1535864469529, 1535864555688);
+INSERT INTO `t_device_ability` VALUES (18, 'name', 'dirvalue', 1, 1, 1, 1, 1, NULL, NULL, 'remark', NULL, 1535865797558, NULL);
+INSERT INTO `t_device_ability` VALUES (19, 'name1', '1dirvalue1', 1, 1, 1, 2, 2, NULL, NULL, 'remark1', NULL, 1535865820624, NULL);
+INSERT INTO `t_device_ability` VALUES (20, 'name12', '1dirvalue12', 1, 1, 1, 4, 4, NULL, NULL, 'remark12', NULL, 1535865852167, NULL);
+INSERT INTO `t_device_ability` VALUES (21, '3', '3', 1, 1, 0, 4, 4, NULL, NULL, '3', NULL, 1535865936791, NULL);
+INSERT INTO `t_device_ability` VALUES (23, '34', '34', 1, 0, 1, 3, 3, NULL, NULL, '34', 1, 1535867899192, NULL);
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_device_ablity_option
+-- Table structure for t_device_ability_option
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_ablity_option`;
-CREATE TABLE `t_device_ablity_option` (
+DROP TABLE IF EXISTS `t_device_ability_option`;
+CREATE TABLE `t_device_ability_option` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `ablityId` varchar(11) DEFAULT NULL COMMENT '所在能力主键',
+  `abilityId` varchar(11) DEFAULT NULL COMMENT '所在能力主键',
   `optionName` varchar(200) DEFAULT NULL COMMENT '能力选项名称',
   `optionValue` varchar(11) DEFAULT NULL COMMENT '通讯对应指令/能力选项阈值',
   `minVal` int(20) DEFAULT NULL COMMENT '最小值',
@@ -390,35 +390,35 @@ CREATE TABLE `t_device_ablity_option` (
 ) AUTO_INCREMENT=62  COMMENT='设备能力选项表';
 
 -- ----------------------------
--- Records of t_device_ablity_option
+-- Records of t_device_ability_option
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_ablity_option` VALUES (9, '0', '1挡', '1', NULL, NULL, 1, 1534940511987, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (10, '0', '2挡', '2', NULL, NULL, 1, 1534940512020, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (11, '0', '1挡', '1', NULL, NULL, 1, 1534940564625, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (12, '0', '2挡', '2', NULL, NULL, 1, 1534940564666, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (40, '15', '12323', '23123', NULL, NULL, 1, 1535727952712, 1535867366605);
-INSERT INTO `t_device_ablity_option` VALUES (41, '15', '一档', '10', NULL, NULL, 2, 1535728048640, 1535867366610);
-INSERT INTO `t_device_ablity_option` VALUES (42, '15', '二档23', '2023', NULL, NULL, 1, 1535728048643, 1535867366614);
-INSERT INTO `t_device_ablity_option` VALUES (43, '16', '三档', '123', NULL, NULL, 1, 1535728062709, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (44, '16', '一档', '10', NULL, NULL, 1, 1535728062714, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (45, '16', '二档', '20', NULL, NULL, 1, 1535728062724, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (46, '17', 'string', 'string', 1, 1, 1, 1535864470034, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (47, '17', 'string', 'string', 11, 11, 1, 1535864555829, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (48, '18', '', '', NULL, NULL, 1, 1535865797641, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (49, '19', 'k1', 'v1', NULL, NULL, 1, 1535865820650, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (50, '20', NULL, NULL, 1, 1, 1, 1535865852230, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (51, '20', NULL, NULL, 0, 0, 1, 1535865852233, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (52, '21', NULL, NULL, 1, 1, 1, 1535865936888, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (57, '15', '45', '45453', NULL, NULL, 1, 1535867366618, NULL);
-INSERT INTO `t_device_ablity_option` VALUES (61, '23', '23', '4', NULL, NULL, 1, 1535867899289, NULL);
+INSERT INTO `t_device_ability_option` VALUES (9, '0', '1挡', '1', NULL, NULL, 1, 1534940511987, NULL);
+INSERT INTO `t_device_ability_option` VALUES (10, '0', '2挡', '2', NULL, NULL, 1, 1534940512020, NULL);
+INSERT INTO `t_device_ability_option` VALUES (11, '0', '1挡', '1', NULL, NULL, 1, 1534940564625, NULL);
+INSERT INTO `t_device_ability_option` VALUES (12, '0', '2挡', '2', NULL, NULL, 1, 1534940564666, NULL);
+INSERT INTO `t_device_ability_option` VALUES (40, '15', '12323', '23123', NULL, NULL, 1, 1535727952712, 1535867366605);
+INSERT INTO `t_device_ability_option` VALUES (41, '15', '一档', '10', NULL, NULL, 2, 1535728048640, 1535867366610);
+INSERT INTO `t_device_ability_option` VALUES (42, '15', '二档23', '2023', NULL, NULL, 1, 1535728048643, 1535867366614);
+INSERT INTO `t_device_ability_option` VALUES (43, '16', '三档', '123', NULL, NULL, 1, 1535728062709, NULL);
+INSERT INTO `t_device_ability_option` VALUES (44, '16', '一档', '10', NULL, NULL, 1, 1535728062714, NULL);
+INSERT INTO `t_device_ability_option` VALUES (45, '16', '二档', '20', NULL, NULL, 1, 1535728062724, NULL);
+INSERT INTO `t_device_ability_option` VALUES (46, '17', 'string', 'string', 1, 1, 1, 1535864470034, NULL);
+INSERT INTO `t_device_ability_option` VALUES (47, '17', 'string', 'string', 11, 11, 1, 1535864555829, NULL);
+INSERT INTO `t_device_ability_option` VALUES (48, '18', '', '', NULL, NULL, 1, 1535865797641, NULL);
+INSERT INTO `t_device_ability_option` VALUES (49, '19', 'k1', 'v1', NULL, NULL, 1, 1535865820650, NULL);
+INSERT INTO `t_device_ability_option` VALUES (50, '20', NULL, NULL, 1, 1, 1, 1535865852230, NULL);
+INSERT INTO `t_device_ability_option` VALUES (51, '20', NULL, NULL, 0, 0, 1, 1535865852233, NULL);
+INSERT INTO `t_device_ability_option` VALUES (52, '21', NULL, NULL, 1, 1, 1, 1535865936888, NULL);
+INSERT INTO `t_device_ability_option` VALUES (57, '15', '45', '45453', NULL, NULL, 1, 1535867366618, NULL);
+INSERT INTO `t_device_ability_option` VALUES (61, '23', '23', '4', NULL, NULL, 1, 1535867899289, NULL);
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_device_ablity_set
+-- Table structure for t_device_ability_set
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_ablity_set`;
-CREATE TABLE `t_device_ablity_set` (
+DROP TABLE IF EXISTS `t_device_ability_set`;
+CREATE TABLE `t_device_ability_set` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(100) DEFAULT NULL COMMENT '能力集合名称',
   `status` int(1) DEFAULT NULL COMMENT '状态',
@@ -429,13 +429,13 @@ CREATE TABLE `t_device_ablity_set` (
 )  COMMENT='功能集';
 
 -- ----------------------------
--- Table structure for t_device_ablity_set_relation
+-- Table structure for t_device_ability_set_relation
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_ablity_set_relation`;
-CREATE TABLE `t_device_ablity_set_relation` (
+DROP TABLE IF EXISTS `t_device_ability_set_relation`;
+CREATE TABLE `t_device_ability_set_relation` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `ablityId` int(11) DEFAULT NULL COMMENT '能力主键',
-  `ablitySetId` int(11) DEFAULT NULL COMMENT '能力集合主键',
+  `abilityId` int(11) DEFAULT NULL COMMENT '能力主键',
+  `abilitySetId` int(11) DEFAULT NULL COMMENT '能力集合主键',
   PRIMARY KEY (`id`) USING BTREE
 )  COMMENT='功能集 和能力 关联关系表';
 
@@ -540,13 +540,13 @@ INSERT INTO `t_device_model` VALUES (16, 1, 'name', 'sh01', 0, 1, 11, '1.1', 'st
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_device_model_ablity
+-- Table structure for t_device_model_ability
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_model_ablity`;
-CREATE TABLE `t_device_model_ablity` (
+DROP TABLE IF EXISTS `t_device_model_ability`;
+CREATE TABLE `t_device_model_ability` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `modelId` int(11) DEFAULT NULL COMMENT '型号id',
-  `ablityId` int(11) DEFAULT NULL COMMENT '能力id',
+  `abilityId` int(11) DEFAULT NULL COMMENT '能力id',
   `definedName` varchar(200) DEFAULT NULL COMMENT '自定义名称',
   `maxVal` int(20) DEFAULT NULL COMMENT '最大值',
   `minVal` int(20) DEFAULT NULL COMMENT '最小值',
@@ -557,24 +557,24 @@ CREATE TABLE `t_device_model_ablity` (
 ) AUTO_INCREMENT=6  COMMENT='设备型号 功能表';
 
 -- ----------------------------
--- Records of t_device_model_ablity
+-- Records of t_device_model_ability
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_model_ablity` VALUES (1, 1, 1, 'string2', NULL, NULL, 1, 1535724644801, 1535725374901);
-INSERT INTO `t_device_model_ablity` VALUES (2, 1, 0, 'string', NULL, NULL, 1, 1535724817486, NULL);
-INSERT INTO `t_device_model_ablity` VALUES (3, 15, 0, 'string', NULL, NULL, 1, 1535817757815, NULL);
-INSERT INTO `t_device_model_ablity` VALUES (4, 16, 0, 'string', NULL, NULL, 1, 1535818363330, NULL);
-INSERT INTO `t_device_model_ablity` VALUES (5, 16, 0, 'string', NULL, NULL, 1, 1535818629401, NULL);
+INSERT INTO `t_device_model_ability` VALUES (1, 1, 1, 'string2', NULL, NULL, 1, 1535724644801, 1535725374901);
+INSERT INTO `t_device_model_ability` VALUES (2, 1, 0, 'string', NULL, NULL, 1, 1535724817486, NULL);
+INSERT INTO `t_device_model_ability` VALUES (3, 15, 0, 'string', NULL, NULL, 1, 1535817757815, NULL);
+INSERT INTO `t_device_model_ability` VALUES (4, 16, 0, 'string', NULL, NULL, 1, 1535818363330, NULL);
+INSERT INTO `t_device_model_ability` VALUES (5, 16, 0, 'string', NULL, NULL, 1, 1535818629401, NULL);
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_device_model_ablity_option
+-- Table structure for t_device_model_ability_option
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_model_ablity_option`;
-CREATE TABLE `t_device_model_ablity_option` (
+DROP TABLE IF EXISTS `t_device_model_ability_option`;
+CREATE TABLE `t_device_model_ability_option` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `modelAblityId` int(11) DEFAULT NULL COMMENT '型号的能力主键 即 t_device_model_ablity的id',
-  `ablityOptionId` int(11) DEFAULT NULL,
+  `modelabilityId` int(11) DEFAULT NULL COMMENT '型号的能力主键 即 t_device_model_ability的id',
+  `abilityOptionId` int(11) DEFAULT NULL,
   `definedName` varchar(200) DEFAULT NULL COMMENT '型号的能力选项自定义名称',
   `minVal` int(20) DEFAULT NULL COMMENT '最小值',
   `maxVal` int(20) DEFAULT NULL COMMENT '最大值',
@@ -585,16 +585,16 @@ CREATE TABLE `t_device_model_ablity_option` (
 ) AUTO_INCREMENT=8  COMMENT='设备型号 功能选项自定义表';
 
 -- ----------------------------
--- Records of t_device_model_ablity_option
+-- Records of t_device_model_ability_option
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_model_ablity_option` VALUES (1, 1, 2, 'string222', NULL, NULL, 1, 1535724367090, 1535725380182);
-INSERT INTO `t_device_model_ablity_option` VALUES (2, 0, 1, 'definedName', NULL, NULL, 1, 1535724604655, NULL);
-INSERT INTO `t_device_model_ablity_option` VALUES (3, 1, 1, 'definedName', NULL, NULL, 1, 1535724648135, NULL);
-INSERT INTO `t_device_model_ablity_option` VALUES (4, 2, 0, 'string', NULL, NULL, 1, 1535724817606, NULL);
-INSERT INTO `t_device_model_ablity_option` VALUES (5, 3, 0, 'string', NULL, NULL, 1, 1535817757823, NULL);
-INSERT INTO `t_device_model_ablity_option` VALUES (6, 4, 0, 'string', NULL, NULL, 1, 1535818363343, NULL);
-INSERT INTO `t_device_model_ablity_option` VALUES (7, 5, 0, 'string', NULL, NULL, 1, 1535818629406, NULL);
+INSERT INTO `t_device_model_ability_option` VALUES (1, 1, 2, 'string222', NULL, NULL, 1, 1535724367090, 1535725380182);
+INSERT INTO `t_device_model_ability_option` VALUES (2, 0, 1, 'definedName', NULL, NULL, 1, 1535724604655, NULL);
+INSERT INTO `t_device_model_ability_option` VALUES (3, 1, 1, 'definedName', NULL, NULL, 1, 1535724648135, NULL);
+INSERT INTO `t_device_model_ability_option` VALUES (4, 2, 0, 'string', NULL, NULL, 1, 1535724817606, NULL);
+INSERT INTO `t_device_model_ability_option` VALUES (5, 3, 0, 'string', NULL, NULL, 1, 1535817757823, NULL);
+INSERT INTO `t_device_model_ability_option` VALUES (6, 4, 0, 'string', NULL, NULL, 1, 1535818363343, NULL);
+INSERT INTO `t_device_model_ability_option` VALUES (7, 5, 0, 'string', NULL, NULL, 1, 1535818629406, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -633,7 +633,7 @@ CREATE TABLE `t_device_model_format_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `modelFormatId` int(11) DEFAULT NULL COMMENT '型号版式主键',
   `itemId` int(11) DEFAULT NULL COMMENT '版式软件功能项主键',
-  `ablityId` int(11) DEFAULT NULL COMMENT '能力主键',
+  `abilityId` int(11) DEFAULT NULL COMMENT '能力主键',
   `showStatus` int(1) DEFAULT NULL COMMENT '是否展示',
   `showName` varchar(200) DEFAULT NULL COMMENT '展示名称',
   `status` int(1) DEFAULT NULL COMMENT '状态',
@@ -796,115 +796,115 @@ INSERT INTO `t_device_type` VALUES (53, '2', '1', 'http://mybucket42.oss-cn-beij
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_device_type_ablity_set
+-- Table structure for t_device_type_ability_set
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_type_ablity_set`;
-CREATE TABLE `t_device_type_ablity_set` (
+DROP TABLE IF EXISTS `t_device_type_ability_set`;
+CREATE TABLE `t_device_type_ability_set` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `typeId` int(11) DEFAULT NULL COMMENT '类型主键',
-  `ablitySetId` int(11) DEFAULT NULL COMMENT '能力集合主键',
+  `abilitySetId` int(11) DEFAULT NULL COMMENT '能力集合主键',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `uk_typeId` (`typeId`) USING BTREE
 )  COMMENT='设备类型对应的 功能集表 (1v1)';
 
 -- ----------------------------
--- Table structure for t_device_type_ablitys
+-- Table structure for t_device_type_abilitys
 -- ----------------------------
-DROP TABLE IF EXISTS `t_device_type_ablitys`;
-CREATE TABLE `t_device_type_ablitys` (
+DROP TABLE IF EXISTS `t_device_type_abilitys`;
+CREATE TABLE `t_device_type_abilitys` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `ablityId` int(11) DEFAULT NULL COMMENT '能力主键',
+  `abilityId` int(11) DEFAULT NULL COMMENT '能力主键',
   `typeId` int(11) DEFAULT NULL COMMENT '设备类型主键',
   PRIMARY KEY (`id`) USING BTREE
 ) AUTO_INCREMENT=84  COMMENT='功能集 和能力 关联关系表';
 
 -- ----------------------------
--- Records of t_device_type_ablitys
+-- Records of t_device_type_abilitys
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_device_type_ablitys` VALUES (1, 7, 39);
-INSERT INTO `t_device_type_ablitys` VALUES (2, 2, 1);
-INSERT INTO `t_device_type_ablitys` VALUES (3, 2, 1);
-INSERT INTO `t_device_type_ablitys` VALUES (4, 2, 18);
-INSERT INTO `t_device_type_ablitys` VALUES (5, 1, 18);
-INSERT INTO `t_device_type_ablitys` VALUES (6, 1, 19);
-INSERT INTO `t_device_type_ablitys` VALUES (7, 1, 20);
-INSERT INTO `t_device_type_ablitys` VALUES (8, 2, 21);
-INSERT INTO `t_device_type_ablitys` VALUES (9, 1, 21);
-INSERT INTO `t_device_type_ablitys` VALUES (10, 2, 22);
-INSERT INTO `t_device_type_ablitys` VALUES (11, 1, 22);
-INSERT INTO `t_device_type_ablitys` VALUES (12, 2, 1);
-INSERT INTO `t_device_type_ablitys` VALUES (13, 2, 1);
-INSERT INTO `t_device_type_ablitys` VALUES (14, 2, 23);
-INSERT INTO `t_device_type_ablitys` VALUES (15, 1, 24);
-INSERT INTO `t_device_type_ablitys` VALUES (16, 2, 24);
-INSERT INTO `t_device_type_ablitys` VALUES (17, 2, 25);
-INSERT INTO `t_device_type_ablitys` VALUES (18, 1, 25);
-INSERT INTO `t_device_type_ablitys` VALUES (19, 1, 29);
-INSERT INTO `t_device_type_ablitys` VALUES (20, 2, 29);
-INSERT INTO `t_device_type_ablitys` VALUES (21, 2, 30);
-INSERT INTO `t_device_type_ablitys` VALUES (22, 1, 30);
-INSERT INTO `t_device_type_ablitys` VALUES (23, 1, 31);
-INSERT INTO `t_device_type_ablitys` VALUES (24, 2, 31);
-INSERT INTO `t_device_type_ablitys` VALUES (25, 1, 32);
-INSERT INTO `t_device_type_ablitys` VALUES (26, 2, 33);
-INSERT INTO `t_device_type_ablitys` VALUES (27, 1, 33);
-INSERT INTO `t_device_type_ablitys` VALUES (28, 2, 34);
-INSERT INTO `t_device_type_ablitys` VALUES (29, 2, 35);
-INSERT INTO `t_device_type_ablitys` VALUES (30, 1, 34);
-INSERT INTO `t_device_type_ablitys` VALUES (31, 1, 35);
-INSERT INTO `t_device_type_ablitys` VALUES (32, 1, 24);
-INSERT INTO `t_device_type_ablitys` VALUES (33, 2, 24);
-INSERT INTO `t_device_type_ablitys` VALUES (34, 1, 24);
-INSERT INTO `t_device_type_ablitys` VALUES (35, 1, 24);
-INSERT INTO `t_device_type_ablitys` VALUES (36, 2, 27);
-INSERT INTO `t_device_type_ablitys` VALUES (37, 2, 27);
-INSERT INTO `t_device_type_ablitys` VALUES (38, 1, 27);
-INSERT INTO `t_device_type_ablitys` VALUES (39, 1, 35);
-INSERT INTO `t_device_type_ablitys` VALUES (40, 1, 35);
-INSERT INTO `t_device_type_ablitys` VALUES (41, 2, 35);
-INSERT INTO `t_device_type_ablitys` VALUES (42, 1, 36);
-INSERT INTO `t_device_type_ablitys` VALUES (43, 2, 36);
-INSERT INTO `t_device_type_ablitys` VALUES (44, 2, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (45, 1, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (46, 2, 38);
-INSERT INTO `t_device_type_ablitys` VALUES (47, 1, 38);
-INSERT INTO `t_device_type_ablitys` VALUES (48, 2, 39);
-INSERT INTO `t_device_type_ablitys` VALUES (49, 1, 39);
-INSERT INTO `t_device_type_ablitys` VALUES (50, 2, 40);
-INSERT INTO `t_device_type_ablitys` VALUES (51, 1, 40);
-INSERT INTO `t_device_type_ablitys` VALUES (52, 2, 41);
-INSERT INTO `t_device_type_ablitys` VALUES (53, 1, 41);
-INSERT INTO `t_device_type_ablitys` VALUES (54, 1, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (55, 1, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (56, 1, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (57, 2, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (58, 1, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (59, 1, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (60, 1, 37);
-INSERT INTO `t_device_type_ablitys` VALUES (61, 1, 38);
-INSERT INTO `t_device_type_ablitys` VALUES (62, 11, 42);
-INSERT INTO `t_device_type_ablitys` VALUES (63, 10, 42);
-INSERT INTO `t_device_type_ablitys` VALUES (64, 10, 43);
-INSERT INTO `t_device_type_ablitys` VALUES (65, 11, 44);
-INSERT INTO `t_device_type_ablitys` VALUES (66, 12, 45);
-INSERT INTO `t_device_type_ablitys` VALUES (67, 11, 45);
-INSERT INTO `t_device_type_ablitys` VALUES (68, 13, 46);
-INSERT INTO `t_device_type_ablitys` VALUES (69, 11, 46);
-INSERT INTO `t_device_type_ablitys` VALUES (70, 12, 47);
-INSERT INTO `t_device_type_ablitys` VALUES (71, 10, 47);
-INSERT INTO `t_device_type_ablitys` VALUES (72, 11, 48);
-INSERT INTO `t_device_type_ablitys` VALUES (73, 13, 48);
-INSERT INTO `t_device_type_ablitys` VALUES (74, 12, 49);
-INSERT INTO `t_device_type_ablitys` VALUES (75, 11, 49);
-INSERT INTO `t_device_type_ablitys` VALUES (76, 12, 50);
-INSERT INTO `t_device_type_ablitys` VALUES (77, 13, 50);
-INSERT INTO `t_device_type_ablitys` VALUES (78, 13, 51);
-INSERT INTO `t_device_type_ablitys` VALUES (79, 11, 51);
-INSERT INTO `t_device_type_ablitys` VALUES (80, 16, 52);
-INSERT INTO `t_device_type_ablitys` VALUES (81, 15, 52);
-INSERT INTO `t_device_type_ablitys` VALUES (82, 15, 53);
-INSERT INTO `t_device_type_ablitys` VALUES (83, 16, 53);
+INSERT INTO `t_device_type_abilitys` VALUES (1, 7, 39);
+INSERT INTO `t_device_type_abilitys` VALUES (2, 2, 1);
+INSERT INTO `t_device_type_abilitys` VALUES (3, 2, 1);
+INSERT INTO `t_device_type_abilitys` VALUES (4, 2, 18);
+INSERT INTO `t_device_type_abilitys` VALUES (5, 1, 18);
+INSERT INTO `t_device_type_abilitys` VALUES (6, 1, 19);
+INSERT INTO `t_device_type_abilitys` VALUES (7, 1, 20);
+INSERT INTO `t_device_type_abilitys` VALUES (8, 2, 21);
+INSERT INTO `t_device_type_abilitys` VALUES (9, 1, 21);
+INSERT INTO `t_device_type_abilitys` VALUES (10, 2, 22);
+INSERT INTO `t_device_type_abilitys` VALUES (11, 1, 22);
+INSERT INTO `t_device_type_abilitys` VALUES (12, 2, 1);
+INSERT INTO `t_device_type_abilitys` VALUES (13, 2, 1);
+INSERT INTO `t_device_type_abilitys` VALUES (14, 2, 23);
+INSERT INTO `t_device_type_abilitys` VALUES (15, 1, 24);
+INSERT INTO `t_device_type_abilitys` VALUES (16, 2, 24);
+INSERT INTO `t_device_type_abilitys` VALUES (17, 2, 25);
+INSERT INTO `t_device_type_abilitys` VALUES (18, 1, 25);
+INSERT INTO `t_device_type_abilitys` VALUES (19, 1, 29);
+INSERT INTO `t_device_type_abilitys` VALUES (20, 2, 29);
+INSERT INTO `t_device_type_abilitys` VALUES (21, 2, 30);
+INSERT INTO `t_device_type_abilitys` VALUES (22, 1, 30);
+INSERT INTO `t_device_type_abilitys` VALUES (23, 1, 31);
+INSERT INTO `t_device_type_abilitys` VALUES (24, 2, 31);
+INSERT INTO `t_device_type_abilitys` VALUES (25, 1, 32);
+INSERT INTO `t_device_type_abilitys` VALUES (26, 2, 33);
+INSERT INTO `t_device_type_abilitys` VALUES (27, 1, 33);
+INSERT INTO `t_device_type_abilitys` VALUES (28, 2, 34);
+INSERT INTO `t_device_type_abilitys` VALUES (29, 2, 35);
+INSERT INTO `t_device_type_abilitys` VALUES (30, 1, 34);
+INSERT INTO `t_device_type_abilitys` VALUES (31, 1, 35);
+INSERT INTO `t_device_type_abilitys` VALUES (32, 1, 24);
+INSERT INTO `t_device_type_abilitys` VALUES (33, 2, 24);
+INSERT INTO `t_device_type_abilitys` VALUES (34, 1, 24);
+INSERT INTO `t_device_type_abilitys` VALUES (35, 1, 24);
+INSERT INTO `t_device_type_abilitys` VALUES (36, 2, 27);
+INSERT INTO `t_device_type_abilitys` VALUES (37, 2, 27);
+INSERT INTO `t_device_type_abilitys` VALUES (38, 1, 27);
+INSERT INTO `t_device_type_abilitys` VALUES (39, 1, 35);
+INSERT INTO `t_device_type_abilitys` VALUES (40, 1, 35);
+INSERT INTO `t_device_type_abilitys` VALUES (41, 2, 35);
+INSERT INTO `t_device_type_abilitys` VALUES (42, 1, 36);
+INSERT INTO `t_device_type_abilitys` VALUES (43, 2, 36);
+INSERT INTO `t_device_type_abilitys` VALUES (44, 2, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (45, 1, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (46, 2, 38);
+INSERT INTO `t_device_type_abilitys` VALUES (47, 1, 38);
+INSERT INTO `t_device_type_abilitys` VALUES (48, 2, 39);
+INSERT INTO `t_device_type_abilitys` VALUES (49, 1, 39);
+INSERT INTO `t_device_type_abilitys` VALUES (50, 2, 40);
+INSERT INTO `t_device_type_abilitys` VALUES (51, 1, 40);
+INSERT INTO `t_device_type_abilitys` VALUES (52, 2, 41);
+INSERT INTO `t_device_type_abilitys` VALUES (53, 1, 41);
+INSERT INTO `t_device_type_abilitys` VALUES (54, 1, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (55, 1, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (56, 1, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (57, 2, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (58, 1, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (59, 1, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (60, 1, 37);
+INSERT INTO `t_device_type_abilitys` VALUES (61, 1, 38);
+INSERT INTO `t_device_type_abilitys` VALUES (62, 11, 42);
+INSERT INTO `t_device_type_abilitys` VALUES (63, 10, 42);
+INSERT INTO `t_device_type_abilitys` VALUES (64, 10, 43);
+INSERT INTO `t_device_type_abilitys` VALUES (65, 11, 44);
+INSERT INTO `t_device_type_abilitys` VALUES (66, 12, 45);
+INSERT INTO `t_device_type_abilitys` VALUES (67, 11, 45);
+INSERT INTO `t_device_type_abilitys` VALUES (68, 13, 46);
+INSERT INTO `t_device_type_abilitys` VALUES (69, 11, 46);
+INSERT INTO `t_device_type_abilitys` VALUES (70, 12, 47);
+INSERT INTO `t_device_type_abilitys` VALUES (71, 10, 47);
+INSERT INTO `t_device_type_abilitys` VALUES (72, 11, 48);
+INSERT INTO `t_device_type_abilitys` VALUES (73, 13, 48);
+INSERT INTO `t_device_type_abilitys` VALUES (74, 12, 49);
+INSERT INTO `t_device_type_abilitys` VALUES (75, 11, 49);
+INSERT INTO `t_device_type_abilitys` VALUES (76, 12, 50);
+INSERT INTO `t_device_type_abilitys` VALUES (77, 13, 50);
+INSERT INTO `t_device_type_abilitys` VALUES (78, 13, 51);
+INSERT INTO `t_device_type_abilitys` VALUES (79, 11, 51);
+INSERT INTO `t_device_type_abilitys` VALUES (80, 16, 52);
+INSERT INTO `t_device_type_abilitys` VALUES (81, 15, 52);
+INSERT INTO `t_device_type_abilitys` VALUES (82, 15, 53);
+INSERT INTO `t_device_type_abilitys` VALUES (83, 16, 53);
 COMMIT;
 
 -- ----------------------------
@@ -1088,7 +1088,7 @@ CREATE TABLE `wx_format_items` (
   `formatId` int(11) NOT NULL COMMENT '版式主键',
   `pageId` int(11) DEFAULT NULL COMMENT '所在页面名称',
   `name` varchar(200) DEFAULT NULL COMMENT '中文名',
-  `ablityType` int(1) DEFAULT NULL COMMENT '可配置的功能项类型',
+  `abilityType` int(1) DEFAULT NULL COMMENT '可配置的功能项类型',
   `status` int(1) DEFAULT NULL,
   `createTime` bigint(20) DEFAULT NULL,
   `lastUpdateTIme` bigint(20) DEFAULT NULL,

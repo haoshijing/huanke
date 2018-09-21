@@ -1,6 +1,7 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.h5.req.BaseRequest;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
@@ -12,6 +13,7 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +35,15 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping("/user/appid")
+    public Object getAppId(@RequestBody BaseRequest<Integer> request){
+        Integer customerId = request.getValue();
+        if(customerId == null){
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "请传入value");
+        }
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        return new ApiResponse<>(customerPo.getAppid());
+    }
 
 
     @RequestMapping("/user/auth")
@@ -50,7 +61,7 @@ public class AuthController {
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         if(StringUtils.isEmpty(code)){
-            String redirect_uri = request.getRequestURL().toString();
+            String redirect_uri = request.getRequestURL().toString().replace("127.0.0.1", "dev.hcocloud.com");
             String fullRedirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
                     + URLEncoder.encode(redirect_uri, "UTF-8")+ "?customerId=" + customerId +"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
             System.out.println("fullredirectUrl->" + fullRedirectUrl);
@@ -73,7 +84,7 @@ public class AuthController {
             log.info("isOk = {}",isOk);
         }
         if(isOk){
-            userService.addOrUpdateUser(access_token,openId);
+            userService.addOrUpdateUser(access_token,openId, customerId);
         }
         return new ApiResponse<>(openId);
     }

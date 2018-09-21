@@ -43,7 +43,7 @@ public class WechartUtil {
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String appId = customerPo.getAppid();
         String appSecret = customerPo.getAppsecret();
-        String accessTokenKey = ACCESSS_TOKEN_PREIX+getCurrentPublicId();
+        String accessTokenKey = ACCESSS_TOKEN_PREIX+getCurrentCustomerId();
         boolean needFromServer = getFromSever;
         if (!needFromServer) {
             String storeAccessToken = stringRedisTemplate.opsForValue().get(accessTokenKey);
@@ -115,9 +115,9 @@ public class WechartUtil {
     }
 
     public  String getJsApi(){
-        String jsapiKey = JSAPI_PREIX+getCurrentPublicId();
-        String ticketKey  = TICKET_PREFIX + getCurrentPublicId();
-        String jsapi  = stringRedisTemplate.opsForValue().get(jsapiKey);
+        String jsapiKey = JSAPI_PREIX+getCurrentCustomerId();
+        String ticketKey  = TICKET_PREFIX + getCurrentCustomerId();
+        String jsapi  = stringRedisTemplate.opsForValue().get(ticketKey);
         if(StringUtils.isNotEmpty(jsapi)){
             return jsapi;
         }
@@ -147,22 +147,17 @@ public class WechartUtil {
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
-            BufferedReader rd;
-            StringBuilder result;
-            String line;
-            try (CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet)) {
-                rd = new BufferedReader(
-                        new InputStreamReader(response.getEntity().getContent()));
-            }
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-            result = new StringBuilder();
-            line = "";
+            StringBuilder result = new StringBuilder();
+            String line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
             return result.toString();
         } catch (Exception e) {
-            log.error("",e);
             return "";
         }
     }
@@ -269,9 +264,15 @@ public class WechartUtil {
 
     private String getCurrentPublicId(){
         UserRequestContext context =  UserRequestContextHolder.get();
-        Integer customerId = context.getCurrentId();
+        Integer customerId = context.getCustomerVo().getCustomerId();
         CustomerPo customerPo = customerMapper.selectById(customerId);
         String publicId = customerPo.getPublicId();
         return publicId;
+    }
+
+    private Integer getCurrentCustomerId(){
+        UserRequestContext context =  UserRequestContextHolder.get();
+        Integer customerId = context.getCustomerVo().getCustomerId();
+        return customerId;
     }
 }

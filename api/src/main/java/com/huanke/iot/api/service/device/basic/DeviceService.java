@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -145,7 +146,9 @@ public class DeviceService {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
                         DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getId());
-                        deviceItemPo.setWxDevicdId(devicePo.getWxDeviceId());
+                        deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
+                        int childDeviceCount = deviceMapper.queryChildDeviceCount(devicePo.getId());
+                        deviceItemPo.setChildDeviceCount(childDeviceCount);
                         Integer modelId = devicePo.getModelId();
                         Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
@@ -216,7 +219,7 @@ public class DeviceService {
         querydeviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
         querydeviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(querydeviceCustomerUserRelationPo);
-        if(deviceCustomerUserRelationPo == null){
+        if (deviceCustomerUserRelationPo == null) {
             log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", deviceId, customerUserPo.getOpenId());
             return false;
         }
@@ -315,11 +318,11 @@ public class DeviceService {
         return deviceSpeedConfigVo;
     }
 
-    public Boolean editDeviceLoc(Integer userId, String deviceId, String location) {
+    public Boolean editDeviceLoc(Integer userId, Integer deviceId, String location) {
         DevicePo devicePo = new DevicePo();
-        devicePo.setWxDeviceId(deviceId);
+        devicePo.setId(deviceId);
         devicePo.setLocation(location);
-        return deviceMapper.updateByDeviceId(devicePo) > 0;
+        return deviceMapper.updateById(devicePo) > 0;
     }
 
 
@@ -373,5 +376,35 @@ public class DeviceService {
             }
         }
         return weatherVo;
+    }
+
+    public List<DeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId) {
+        List<DeviceListVo.DeviceItemPo> childDevicePos = new ArrayList<>();
+        List<DevicePo> devicePoList = deviceMapper.queryChildDevice(hostDeviceId);
+        for (DevicePo devicePo : devicePoList) {
+            DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
+            deviceItemPo.setDeviceId(devicePo.getId());
+            deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
+            deviceItemPo.setLocation(devicePo.getLocation());
+            Integer modelId = devicePo.getModelId();
+            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+            deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
+            deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
+            deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
+            if (deviceTypePo != null) {
+                deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
+                deviceItemPo.setIcon(deviceTypePo.getIcon());
+            }
+            Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
+            deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
+            deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
+            deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
+            deviceItemPo.setTem(getData(data, SensorTypeEnums.TEMPERATURE_IN.getCode()));
+            deviceItemPo.setHcho(getData(data, SensorTypeEnums.HCHO_IN.getCode()));
+            deviceItemPo.setTvoc(getData(data, SensorTypeEnums.TVOC_IN.getCode()));
+            childDevicePos.add(deviceItemPo);
+        }
+        return childDevicePos;
     }
 }

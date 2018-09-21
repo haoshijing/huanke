@@ -30,7 +30,7 @@ public class UserService {
     private WechartUtil wechartUtil;
 
     @Async("taskExecutor")
-    public void  addOrUpdateUser(String accessToken, String openId){
+    public void  addOrUpdateUser(String accessToken, String openId, Integer customerId){
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
         CustomerUserPo dbCustomerUserPo = new CustomerUserPo();
 
@@ -47,6 +47,7 @@ public class UserService {
             dbCustomerUserPo.setUnionid(userInfo.getString("unionid"));
             dbCustomerUserPo.setSex(userInfo.getInteger("sex"));
             dbCustomerUserPo.setNickname(userInfo.getString("nickname"));
+            dbCustomerUserPo.setCustomerId(customerId);
             dbCustomerUserPo.setLastVisitTime(System.currentTimeMillis());
             dbCustomerUserPo.setLastUpdateTime(System.currentTimeMillis());
         }
@@ -69,6 +70,19 @@ public class UserService {
             return 0;
         }
         return customerUserPo.getId();
+    }
+
+    public CustomerUserPo getUserByTicket(String openId) {
+        String userIdStr = stringRedisTemplate.opsForValue().get(openId);
+        if(StringUtils.isNotEmpty(userIdStr)){
+            return null;
+        }
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
+        if(customerUserPo == null){
+            log.error(" openId = {} , user is null" ,openId);
+            return null;
+        }
+        return customerUserPo;
     }
 
     public Integer getUserIdByIMei(String imei) {

@@ -17,6 +17,10 @@
         executeTime,
         status,
         executeRet,
+        type,
+        hour,
+        minute,
+        second,
         createTime,
         lastUpdateTime
         )
@@ -28,6 +32,10 @@
         #{executeTime},
         #{status},
         #{executeRet},
+        #{type},
+        #{hour},
+        #{minute},
+        #{second},
         #{createTime},
         #{lastUpdateTime}
         )
@@ -43,12 +51,12 @@
     <select id = "selectTimerList" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
         select * from <include refid="tableName" />
         <where>
-            <if test = "timerType != null">
-                AND timerType = #{timerType}
-
-            </if>
             <if test = "userId != null">
                 AND userId =#{userId}
+            </if>
+            <if test = "type != null">
+                AND type = #{type}
+
             </if>
             and status IN(1,2)
            order by executeTime asc
@@ -63,7 +71,25 @@
     
     <select id="queryTimers" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
         select * from <include refid="tableName"/>
-        where executeTime <![CDATA[ <     ]]> #{time} and status = 1
+        where executeTime <![CDATA[ <     ]]> #{time}
+        and type = 1
+        and status = 1
+    </select>
+
+    <select id="queryIdeaTimers" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
+        select tdt.* from t_device_timer tdt,t_device_timer_day tdtd
+        where tdtd.dayOfWeek = #{dayOfWeek}
+        and tdt.type = 2
+        and tdt.status = 1
+        and tdt.id = tdtd.timeId
+    </select>
+
+    <select id="queryIdeaTypeTimers" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
+        select tdt.* from t_device_timer tdt,t_device_timer_day tdtd
+        where tdtd.dayOfWeek = #{dayOfWeek}
+        and tdt.type = 2
+        and tdt.status = 1
+        and tdt.id = tdtd.timeId
     </select>
     
     <update id="updateById">
@@ -82,6 +108,18 @@
             </if>
             <if test = "executeRet != null">
                 executeRet = #{executeRet} ,
+            </if>
+            <if test = "type != null">
+                type = #{type} ,
+            </if>
+            <if test = "hour != null">
+                hour = #{hour} ,
+            </if>
+            <if test = "minute != null">
+                minute = #{minute} ,
+            </if>
+            <if test = "second != null">
+                second = #{second} ,
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>

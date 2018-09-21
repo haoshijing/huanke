@@ -62,14 +62,26 @@ public class DeviceController extends BaseController {
     }
 
     /**
-     * 首页查询我的设备
+     * 查询子设备
      * @return
      */
+    @RequestMapping("/obtainChildDevice/{hostDeviceId}")
+    public Object obtainChildDevice(@PathVariable("hostDeviceId") Integer hostDeviceId) {
+        Integer userId = getCurrentUserId();
+        log.info("查询子设备列表，userId={}， hostDeviceId={}", userId, hostDeviceId);
+        List<DeviceListVo.DeviceItemPo> childDeviceList = deviceService.queryChildDevice(hostDeviceId);
+        return new ApiResponse<>(childDeviceList);
+    }
+
+    /**
+     * 暂时不用
+     * @return
+     *//*
     @RequestMapping("/queryDetailByDeviceId")
     public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
         return new ApiResponse<>(deviceDetailVo);
-    }
+    }*/
 
     @RequestMapping("/getLocation/{deviceId}")
     public ApiResponse<LocationVo> queryDeviceLocation(@PathVariable("deviceId") Integer deviceId) {
@@ -89,7 +101,11 @@ public class DeviceController extends BaseController {
      */
     @RequestMapping("/newQueryDetailByDeviceId")
     public ApiResponse<List<DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
+        Integer userId = getCurrentUserId();
         Integer deviceId = request.getDeviceId();
+        if(!deviceDataService.verifyUser(userId, deviceId)){
+            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
+        }
         List<Integer> abilityIds = request.getAbilityIds();
         if(deviceId == null || abilityIds.isEmpty()){
             return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
@@ -101,8 +117,11 @@ public class DeviceController extends BaseController {
     @RequestMapping("/editDevice")
     public ApiResponse<Boolean> editDevice(@RequestBody DeviceRequest request) {
         Integer deviceId = request.getDeviceId();
-        String deviceName = request.getDeviceName();
         Integer userId = getCurrentUserId();
+        if(!deviceDataService.verifyUser(userId, deviceId)){
+            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
+        }
+        String deviceName = request.getDeviceName();
         log.info("编辑设备，deviceId={}，deviceName={}，userId={}", deviceId, deviceName, userId);
         boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
         return new ApiResponse<>(ret);
@@ -134,6 +153,9 @@ public class DeviceController extends BaseController {
     public ApiResponse<Boolean> deleteDevice(@RequestBody BaseRequest<Integer> request){
         Integer deviceId = request.getValue();
         Integer userId = getCurrentUserId();
+        if(!deviceDataService.verifyUser(userId, deviceId)){
+            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
+        }
         log.info("删除设备，deviceId={}，userId={}", deviceId, userId);
         Boolean ret = deviceDataService.deleteDevice(userId,deviceId);
         return new ApiResponse<>(ret);
@@ -147,11 +169,16 @@ public class DeviceController extends BaseController {
     }*/
 
     @RequestMapping("/updateDeviceLocation")
-    public ApiResponse<Boolean> updateDeviceLocation(String deviceId,String location){
-        if(StringUtils.isEmpty(location)){
-            return new ApiResponse(RetCode.PARAM_ERROR);
+    public ApiResponse<Boolean> updateDeviceLocation(@RequestBody DeviceLocationRequest request){
+        Integer deviceId = request.getDeviceId();
+        String location = request.getLocation();
+        if(StringUtils.isEmpty(location) || deviceId == null){
+            return new ApiResponse(RetCode.PARAM_ERROR, "参数错误");
         }
         Integer userId = getCurrentUserId();
+        if(!deviceDataService.verifyUser(userId, deviceId)){
+            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
+        }
         Boolean clearOk = deviceService.editDeviceLoc(userId, deviceId,location);
         return new ApiResponse<>(clearOk);
     }
@@ -166,14 +193,6 @@ public class DeviceController extends BaseController {
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
         String funcId = deviceFuncVo.getFuncId();
-        if (StringUtils.isNotEmpty(funcId) && funcId.contains("33")) {
-            deviceFuncVo.setValue(String.valueOf(3600*3000));
-        }
-        if(StringUtils.isNotEmpty(funcId) && funcId.contains("28")){
-            if(StringUtils.equals(deviceFuncVo.getValue(),"0")){
-                deviceFuncVo.setValue("1");
-            }
-        }
         String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserId(),1);
         return new ApiResponse<>(requestId);
     }

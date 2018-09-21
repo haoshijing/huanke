@@ -38,7 +38,11 @@ public class DeviceListVo {
         /**
          * 微信生成设备deviceId
          */
-        private String wxDevicdId;
+        private String wxDeviceId;
+        /**
+         * 从设备数量
+         */
+        private Integer childDeviceCount;
         /**
          * 设备名称
          */
