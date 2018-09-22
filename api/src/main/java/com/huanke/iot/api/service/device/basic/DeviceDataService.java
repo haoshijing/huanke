@@ -171,7 +171,7 @@ public class DeviceDataService {
             }
             return deviceTeamVoList;
         }*/
-        if(teamId == null){
+        if (teamId == null) {
             DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
             String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
             deviceTeamPo.setName(defaultTeamName);
@@ -404,7 +404,6 @@ public class DeviceDataService {
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_single:
-                case DeviceAbilityTypeContants.ability_type_checkbox:
                     List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
                     String optionValue = getData(controlDatas, dirValue);
                     List<DeviceAbilitysVo.abilityOption> abilityOptionList = new ArrayList<>();
@@ -419,6 +418,23 @@ public class DeviceDataService {
                         abilityOptionList.add(abilityOption);
                     }
                     deviceAbilitysVo.setAbilityOptionList(abilityOptionList);
+                    break;
+                case DeviceAbilityTypeContants.ability_type_checkbox:
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    List<DeviceAbilitysVo.abilityOption> abilityOptionList1 = new ArrayList<>();
+                    for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos1) {
+                        String targetOptionValue = deviceabilityOptionPo.getOptionValue();
+                        String finalOptionValue = getData(controlDatas, targetOptionValue);
+                        DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
+                        abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                        if(Integer.valueOf(finalOptionValue) == 1){
+                            abilityOption.setIsSelect(1);
+                        }else{
+                            abilityOption.setIsSelect(0);
+                        }
+                        abilityOptionList1.add(abilityOption);
+                    }
+                    deviceAbilitysVo.setAbilityOptionList(abilityOptionList1);
                     break;
                 case DeviceAbilityTypeContants.ability_type_threshhold:
                     deviceAbilitysVo.setCurrValue(getData(controlDatas, dirValue));
@@ -878,14 +894,14 @@ public class DeviceDataService {
         return (int) (((tbl_aqi[i + 1] - tbl_aqi[i]) / (tbl_pm2_5[i + 1] - tbl_pm2_5[i]) * (pm2_5 - tbl_pm2_5[i]) + tbl_aqi[i]));
     }
 
-    public boolean verifyUser(Integer userId, Integer deviceId){
+    public boolean verifyUser(Integer userId, Integer deviceId) {
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
         String wxOpenId = customerUserPo.getOpenId();
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
         deviceCustomerUserRelationPo.setOpenId(wxOpenId);
         deviceCustomerUserRelationPo.setDeviceId(deviceId);
         Integer count = deviceCustomerUserRelationMapper.queryRelationCount(deviceCustomerUserRelationPo);
-        if(count > 0){
+        if (count > 0) {
             return true;
         }
         return false;
