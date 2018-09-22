@@ -129,9 +129,6 @@ public class DeviceHighController extends BaseController{
     @RequestMapping("delChildDevice/{childDeviceId}")
     public Object delChildDevice(@PathVariable("childDeviceId") Integer childDeviceId){
         Integer userId = getCurrentUserId();
-        if(!deviceDataService.verifyUser(userId, childDeviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
         log.info("删除从设备：childDeviceId={}", childDeviceId);
         deviceService.deleteById(childDeviceId);
         return new ApiResponse<>();
