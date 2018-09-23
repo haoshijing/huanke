@@ -12,6 +12,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
+import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
@@ -19,6 +20,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
+import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
@@ -27,6 +29,7 @@ import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.format.ModelFormatVo;
+import com.huanke.iot.manage.vo.response.format.WxFormatVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -69,6 +72,9 @@ public class DeviceModelService {
 
     @Autowired
     private DeviceIdPoolMapper deviceIdPoolMapper;
+
+    @Autowired
+    private WxFormatItemMapper wxFormatItemMapper;
 
 
     @Value("${accessKeyId}")
@@ -632,22 +638,45 @@ public class DeviceModelService {
                 deviceModelFormatPageVo.setFormatId(formatId);
                 deviceModelFormatPageVo.setModelId(modelId);
 
+                /*
+                *  查询版式的配置，和型号的配置项进行做对比，是否版式项有增删。*/
+                //查询 版式配置表
+                List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByPageId(formatId,deviceModelFormatPagePo.getPageId());
                 //查询 型号的自定义版式的配置项
                 List<DeviceModelFormatItemPo> deviceModelFormatItempos = deviceModelFormatItemMapper.obtainModelFormatItems(deviceModelFormatPagePo.getId());
                 List<ModelFormatVo.DeviceModelFormatItemVo> deviceModelFormatItemVos = new ArrayList<ModelFormatVo.DeviceModelFormatItemVo>();
-                if (deviceModelFormatItempos != null && deviceModelFormatItempos.size() > 0) {
-                    deviceModelFormatItemVos = deviceModelFormatItempos.stream().map(deviceModelFormatItemPo -> {
+                if(wxFormatItemPos!=null&&wxFormatItemPos.size()>0){
+                    deviceModelFormatItemVos =  wxFormatItemPos.stream().map( wxFormatItemPo -> {
                         ModelFormatVo.DeviceModelFormatItemVo deviceModelFormatItemVo = new ModelFormatVo.DeviceModelFormatItemVo();
-                        deviceModelFormatItemVo.setId(deviceModelFormatItemPo.getId());
-                        deviceModelFormatItemVo.setModelFormatId(deviceModelFormatPagePo.getId());
-                        deviceModelFormatItemVo.setAbilityId(deviceModelFormatItemPo.getAbilityId());
-                        deviceModelFormatItemVo.setItemId(deviceModelFormatItemPo.getItemId());
-                        deviceModelFormatItemVo.setShowName(deviceModelFormatItemPo.getShowName());
-                        deviceModelFormatItemVo.setShowStatus(deviceModelFormatItemPo.getShowStatus());
-                        deviceModelFormatItemVo.setStatus(deviceModelFormatItemPo.getStatus());
-                        return deviceModelFormatItemVo;
 
+                        deviceModelFormatItemVo.setModelFormatId(deviceModelFormatPagePo.getId());
+                        deviceModelFormatItemVo.setItemId(wxFormatItemPo.getId());
+                        deviceModelFormatItemVo.setShowName(wxFormatItemPo.getName());
+                        deviceModelFormatItemVo.setShowStatus(DeviceConstant.DEVICE_MODEL_FORMAT_ITEM_SHOW_NO);
+                        deviceModelFormatItemVo.setStatus(CommonConstant.STATUS_YES);
+
+                        //遍历 对比 型号的版式的配置项
+                        if (deviceModelFormatItempos != null && deviceModelFormatItempos.size() > 0) {
+                            for(int i=0;i<deviceModelFormatItempos.size();i++){
+                                DeviceModelFormatItemPo deviceModelFormatItemPo = deviceModelFormatItempos.get(i);
+                                //如果 配置项id相同
+                                if(deviceModelFormatItemPo.getItemId().equals(wxFormatItemPo.getId())){
+
+                                    deviceModelFormatItemVo.setId(deviceModelFormatItemPo.getId());
+                                    deviceModelFormatItemVo.setAbilityId(deviceModelFormatItemPo.getAbilityId());
+                                    deviceModelFormatItemVo.setShowName(deviceModelFormatItemPo.getShowName());
+                                    deviceModelFormatItemVo.setShowStatus(deviceModelFormatItemPo.getShowStatus());
+                                    deviceModelFormatItemVo.setStatus(deviceModelFormatItemPo.getStatus());
+                                    break;
+                                }
+
+                            }
+
+                        }
+
+                        return deviceModelFormatItemVo;
                     }).collect(Collectors.toList());
+
                     deviceModelFormatPageVo.setModelFormatItems(deviceModelFormatItemVos);
                 }
 

@@ -24,11 +24,11 @@ public class DeviceConstant {
 
 
     /*能力类型*/
-    public static final Integer ability_TYPE_TEXT = 1; //文本类
-    public static final Integer ability_TYPE_RADIO = 2; //单选类
-    public static final Integer ability_TYPE_SELECT = 3; //多选类
-    public static final Integer ability_TYPE_NUMBER = 4; //阈值类
-    public static final Integer ability_TYPE_SELECT_NUMBER = 5; //阈值选项类
+    public static final Integer ABILITY_TYPE_TEXT = 1; //文本类
+    public static final Integer ABILITY_TYPE_RADIO = 2; //单选类
+    public static final Integer ABILITY_TYPE_SELECT = 3; //多选类
+    public static final Integer ABILITY_TYPE_NUMBER = 4; //阈值类
+    public static final Integer ABILITY_TYPE_SELECT_NUMBER = 5; //阈值选项类
 
     public static  final Integer WXDEVICEID_STATUS_YES = 1; // 已占用
     public static  final Integer WXDEVICEID_STATUS_NO = 0; // 未占用
@@ -41,4 +41,7 @@ public class DeviceConstant {
     public static  final Integer HAS_TEAM_NO = -1; // -1 该用户不存在设设备组
 
 
+    /*型号的版式配置项是否显示*/
+    public static final Integer DEVICE_MODEL_FORMAT_ITEM_SHOW_YES = 1; // 是
+    public static final Integer DEVICE_MODEL_FORMAT_ITEM_SHOW_NO = 0; //否
 }
