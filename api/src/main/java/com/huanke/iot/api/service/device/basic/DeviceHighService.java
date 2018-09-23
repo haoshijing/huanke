@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
 import com.huanke.iot.base.constant.CommonConstant;
@@ -11,6 +12,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -85,9 +87,16 @@ public class DeviceHighService {
         devicePo.setTypeId(typeId);
         devicePo.setLastUpdateTime(System.currentTimeMillis());
         devicePo.setStatus(CommonConstant.STATUS_YES);
-        DevicePo hostDevice = deviceMapper.selectById(hostDeviceId);
-        devicePo.setModelId(hostDevice.getModelId());
-        return addOrUpdate(devicePo);
+
+        Integer childDeviceId = addOrUpdate(devicePo);
+        //缓存设备码表等待设备读取
+        Integer childDeviceTypeId = deviceModelMapper.selectById(modelId).getTypeId();
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(childDeviceTypeId);
+        JSONObject stopWatchJson = JSONObject.parseObject(deviceTypePo.getStopWatch());
+        stopWatchJson.put("address", childDeviceId);
+        String redisStopWatch = JSONObject.toJSONString(stopWatchJson);
+        stringRedisTemplate.opsForValue().set("childStopWatch." + childDeviceId, redisStopWatch);
+        return childDeviceId;
     }
 
     private Integer addOrUpdate(DevicePo devicePo) {

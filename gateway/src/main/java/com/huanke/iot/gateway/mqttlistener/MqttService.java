@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class MqttService {
 
+
     @Value("${mqttServerUrl}")
     private String mqttServerUrl;
 
@@ -61,6 +62,16 @@ public class MqttService {
                     AbstractHandler.getHandler(topic).handler(topic,message.getPayload());
                 }
             });
+        }
+    }
+
+    public void sendMessage(String topic,String message){
+        if(mqttClient != null){
+            try {
+                mqttClient.publish(topic, new MqttMessage(message.getBytes()));
+            }catch (Exception e){
+                log.error("",e);
+            }
         }
     }
 }
