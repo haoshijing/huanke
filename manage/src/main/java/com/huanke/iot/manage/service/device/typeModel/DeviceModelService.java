@@ -316,6 +316,7 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
+            deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
             deviceModelVo.setIcon(deviceModelPo.getIcon());
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
@@ -391,6 +392,7 @@ public class DeviceModelService {
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setIcon(deviceModelVo.getIcon());
+            deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
             deviceModelVo.setId(deviceModelPo.getId());
 
             List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId());
@@ -425,6 +427,7 @@ public class DeviceModelService {
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
+            deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
             deviceModelVo.setIcon(deviceModelPo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
 

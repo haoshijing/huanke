@@ -24,6 +24,7 @@ public class DeviceModelVo {
     private Integer formatId;
     private String icon;
     private String version;
+    private String childModelIds;
     private Integer status = CommonConstant.STATUS_YES;
     private String remark;
 

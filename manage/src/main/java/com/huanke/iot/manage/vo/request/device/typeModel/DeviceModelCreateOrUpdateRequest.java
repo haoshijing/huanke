@@ -22,6 +22,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private Integer formatId;
     private String icon; //缩略图
     private String version;
+    private String childModelIds;
     private String description;
     private Integer status = CommonConstant.STATUS_YES;
     private String remark;

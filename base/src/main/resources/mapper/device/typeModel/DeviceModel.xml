@@ -20,6 +20,7 @@
         formatId,
         icon,
         version,
+        childModelIds,
         status,
         remark,
         createTime
@@ -33,6 +34,7 @@
         #{formatId},
         #{icon},
         #{version},
+        #{childModelIds},
         #{status},
         #{remark},
         #{createTime}
@@ -65,6 +67,9 @@
             </if>
             <if test="version != null and version != ''">
                 version = #{version},
+            </if>
+            <if test="childModelIds != null and childModelIds != ''">
+                childModelIds = #{childModelIds},
             </if>
             <if test="status != null ">
                 status = #{status},
