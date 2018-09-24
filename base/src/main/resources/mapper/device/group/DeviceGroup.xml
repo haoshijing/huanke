@@ -92,7 +92,7 @@
         select
         t_device_group.*
         FROM
-        t_device_group.*,t_device_group_item
+        t_device_group ,t_device_group_item
         WHERE
          t_device_group_item.deviceId = #{deviceId}
         AND

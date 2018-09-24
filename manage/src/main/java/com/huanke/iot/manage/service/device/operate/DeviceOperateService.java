@@ -20,6 +20,8 @@ import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
@@ -188,9 +190,11 @@ public class DeviceOperateService {
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
-            if (null != this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
-                deviceQueryVo.setGroupId(this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId());
-                deviceQueryVo.setGroupName(this.deviceGroupMapper.selectByDeviceId(devicePo.getId()).getName());
+            DeviceGroupPo queryDeviceGroup = this.deviceGroupMapper.selectByDeviceId(devicePo.getId());
+//            DeviceGroupItemPo queryDeviceGroupItemPo = this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId());
+            if (null != queryDeviceGroup) {
+                deviceQueryVo.setGroupId(queryDeviceGroup.getId());
+                deviceQueryVo.setGroupName(queryDeviceGroup.getName());
             } else {
                 deviceQueryVo.setGroupId(-1);
                 deviceQueryVo.setGroupName("无集群");
