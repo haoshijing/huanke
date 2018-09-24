@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.user.dao.role.RoleManagerMapper">
+
+    <sql id="role_table">
+        t_role
+    </sql>
+    <sql id="permission_table">
+        t_permission
+    </sql>
+    <sql id="role_permission_table">
+        t_role_permission
+    </sql>
+    <sql id="user_table">
+        t_user
+    </sql>
+
+    <select id="getPermissionsByRoleId" resultType="com.huanke.iot.user.model.role.Permission">
+        select * from
+        <include refid="permission_table"/>
+        where id in
+        (select permissionId from
+        <include refid="role_permission_table"/>
+        where roleId=#{roleId})
+    </select>
+    <select id="selectAll" resultType="com.huanke.iot.user.model.role.Role">
+        select r.*,COUNT(u.id) as userCount from
+        <include refid="role_table"/>
+        r LEFT JOIN
+        <include refid="user_table"/>
+        u on r.id=u.roleId GROUP BY r.id
+    </select>
+    <insert id="insert" parameterType="com.huanke.iot.user.model.role.Role"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        <include refid="role_table"/>
+        (
+        roleName,
+        roleDesc,
+        creater,
+        createTime,
+        lastUpdateTime
+        )
+        VALUE (
+        #{roleName},
+        #{roleDesc},
+        #{creater},
+        now(),
+        now()
+        )
+    </insert>
+    <insert id="insertRole2Permission">
+        insert into
+        <include refid="role_permission_table"/>
+        (
+        roleId,
+        permissionId
+        )
+        values
+        <foreach collection="permissions" item="item" index="index" separator=",">
+            (#{roleId}, #{item,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+    <delete id="delRole2PermissionByRoleId">
+        delete from
+        <include refid="role_permission_table"/>
+        where roleId=#{roleId}
+    </delete>
+    <update id="updateById" parameterType="com.huanke.iot.user.model.role.Role">
+        update
+        <include refid="role_table"/>
+        <set>
+            <if test="roleName != null and roleName != ''">
+                roleName = #{roleName},
+            </if>
+            <if test="roleDesc != null and roleDesc != ''">
+                roleDesc = #{roleDesc},
+            </if>
+            <if test="id != null ">
+                lastUpdateTime = now(),
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="getUsersByRoleId" resultType="com.huanke.iot.user.model.user.User">
+        select * from
+        <include refid="user_table"/>
+        where roleId=#{roleId}
+    </select>
+    <delete id="deleteById">
+        delete from
+        <include refid="role_table"/>
+        where id=#{id}
+    </delete>
+    <select id="selectById" resultType="com.huanke.iot.user.model.role.Role">
+        select * from
+        <include refid="role_table"/>,
+        (select count(id) as userCount from
+        <include refid="user_table"/>
+        where roleId=#{id}) u
+        where id=#{id}
+    </select>
+</mapper>
