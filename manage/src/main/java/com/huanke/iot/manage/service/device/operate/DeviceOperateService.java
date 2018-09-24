@@ -527,31 +527,47 @@ public class DeviceOperateService {
         List<DeviceQueryRequest.DeviceQueryList> bindDeviceList = deviceBindToUserRequest.getDeviceQueryRequest().getDeviceList();
 
         if(bindDeviceList!=null&&bindDeviceList.size()>0){
-            bindDeviceList.stream().forEach(bindDevice -> {
+            for(int m=0;m<bindDeviceList.size();m++){
+                DevicePo bindDevice = new DevicePo();
+
                 DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
                 DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
+
+                //查询 设备是否存在
                 DevicePo devicePo = this.deviceMapper.selectByMac(bindDevice.getMac());
-                //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
-                devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
-                //设定绑定时间
-                devicePo.setBindTime(System.currentTimeMillis());
-                devicePo.setLastUpdateTime(System.currentTimeMillis());
-                deviceTeamItemPo.setDeviceId(devicePo.getId());
-                deviceTeamItemPo.setTeamId(deviceTeamId);
-                deviceTeamItemPo.setUserId(customerUserPo.getId());
-                deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
-                deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
-                deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
-                deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
-                deviceCustomerUserRelationPo.setCustomerId(customerUserPo.getId());
-                deviceCustomerUserRelationPo.setOpenId(deviceBindToUserRequest.getOpenId());
-                deviceCustomerUserRelationPo.setStatus(CommonConstant.STATUS_YES);
-                deviceCustomerUserRelationPo.setCreateTime(System.currentTimeMillis());
-                deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
-                devicePoList.add(devicePo);
-                deviceTeamItemPoList.add(deviceTeamItemPo);
-                deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
-            });
+                if(devicePo!=null){
+                    //查询 该设备是否有客户关系，即 该设备是否被分配。
+                    DeviceCustomerRelationPo queryDeviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
+                    if(queryDeviceCustomerRelationPo!=null){
+                        //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
+                        devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
+                        //设定绑定时间
+                        devicePo.setBindTime(System.currentTimeMillis());
+                        devicePo.setLastUpdateTime(System.currentTimeMillis());
+                        deviceTeamItemPo.setDeviceId(devicePo.getId());
+                        deviceTeamItemPo.setTeamId(deviceTeamId);
+                        deviceTeamItemPo.setUserId(customerUserPo.getId());
+                        deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+                        deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
+                        deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
+                        deviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
+                        deviceCustomerUserRelationPo.setCustomerId(customerUserPo.getId());
+                        deviceCustomerUserRelationPo.setOpenId(deviceBindToUserRequest.getOpenId());
+                        deviceCustomerUserRelationPo.setStatus(CommonConstant.STATUS_YES);
+                        deviceCustomerUserRelationPo.setCreateTime(System.currentTimeMillis());
+                        deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
+                        devicePoList.add(devicePo);
+                        deviceTeamItemPoList.add(deviceTeamItemPo);
+                        deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
+                    }else{
+                        return new ApiResponse<>(RetCode.PARAM_ERROR,"MAC："+bindDevice.getMac()+" 未被分配，绑定失败！",true);
+                    }
+
+                }else{
+                    return new ApiResponse<>(RetCode.PARAM_ERROR,"MAC："+bindDevice.getMac()+" 不存在，绑定失败！",true);
+                }
+
+            }
         }
 
         //进行设备名称的批量更新
