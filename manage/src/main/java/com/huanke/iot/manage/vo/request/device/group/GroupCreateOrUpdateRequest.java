@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class GroupCreateOrUpdateRequest {
     /**
-     * 编组名称
+     * 集群名称
      */
     private String name;
 
@@ -18,6 +18,12 @@ public class GroupCreateOrUpdateRequest {
      * B端客户id
      */
     private Integer customerId;
+
+    private String introduction;
+
+    private String remark;
+
+    private String createLocation;
 
 
     private DeviceQueryRequest deviceQueryRequest;

@@ -21,6 +21,8 @@ public interface DeviceGroupItemMapper extends BaseMapper<DeviceGroupItemPo> {
 
     Integer deleteDeviceById(Integer deviceId);
 
+    Integer insertBatch(List<DeviceGroupItemPo> deviceGroupItemPoList);
+
 
     int deleteItemsByDeviceId(Integer iDeviceId);
 

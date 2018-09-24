@@ -17,6 +17,9 @@
         masterUserId,
         manageUserIds,
         status,
+        introduction,
+        remark,
+        createLocation,
         createTime,
         lastUpdateTime
         )
@@ -26,9 +29,45 @@
         #{masterUserId},
         #{manageUserIds},
         #{status},
+        #{introduction},
+        #{remark},
+        #{createLocation},
         #{createTime},
         #{lastUpdateTime}
         )
+    </insert>
+
+    <!-- 批量插入数条记录 -->
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        name,
+        customerId,
+        masterUserId,
+        manageUserIds,
+        status,
+        introduction,
+        remark,
+        createLocation,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES
+        <foreach collection="list" item="group" separator=",">
+            (
+            #{group.name},
+            #{group.customerId},
+            #{group.masterUserId},
+            #{group.manageUserIds},
+            #{group.status},
+            #{group.introduction},
+            #{group.remark},
+            #{group.createLocation},
+            #{group.createTime},
+            #{group.lastUpdateTime}
+            )
+        </foreach>
     </insert>
 
     <select id="selectCount" resultType="java.lang.Integer">
@@ -52,14 +91,23 @@
         select * from
         <include refid="tableName"/>
         <where>
-            <if test = "param.userId != null and param.userId != 0">
-                AND userId = #{param.customerId}
+            <if test = "param.name != null and param.name != ''">
+                AND name = #{param.name}
             </if>
             <if test="param.status != null">
                 AND status = #{param.status}
             </if>
-            <if test = "param.groupName != null">
-                and groupName = #{param.name}
+            <if test = "param.customerId != null">
+                and customerId = #{param.customerId}
+            </if>
+            <if test = "param.introduction != null and param.introduction != ''">
+                and introduction = #{param.introduction}
+            </if>
+            <if test = "param.remark != null and param.remark != ''">
+                and remark = #{param.remark}
+            </if>
+            <if test = "param.createLocation != null and param.createLocation != ''">
+                and createLocation = #{param.createLocation}
             </if>
         </where>
         limit #{limit} offset #{offset}

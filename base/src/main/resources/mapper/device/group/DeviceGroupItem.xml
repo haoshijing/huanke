@@ -27,6 +27,29 @@
         )
     </insert>
 
+    <!-- 批量插入数条记录 -->
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        deviceId,
+        groupId,
+        status,
+        createTime,
+        lastUpdateTime
+        )
+        VALUES
+        <foreach collection="list" item="groupItem" separator=",">
+            (
+            #{groupItem.deviceId},
+            #{groupItem.groupId},
+            #{groupItem.status},
+            #{groupItem.createTime},
+            #{groupItem.lastUpdateTime}
+            )
+        </foreach>
+    </insert>
+
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupItemPo">
         select
         *

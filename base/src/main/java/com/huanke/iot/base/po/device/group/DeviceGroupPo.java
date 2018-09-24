@@ -38,6 +38,12 @@ public class DeviceGroupPo {
      */
     private Integer status = 1;
 
+    private String introduction;
+
+    private String remark;
+
+    private String createLocation;
+
     /**
      * 创建时间
      */
