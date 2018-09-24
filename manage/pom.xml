@@ -16,6 +16,11 @@
             <groupId>com.huanke</groupId>
             <version>${parent.version}</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<artifactId>user</artifactId>-->
+            <!--<groupId>com.huanke</groupId>-->
+            <!--<version>${parent.version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

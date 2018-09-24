@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author haoshijing
  * @version 2018年01月10日 10:16
  **/
-@ControllerAdvice
+//@ControllerAdvice
 @Slf4j
 public class ExceptionHandlerAdvice {
 

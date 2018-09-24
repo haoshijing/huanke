@@ -29,11 +29,14 @@ import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
+//import com.huanke.iot.user.model.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -151,6 +154,8 @@ public class DeviceOperateService {
      */
     public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
         //todo 显示从设备
+//        User user = (User) SecurityUtils.getSubject().getSession().getAttribute("user");
+
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
@@ -590,6 +595,7 @@ public class DeviceOperateService {
      */
     public ApiResponse<Boolean> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
 
+
         try {
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
@@ -605,6 +611,7 @@ public class DeviceOperateService {
             }else if(!mac.equals(queryDevicePo.getMac())){
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
             }
+
 
             //删除 该设备的用户绑定关系
             deviceCustomerUserRelationMapper.deleteRealationByDeviceId(deviceId);
