@@ -5,7 +5,9 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.service.device.group.DeviceGroupService;
+import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
+import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +37,7 @@ public class DeviceGroupController {
      */
     @ApiOperation("创建新集群并向其中添加设备，从设备列表进入，添加已经选中的设备")
     @RequestMapping(value = "/addNewGroupAndDevice",method = RequestMethod.POST)
-    public  ApiResponse<Boolean> addNewGroupAndDevice(@RequestBody GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception{
+    public  ApiResponse<Boolean> addNewGroupAndDevice(@RequestBody GroupCreateOrUpdateRequest groupCreateOrUpdateRequest){
         try {
             //集群名不可为空
             if(!StringUtils.isNotEmpty(groupCreateOrUpdateRequest.getName())){
@@ -72,6 +74,20 @@ public class DeviceGroupController {
         }
     }
 
+    @ApiOperation("根据查询条件分页查询设备")
+    @RequestMapping(value = "/queryGroupByPage",method = RequestMethod.POST)
+    public ApiResponse<List<DeviceGroupListVo>> queryGroupByPage(@RequestBody GroupQueryRequest groupQueryRequest){
+        try {
+            List<DeviceGroupListVo> deviceGroupListVoList=this.deviceGroupService.queryGroupByPage(groupQueryRequest);
+            return new ApiResponse<>(RetCode.OK,"查询成功",deviceGroupListVoList);
+
+        }catch (Exception e){
+            log.error("集群查询失败 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"集群查询异常");
+        }
+    }
+
+
     /**
      *在设备列表中点击集群时，显示设备列表中已有集群的集群名称，若存在多个集群，则返回错误
      * @param deviceQueryRequest
@@ -80,7 +96,7 @@ public class DeviceGroupController {
      */
     @ApiOperation("在设备列表中点击集群时，显示设备列表中已有集群的集群名称，若存在多个集群，则返回错误")
     @RequestMapping(value = "/queryGroupByDevice",method = RequestMethod.POST)
-    public  ApiResponse<DeviceGroupPo> queryGroupByDevice(@RequestBody DeviceQueryRequest deviceQueryRequest) throws Exception{
+    public  ApiResponse<DeviceGroupPo> queryGroupByDevice(@RequestBody DeviceQueryRequest deviceQueryRequest){
         DeviceGroupPo deviceGroupPo=null;
         try {
             List<DeviceQueryRequest.DeviceQueryList> deviceLists=deviceQueryRequest.getDeviceList();

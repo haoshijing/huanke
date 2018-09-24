@@ -1,17 +1,23 @@
 package com.huanke.iot.manage.service.device.group;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
+import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,22 +58,21 @@ public class DeviceGroupService {
      * @param deviceGroupCreateOrUpdate
      * @return
      */
-    public DeviceGroupPo createGroup(GroupCreateOrUpdateRequest deviceGroupCreateOrUpdate){
+    public DeviceGroupPo createGroup(GroupCreateOrUpdateRequest deviceGroupCreateOrUpdate) throws Exception{
         DeviceGroupPo queryPo=new DeviceGroupPo();
         queryPo.setName(deviceGroupCreateOrUpdate.getName());
         queryPo.setCustomerId(deviceGroupCreateOrUpdate.getCustomerId());
-        DeviceGroupPo deviceGroupPo=deviceGroupMapper.queryByName(queryPo);
+        DeviceGroupPo deviceGroupPo=this.deviceGroupMapper.queryByName(queryPo);
         if(null != deviceGroupPo){
             return null;
         }
         else {
             DeviceGroupPo insertPo=new DeviceGroupPo();
-            insertPo.setName(deviceGroupCreateOrUpdate.getName());
-            insertPo.setCustomerId(deviceGroupCreateOrUpdate.getCustomerId());
-            insertPo.setStatus(1);
+            BeanUtils.copyProperties(deviceGroupCreateOrUpdate,insertPo);
+            insertPo.setStatus(CommonConstant.STATUS_YES);
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setLastUpdateTime(System.currentTimeMillis());
-            deviceGroupMapper.insert(insertPo);
+            this.deviceGroupMapper.insert(insertPo);
             return insertPo;
         }
     }
@@ -77,26 +82,53 @@ public class DeviceGroupService {
      * @param groupCreateOrUpdateRequest
      * @return
      */
-    public Boolean addDeviceToGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest, DeviceGroupPo deviceGroupPo){
+    public Boolean addDeviceToGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest, DeviceGroupPo deviceGroupPo) throws Exception{
+        List<DeviceGroupItemPo> deviceGroupItemPoList=new ArrayList<>();
         //判断当前设备列表中是否存在集群冲突
         if(isGroupConflict(groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList())){
             return false;
         }
         else {
             for (DeviceQueryRequest.DeviceQueryList deviceList : groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList()) {
-                DevicePo devicePo = deviceMapper.selectByMac(deviceList.getMac());
+                DevicePo devicePo = this.deviceMapper.selectByMac(deviceList.getMac());
                 DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
                 deviceGroupItemPo.setGroupId(deviceGroupPo.getId());
                 deviceGroupItemPo.setDeviceId(devicePo.getId());
                 deviceGroupItemPo.setStatus(1);
                 deviceGroupItemPo.setCreateTime(System.currentTimeMillis());
                 deviceGroupItemPo.setLastUpdateTime(System.currentTimeMillis());
-                deviceGroupItemMapper.insert(deviceGroupItemPo);
+                deviceGroupItemPoList.add(deviceGroupItemPo);
             }
+            //进行批量插入
+            this.deviceGroupItemMapper.insertBatch(deviceGroupItemPoList);
             return true;
         }
     }
 
+    public List<DeviceGroupListVo> queryGroupByPage(GroupQueryRequest groupQueryRequest)throws Exception{
+        List<DeviceGroupListVo> deviceGroupListVoList = new ArrayList<>();
+        //todo 显示从设备
+        Integer offset = (groupQueryRequest.getPage() - 1) * groupQueryRequest.getLimit();
+        Integer limit = groupQueryRequest.getLimit();
+        DeviceGroupPo queryPo = new DeviceGroupPo();
+        BeanUtils.copyProperties(groupQueryRequest,queryPo);
+        List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo,limit,offset);
+        if(null != deviceGroupPoList){
+            //查询当前集群的客户信息
+            deviceGroupPoList.stream().forEach(deviceGroupPo -> {
+                DeviceGroupListVo deviceGroupListVo = new DeviceGroupListVo();
+                deviceGroupListVo.setId(deviceGroupPo.getId());
+                deviceGroupListVo.setName(deviceGroupPo.getName());
+                deviceGroupListVo.setIntroduction(deviceGroupPo.getIntroduction());
+                deviceGroupListVo.setRemark(deviceGroupPo.getRemark());
+                CustomerPo customerPo=this.customerMapper.selectById(deviceGroupPo.getCustomerId());
+                deviceGroupListVo.setCustomerName(customerPo.getName());
+                deviceGroupListVo.setCreateTime(deviceGroupPo.getCreateTime());
+                deviceGroupListVoList.add(deviceGroupListVo);
+            });
+        }
+        return  deviceGroupListVoList;
+    }
     /**
      * 查询设备列的集群信息，若存在直接返回集群的相关信息
      * @param deviceLists

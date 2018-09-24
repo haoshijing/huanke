@@ -23,6 +23,8 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
 
     DeviceGroupPo queryByName(DeviceGroupPo deviceGroupPo);
 
+    Integer insertBatch(List<DeviceGroupPo> deviceGroupPoList);
+
     DeviceGroupPo selectByDeviceId(Integer deviceId);
 
     DeviceGroupPo selectById(Integer id);
