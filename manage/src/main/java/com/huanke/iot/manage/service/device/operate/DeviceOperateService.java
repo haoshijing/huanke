@@ -278,6 +278,10 @@ public class DeviceOperateService {
                     //设定启用状态为禁用
                     queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
 
+                    queryDevicePo.setWxDeviceId(null);
+                    queryDevicePo.setWxDevicelicence(null);
+                    queryDevicePo.setWxQrticket(null);
+
                     queryDevicePo.setStatus(CommonConstant.STATUS_DEL);
 
                     queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
@@ -384,6 +388,8 @@ public class DeviceOperateService {
                 //从pool中获取设备id和证书
                 DeviceIdPoolPo queryPoolPo = new DeviceIdPoolPo();
                 queryPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                queryPoolPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
+                queryPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
                 //每次查找当前池中未使用第一条license
                 List<DeviceIdPoolPo> poolPoList = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset);
                 if(poolPoList!=null&&poolPoList.size()>0) {
@@ -444,6 +450,7 @@ public class DeviceOperateService {
                         deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
                         deviceIdPoolPoList.add(deviceIdPoolPo);
                         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+
                         //若存在绑定设备则先进行解绑
                         if(null != deviceCustomerUserRelationPo){
                             this.deviceCustomerUserRelationMapper.deleteRelationByDeviceId(devicePo.getId());

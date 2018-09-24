@@ -63,6 +63,9 @@
             <if test="param.customerId != null and param.customerId != ''">
                 AND customerId = #{param.customerId}
             </if>
+            <if test="param.productId != null  and param.productId != ''  ">
+                AND productId = #{param.productId}
+            </if>
             <if test="param.wxDeviceId != null and param.wxDeviceId != ''">
                 AND wxDeviceId = #{param.wxDeviceId}
             </if>
@@ -82,7 +85,9 @@
             1 = 1
             <if test="param.customerId != null and param.customerId != ''">
                 AND customerId = #{param.customerId}
-
+            </if>
+            <if test="param.productId != null and param.productId != ''">
+                AND productId = #{param.productId}
             </if>
             <if test="param.wxDeviceId != null and param.wxDeviceId != ''">
                 AND wxDeviceId = #{param.wxDeviceId}
