@@ -936,11 +936,17 @@ public class DeviceDataService {
     }
 
     public boolean verifyUser(Integer userId, Integer deviceId) {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        Integer hostDeviceId = devicePo.getHostDeviceId();
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
         String wxOpenId = customerUserPo.getOpenId();
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
         deviceCustomerUserRelationPo.setOpenId(wxOpenId);
-        deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        if(hostDeviceId != null){
+            deviceCustomerUserRelationPo.setDeviceId(hostDeviceId);
+        }else{
+            deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        }
         Integer count = deviceCustomerUserRelationMapper.queryRelationCount(deviceCustomerUserRelationPo);
         if (count > 0) {
             return true;
