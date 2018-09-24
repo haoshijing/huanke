@@ -13,4 +13,5 @@ public class ChildDeviceVo {
     private Integer id;
     private String deviceName;
     private String childId;
+    private String deviceTypeName;
 }

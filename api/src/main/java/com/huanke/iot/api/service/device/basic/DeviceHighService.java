@@ -125,6 +125,10 @@ public class DeviceHighService {
             childDeviceVo.setDeviceName(devicePo.getName());
             childDeviceVo.setChildId(devicePo.getChildId());
             childDeviceVos.add(childDeviceVo);
+            Integer modelId = devicePo.getModelId();
+            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+            childDeviceVo.setDeviceTypeName(deviceTypePo.getName());
         }
         return childDeviceVos;
     }
