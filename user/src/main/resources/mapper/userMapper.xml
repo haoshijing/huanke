@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.user.dao.user.UserManagerMapper">
+
+    <sql id="tableName">
+        t_user
+    </sql>
+    <sql id="role_tableName">
+        t_role
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" parameterType="com.huanke.iot.user.model.user.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        userName,
+        password,
+        realName,
+        nickName,
+        telephone,
+        roleId,
+        openID,
+        appId,
+        appSecret,
+        secondDomain,
+        status,
+        templateId,
+        createTime,
+        lastUpdateTime
+        )
+        VALUE (
+        #{userName},
+        #{password},
+        #{realName},
+        #{nickName},
+        #{telephone},
+        #{roleId},
+        #{openID},
+        #{appId},
+        #{appSecret},
+        #{secondDomain},
+        #{status},
+        #{templateId},
+        now(),
+        now()
+        )
+    </insert>
+    <update id="updateById" parameterType="com.huanke.iot.user.model.user.User">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="userName != null and userName != ''">
+                userName = #{userName},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="realName != null and realName != ''">
+                realName = #{realName},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                nickName = #{nickName},
+            </if>
+            <if test="telephone != null and telephone != ''">
+                telephone = #{telephone},
+            </if>
+            <if test="roleId != null ">
+                roleId = #{roleId},
+            </if>
+            <if test="openID != null and openID != ''">
+                openID = #{openID},
+            </if>
+            <if test="appId != null and appId != ''">
+                appId = #{appId},
+            </if>
+            <if test="openID != null and openID != ''">
+                openID = #{openID},
+            </if>
+            <if test="appSecret != null and appSecret != ''">
+                appSecret = #{appSecret},
+            </if>
+            <if test="secondDomain != null and secondDomain != ''">
+                secondDomain = #{secondDomain},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="templateId != null">
+                templateId = #{templateId},
+            </if>
+            lastUpdateTime = now()
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteById">
+        delete from
+        <include refid="tableName"/>
+        where id=#{id}
+    </delete>
+
+    <!-- 根据信息筛选返回数据 -->
+    <select id="selectByUserName" parameterType="java.lang.String" resultType="com.huanke.iot.user.model.user.User">
+        SELECT
+        u.*,r.roleName
+        FROM
+        <include refid="tableName"/>
+        u
+        left join
+        <include refid="role_tableName"/>
+        r on u.roleId = r.id
+        WHERE userName = #{userName} limit 1
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.user.model.user.User">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id}
+    </select>
+    <select id="selectAll" resultType="com.huanke.iot.user.model.user.User">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+    </select>
+</mapper>
