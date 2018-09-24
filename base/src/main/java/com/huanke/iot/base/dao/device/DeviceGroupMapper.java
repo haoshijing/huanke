@@ -4,6 +4,8 @@ import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author haoshijing
  * @version 2018年04月08日 10:20
@@ -25,4 +27,5 @@ public interface DeviceGroupMapper extends BaseMapper<DeviceGroupPo> {
 
     DeviceGroupPo selectById(Integer id);
 
+    List<DeviceGroupPo> selectByCustomerId(Integer customerId);
 }

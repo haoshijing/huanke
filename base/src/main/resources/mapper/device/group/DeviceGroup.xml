@@ -118,4 +118,10 @@
         where name = #{name} and customerId = #{customerId}
     </select>
 
+    <select id="selectByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
+        select * from  <include refid="tableName"/>
+        where customerId = #{customerId}
+        AND status = 1
+    </select>
+
 </mapper>

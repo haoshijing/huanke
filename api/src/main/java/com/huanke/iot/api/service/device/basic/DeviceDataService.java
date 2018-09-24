@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
+import com.huanke.iot.api.controller.h5.req.DeviceGroupFuncVo;
 import com.huanke.iot.api.controller.h5.req.ShareRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
@@ -171,7 +172,7 @@ public class DeviceDataService {
             }
             return deviceTeamVoList;
         }*/
-        if(teamId == null){
+        if (teamId == null) {
             DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
             String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
             deviceTeamPo.setName(defaultTeamName);
@@ -404,7 +405,6 @@ public class DeviceDataService {
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_single:
-                case DeviceAbilityTypeContants.ability_type_checkbox:
                     List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
                     String optionValue = getData(controlDatas, dirValue);
                     List<DeviceAbilitysVo.abilityOption> abilityOptionList = new ArrayList<>();
@@ -420,6 +420,23 @@ public class DeviceDataService {
                     }
                     deviceAbilitysVo.setAbilityOptionList(abilityOptionList);
                     break;
+                case DeviceAbilityTypeContants.ability_type_checkbox:
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    List<DeviceAbilitysVo.abilityOption> abilityOptionList1 = new ArrayList<>();
+                    for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos1) {
+                        String targetOptionValue = deviceabilityOptionPo.getOptionValue();
+                        String finalOptionValue = getData(controlDatas, targetOptionValue);
+                        DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
+                        abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                        if (Integer.valueOf(finalOptionValue) == 1) {
+                            abilityOption.setIsSelect(1);
+                        } else {
+                            abilityOption.setIsSelect(0);
+                        }
+                        abilityOptionList1.add(abilityOption);
+                    }
+                    deviceAbilitysVo.setAbilityOptionList(abilityOptionList1);
+                    break;
                 case DeviceAbilityTypeContants.ability_type_threshhold:
                     deviceAbilitysVo.setCurrValue(getData(controlDatas, dirValue));
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
@@ -430,6 +447,29 @@ public class DeviceDataService {
                 default:
                     break;
 
+            }
+            deviceAbilitysVoList.add(deviceAbilitysVo);
+        }
+        //添加空气质量判定
+        if (datas.containsKey(SensorTypeEnums.PM25_IN.getCode())) {
+            DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilitysVo();
+            deviceAbilitysVo.setDirValue("0");
+            deviceAbilitysVo.setAbilityName("空气质量");
+
+            String data = getData(datas, SensorTypeEnums.PM25_IN.getCode());
+            if (StringUtils.isNotEmpty(data)) {
+                Integer diData = Integer.valueOf(data);
+                if (diData >= 0 && diData <= 35) {
+                    deviceAbilitysVo.setCurrValue("优");
+                } else if (diData > 35 && diData <= 75) {
+                    deviceAbilitysVo.setCurrValue("良");
+                } else if (diData > 75 && diData <= 150) {
+                    deviceAbilitysVo.setCurrValue("中");
+                } else {
+                    deviceAbilitysVo.setCurrValue("差");
+                }
+            } else {
+                deviceAbilitysVo.setCurrValue("优");
             }
             deviceAbilitysVoList.add(deviceAbilitysVo);
         }
@@ -527,6 +567,19 @@ public class DeviceDataService {
             info.setSoftVersion(jsonObject.getString("software"));
         }
         deviceDetailVo.setDeviceInfoItem(info);
+    }
+
+    public void sendGroupFunc(DeviceGroupFuncVo deviceGroupFuncVo, Integer userId, int operType) {
+        List<String> wxDeviceIdList = deviceGroupFuncVo.getWxDeviceIdList();
+        String funcId = deviceGroupFuncVo.getFuncId();
+        String value = deviceGroupFuncVo.getValue();
+        for (String wxDeviceId : wxDeviceIdList) {
+            DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
+            deviceFuncVo.setWxDeviceId(wxDeviceId);
+            deviceFuncVo.setFuncId(funcId);
+            deviceFuncVo.setValue(value);
+            String requestId = sendFunc(deviceFuncVo, userId, operType);
+        }
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
@@ -878,14 +931,14 @@ public class DeviceDataService {
         return (int) (((tbl_aqi[i + 1] - tbl_aqi[i]) / (tbl_pm2_5[i + 1] - tbl_pm2_5[i]) * (pm2_5 - tbl_pm2_5[i]) + tbl_aqi[i]));
     }
 
-    public boolean verifyUser(Integer userId, Integer deviceId){
+    public boolean verifyUser(Integer userId, Integer deviceId) {
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
         String wxOpenId = customerUserPo.getOpenId();
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
         deviceCustomerUserRelationPo.setOpenId(wxOpenId);
         deviceCustomerUserRelationPo.setDeviceId(deviceId);
         Integer count = deviceCustomerUserRelationMapper.queryRelationCount(deviceCustomerUserRelationPo);
-        if(count > 0){
+        if (count > 0) {
             return true;
         }
         return false;

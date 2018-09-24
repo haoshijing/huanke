@@ -1,57 +1,44 @@
 package com.huanke.iot.api.controller.h5;
 
-import com.huanke.iot.api.controller.h5.team.DeviceGroupNewRequest;
-import com.huanke.iot.api.controller.h5.team.DeviceGroupRequest;
+import com.huanke.iot.api.controller.h5.req.DeviceGroupFuncVo;
+import com.huanke.iot.api.controller.h5.response.DeviceGroupVo;
+import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.team.DeviceGroupService;
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.base.constant.RetCode;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author onlymark
  * @version 2018年08月24日 10:16
  **/
 @RestController
-@RequestMapping("/h5/api")
+@RequestMapping("/h5/api/group")
+@Slf4j
 public class DeviceGroupController extends BaseController{
     @Autowired
-    DeviceGroupService deviceGroupService;
-    @RequestMapping("/createGroup")
-    public ApiResponse<Integer> createDeviceGroup( @RequestBody DeviceGroupNewRequest deviceGroupNewRequest){
+    private DeviceGroupService deviceGroupService;
+    @Autowired
+    private DeviceDataService deviceDataService;
+
+
+    @RequestMapping("/list")
+    public Object groupList() {
         Integer userId = getCurrentUserId();
-        Integer groupId = deviceGroupService.createDeviceGroup(userId,deviceGroupNewRequest);
-        return new ApiResponse<>(groupId);
+        Integer customerId = getCurrentCustomerId();
+        log.info("查询设备群列表： userId={}, customerId={}", userId, customerId);
+        List<DeviceGroupVo> deviceGroupVoList = deviceGroupService.getGroupListByUserId(userId, customerId);
+        return new ApiResponse<>(deviceGroupVoList);
     }
 
-    @RequestMapping("/deleteGroup")
-    public ApiResponse<Boolean> delDeviceGroup(Integer groupId){
-        Integer userId = getCurrentUserId();
-        Boolean ret  = deviceGroupService.deleteGroup(userId,groupId);
-        return new ApiResponse<>(ret);
-    }
-    @RequestMapping("/updateDeviceGroup")
-    public ApiResponse<Boolean> updateDeviceGroup(@RequestBody DeviceGroupRequest deviceGroupRequest){
-        Integer userId = getCurrentUserId();
-        Boolean ret = deviceGroupService.updateDeviceGroup(userId,deviceGroupRequest);
-        return new ApiResponse<>(ret);
-    }
-
-    @RequestMapping("/updateGroupName")
-    public ApiResponse<Boolean> updateGroupName(Integer groupId,String groupName){
-        Integer userId = getCurrentUserId();
-        if(groupId == null  || StringUtils.isEmpty(groupName)){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
-        }
-        ApiResponse apiResponse = new ApiResponse(true);
-        Boolean ret = deviceGroupService.updateGroupName(userId,groupId,groupName);
-        apiResponse.setData(ret);
-        if(!ret){
-            apiResponse.setMsg("该组名已存在");
-        }
-        return apiResponse;
+    @RequestMapping("/groupSendFunc")
+    public Object groupSendFunc(@RequestBody DeviceGroupFuncVo deviceGroupFuncVo) {
+        deviceDataService.sendGroupFunc(deviceGroupFuncVo, getCurrentUserId(), 1);
+        return new ApiResponse<>();
     }
 }

@@ -76,12 +76,12 @@ public class DeviceController extends BaseController {
     /**
      * 暂时不用
      * @return
-     *//*
+     */
     @RequestMapping("/queryDetailByDeviceId")
     public ApiResponse<DeviceDetailVo> queryDetailByDeviceId(String deviceId) {
         DeviceDetailVo deviceDetailVo = deviceDataService.queryDetailByDeviceId(deviceId);
         return new ApiResponse<>(deviceDetailVo);
-    }*/
+    }
 
     @RequestMapping("/getLocation/{deviceId}")
     public ApiResponse<LocationVo> queryDeviceLocation(@PathVariable("deviceId") Integer deviceId) {

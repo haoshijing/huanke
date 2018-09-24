@@ -2,7 +2,8 @@ package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
-import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author sixiaojun
@@ -20,8 +21,8 @@ public interface DeviceGroupItemMapper extends BaseMapper<DeviceGroupItemPo> {
 
     Integer deleteDeviceById(Integer deviceId);
 
-    boolean deleteByJoinId(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId);
 
     int deleteItemsByDeviceId(Integer iDeviceId);
 
+    List<DeviceGroupItemPo> selectByGroupId(Integer groupId);
 }
