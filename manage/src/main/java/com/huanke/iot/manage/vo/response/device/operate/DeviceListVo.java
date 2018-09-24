@@ -52,6 +52,12 @@ public class DeviceListVo {
 
     private Integer modelId;
 
+    private Integer hostStatus;
+
+    private Integer hostDeviceId;
+
+    private String childId;
+
     /**
      * 设备型号
      */

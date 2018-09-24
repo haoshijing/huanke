@@ -190,6 +190,10 @@ public class DeviceOperateService {
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
+            //获取主从相关的信息
+            deviceQueryVo.setHostDeviceId(devicePo.getHostDeviceId());
+            deviceQueryVo.setHostStatus(devicePo.getHostStatus());
+            deviceQueryVo.setChildId(devicePo.getChildId());
             DeviceGroupPo queryDeviceGroup = this.deviceGroupMapper.selectByDeviceId(devicePo.getId());
 //            DeviceGroupItemPo queryDeviceGroupItemPo = this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId());
             if (null != queryDeviceGroup) {
