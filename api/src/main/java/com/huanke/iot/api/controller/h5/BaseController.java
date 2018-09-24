@@ -23,4 +23,9 @@ public class BaseController {
         UserRequestContext requestContext = UserRequestContextHolder.get();
         return  requestContext.getCustomerVo().getAppId();
     }
+
+    protected Integer getCurrentCustomerId(){
+        UserRequestContext requestContext = UserRequestContextHolder.get();
+        return  requestContext.getCustomerVo().getCustomerId();
+    }
 }

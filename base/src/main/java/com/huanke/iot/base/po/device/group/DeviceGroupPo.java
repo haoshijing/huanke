@@ -26,7 +26,7 @@ public class DeviceGroupPo {
     /**
      * 父openId
      */
-    private String masterUserId;
+    private Integer masterUserId;
 
     /**
      * 管理OpenId

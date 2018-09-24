@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
+import com.huanke.iot.api.controller.h5.req.DeviceGroupFuncVo;
 import com.huanke.iot.api.controller.h5.req.ShareRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
@@ -427,9 +428,9 @@ public class DeviceDataService {
                         String finalOptionValue = getData(controlDatas, targetOptionValue);
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
-                        if(Integer.valueOf(finalOptionValue) == 1){
+                        if (Integer.valueOf(finalOptionValue) == 1) {
                             abilityOption.setIsSelect(1);
-                        }else{
+                        } else {
                             abilityOption.setIsSelect(0);
                         }
                         abilityOptionList1.add(abilityOption);
@@ -446,6 +447,29 @@ public class DeviceDataService {
                 default:
                     break;
 
+            }
+            deviceAbilitysVoList.add(deviceAbilitysVo);
+        }
+        //添加空气质量判定
+        if (datas.containsKey(SensorTypeEnums.PM25_IN.getCode())) {
+            DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilitysVo();
+            deviceAbilitysVo.setDirValue("0");
+            deviceAbilitysVo.setAbilityName("空气质量");
+
+            String data = getData(datas, SensorTypeEnums.PM25_IN.getCode());
+            if (StringUtils.isNotEmpty(data)) {
+                Integer diData = Integer.valueOf(data);
+                if (diData >= 0 && diData <= 35) {
+                    deviceAbilitysVo.setCurrValue("优");
+                } else if (diData > 35 && diData <= 75) {
+                    deviceAbilitysVo.setCurrValue("良");
+                } else if (diData > 75 && diData <= 150) {
+                    deviceAbilitysVo.setCurrValue("中");
+                } else {
+                    deviceAbilitysVo.setCurrValue("差");
+                }
+            } else {
+                deviceAbilitysVo.setCurrValue("优");
             }
             deviceAbilitysVoList.add(deviceAbilitysVo);
         }
@@ -543,6 +567,19 @@ public class DeviceDataService {
             info.setSoftVersion(jsonObject.getString("software"));
         }
         deviceDetailVo.setDeviceInfoItem(info);
+    }
+
+    public void sendGroupFunc(DeviceGroupFuncVo deviceGroupFuncVo, Integer userId, int operType) {
+        List<String> wxDeviceIdList = deviceGroupFuncVo.getWxDeviceIdList();
+        String funcId = deviceGroupFuncVo.getFuncId();
+        String value = deviceGroupFuncVo.getValue();
+        for (String wxDeviceId : wxDeviceIdList) {
+            DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
+            deviceFuncVo.setWxDeviceId(wxDeviceId);
+            deviceFuncVo.setFuncId(funcId);
+            deviceFuncVo.setValue(value);
+            String requestId = sendFunc(deviceFuncVo, userId, operType);
+        }
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
