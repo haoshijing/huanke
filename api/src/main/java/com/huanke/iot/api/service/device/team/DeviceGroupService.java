@@ -34,7 +34,7 @@ public class DeviceGroupService {
         List<DeviceGroupVo> deviceGroupVoList = new ArrayList<>();
         List<DeviceGroupPo> deviceGroupPoListAll = deviceGroupMapper.selectByCustomerId(customerId);
         List<DeviceGroupPo> deviceGroupPoList = deviceGroupPoListAll.stream().filter(deviceGroupPo -> {
-            if (deviceGroupPo.getMasterUserId() == userId || Arrays.asList(deviceGroupPo.getManageUserIds().split(",")).contains(String.valueOf(userId))) {
+            if (deviceGroupPo.getMasterUserId().equals(userId)|| (deviceGroupPo.getManageUserIds() != null && Arrays.asList(deviceGroupPo.getManageUserIds().split(",")).contains(String.valueOf(userId)))) {
                 return true;
             }
             return false;

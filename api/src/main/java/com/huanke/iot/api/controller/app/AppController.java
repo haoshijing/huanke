@@ -78,7 +78,7 @@ public class AppController extends BaseController {
     @RequestMapping("/sendFunc")
     public ApiResponse<Boolean> sendFuc(String deviceId,String funcId){
         DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
-        if(StringUtils.equals("1", funcId)){
+        /*if(StringUtils.equals("1", funcId)){
             deviceFuncVo.setWxDeviceId(deviceId);
             deviceFuncVo.setFuncId("210");
             deviceFuncVo.setValue("0");
@@ -99,7 +99,7 @@ public class AppController extends BaseController {
             deviceFuncVo.setWxDeviceId(deviceId);
             deviceFuncVo.setFuncId("210");
             deviceFuncVo.setValue("1");
-        }
+        }*/
         deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),2);
         return new ApiResponse<>(true);
     }

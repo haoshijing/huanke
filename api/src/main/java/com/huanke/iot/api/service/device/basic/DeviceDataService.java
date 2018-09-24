@@ -570,12 +570,12 @@ public class DeviceDataService {
     }
 
     public void sendGroupFunc(DeviceGroupFuncVo deviceGroupFuncVo, Integer userId, int operType) {
-        List<String> wxDeviceIdList = deviceGroupFuncVo.getWxDeviceIdList();
+        List<Integer> deviceIdList = deviceGroupFuncVo.getDeviceIdList();
         String funcId = deviceGroupFuncVo.getFuncId();
         String value = deviceGroupFuncVo.getValue();
-        for (String wxDeviceId : wxDeviceIdList) {
+        for (Integer deviceId : deviceIdList) {
             DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
-            deviceFuncVo.setWxDeviceId(wxDeviceId);
+            deviceFuncVo.setDeviceId(deviceId);
             deviceFuncVo.setFuncId(funcId);
             deviceFuncVo.setValue(value);
             String requestId = sendFunc(deviceFuncVo, userId, operType);
@@ -583,7 +583,11 @@ public class DeviceDataService {
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceFuncVo.getWxDeviceId());
+        DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
+        if(devicePo.getHostDeviceId() != null){
+            //子设备
+            devicePo = deviceMapper.selectById(devicePo.getHostDeviceId());
+        }
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;
