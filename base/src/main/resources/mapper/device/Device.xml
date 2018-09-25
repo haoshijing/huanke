@@ -165,6 +165,14 @@
         <include refid="tableName"/>
         WHERE mac = #{mac} limit 1
     </select>
+
+    <select id="selectByName" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE name = #{name} limit 1
+    </select>
     <select id="selectDeviceCustomerRelationByMac" parameterType="java.lang.String"
             resultType="com.huanke.iot.base.po.device.DevicePo">
         select

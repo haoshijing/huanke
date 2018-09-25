@@ -15,6 +15,8 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
      */
     DevicePo selectByMac(String mac);
 
+    DevicePo selectByName(String name);
+
     DevicePo selectDeviceCustomerRelationByMac(String mac);
 
     /**

@@ -799,9 +799,12 @@ public class DeviceOperateService {
     public DevicePo queryDeviceByName(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList) {
         DevicePo devicePo = null;
         for (DeviceCreateOrUpdateRequest.DeviceUpdateList device : deviceList) {
-            devicePo = deviceMapper.selectByMac(device.getName());
-            if (null != devicePo) {
+            devicePo = deviceMapper.selectByName(device.getName());
+            if (null != devicePo && CommonConstant.STATUS_DEL != devicePo.getStatus()) {
                 return devicePo;
+            }
+            else {
+                devicePo = null;
             }
         }
         return devicePo;
