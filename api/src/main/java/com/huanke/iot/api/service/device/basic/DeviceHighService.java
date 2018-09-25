@@ -99,7 +99,8 @@ public class DeviceHighService {
 
         JSONObject stopWatchJson = JSONObject.parseObject(deviceTypePo.getStopWatch());
         if(stopWatchJson != null){
-            JSONArray n = stopWatchJson.getJSONArray("n");
+            JSONObject mb = stopWatchJson.getJSONObject("mb");
+            JSONArray n = mb.getJSONArray("n");
             n.add(String.valueOf(childId));
             stopWatchJson.put("n",n);
             String redisStopWatch = JSONObject.toJSONString(stopWatchJson);
