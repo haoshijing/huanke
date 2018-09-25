@@ -144,4 +144,13 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <update id="updateStopWatch" >
+        update
+        <include refid="tableName"/>
+        <set>
+            stopWatch = #{stopWatch}
+        </set>
+        where id = #{id}
+    </update>
+
 </mapper>

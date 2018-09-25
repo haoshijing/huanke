@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
@@ -90,15 +91,23 @@ public class DeviceHighService {
 
         Integer childDeviceId = addOrUpdate(devicePo);
         //缓存设备码表等待设备读取
-        Integer childDeviceTypeId = deviceModelMapper.selectById(modelId).getTypeId();
-        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(childDeviceTypeId);
+        DevicePo hostDevice = deviceMapper.selectById(hostDeviceId);
+        Integer hostModelId = hostDevice.getModelId();
+        Integer hostDeviceTypeId = deviceModelMapper.selectById(hostModelId).getTypeId();
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(hostDeviceTypeId);
+
+
         JSONObject stopWatchJson = JSONObject.parseObject(deviceTypePo.getStopWatch());
-        if(stopWatchJson == null){
+        if(stopWatchJson != null){
+            JSONArray n = stopWatchJson.getJSONArray("n");
+            n.add(String.valueOf(childId));
+            stopWatchJson.put("n",n);
+            String redisStopWatch = JSONObject.toJSONString(stopWatchJson);
+            deviceTypeMapper.updateStopWatch(hostDeviceTypeId, redisStopWatch);
+            stringRedisTemplate.opsForValue().set("childStopWatch." + hostDeviceId, redisStopWatch);
+        }else{
             log.info("码表为空：hostDeviceId ={}, childId={}, modelId={}", hostDeviceId, childId, modelId);
         }
-        stopWatchJson.put("address", childDeviceId);
-        String redisStopWatch = JSONObject.toJSONString(stopWatchJson);
-        stringRedisTemplate.opsForValue().set("childStopWatch." + childDeviceId, redisStopWatch);
         return childDeviceId;
     }
 
