@@ -987,6 +987,7 @@ public class DeviceOperateService {
 
     private ApiResponse<JSONObject> obtainDeviceInfo(String appId, String appSecret, String customerId, String productId) {
         String accessToken = wechartUtil.getAccessToken(appId, appSecret, customerId, false);
+        log.error("accessToken: " +accessToken);
         if (StringUtils.isBlank(accessToken)) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该appId与appSecret无法获取accessToken");
         }
