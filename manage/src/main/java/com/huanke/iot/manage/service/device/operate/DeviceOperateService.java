@@ -370,12 +370,11 @@ public class DeviceOperateService {
         if (deviceList != null && deviceList.size() > 0) {
             //首先查询device_pool表中 该客户的该型号下 是否存在足够数量的device_id和device_license
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
-
             deviceIdPoolPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
             deviceIdPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
             deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
             Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
-            //若当前设备池中的数量不够，则向微信公众号请求所需要的新的设备证书
+            //若当前设备池中当前产品的配额的数量不够，则向微信公众号请求所需要的新的设备证书
             if (deviceList.size() > devicePoolCount) {
                 Integer addCount = deviceList.size() - devicePoolCount;
                 //获取数据
@@ -384,7 +383,6 @@ public class DeviceOperateService {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg(), false);
                 }
             }
-
             //当pool中的证书数量充足时进行分配
             Integer offset = 0;
             List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
@@ -788,7 +786,7 @@ public class DeviceOperateService {
         DevicePo devicePo = null;
         for (DeviceCreateOrUpdateRequest.DeviceUpdateList device : deviceList) {
             devicePo = deviceMapper.selectByMac(device.getMac());
-            if (null != devicePo) {
+            if (null != devicePo && CommonConstant.STATUS_DEL != devicePo.getStatus()) {
                 return devicePo;
             }
         }

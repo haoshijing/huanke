@@ -56,6 +56,8 @@
         FROM
         <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
+        AND
+        status =1
     </select>
 
     <delete id="deleteDeviceById" parameterType="com.huanke.iot.base.po.device.group.DeviceGroupItemPo">

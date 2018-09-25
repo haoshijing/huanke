@@ -1,17 +1,22 @@
 package com.huanke.iot.manage.service.device.group;
 
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
+import com.huanke.iot.manage.vo.response.device.group.DeviceGroupDetailVo;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +55,9 @@ public class DeviceGroupService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
 
     /**
      * 2018-08-18
@@ -105,30 +113,76 @@ public class DeviceGroupService {
         }
     }
 
-    public List<DeviceGroupListVo> queryGroupByPage(GroupQueryRequest groupQueryRequest)throws Exception{
+    /**
+     * 分页查询群列表
+     * 2018-09-25
+     * sixiaojun
+     * @param groupQueryRequest
+     * @return
+     * @throws Exception
+     */
+    public ApiResponse<List<DeviceGroupListVo>> queryGroupByPage(GroupQueryRequest groupQueryRequest)throws Exception{
         List<DeviceGroupListVo> deviceGroupListVoList = new ArrayList<>();
-        //todo 显示从设备
         Integer offset = (groupQueryRequest.getPage() - 1) * groupQueryRequest.getLimit();
         Integer limit = groupQueryRequest.getLimit();
         DeviceGroupPo queryPo = new DeviceGroupPo();
         BeanUtils.copyProperties(groupQueryRequest,queryPo);
         List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo,limit,offset);
         if(null != deviceGroupPoList){
-            //查询当前集群的客户信息
             deviceGroupPoList.stream().forEach(deviceGroupPo -> {
                 DeviceGroupListVo deviceGroupListVo = new DeviceGroupListVo();
                 deviceGroupListVo.setId(deviceGroupPo.getId());
                 deviceGroupListVo.setName(deviceGroupPo.getName());
                 deviceGroupListVo.setIntroduction(deviceGroupPo.getIntroduction());
                 deviceGroupListVo.setRemark(deviceGroupPo.getRemark());
+                //查询当前集群的客户信息
                 CustomerPo customerPo=this.customerMapper.selectById(deviceGroupPo.getCustomerId());
                 deviceGroupListVo.setCustomerName(customerPo.getName());
+                //查询当前集群中的设备总量
+                DeviceGroupItemPo groupItemPo = new DeviceGroupItemPo();
+                groupItemPo.setGroupId(deviceGroupPo.getId());
+                Integer deviceCount = this.deviceGroupItemMapper.selectCount(groupItemPo);
+                deviceGroupListVo.setDeviceCount(deviceCount);
                 deviceGroupListVo.setCreateTime(deviceGroupPo.getCreateTime());
                 deviceGroupListVoList.add(deviceGroupListVo);
             });
         }
-        return  deviceGroupListVoList;
+        return new ApiResponse<>(RetCode.OK,"集群查询成功",deviceGroupListVoList);
     }
+
+
+    /**
+     * 查询集群总数
+     * sixiaojun
+     * 2018-09-25
+     * @return
+     * @throws Exception
+     */
+    public ApiResponse<Integer> queryGroupCount() throws Exception{
+        DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
+        deviceGroupPo.setStatus(CommonConstant.STATUS_YES);
+        Integer groupCount = this.deviceGroupMapper.selectCount(deviceGroupPo);
+        return new ApiResponse<>(RetCode.OK,"查询集群总数成功",groupCount);
+    }
+
+    public ApiResponse<DeviceGroupDetailVo> queryGroupById(Integer groupId)throws Exception{
+        DeviceGroupDetailVo deviceGroupDetailVo = new DeviceGroupDetailVo();
+        DeviceGroupPo deviceGroupPo = this.deviceGroupMapper.selectById(groupId);
+        if(null != deviceGroupPo){
+            BeanUtils.copyProperties(deviceGroupPo,deviceGroupDetailVo);
+            //查询设备的相关信息
+            List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(groupId);
+            deviceGroupItemPoList.stream().forEach(deviceGroupItemPo -> {
+                DeviceGroupDetailVo.DeviceInGroup device =new DeviceGroupDetailVo.DeviceInGroup();
+                DevicePo devicePo = this.deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
+                BeanUtils.copyProperties(devicePo,device);
+            });
+
+        }
+        return new ApiResponse<>(RetCode.OK,"查询集群详情成功",deviceGroupDetailVo);
+    }
+
+
     /**
      * 查询设备列的集群信息，若存在直接返回集群的相关信息
      * @param deviceLists

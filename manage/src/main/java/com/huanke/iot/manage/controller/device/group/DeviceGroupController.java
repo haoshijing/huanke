@@ -7,7 +7,9 @@ import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.service.device.group.DeviceGroupService;
 import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
+import com.huanke.iot.manage.vo.response.device.group.DeviceGroupDetailVo;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -78,12 +80,29 @@ public class DeviceGroupController {
     @RequestMapping(value = "/queryGroupByPage",method = RequestMethod.POST)
     public ApiResponse<List<DeviceGroupListVo>> queryGroupByPage(@RequestBody GroupQueryRequest groupQueryRequest){
         try {
-            List<DeviceGroupListVo> deviceGroupListVoList=this.deviceGroupService.queryGroupByPage(groupQueryRequest);
-            return new ApiResponse<>(RetCode.OK,"查询成功",deviceGroupListVoList);
+            return this.deviceGroupService.queryGroupByPage(groupQueryRequest);
 
         }catch (Exception e){
-            log.error("集群查询失败 = {}",e);
-            return new ApiResponse<>(RetCode.ERROR,"集群查询异常");
+            log.error("集群查询列表错误 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"集群查询列表异常");
+        }
+    }
+
+
+//    @ApiOperation("根据查询条件分页查询设备")
+//    @RequestMapping(value = "/queryGroupById",method = RequestMethod.POST)
+//    public ApiResponse<DeviceGroupDetailVo> queryGroupById(){
+//
+//    }
+
+    @ApiOperation("查询集群总数")
+    @RequestMapping(value = "/queryGroupCount",method = RequestMethod.GET)
+    public ApiResponse<Integer> queryGroupCount(){
+        try{
+            return this.deviceGroupService.queryGroupCount();
+        }catch (Exception e){
+            log.error("查询集群数量错误 =  {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"查询集群总数异常");
         }
     }
 
