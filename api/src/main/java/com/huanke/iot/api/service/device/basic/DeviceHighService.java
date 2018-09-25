@@ -1,7 +1,5 @@
 package com.huanke.iot.api.service.device.basic;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
 import com.huanke.iot.base.constant.CommonConstant;
@@ -48,6 +46,8 @@ public class DeviceHighService {
     private DeviceTypeMapper deviceTypeMapper;
     @Autowired
     private DeviceTeamItemMapper deviceTeamItemMapper;
+    @Autowired
+    private DeviceDataService deviceDataService;
 
     public String getHighToken(Integer customerId, String password) throws Exception {
         WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(customerId, password);
@@ -96,16 +96,9 @@ public class DeviceHighService {
         Integer hostDeviceTypeId = deviceModelMapper.selectById(hostModelId).getTypeId();
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(hostDeviceTypeId);
 
-
-        JSONObject stopWatchJson = JSONObject.parseObject(deviceTypePo.getStopWatch());
-        if(stopWatchJson != null){
-            JSONObject mb = stopWatchJson.getJSONObject("mb");
-            JSONArray n = mb.getJSONArray("n");
-            n.add(String.valueOf(childId));
-            stopWatchJson.put("n",n);
-            String redisStopWatch = JSONObject.toJSONString(stopWatchJson);
-            deviceTypeMapper.updateStopWatch(hostDeviceTypeId, redisStopWatch);
-            stringRedisTemplate.opsForValue().set("childStopWatch." + hostDeviceId, redisStopWatch);
+        String stopWatch = deviceTypePo.getStopWatch();
+        if(stopWatch != null){
+            deviceDataService.sendMb(hostDeviceId, stopWatch);
         }else{
             log.info("码表为空：hostDeviceId ={}, childId={}, modelId={}", hostDeviceId, childId, modelId);
         }

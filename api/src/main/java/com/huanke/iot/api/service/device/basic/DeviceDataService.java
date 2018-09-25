@@ -622,6 +622,11 @@ public class DeviceDataService {
         return "";
     }
 
+    public void sendMb(Integer deviceId, String stopWatch) {
+        String topic = "/down/stopWatch/" + deviceId;
+        mqttSendService.sendMessage(topic, stopWatch);
+    }
+
 
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
