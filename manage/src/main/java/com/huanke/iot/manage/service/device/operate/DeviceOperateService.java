@@ -890,20 +890,25 @@ public class DeviceOperateService {
                         String wxDevicelicence = jsonObject.getString("devicelicence");
                         String wxQrticket = jsonObject.getString("qrticket");
 
-                        DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
+                        if(wxDeviceId!=null&&wxDevicelicence!=null){
+                            DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
 
-                        insertPo.setCustomerId(customerId);
-                        insertPo.setProductId(productId);
-                        insertPo.setWxDeviceId(wxDeviceId);
-                        insertPo.setWxDeviceLicence(wxDevicelicence);
-                        insertPo.setWxQrticket(wxQrticket);
-                        insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-                        insertPo.setCreateTime(System.currentTimeMillis());
-                        insertPo.setLastUpdateTime(System.currentTimeMillis());
+                            insertPo.setCustomerId(customerId);
+                            insertPo.setProductId(productId);
+                            insertPo.setWxDeviceId(wxDeviceId);
+                            insertPo.setWxDeviceLicence(wxDevicelicence);
+                            insertPo.setWxQrticket(wxQrticket);
+                            insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                            insertPo.setCreateTime(System.currentTimeMillis());
+                            insertPo.setLastUpdateTime(System.currentTimeMillis());
 
-                        deviceIdPoolPos.add(insertPo);
+                            deviceIdPoolPos.add(insertPo);
 
-                        correctCount++;
+                            correctCount++;
+                        }else{
+                            log.error("wxDeviceId为空 = {}",jsonObject);
+                        }
+
                     } else {
                         log.error("createWxDeviceIdPool.jsonObject = {}", false);
                     }
