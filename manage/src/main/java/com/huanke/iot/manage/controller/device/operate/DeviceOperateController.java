@@ -172,7 +172,6 @@ public class DeviceOperateController {
     @ApiOperation("删除单个设备")
     @DeleteMapping(value = "/deleteOneDevice")
     public ApiResponse<Boolean> deleteOneDevice(@RequestBody DeviceUnbindRequest.deviceVo deviceVo) {
-
         try {
             if (null == deviceVo.deviceId || deviceVo.deviceId <= 0 || StringUtils.isBlank(deviceVo.mac)) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "参数不可为空");
