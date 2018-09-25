@@ -789,6 +789,9 @@ public class DeviceOperateService {
             if (null != devicePo && CommonConstant.STATUS_DEL != devicePo.getStatus()) {
                 return devicePo;
             }
+            else {
+                devicePo = null;
+            }
         }
         return devicePo;
     }
