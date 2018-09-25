@@ -379,7 +379,7 @@ public class DeviceOperateService {
                 Integer addCount = deviceList.size() - devicePoolCount;
                 //获取数据
                 ApiResponse<Integer> result = createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(), deviceAssignToCustomerRequest.getProductId(), addCount);
-                if (result == null || RetCode.PARAM_ERROR == result.getCode()) {
+                if (result == null || RetCode.OK != result.getCode()) {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg(), false);
                 }
             }
@@ -881,7 +881,7 @@ public class DeviceOperateService {
                 for (int m = 0; m < addCount; m++) {
                     ApiResponse<JSONObject> result = obtainDeviceInfo(appId, appSecret, customerId.toString(), productId);
                     //当第一个就开始 出现错误时，则直接返回结果
-                    if (m == 0 && RetCode.ERROR == result.getCode()) {
+                    if (m == 0 && RetCode.OK != result.getCode()) {
                         return new ApiResponse<>(RetCode.ERROR, result.getMsg(),correctCount);
                     }
                     JSONObject jsonObject = result.getData();
