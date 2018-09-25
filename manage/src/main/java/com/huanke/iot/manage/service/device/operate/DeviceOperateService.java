@@ -280,18 +280,12 @@ public class DeviceOperateService {
                     queryDevicePo.setWxDevicelicence(null);
                     queryDevicePo.setWxQrticket(null);
 
-                    //设定绑定状态为未绑定
-                    queryDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
                     //设定工作状态为空闲
                     queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
                     //设定在线状态为离线
                     queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
                     //设定启用状态为禁用
                     queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
-
-                    queryDevicePo.setWxDeviceId(null);
-                    queryDevicePo.setWxDevicelicence(null);
-                    queryDevicePo.setWxQrticket(null);
 
                     queryDevicePo.setStatus(CommonConstant.STATUS_DEL);
 
