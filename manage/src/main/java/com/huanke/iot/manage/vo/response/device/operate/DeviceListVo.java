@@ -58,6 +58,8 @@ public class DeviceListVo {
 
     private String childId;
 
+    private Integer childCount;
+
     /**
      * 设备型号
      */

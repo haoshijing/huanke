@@ -159,6 +159,7 @@ public class DeviceOperateService {
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
+        //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
         if(deviceListQueryRequest!=null){
             BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
@@ -199,6 +200,8 @@ public class DeviceOperateService {
             deviceQueryVo.setHostDeviceId(devicePo.getHostDeviceId());
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
             deviceQueryVo.setChildId(devicePo.getChildId());
+            Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getHostDeviceId());
+            deviceQueryVo.setChildCount(childCount);
             DeviceGroupPo queryDeviceGroup = this.deviceGroupMapper.selectByDeviceId(devicePo.getId());
 //            DeviceGroupItemPo queryDeviceGroupItemPo = this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId());
             if (null != queryDeviceGroup) {
@@ -744,6 +747,17 @@ public class DeviceOperateService {
         }
 
     }
+
+    public ApiResponse<List<DevicePo>> queryChildDevice(Integer deviceId)throws Exception{
+        List<DevicePo> devicePoList = this.deviceMapper.selectChildDeviceListByHostDeviceId(deviceId);
+        if(null != devicePoList && 0 < devicePoList.size()){
+            return new ApiResponse<>(RetCode.OK,"查询从设备成功",devicePoList);
+        }
+        else {
+            return new ApiResponse<>(RetCode.OK,"当前设备无从设备",null);
+        }
+    }
+
 
     public List<CustomerUserPo> queryUser(Integer customerId) {
         List<CustomerUserPo> customerUserPoList = this.customerUserMapper.selectByCustomerId(customerId);

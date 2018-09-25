@@ -301,6 +301,18 @@ public class DeviceOperateController {
         }
     }
 
+    @ApiOperation("查询主设备下的从设备")
+    @RequestMapping(value = "/queryChildDevice/{id}", method = RequestMethod.POST)
+    public ApiResponse<List<DevicePo>> queryChildDevice(@PathVariable("id") Integer hostDeviceId){
+        try {
+            return this.deviceService.queryChildDevice(hostDeviceId);
+        }catch (Exception e){
+            log.error("从设备查询错误 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"从设备查询失败");
+        }
+    }
+
+
     @ApiOperation("查询当前客户下的用户列表")
     @RequestMapping(value = "/queryUsers", method = RequestMethod.POST)
     public ApiResponse<List<CustomerUserPo>> queryUsers(@RequestBody QueryInfoByCustomerRequest queryInfoByCustomerRequest) {
