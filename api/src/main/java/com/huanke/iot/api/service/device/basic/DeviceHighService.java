@@ -93,6 +93,9 @@ public class DeviceHighService {
         Integer childDeviceTypeId = deviceModelMapper.selectById(modelId).getTypeId();
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(childDeviceTypeId);
         JSONObject stopWatchJson = JSONObject.parseObject(deviceTypePo.getStopWatch());
+        if(stopWatchJson == null){
+            log.info("码表为空：hostDeviceId ={}, childId={}, modelId={}", hostDeviceId, childId, modelId);
+        }
         stopWatchJson.put("address", childDeviceId);
         String redisStopWatch = JSONObject.toJSONString(stopWatchJson);
         stringRedisTemplate.opsForValue().set("childStopWatch." + childDeviceId, redisStopWatch);
