@@ -344,8 +344,7 @@
         </set>
         where
         1= 1
-        <if test="wxDeviceId != null and wxDeviceId != ''">and wxDeviceId = #{wxDeviceId}</if>
-        AND
+        and wxDeviceId = #{wxDeviceId}
 
     </update>
 
@@ -513,9 +512,9 @@
             bindTime = #{bindTime}
             lastUpdateTime = #{lastUpdateTime}
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
-            <!--#{item}-->
+        <!--#{item}-->
         <!--</foreach>-->
     </update>
 
@@ -554,7 +553,8 @@
         where deviceId = #{id}
     </select>
 
-    <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         <include refid="tableName"/>
         WHERE hostDeviceId = #{hostDeviceId}
@@ -567,7 +567,7 @@
         <set>
             status = 2
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
     </update>
 
     <select id="getByHostDeviceIdAndTypeId" resultType="com.huanke.iot.base.po.device.DevicePo">
