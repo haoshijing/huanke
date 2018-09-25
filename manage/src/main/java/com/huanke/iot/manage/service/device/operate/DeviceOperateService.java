@@ -259,9 +259,7 @@ public class DeviceOperateService {
      * @param deviceVo
      * @return
      */
-    public ApiResponse<Boolean> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) {
-
-        try {
+    public ApiResponse<Boolean> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception{
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
             //解除 用户绑定关系、组关系
@@ -306,10 +304,6 @@ public class DeviceOperateService {
                 return result;
             }
             return new ApiResponse<>(RetCode.OK, "删除成功");
-        } catch (Exception e) {
-            log.error("设备删除失败-{}", e);
-            return new ApiResponse<>(RetCode.ERROR, "设备删除失败");
-        }
     }
 
     /**
