@@ -81,6 +81,7 @@
                 or  customerIds like CONCAT('%,',#{customerIds})
                 or  customerIds like CONCAT('%,',CONCAT(#{customerIds},',%'))
                 or customerIds = #{customerIds}
+                or customerIds is null
                 )
 
             <if test="typeIds != null and typeIds !='' ">
