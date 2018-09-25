@@ -526,7 +526,7 @@ public class DeviceOperateService {
 
         if(bindDeviceList!=null&&bindDeviceList.size()>0){
             for(int m=0;m<bindDeviceList.size();m++){
-                DevicePo bindDevice = new DevicePo();
+                DeviceQueryRequest.DeviceQueryList bindDevice = bindDeviceList.get(m);
 
                 DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
                 DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
