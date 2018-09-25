@@ -418,7 +418,6 @@
         where
         1= 1
         and id = #{id}
-        and status = #{status}
     </update>
 
     <!--批量更新-->
