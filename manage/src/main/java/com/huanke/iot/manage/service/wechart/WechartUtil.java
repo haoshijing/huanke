@@ -31,6 +31,7 @@ public class WechartUtil {
     public String getAccessToken(String appId, String appSecret, String customerId, boolean getFromSever) {
         String accessTokenKey = ACCESSS_TOKEN_PREIX + customerId;
         boolean needFromServer = getFromSever;
+
         if (!needFromServer) {
             String storeAccessToken = stringRedisTemplate.opsForValue().get(accessTokenKey);
             if (StringUtils.isNotEmpty(storeAccessToken)) {
@@ -50,13 +51,12 @@ public class WechartUtil {
                 while ((line = rd.readLine()) != null) {
                     result.append(line);
                 }
-                log.info("result = {}", result);
                 JSONObject json = JSONObject.parseObject(result.toString());
                 if (json.containsKey("access_token")) {
                     String queryAccessToken = json.getString("access_token");
                     if (StringUtils.isNotEmpty(queryAccessToken)) {
                         stringRedisTemplate.opsForValue().set(accessTokenKey, queryAccessToken);
-                        stringRedisTemplate.expire(accessTokenKey, 7000,TimeUnit.SECONDS);
+                        stringRedisTemplate.expire(accessTokenKey, 7000, TimeUnit.SECONDS);
                         return queryAccessToken;
                     }
                 }

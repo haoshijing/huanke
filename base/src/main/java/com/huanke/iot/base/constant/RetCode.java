@@ -16,4 +16,6 @@ public final class RetCode {
     public static final int NEED_LOGIN_ERROR = 401;
 
     public static final int AUTH_ERROR = 403;
+
+    public static final Integer WX_RROR_40001 = 40001;
 }

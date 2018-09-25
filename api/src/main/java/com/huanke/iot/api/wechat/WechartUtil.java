@@ -72,6 +72,7 @@ public class WechartUtil {
                     String queryAccessToken = json.getString("access_token");
                     if (StringUtils.isNotEmpty(queryAccessToken)) {
                         stringRedisTemplate.opsForValue().set(accessTokenKey, queryAccessToken);
+                        stringRedisTemplate.expire(accessTokenKey, 7000, TimeUnit.SECONDS);
                         return queryAccessToken;
                     }
                 }

@@ -259,7 +259,9 @@ public class DeviceOperateService {
      * @param deviceVo
      * @return
      */
-    public ApiResponse<Boolean> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception{
+    public ApiResponse<Boolean> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) {
+
+        try {
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
             //解除 用户绑定关系、组关系
@@ -280,12 +282,18 @@ public class DeviceOperateService {
                     queryDevicePo.setWxDevicelicence(null);
                     queryDevicePo.setWxQrticket(null);
 
+                    //设定绑定状态为未绑定
+                    queryDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
                     //设定工作状态为空闲
                     queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
                     //设定在线状态为离线
                     queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
                     //设定启用状态为禁用
                     queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
+
+                    queryDevicePo.setWxDeviceId(null);
+                    queryDevicePo.setWxDevicelicence(null);
+                    queryDevicePo.setWxQrticket(null);
 
                     queryDevicePo.setStatus(CommonConstant.STATUS_DEL);
 
@@ -298,6 +306,10 @@ public class DeviceOperateService {
                 return result;
             }
             return new ApiResponse<>(RetCode.OK, "删除成功");
+        } catch (Exception e) {
+            log.error("设备删除失败-{}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备删除失败");
+        }
     }
 
     /**
@@ -391,7 +403,7 @@ public class DeviceOperateService {
                 queryPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
                 //每次查找当前池中未使用第一条license
                 List<DeviceIdPoolPo> poolPoList = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset);
-                if(poolPoList != null & poolPoList.size()>0) {
+                if(poolPoList!=null&&poolPoList.size()>0) {
                     DeviceIdPoolPo resultPo = poolPoList.get(0);
 
                     //记录本次使用的pool状态为已占用
