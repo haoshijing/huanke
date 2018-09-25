@@ -481,6 +481,8 @@ public class DeviceDataService {
     public static class FuncItemMessage {
         private String type;
         private String value;
+        private String childid;
+
     }
 
     @Data
@@ -607,6 +609,9 @@ public class DeviceDataService {
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(deviceFuncVo.getValue());
+            if(devicePo.getHostDeviceId() != null){
+                funcItemMessage.setChildid(devicePo.getChildId());
+            }
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
 
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
