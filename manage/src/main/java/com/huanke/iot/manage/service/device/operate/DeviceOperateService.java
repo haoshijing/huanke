@@ -414,6 +414,7 @@ public class DeviceOperateService {
                     DevicePo devicePo = new DevicePo();
                     devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
                     devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
+                    devicePo.setStatus(CommonConstant.STATUS_YES);
                     devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
                     devicePo.setWxDeviceId(resultPo.getWxDeviceId());
                     devicePo.setWxDevicelicence(resultPo.getWxDeviceLicence());

@@ -163,7 +163,11 @@
         *
         FROM
         <include refid="tableName"/>
-        WHERE mac = #{mac} limit 1
+        WHERE
+        mac = #{mac}
+        AND
+        status = 1
+        limit 1
     </select>
 
     <select id="selectByName" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
@@ -341,6 +345,8 @@
         where
         1= 1
         <if test="wxDeviceId != null and wxDeviceId != ''">and wxDeviceId = #{wxDeviceId}</if>
+        AND
+
     </update>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
@@ -413,6 +419,7 @@
         where
         1= 1
         and id = #{id}
+        and status = #{status}
     </update>
 
     <!--批量更新-->
@@ -467,9 +474,10 @@
                 </foreach>
             </trim>
         </trim>
-        where id in
-        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
-            #{item.id,jdbcType=BIGINT}
+        where
+        id in
+        <foreach collection="list" index="index" item="device" separator="," open="(" close=")">
+            #{device.id,jdbcType=BIGINT}
         </foreach>
     </update>
 
