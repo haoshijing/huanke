@@ -1008,6 +1008,11 @@ public class DeviceOperateService {
             if (jsonObject != null) {
 
                 if (jsonObject.containsKey("errcode") && CommonConstant.ZERO != jsonObject.get("errcode")) {
+                    if(RetCode.WX_RROR_40001 .equals( jsonObject.get("errcode"))){
+                        log.error("WX_RROR_40001");
+                        accessToken = wechartUtil.getAccessToken(appId, appSecret, customerId, true);
+                        obtainDeviceInfo( appId,  appSecret,  customerId,  productId);
+                    }
                     return new ApiResponse<>(RetCode.PARAM_ERROR, result.toString(), jsonObject);
                 }
                 JSONObject resultObject = jsonObject.getJSONObject("base_resp");
