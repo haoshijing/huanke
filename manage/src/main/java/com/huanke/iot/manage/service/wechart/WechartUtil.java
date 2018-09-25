@@ -32,7 +32,7 @@ public class WechartUtil {
         String accessTokenKey = ACCESSS_TOKEN_PREIX + customerId;
         log.error("accessTokenKey== " + accessTokenKey);
         boolean needFromServer = getFromSever;
-        stringRedisTemplate.getExpire(accessTokenKey, TimeUnit.SECONDS);//根据key获取过期时间并换算成指定单位 
+        log.error("accessTokenKeyTime== " +stringRedisTemplate.getExpire(accessTokenKey, TimeUnit.SECONDS));//根据key获取过期时间并换算成指定单位 
 
         if (!needFromServer) {
             String storeAccessToken = stringRedisTemplate.opsForValue().get(accessTokenKey);
