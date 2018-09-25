@@ -345,6 +345,7 @@
         where
         1= 1
         and wxDeviceId = #{wxDeviceId}
+
     </update>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.DevicePo">
