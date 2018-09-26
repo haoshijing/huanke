@@ -33,7 +33,7 @@ public class DeviceTeamVo {
 
     @Data
     public static class ImgVideos {
-        private String imgvideo;
+        private String imgVideo;
     }
 
     @Data

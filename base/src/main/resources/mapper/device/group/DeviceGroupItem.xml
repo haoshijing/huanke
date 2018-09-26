@@ -74,6 +74,16 @@
         where deviceId = #{deviceId}
     </delete>
 
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from
+        <include refid="tableName"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item.teamId,jdbcType=BIGINT}
+        </foreach>
+    </delete>
+
     <select id="selectByGroupId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupItemPo">
         select
         *

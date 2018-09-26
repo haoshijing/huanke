@@ -172,4 +172,13 @@
         AND status = 1
     </select>
 
+    <update id="deleteById" parameterType="java.lang.Integer">
+        update
+        <include refid="tableName"/>
+        <set>
+            status = 2
+        </set>
+        WHERE id  = #{id}
+    </update>
+
 </mapper>

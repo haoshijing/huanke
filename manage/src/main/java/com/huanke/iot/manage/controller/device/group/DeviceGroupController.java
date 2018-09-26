@@ -14,10 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -61,7 +58,7 @@ public class DeviceGroupController {
             }
             else {
                 //首先创建集群,并返回新增集群的相关信息
-                DeviceGroupPo deviceGroupPo= deviceGroupService.createGroup(groupCreateOrUpdateRequest);
+                DeviceGroupPo deviceGroupPo= deviceGroupService.createNewGroup(groupCreateOrUpdateRequest);
                 //集群创建成功后获取集群ID，向其中添加选中的设备
 
                 //当有选中设备时加入选中的设备，没有选中设备时只创建新的集群
@@ -88,12 +85,27 @@ public class DeviceGroupController {
         }
     }
 
+    @ApiOperation("根据id查询集群详情")
+    @RequestMapping(value = "/queryGroupById/{id}",method = RequestMethod.POST)
+    public ApiResponse<DeviceGroupDetailVo> queryGroupById(@PathVariable("id") Integer groupId){
+        try {
+            return this.deviceGroupService.queryGroupById(groupId);
+        }catch (Exception e){
+            log.error("集群详情查询失败 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"集群查询异常");
+        }
+    }
 
-//    @ApiOperation("根据查询条件分页查询设备")
-//    @RequestMapping(value = "/queryGroupById",method = RequestMethod.POST)
-//    public ApiResponse<DeviceGroupDetailVo> queryGroupById(){
-//
-//    }
+    @ApiOperation("根据id删除集群")
+    @RequestMapping(value = "/deleteGroupById/{id}",method = RequestMethod.POST)
+    public ApiResponse<Boolean> deleteGroupById(@PathVariable("id") Integer groupId){
+        try {
+            return this.deviceGroupService.deleteOneGroup(groupId);
+        }catch (Exception e){
+            log.error("删除集群失败 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"删除集群异常");
+        }
+    }
 
     @ApiOperation("查询集群总数")
     @RequestMapping(value = "/queryGroupCount",method = RequestMethod.GET)

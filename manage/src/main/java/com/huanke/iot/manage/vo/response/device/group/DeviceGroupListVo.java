@@ -11,5 +11,6 @@ public class DeviceGroupListVo {
     private String customerName;
     private String introduction;
     private Integer deviceCount;
+    private Integer status;
     private Long createTime;
 }

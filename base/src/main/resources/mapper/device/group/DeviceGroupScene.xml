@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.device.DeviceTeamSceneMapper">
+<mapper namespace="com.huanke.iot.base.dao.device.DeviceGroupSceneMapper">
 
     <sql id="tableName">
-        t_device_team_scene
+        t_device_group_scene
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.huanke.iot.base.po.device.team.DeviceTeamScenePo">
+            parameterType="com.huanke.iot.base.po.device.group.DeviceGroupScenePo">
         INSERT INTO
         <include refid="tableName"/>
         (
         id,
-        teamId,
+        groupId,
         imgVideo,
-        status,
+        status
         createTime,
         lastUpdateTime
         )
@@ -35,43 +35,43 @@
         <include refid="tableName"/>
         (
         id,
-        teamId,
+        groupId,
         imgVideo,
         status,
         createTime,
         lastUpdateTime
         )
         VALUES
-        <foreach collection="list" item="teamScene" separator=",">
+        <foreach collection="list" item="groupScene" separator=",">
             (
-            #{teamScene.id},
-            #{teamScene.teamId},
-            #{teamScene.imgVideo},
-            #{teamScene.status},
-            #{teamScene.createTime},
-            #{teamScene.lastUpdateTime}
+            #{groupScene.id},
+            #{groupScene.groupId},
+            #{groupScene.imgVideo},
+            #{groupScene.status},
+            #{groupScene.createTime},
+            #{groupScene.lastUpdateTime}
             )
         </foreach>
     </insert>
 
-    <select id="selectImgVideoList" resultType="com.huanke.iot.base.po.device.team.DeviceTeamScenePo">
+    <select id="selectImgVideoList" resultType="com.huanke.iot.base.po.device.group.DeviceGroupScenePo">
         select * from
         <include refid="tableName"/>
-        where teamId = #{teamId}
+        where groupId = #{groupId}
     </select>
 
-    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamScenePo">
+    <select id="selectByGroupId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupScenePo">
         select
         *
         FROM
         <include refid="tableName"/>
-        WHERE teamId = #{teamId}
+        WHERE groupId = #{groupId}
     </select>
 
-    <delete id="deleteByTeamId" >
+    <delete id="deleteByGroupId" >
         delete from
         <include refid="tableName"/>
-        where teamId = #{teamId}
+        where groupId = #{groupId}
     </delete>
 
     <!--批量删除-->

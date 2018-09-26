@@ -15,6 +15,7 @@ public class DeviceGroupDetailVo {
     private Integer deviceCount;
     private Long createTime;
     private List<DeviceInGroup> deviceList;
+    private List<ImageVideo> imageVideoList;
     @Data
     public static class DeviceInGroup{
         private Integer id;
@@ -28,5 +29,9 @@ public class DeviceGroupDetailVo {
         //todo 告警状态
 
         private String icon;
+    }
+    @Data
+    public static class ImageVideo{
+        private String imgVideo;
     }
 }

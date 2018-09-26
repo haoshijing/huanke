@@ -298,7 +298,7 @@ public class DeviceTeamService {
             List<DeviceTeamScenePo> deviceTeamScenePoList = this.deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId());
             List<DeviceTeamVo.ImgVideos> imgVideosList = deviceTeamScenePoList.stream().map(eachPo -> {
                 DeviceTeamVo.ImgVideos imgVideos = new DeviceTeamVo.ImgVideos();
-                imgVideos.setImgvideo(eachPo.getImgVideo());
+                imgVideos.setImgVideo(eachPo.getImgVideo());
                 return imgVideos;
             }).collect(Collectors.toList());
             deviceTeamVo.setImgVideosList(imgVideosList);
@@ -360,7 +360,7 @@ public class DeviceTeamService {
             List<DeviceTeamScenePo> deviceTeamScenePoList = this.deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId());
             List<DeviceTeamVo.ImgVideos> imgVideosList = deviceTeamScenePoList.stream().map(eachPo -> {
                 DeviceTeamVo.ImgVideos imgVideos = new DeviceTeamVo.ImgVideos();
-                imgVideos.setImgvideo(eachPo.getImgVideo());
+                imgVideos.setImgVideo(eachPo.getImgVideo());
                 return imgVideos;
             }).collect(Collectors.toList());
             deviceTeamVo.setImgVideosList(imgVideosList);
