@@ -6,8 +6,9 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import com.huanke.iot.gateway.mqttlistener.MqttService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Repository;
 
 /**
  * 描述:
@@ -15,10 +16,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @author onlymark
  * @create 2018-09-23 上午11:23
  */
+@Repository
+@Slf4j
 public class StopWatchHandler extends AbstractHandler {
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private MqttService mqttService;
