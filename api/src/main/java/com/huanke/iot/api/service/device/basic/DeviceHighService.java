@@ -1,5 +1,7 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
 import com.huanke.iot.base.constant.CommonConstant;
@@ -98,6 +100,18 @@ public class DeviceHighService {
 
         String stopWatch = deviceTypePo.getStopWatch();
         if(stopWatch != null){
+            JSONObject jsonObject = JSONObject.parseObject(stopWatch);
+            JSONObject mb = jsonObject.getJSONObject("mb");
+            JSONArray n = mb.getJSONArray("n");
+            if(!n.contains(childId)){
+                n.add(childId);
+                mb.remove("n");
+                mb.put("n",n);
+                jsonObject.remove("mb");
+                jsonObject.put("mb", mb);
+                stopWatch = jsonObject.toString();
+            }
+            deviceTypeMapper.updateStopWatch(hostDeviceTypeId, stopWatch);
             deviceDataService.sendMb(hostDeviceId, stopWatch);
         }else{
             log.info("码表为空：hostDeviceId ={}, childId={}, modelId={}", hostDeviceId, childId, modelId);
