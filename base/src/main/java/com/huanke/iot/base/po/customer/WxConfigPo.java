@@ -10,7 +10,7 @@ public class WxConfigPo {
     private Integer customerId;
     private String password;
     private String defaultTeamName;
-    private Integer htmlTypeId;
+    private String htmlTypeIds;
     private String backgroundImg;
     private String themeName;
     private String logo;
