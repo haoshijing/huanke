@@ -51,7 +51,7 @@ public class CustomerVo {
         private String password;
         private String defaultTeamName;
         private String backgroundImgKey;
-        private Integer htmlTypeId;
+        private String htmlTypeIds;
         private String themeName;
         private String logoKey;
         private String version;

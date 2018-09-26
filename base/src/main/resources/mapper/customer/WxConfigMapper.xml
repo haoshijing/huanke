@@ -13,7 +13,7 @@
         customerId,
         password,
         defaultTeamName,
-        htmlTypeId,
+        htmlTypeIds,
         backgroundImg,
         themeName,
         logo,
@@ -25,7 +25,7 @@
         #{customerId},
         #{password},
         #{defaultTeamName},
-        #{htmlTypeId},
+        #{htmlTypeIds},
         #{backgroundImg},
         #{themeName},
         #{logo},
@@ -48,8 +48,8 @@
             <if test="defaultTeamName != null  and defaultTeamName != '' ">
                 defaultTeamName = #{defaultTeamName},
             </if>
-            <if test="htmlTypeId != null   ">
-                htmlTypeId = #{htmlTypeId},
+            <if test="htmlTypeIds != null and htmlTypeIds != ''   ">
+                htmlTypeIds = #{htmlTypeIds},
             </if>
             <if test="backgroundImg != null  and backgroundImg != '' ">
                 backgroundImg = #{backgroundImg},
