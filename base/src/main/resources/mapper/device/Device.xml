@@ -25,6 +25,8 @@
         onlineStatus,
         bindStatus,
         bindTime,
+        assignStatus,
+        assignTime,
         enableStatus,
         workStatus,
         ip,
@@ -58,6 +60,8 @@
         #{onlineStatus},
         #{bindStatus},
         #{bindTime},
+        #{assignStatus},
+        #{assignTime},
         #{enableStatus},
         #{workStatus},
         #{ip},
@@ -96,6 +100,8 @@
         onlineStatus,
         bindStatus,
         bindTime,
+        assignStatus,
+        assignTime,
         enableStatus,
         workStatus,
         ip,
@@ -130,6 +136,8 @@
             #{device.onlineStatus},
             #{device.bindStatus},
             #{device.bindTime},
+            #{device.assignStatus},
+            #{device.assignTime},
             #{device.enableStatus},
             #{device.workStatus},
             #{device.ip},
@@ -218,6 +226,9 @@
             <if test="param.bindStatus != null">
                 AND bindStatus = #{param.bindStatus}
             </if>
+            <if test="param.assignStatus != null">
+                AND assignStatus = #{param.assignStatus}
+            </if>
             <if test="param.enableStatus != null">
                 AND enableStatus = #{param.enableStatus}
             </if>
@@ -248,6 +259,9 @@
             </if>
             <if test="param.onlineStatus != null">
                 AND onlineStatus = #{param.onlineStatus}
+            </if>
+            <if test="param.assignStatus != null">
+                AND assignStatus = #{param.assignStatus}
             </if>
             <if test="param.bindStatus != null">
                 AND bindStatus = #{param.bindStatus}
@@ -314,6 +328,9 @@
             </if>
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
+            </if>
+            <if test="assignStatus != null">
+                assignStatus = #{assignStatus},
             </if>
             <if test="bindStatus != null">
                 bindStatus = #{bindStatus},
@@ -389,6 +406,9 @@
             </if>
             <if test="bindStatus != null">
                 bindStatus = #{bindStatus},
+            </if>
+            <if test="assignStatus != null">
+                assignStatus = #{assignStatus},
             </if>
             <if test="enableStatus != null">
                 enableStatus = #{enableStatus},
@@ -486,6 +506,9 @@
         update
         <include refid="tableName"/>
         <set>
+            <if test="assignStatus != null">
+                assignStatus = #{assignStatus},assignTime = sysdate
+            </if>
             <if test="bindStatus != null">
                 bindStatus = #{bindStatus},bindTime = sysdate
             </if>
@@ -510,6 +533,20 @@
         <set>
             bindStatus = #{bindStatus}
             bindTime = #{bindTime}
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        WHERE id  = #{id}
+        <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    </update>
+
+    <update id="updateAssignStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
+        update
+        <include refid="tableName"/>
+        <set>
+            assignStatus = #{assignStatus}
+            assignTime = #{assignTime}
             lastUpdateTime = #{lastUpdateTime}
         </set>
         WHERE id  = #{id}

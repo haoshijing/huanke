@@ -41,6 +41,11 @@ public class DevicePo {
     private Long bindTime;
     //绑定状态
     private Integer bindStatus;
+
+    //分配状态
+    private Integer assignStatus;
+    //分配时间
+    private Long assignTime;
     //在线状态
     private Integer onlineStatus;
     //启用状态

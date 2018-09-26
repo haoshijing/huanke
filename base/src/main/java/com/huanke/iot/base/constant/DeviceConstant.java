@@ -6,6 +6,10 @@ package com.huanke.iot.base.constant;
  */
 public class DeviceConstant {
 
+    /*分配状态*/
+    public static final Integer ASSIGN_STATUS_YES = 1; //已分配
+    public static final Integer ASSIGN_STATUS_NO = 0;//未分配
+
     /*绑定状态*/
     public static final Integer BIND_STATUS_YES = 1; //已绑定
     public static final Integer BIND_STATUS_NO = 0;//未绑定
