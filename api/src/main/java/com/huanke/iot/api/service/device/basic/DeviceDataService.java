@@ -609,8 +609,9 @@ public class DeviceDataService {
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(deviceFuncVo.getValue());
-            if(devicePo.getHostDeviceId() != null){
-                funcItemMessage.setChildid(devicePo.getChildId());
+            DevicePo devicePo1 = deviceMapper.selectById(deviceFuncVo.getDeviceId());
+            if(devicePo1.getHostDeviceId() != null){
+                funcItemMessage.setChildid(devicePo1.getChildId());
             }
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
 
