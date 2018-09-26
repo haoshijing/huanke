@@ -93,4 +93,18 @@
         AND status = 1
     </select>
 
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <if test="param.deviceId != null and param.deviceId != 0">
+                AND deviceId = #{param.deviceId}
+            </if>
+            <if test="param.groupId != null and param.groupId != 0">
+                AND groupId = #{param.groupId}
+            </if>
+        </where>
+    </select>
+
 </mapper>
