@@ -7,6 +7,6 @@ server:
 
 swaggerUrl:
   #driftingjane.s1.natapp.cc
-#  dev.hcocloud.com:8070
+  dev.hcocloud.com:8070
 #  218.2.177.210:70
-  vancem.s1.natapp.cc
+#  vancem.s1.natapp.cc
