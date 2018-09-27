@@ -881,8 +881,8 @@ public class DeviceOperateService {
                 for (int m = 0; m < addCount; m++) {
                     ApiResponse<JSONObject> result = obtainDeviceInfo(appId, appSecret, customerId.toString(), productId);
                     //当第一个就开始 出现错误时，则直接返回结果
-                    if (m == 0 && RetCode.ERROR == result.getCode()) {
-                        return new ApiResponse<>(RetCode.ERROR, result.getMsg(),correctCount);
+                    if (m == 0 && RetCode.OK != result.getCode()) {
+                        return new ApiResponse<>(RetCode.ERROR, result.getMsg(), correctCount);
                     }
                     JSONObject jsonObject = result.getData();
                     if (jsonObject != null) {
@@ -890,20 +890,25 @@ public class DeviceOperateService {
                         String wxDevicelicence = jsonObject.getString("devicelicence");
                         String wxQrticket = jsonObject.getString("qrticket");
 
-                        DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
+                        if (wxDeviceId != null && wxDevicelicence != null) {
+                            DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
 
-                        insertPo.setCustomerId(customerId);
-                        insertPo.setProductId(productId);
-                        insertPo.setWxDeviceId(wxDeviceId);
-                        insertPo.setWxDeviceLicence(wxDevicelicence);
-                        insertPo.setWxQrticket(wxQrticket);
-                        insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-                        insertPo.setCreateTime(System.currentTimeMillis());
-                        insertPo.setLastUpdateTime(System.currentTimeMillis());
+                            insertPo.setCustomerId(customerId);
+                            insertPo.setProductId(productId);
+                            insertPo.setWxDeviceId(wxDeviceId);
+                            insertPo.setWxDeviceLicence(wxDevicelicence);
+                            insertPo.setWxQrticket(wxQrticket);
+                            insertPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                            insertPo.setCreateTime(System.currentTimeMillis());
+                            insertPo.setLastUpdateTime(System.currentTimeMillis());
 
-                        deviceIdPoolPos.add(insertPo);
+                            deviceIdPoolPos.add(insertPo);
 
-                        correctCount++;
+                            correctCount++;
+                        } else {
+                            log.error("wxDeviceId 或 wxDevicelicence为空 = {}", jsonObject);
+                        }
+
                     } else {
                         log.error("createWxDeviceIdPool.jsonObject = {}", false);
                     }
@@ -1000,8 +1005,12 @@ public class DeviceOperateService {
             JSONObject jsonObject = JSON.parseObject(result.toString());
             //获取微信 设备id 失败
             if (jsonObject != null) {
-
+                //如果 因为 access_token过期，则重新获取access_token，并回调自己。
                 if (jsonObject.containsKey("errcode") && CommonConstant.ZERO != jsonObject.get("errcode")) {
+                    if (RetCode.WX_RROR_40001.equals(jsonObject.get("errcode"))) {
+                        accessToken = wechartUtil.getAccessToken(appId, appSecret, customerId, true);
+                        obtainDeviceInfo(appId, appSecret, customerId, productId);
+                    }
                     return new ApiResponse<>(RetCode.PARAM_ERROR, result.toString(), jsonObject);
                 }
                 JSONObject resultObject = jsonObject.getJSONObject("base_resp");
