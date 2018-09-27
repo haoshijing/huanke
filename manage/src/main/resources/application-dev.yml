@@ -7,14 +7,6 @@ server:
 
 swaggerUrl:
   #driftingjane.s1.natapp.cc
-  dev.hcocloud.com:8070
-#  218.2.177.210:70
+#  dev.hcocloud.com:8070
+  218.2.177.210:70
   #vancem.s1.natapp.cc
-#SSH_USER:
-#  root
-#SSH_PASSWORD:
-#  Kong198818
-#SSH_REMOTE_SERVER:
-#  39.104.52.84
-#MYSQL_REMOTE_SERVER:
-#  39.104.52.84
