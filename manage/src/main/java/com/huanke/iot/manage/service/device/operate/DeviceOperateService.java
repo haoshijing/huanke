@@ -1020,14 +1020,4 @@ public class DeviceOperateService {
         }
         return new ApiResponse<>(RetCode.PARAM_ERROR, "获取设备配额失败", null);
     }
-
-    private Integer getCanUseProductId(String customerId) {
-        String productKey = "productKey." + customerId;
-        String productIdStr = stringRedisTemplate.opsForValue().get(productKey);
-        if (StringUtils.isEmpty(productIdStr)) {
-            return 0;
-        }
-        return Integer.valueOf(productIdStr);
-    }
-
 }

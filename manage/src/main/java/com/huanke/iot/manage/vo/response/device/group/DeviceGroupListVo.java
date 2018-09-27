@@ -10,6 +10,7 @@ public class DeviceGroupListVo {
     private Integer customerId;
     private String customerName;
     private String introduction;
+    private String location;
     private Integer deviceCount;
     private Integer status;
     private Long createTime;
