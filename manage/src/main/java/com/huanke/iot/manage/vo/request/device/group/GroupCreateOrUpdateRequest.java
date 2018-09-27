@@ -1,7 +1,5 @@
 package com.huanke.iot.manage.vo.request.device.group;
 
-import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import lombok.Data;
 
@@ -9,6 +7,8 @@ import java.util.List;
 
 @Data
 public class GroupCreateOrUpdateRequest {
+
+    private Integer id;
     /**
      * 集群名称
      */
@@ -25,7 +25,13 @@ public class GroupCreateOrUpdateRequest {
 
     private String createLocation;
 
+    private List<ImageVideo> imageVideoList;
 
     private DeviceQueryRequest deviceQueryRequest;
+
+    @Data
+    public static class ImageVideo{
+        private String imgVideo;
+    }
 
 }

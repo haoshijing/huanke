@@ -80,7 +80,7 @@
         <include refid="tableName"/>
         where id in
         <foreach collection="list" item="item" separator="," open="(" close=")">
-            #{item.teamId,jdbcType=BIGINT}
+            #{item.id,jdbcType=BIGINT}
         </foreach>
     </delete>
 

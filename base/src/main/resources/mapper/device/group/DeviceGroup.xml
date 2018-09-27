@@ -118,7 +118,16 @@
         <include refid="tableName"/>
         <set>
             <if test="name != null">
-                groupName = #{name},
+                name = #{name},
+            </if>
+            <if test="introduction != null">
+                introduction = #{introduction},
+            </if>
+            <if test="createLocation != null">
+                createLocation = #{createLocation},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
             </if>
             <if test="status != null">
                 status = #{status},

@@ -17,6 +17,7 @@ import com.huanke.iot.base.po.device.group.DeviceGroupScenePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupDetailVo;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
@@ -66,46 +67,65 @@ public class DeviceGroupService {
 
     /**
      * 2018-08-18
-     * 添加新的集群
+     * 添加或更新集群，向集群中添加设备
      * sixiaojun
-     * @param deviceGroupCreateOrUpdate
-     * @return
-     */
-    public DeviceGroupPo createNewGroup(GroupCreateOrUpdateRequest deviceGroupCreateOrUpdate) throws Exception{
-        DeviceGroupPo queryPo=new DeviceGroupPo();
-        queryPo.setName(deviceGroupCreateOrUpdate.getName());
-        queryPo.setCustomerId(deviceGroupCreateOrUpdate.getCustomerId());
-        DeviceGroupPo deviceGroupPo=this.deviceGroupMapper.queryByName(queryPo);
-        if(null != deviceGroupPo){
-            return null;
-        }
-        else {
-            DeviceGroupPo insertPo=new DeviceGroupPo();
-            BeanUtils.copyProperties(deviceGroupCreateOrUpdate,insertPo);
-            insertPo.setStatus(CommonConstant.STATUS_YES);
-            insertPo.setCreateTime(System.currentTimeMillis());
-            insertPo.setLastUpdateTime(System.currentTimeMillis());
-            this.deviceGroupMapper.insert(insertPo);
-            return insertPo;
-        }
-    }
-
-    /**
-     * 向集群中添加选中的设备
      * @param groupCreateOrUpdateRequest
      * @return
      */
-    public Boolean addDeviceToGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest, DeviceGroupPo deviceGroupPo) throws Exception{
-        List<DeviceGroupItemPo> deviceGroupItemPoList=new ArrayList<>();
-        //判断当前设备列表中是否存在集群冲突
-        if(isGroupConflict(groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList())){
-            return false;
+    public ApiResponse<DeviceGroupPo> createOrUpdateGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception{
+        DeviceGroupPo insertOrUpdatePo=new DeviceGroupPo();
+        BeanUtils.copyProperties(groupCreateOrUpdateRequest,insertOrUpdatePo);
+        if(null != groupCreateOrUpdateRequest.getId() && 0 <groupCreateOrUpdateRequest.getId()){
+            //若id为非空则进行更新操作
+            insertOrUpdatePo.setLastUpdateTime(System.currentTimeMillis());
+            this.deviceGroupMapper.updateById(insertOrUpdatePo);
+        }
+        //否则进行新增
+        else {
+            insertOrUpdatePo.setStatus(CommonConstant.STATUS_YES);
+            insertOrUpdatePo.setCreateTime(System.currentTimeMillis());
+            insertOrUpdatePo.setLastUpdateTime(System.currentTimeMillis());
+            this.deviceGroupMapper.insert(insertOrUpdatePo);
+            //新增完之后获取groupId
+            groupCreateOrUpdateRequest.setId(insertOrUpdatePo.getId());
+        }
+        //更新集群相册
+        List<DeviceGroupScenePo> deviceGroupScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(groupCreateOrUpdateRequest.getId());
+        //数据库中已存有记录则先删除记录
+        if(null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()){
+            this.deviceGroupSceneMapper.deleteBatch(deviceGroupScenePoList);
+        }
+        deviceGroupScenePoList.clear();
+        if(null != groupCreateOrUpdateRequest.getImageVideoList() && 0 < groupCreateOrUpdateRequest.getImageVideoList().size()) {
+            groupCreateOrUpdateRequest.getImageVideoList().forEach(imageVideo -> {
+                DeviceGroupScenePo deviceGroupScenePo = new DeviceGroupScenePo();
+                deviceGroupScenePo.setGroupId(groupCreateOrUpdateRequest.getId());
+                deviceGroupScenePo.setImgVideo(imageVideo.getImgVideo());
+                deviceGroupScenePo.setCreateTime(System.currentTimeMillis());
+                deviceGroupScenePo.setLastUpdateTime(System.currentTimeMillis());
+                deviceGroupScenePo.setStatus(CommonConstant.STATUS_YES);
+                deviceGroupScenePoList.add(deviceGroupScenePo);
+            });
+            this.deviceGroupSceneMapper.insertBatch(deviceGroupScenePoList);
+        }
+        //向集群中添加设备
+        //如设备列表中无设备则不进行任何操作
+        if(null == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList() || 0 == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList().size()){
+            return new ApiResponse<>(RetCode.OK,"新增或更新成功",insertOrUpdatePo);
         }
         else {
+            //查询并删除集群中已有的设备
+            List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(insertOrUpdatePo.getId());
+            //存在已有设备时才进行删除
+            if(null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
+                this.deviceGroupItemMapper.deleteBatch(deviceGroupItemPoList);
+            }
+            deviceGroupItemPoList.clear();
+            //重新添加设备
             for (DeviceQueryRequest.DeviceQueryList deviceList : groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList()) {
                 DevicePo devicePo = this.deviceMapper.selectByMac(deviceList.getMac());
                 DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
-                deviceGroupItemPo.setGroupId(deviceGroupPo.getId());
+                deviceGroupItemPo.setGroupId(insertOrUpdatePo.getId());
                 deviceGroupItemPo.setDeviceId(devicePo.getId());
                 deviceGroupItemPo.setStatus(CommonConstant.STATUS_YES);
                 deviceGroupItemPo.setCreateTime(System.currentTimeMillis());
@@ -114,7 +134,7 @@ public class DeviceGroupService {
             }
             //进行批量插入
             this.deviceGroupItemMapper.insertBatch(deviceGroupItemPoList);
-            return true;
+            return new ApiResponse<>(RetCode.OK,"新增集群及设备成功",insertOrUpdatePo);
         }
     }
 
@@ -131,6 +151,7 @@ public class DeviceGroupService {
         Integer offset = (groupQueryRequest.getPage() - 1) * groupQueryRequest.getLimit();
         Integer limit = groupQueryRequest.getLimit();
         DeviceGroupPo queryPo = new DeviceGroupPo();
+        queryPo.setStatus(null);
         BeanUtils.copyProperties(groupQueryRequest,queryPo);
         List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo,limit,offset);
         if(null != deviceGroupPoList){
@@ -141,8 +162,10 @@ public class DeviceGroupService {
                 deviceGroupListVo.setIntroduction(deviceGroupPo.getIntroduction());
                 deviceGroupListVo.setRemark(deviceGroupPo.getRemark());
                 deviceGroupListVo.setStatus(deviceGroupPo.getStatus());
+                deviceGroupListVo.setLocation(deviceGroupPo.getCreateLocation());
                 //查询当前集群的客户信息
                 CustomerPo customerPo=this.customerMapper.selectById(deviceGroupPo.getCustomerId());
+                deviceGroupListVo.setCustomerId(customerPo.getId());
                 deviceGroupListVo.setCustomerName(customerPo.getName());
                 //查询当前集群中的设备总量
                 DeviceGroupItemPo groupItemPo = new DeviceGroupItemPo();
@@ -301,6 +324,24 @@ public class DeviceGroupService {
             }
         }
         return false;
+    }
+
+    /**
+     * 2018-08-20
+     * sixiaojun
+     * 根据mac地址查询设备表中是否存在相同mac地址的设备，如存在，返回DevicePo，新增失败
+     *
+     * @param deviceList
+     * @return devicePo
+     */
+    public DeviceQueryRequest.DeviceQueryList queryDeviceByMac(DeviceQueryRequest deviceList) {
+        for (DeviceQueryRequest.DeviceQueryList device : deviceList.getDeviceList()) {
+            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
+            if (null == devicePo) {
+                return device;
+            }
+        }
+        return null;
     }
 //
 //
