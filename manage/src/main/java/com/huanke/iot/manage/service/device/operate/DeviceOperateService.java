@@ -1007,7 +1007,7 @@ public class DeviceOperateService {
             if (jsonObject != null) {
                 //如果 因为 access_token过期，则重新获取access_token，并回调自己。
                 if (jsonObject.containsKey("errcode") && CommonConstant.ZERO != jsonObject.get("errcode")) {
-                    if (RetCode.WX_RROR_40001.equals(jsonObject.get("errcode"))) {
+                    if (RetCode.WX_RROR_40001.equals(jsonObject.get("errcode"))||RetCode.WX_RROR_40001==jsonObject.get("errcode")) {
                         accessToken = wechartUtil.getAccessToken(appId, appSecret, customerId, true);
                         obtainDeviceInfo(appId, appSecret, customerId, productId);
                     }
