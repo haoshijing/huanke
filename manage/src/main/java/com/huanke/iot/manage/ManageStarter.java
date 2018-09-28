@@ -17,6 +17,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+//@ServletComponentScan
+@EnableSwagger2
 @SpringBootApplication
 @Configuration
 @EnableTransactionManagement
@@ -24,8 +26,29 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @ImportResource({"classpath:application-context.xml"})
 public class ManageStarter {
 
+    @Value("${swaggerUrl}")
+    private String swaggerUrl;
+
     public static void main(String[] args) {
         SpringApplication.run(ManageStarter.class, args);
     }
 
+    @Bean
+    public Docket createRestApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .host(swaggerUrl)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.huanke.iot"))
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("manage")
+                .description("manage")
+                .version("1.0")
+                .build();
+    }
 }

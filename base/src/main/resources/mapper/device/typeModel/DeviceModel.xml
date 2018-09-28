@@ -17,6 +17,7 @@
         typeId,
         customerId,
         productId,
+        productQrCode,
         formatId,
         icon,
         version,
@@ -31,6 +32,7 @@
         #{typeId},
         #{customerId},
         #{productId},
+        #{productQrCode},
         #{formatId},
         #{icon},
         #{version},
@@ -61,6 +63,9 @@
             </if>
             <if test="productId != null and productId !='' ">
                 productId = #{productId},
+            </if>
+            <if test="productQrCode != null and productQrCode !='' ">
+                productQrCode = #{productQrCode},
             </if>
             <if test="icon != null and icon != ''">
                 icon = #{icon},

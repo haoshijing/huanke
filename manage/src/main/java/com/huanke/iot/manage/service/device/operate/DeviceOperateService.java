@@ -44,6 +44,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,6 +175,7 @@ public class DeviceOperateService {
             DeviceListVo deviceQueryVo = new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setMac(devicePo.getMac());
+            //查询类型
             if (null != deviceTypeMapper.selectById(devicePo.getTypeId())) {
                 deviceQueryVo.setTypeId(devicePo.getTypeId());
                 deviceQueryVo.setDeviceType(deviceTypeMapper.selectById(devicePo.getTypeId()).getName());
@@ -186,11 +188,13 @@ public class DeviceOperateService {
                 deviceQueryVo.setCustomerId(customerId);
                 deviceQueryVo.setCustomerName(customerMapper.selectById(customerId).getName());
             }
+            //查询客户信息
             deviceQueryVo.setModelId(devicePo.getModelId());
             DeviceModelPo queryDeviceModel = deviceModelMapper.selectById(devicePo.getModelId());
             if(queryDeviceModel!=null){
                 deviceQueryVo.setModelName(queryDeviceModel.getName());
             }
+            deviceQueryVo.setAssignStatus(devicePo.getAssignStatus());
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
@@ -200,6 +204,7 @@ public class DeviceOperateService {
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
             Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getId());
             deviceQueryVo.setChildCount(childCount);
+            //查询集群信息
             DeviceGroupPo queryDeviceGroup = this.deviceGroupMapper.selectByDeviceId(devicePo.getId());
 //            DeviceGroupItemPo queryDeviceGroupItemPo = this.deviceGroupItemMapper.selectByDeviceId(devicePo.getId());
             if (null != queryDeviceGroup) {
@@ -212,6 +217,7 @@ public class DeviceOperateService {
             deviceQueryVo.setId(devicePo.getId());
             deviceQueryVo.setCreateTime(devicePo.getCreateTime());
             deviceQueryVo.setLastUpdateTime(devicePo.getLastUpdateTime());
+            //查询绑定信息
             DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
             if (null != deviceCustomerUserRelationPo) {
                 CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(deviceCustomerUserRelationPo.getOpenId());
@@ -222,6 +228,25 @@ public class DeviceOperateService {
             return deviceQueryVo;
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
+    }
+
+    public ApiResponse<Boolean> exportDeviceList(DeviceListExportRequest deviceListExportRequest){
+        //根据条件筛选excel列名
+        Class cls =deviceListExportRequest.getClass();
+        Field[] fields = cls.getDeclaredFields();
+        List<String> titles = new ArrayList<>();
+        for (Field field : fields){
+            field.setAccessible(true);
+            try {
+                Boolean result =(Boolean) field.get(deviceListExportRequest);
+                if(result){
+                    titles.add(field.getName());
+                }
+            }catch (Exception e){
+
+            }
+        }
+        return new ApiResponse<>(RetCode.OK,"ss");
     }
 
     /**
@@ -362,6 +387,7 @@ public class DeviceOperateService {
             deviceIdPoolPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
             deviceIdPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
             deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+            deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
             Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
             //若当前设备池中当前产品的配额的数量不够，则向微信公众号请求所需要的新的设备证书
             if (deviceList.size() > devicePoolCount) {
@@ -404,6 +430,8 @@ public class DeviceOperateService {
                     devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
                     devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
                     devicePo.setStatus(CommonConstant.STATUS_YES);
+                    devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_YES);
+                    devicePo.setAssignTime(System.currentTimeMillis());
                     devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
                     devicePo.setWxDeviceId(resultPo.getWxDeviceId());
                     devicePo.setWxDevicelicence(resultPo.getWxDeviceLicence());
@@ -466,6 +494,7 @@ public class DeviceOperateService {
                         devicePo.setWxDevicelicence(null);
                         devicePo.setWxQrticket(null);
                         devicePo.setProductId(null);
+                        devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
                         devicePo.setLastUpdateTime(System.currentTimeMillis());
                         devicePoList.add(devicePo);
                     }
