@@ -481,6 +481,8 @@ public class DeviceDataService {
     public static class FuncItemMessage {
         private String type;
         private String value;
+        private String childid;
+
     }
 
     @Data
@@ -570,12 +572,12 @@ public class DeviceDataService {
     }
 
     public void sendGroupFunc(DeviceGroupFuncVo deviceGroupFuncVo, Integer userId, int operType) {
-        List<String> wxDeviceIdList = deviceGroupFuncVo.getWxDeviceIdList();
+        List<Integer> deviceIdList = deviceGroupFuncVo.getDeviceIdList();
         String funcId = deviceGroupFuncVo.getFuncId();
         String value = deviceGroupFuncVo.getValue();
-        for (String wxDeviceId : wxDeviceIdList) {
+        for (Integer deviceId : deviceIdList) {
             DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
-            deviceFuncVo.setWxDeviceId(wxDeviceId);
+            deviceFuncVo.setDeviceId(deviceId);
             deviceFuncVo.setFuncId(funcId);
             deviceFuncVo.setValue(value);
             String requestId = sendFunc(deviceFuncVo, userId, operType);
@@ -583,7 +585,11 @@ public class DeviceDataService {
     }
 
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceFuncVo.getWxDeviceId());
+        DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
+        if(devicePo.getHostDeviceId() != null){
+            //子设备
+            devicePo = deviceMapper.selectById(devicePo.getHostDeviceId());
+        }
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
             String topic = "/down/control/" + deviceId;
@@ -603,6 +609,10 @@ public class DeviceDataService {
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(deviceFuncVo.getValue());
+            DevicePo devicePo1 = deviceMapper.selectById(deviceFuncVo.getDeviceId());
+            if(devicePo1.getHostDeviceId() != null){
+                funcItemMessage.setChildid(devicePo1.getChildId());
+            }
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
 
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
@@ -611,6 +621,11 @@ public class DeviceDataService {
             return requestId;
         }
         return "";
+    }
+
+    public void sendMb(Integer deviceId, String stopWatch) {
+        String topic = "/down/stopWatch/" + deviceId;
+        mqttSendService.sendMessage(topic, stopWatch);
     }
 
 
@@ -932,11 +947,17 @@ public class DeviceDataService {
     }
 
     public boolean verifyUser(Integer userId, Integer deviceId) {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        Integer hostDeviceId = devicePo.getHostDeviceId();
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
         String wxOpenId = customerUserPo.getOpenId();
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
         deviceCustomerUserRelationPo.setOpenId(wxOpenId);
-        deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        if(hostDeviceId != null){
+            deviceCustomerUserRelationPo.setDeviceId(hostDeviceId);
+        }else{
+            deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        }
         Integer count = deviceCustomerUserRelationMapper.queryRelationCount(deviceCustomerUserRelationPo);
         if (count > 0) {
             return true;

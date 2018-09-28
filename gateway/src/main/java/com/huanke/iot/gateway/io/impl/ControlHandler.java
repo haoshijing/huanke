@@ -1,7 +1,9 @@
 package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.data.DeviceControlMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceControlData;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import lombok.Data;
@@ -20,10 +22,13 @@ public class ControlHandler extends AbstractHandler {
 
     @Autowired
     private DeviceControlMapper deviceControlMapper;
+    @Autowired
+    private DeviceMapper deviceMapper;
     @Data
     public static class FuncItemMessage{
         private String type;
         private Integer value;
+        private String childid;
     }
 
     @Data
@@ -42,8 +47,13 @@ public class ControlHandler extends AbstractHandler {
 
         String message = new String(payloads);
         ControlHandler.FuncListMessage funcListMessage = JSON.parseObject(new String(payloads),ControlHandler.FuncListMessage.class);
-        Integer deviceId = getDeviceIdFromTopic(topic);
+
         funcListMessage.getDatas().forEach(funcItemMessage -> {
+            Integer deviceId = getDeviceIdFromTopic(topic);
+            if(funcItemMessage.getChildid() != null){
+                DevicePo childDevice = deviceMapper.getChildDevice(deviceId, funcItemMessage.getChildid());
+                deviceId = childDevice.getId();
+            }
             DeviceControlData deviceControlData = new DeviceControlData();
             deviceControlData.setFuncId(funcItemMessage.getType());
             deviceControlData.setFuncValue(funcItemMessage.getValue());

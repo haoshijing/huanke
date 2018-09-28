@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class DeviceFuncVo {
-    private String wxDeviceId;
+    private Integer deviceId;
     private String funcId;
     private String value;
 }
