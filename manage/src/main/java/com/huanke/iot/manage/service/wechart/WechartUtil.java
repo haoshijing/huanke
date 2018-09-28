@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Repository
 @Slf4j
 public class WechartUtil {
-    private static final String ACCESSS_TOKEN_PREIX = "accessTokenKey.";
+    private static final String ACCESSS_TOKEN_PREIX = "accessTokenKey.customerId.";
     private static final String JSAPI_PREIX = "jsapi.";
     private static final String TICKET_PREFIX = "ticketKey.";
 
