@@ -28,6 +28,9 @@ public class DeviceListQueryRequest {
     private Integer modelId;
 
 
+    //分配状态
+    private Integer assignStatus;
+
     //绑定状态
     private Integer bindStatus;
     //在线状态

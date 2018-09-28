@@ -191,6 +191,7 @@ public class DeviceOperateService {
             if(queryDeviceModel!=null){
                 deviceQueryVo.setModelName(queryDeviceModel.getName());
             }
+            deviceQueryVo.setAssignStatus(devicePo.getAssignStatus());
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
@@ -362,6 +363,7 @@ public class DeviceOperateService {
             deviceIdPoolPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
             deviceIdPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
             deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+            deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
             Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
             //若当前设备池中当前产品的配额的数量不够，则向微信公众号请求所需要的新的设备证书
             if (deviceList.size() > devicePoolCount) {
@@ -404,6 +406,8 @@ public class DeviceOperateService {
                     devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
                     devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
                     devicePo.setStatus(CommonConstant.STATUS_YES);
+                    devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_YES);
+                    devicePo.setAssignTime(System.currentTimeMillis());
                     devicePo.setProductId(deviceAssignToCustomerRequest.getProductId());
                     devicePo.setWxDeviceId(resultPo.getWxDeviceId());
                     devicePo.setWxDevicelicence(resultPo.getWxDeviceLicence());
@@ -466,6 +470,7 @@ public class DeviceOperateService {
                         devicePo.setWxDevicelicence(null);
                         devicePo.setWxQrticket(null);
                         devicePo.setProductId(null);
+                        devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
                         devicePo.setLastUpdateTime(System.currentTimeMillis());
                         devicePoList.add(devicePo);
                     }

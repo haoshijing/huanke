@@ -317,6 +317,7 @@ public class DeviceModelService {
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
             deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
+            deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
             deviceModelVo.setTypeName(deviceModelPo.getTypeName());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
@@ -363,6 +364,7 @@ public class DeviceModelService {
             deviceModelVo.setName(deviceModelPo.getName());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
+            deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
@@ -393,6 +395,7 @@ public class DeviceModelService {
             deviceModelVo.setName(deviceModelPo.getName());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
+            deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
@@ -427,6 +430,7 @@ public class DeviceModelService {
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
             deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
+            deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
             deviceModelVo.setFormatId(deviceModelPo.getFormatId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
             deviceModelVo.setTypeName(deviceModelPo.getTypeName());

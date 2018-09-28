@@ -24,6 +24,11 @@ public class DeviceListVo {
     private Integer typeId;
     private String deviceType;
     /**
+     * 分配状态
+     */
+    private Integer assignStatus;
+
+    /**
      * 绑定状态
      */
     private Integer bindStatus;
