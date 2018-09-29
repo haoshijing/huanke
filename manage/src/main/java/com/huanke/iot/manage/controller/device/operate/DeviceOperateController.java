@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -375,6 +377,11 @@ public class DeviceOperateController {
         }
     }
 
+    @ApiOperation("导出设备列表")
+    @RequestMapping(value = "/exportDeviceData", method = RequestMethod.POST)
+    public ApiResponse<String> exportDeviceData(@RequestBody DeviceListQueryRequest deviceListQueryRequest,HttpServletResponse response){
+        return new ApiResponse<>(RetCode.OK,"导出excel成功");
+    }
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
 //        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);
