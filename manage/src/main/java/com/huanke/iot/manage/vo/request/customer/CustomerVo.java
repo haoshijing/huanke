@@ -50,10 +50,10 @@ public class CustomerVo {
         //        private  Integer id;
         private String password;
         private String defaultTeamName;
-        private String backgroundImgKey;
+        private String backgroundImg;
         private String htmlTypeIds;
         private String themeName;
-        private String logoKey;
+        private String logo;
         private String version;
         private Integer status = CommonConstant.STATUS_YES;
         private List<H5BgImg> h5BgImgList;  //背景列表
@@ -79,7 +79,7 @@ public class CustomerVo {
         //        private Integer id;
         private String qrcode;   //二维码
         private String name;
-        private String logoKey;
+        private String logo;
         private String version;
         private String deviceChangePassword;    //设备切换密码
         private Integer status = CommonConstant.STATUS_YES;
