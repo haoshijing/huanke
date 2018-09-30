@@ -36,13 +36,13 @@ public class DeviceFormatController extends BaseController{
     @RequestMapping("/getModelVo")
     public ApiResponse<DeviceModelVo> getModelVo(@Valid @RequestBody DeviceFormatRequest request) {
         Integer deviceId = request.getDeviceId();
-        Integer pageId = request.getPageNo();
+        Integer pageNo = request.getPageNo();
         Integer userId = getCurrentUserId();
         if(!deviceDataService.verifyUser(userId, deviceId)){
             return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
         }
-        log.info("获取h5页面配置项及功能项，deviceId={},pageId={}", deviceId, pageId);
-        DeviceModelVo deviceModelVo = deviceFormatService.getModelVo(deviceId, pageId);
+        log.info("获取h5页面配置项及功能项，deviceId={},pageNo={}", deviceId, pageNo);
+        DeviceModelVo deviceModelVo = deviceFormatService.getModelVo(deviceId, pageNo);
         return new ApiResponse<>(deviceModelVo);
     }
 
