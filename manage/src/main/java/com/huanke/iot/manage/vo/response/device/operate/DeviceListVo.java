@@ -47,7 +47,7 @@ public class DeviceListVo {
     /**
      * 工作状态
      */
-    private Integer WorkStatus;
+    private Integer workStatus;
     /**
      * 在线状态
      */
@@ -70,7 +70,7 @@ public class DeviceListVo {
      */
     private String modelName;
 
-    private Long createTime;
+    private Long birthTime;
 
     private Long lastUpdateTime;
 

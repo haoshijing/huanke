@@ -5,31 +5,31 @@ import lombok.Data;
 @Data
 public class DeviceListExportRequest {
     //名称
-    private Boolean displayName;
+    private Boolean name;
     //MAC
-    private Boolean displayMac;
+    private Boolean mac;
     //归属
-    private Boolean displayOwner;
+    private Boolean customerName;
     //类型
-    private Boolean displayType;
+    private Boolean deviceType;
     //绑定状态
-    private Boolean displayBindStatus;
+    private Boolean bindStatus;
     //启用状态
-    private Boolean displayEnableStatus;
+    private Boolean enableStatus;
     //集群名
-    private Boolean displayGroupName;
+    private Boolean groupName;
     //工作状态
-    private Boolean displayWorkStatus;
+    private Boolean workStatus;
     //在线状态
-    private Boolean displayOnlineStatus;
+    private Boolean onlineStatus;
     //设备型号ID
-    private Boolean displayModelId;
+    private Boolean modelId;
     //设备型号名称
-    private Boolean displayModelName;
+    private Boolean modelName;
     //注册时间
-    private Boolean displayBirthName;
+    private Boolean birthTime;
     //最后上上线时间
-    private Boolean displayLastOnlineTime;
+    private Boolean lastUpdateTime;
     //地理位置
-    private Boolean displayLocation;
+    private Boolean location;
 }
