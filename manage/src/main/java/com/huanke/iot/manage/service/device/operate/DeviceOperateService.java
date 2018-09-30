@@ -47,6 +47,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -239,10 +241,15 @@ public class DeviceOperateService {
         return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
     }
 
+
+    /**
+     * 导出设备列表
+     * @param response
+     * @param deviceListExportRequest
+     * @return
+     * @throws Exception
+     */
     public ApiResponse<Boolean> exportDeviceList(HttpServletResponse response, DeviceListExportRequest deviceListExportRequest) throws Exception{
-        DeviceListQueryRequest deviceListQueryRequest = new DeviceListQueryRequest();
-        deviceListQueryRequest.setLimit(10);
-        deviceListQueryRequest.setPage(1);
         //生成列名map
         Map<String,String> titleMap = new HashMap<>();
         for(int i = 0; i< keys.length; i++){
@@ -256,23 +263,28 @@ public class DeviceOperateService {
         Map<String,String> filterMap = new HashMap<>();
         for (Field field : fields){
             field.setAccessible(true);
-            Boolean result =(Boolean) field.get(deviceListExportRequest);
-            if(result){
-                titleKeys.add(field.getName());
-                titleNames.add(titleMap.get(field.getName()));
-                filterMap.put(field.getName(),field.getName());
+            String getMethodName = "get" + field.getName().substring(0, 1).toUpperCase()
+                    + field.getName().substring(1);
+            Method getMethod = cls.getMethod(getMethodName, new Class[]{});
+            Object value = getMethod.invoke(deviceListExportRequest, new Object[]{});
+            if(value instanceof Boolean) {
+                Boolean result = (Boolean) field.get(deviceListExportRequest);
+                if (result) {
+                    titleKeys.add(field.getName());
+                    titleNames.add(titleMap.get(field.getName()));
+                    filterMap.put(field.getName(), field.getName());
+                }
             }
         }
-
         //生成列后按列条件筛选device数据
-        ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListQueryRequest);
+        ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListExportRequest.getDeviceListQueryRequest());
         if(RetCode.OK == result.getCode())
         {
             List<DeviceListVo> deviceListVoList = result.getData();
             String[] titles = new String[titleNames.size()];
             titleNames.toArray(titles);
             ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();
-            deviceListVoExcelUtil.exportExcel("filename",response,"sheet1",titles,deviceListVoList,filterMap,deviceListVoExcelUtil.EXCEl_FILE_2007);
+            deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(),response,deviceListExportRequest.getSheetTitle(),titles,deviceListVoList,filterMap,deviceListVoExcelUtil.EXCEl_FILE_2007);
         }
         return new ApiResponse<>(RetCode.OK,"ss");
     }

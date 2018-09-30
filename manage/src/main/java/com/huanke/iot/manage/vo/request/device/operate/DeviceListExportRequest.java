@@ -32,4 +32,10 @@ public class DeviceListExportRequest {
     private Boolean lastUpdateTime;
     //地理位置
     private Boolean location;
+
+    private String fileName;
+
+    private String sheetTitle;
+
+    private DeviceListQueryRequest deviceListQueryRequest;
 }

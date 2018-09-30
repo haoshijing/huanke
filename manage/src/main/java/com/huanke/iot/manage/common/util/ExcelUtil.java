@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -79,8 +80,13 @@ public class ExcelUtil<T>{
      * @param version 2003 或者 2007，不传时默认生成2003版本S
      */
     public void exportExcel(String fileName,HttpServletResponse response ,String title, String[] headers, Collection<T> dataSet, Map<String,String> filterMap,String version) throws Exception{
-        response.setContentType("application/vnd.ms-excel");
-        response.addHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8") + ".xlsx");
+        fileName= URLEncoder.encode(fileName, "GB2312");
+        fileName= URLDecoder.decode(fileName, "ISO8859_1");
+        if(fileName.contains(".xls")||fileName.contains(".xlsx")){
+            response.setHeader("Content-Disposition","attachment;filename="+fileName);
+        }else{
+            response.setHeader("Content-Disposition","attachment;filename="+fileName+".xls");
+        }
         if(StringUtils.isBlank(version) || EXCEL_FILE_2003.equals(version.trim())){
             exportExcel2003(title, headers, dataSet, response.getOutputStream(), "yyyy-MM-dd hh:mm:ss");
         }else{
