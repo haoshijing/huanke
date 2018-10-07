@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Repository
@@ -105,6 +107,11 @@ public class DeviceOperateService {
 
     @Autowired
     private WxConfigMapper wxConfigMapper;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    private static final String CUSTOMERID_PREIX = "customerId.";
 
     private static String[] keys = {"name","mac","customerName","deviceType","bindStatus","enableStatus","groupName",
                                     "workStatus","onlineStatus","modelId","modelName","birthTime","lastUpdateTime","location"};
@@ -170,6 +177,8 @@ public class DeviceOperateService {
 
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
+        Integer customerId = obtainCustomerId(false);
+
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
@@ -177,6 +186,8 @@ public class DeviceOperateService {
             BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
         }
         queryPo.setStatus(null);
+        queryPo.setCustomerId(customerId);
+
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
         if(0 == devicePos.size() || null == devicePos){
             return new ApiResponse<>(RetCode.OK,"暂无设备",null);
@@ -195,9 +206,9 @@ public class DeviceOperateService {
             }
             deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
             if (null != deviceCustomerRelationPo) {
-                Integer customerId = deviceCustomerRelationPo.getCustomerId();
+                Integer tempCustomerId = deviceCustomerRelationPo.getCustomerId();
                 deviceQueryVo.setCustomerId(customerId);
-                deviceQueryVo.setCustomerName(customerMapper.selectById(customerId).getName());
+                deviceQueryVo.setCustomerName(customerMapper.selectById(tempCustomerId).getName());
             }
             //查询客户信息
             deviceQueryVo.setModelId(devicePo.getModelId());
@@ -346,6 +357,8 @@ public class DeviceOperateService {
                     queryDevicePo.setWxDevicelicence(null);
                     queryDevicePo.setWxQrticket(null);
 
+                    queryDevicePo.setCustomerId(null);
+
                     //设定工作状态为空闲
                     queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
                     //设定在线状态为离线
@@ -469,6 +482,7 @@ public class DeviceOperateService {
                     DevicePo devicePo = new DevicePo();
                     devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
                     devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
+                    devicePo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
                     devicePo.setStatus(CommonConstant.STATUS_YES);
                     devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_YES);
                     devicePo.setAssignTime(System.currentTimeMillis());
@@ -534,6 +548,8 @@ public class DeviceOperateService {
                         devicePo.setWxDevicelicence(null);
                         devicePo.setWxQrticket(null);
                         devicePo.setProductId(null);
+                        devicePo.setCustomerId(null);
+
                         devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
                         devicePo.setLastUpdateTime(System.currentTimeMillis());
                         devicePoList.add(devicePo);
@@ -1097,5 +1113,42 @@ public class DeviceOperateService {
             log.error("", e);
         }
         return new ApiResponse<>(RetCode.PARAM_ERROR, "获取设备配额失败", null);
+    }
+
+    public Integer obtainCustomerId(boolean fromServer){
+
+        String customerId;
+        String origin = httpServletRequest.getHeader("origin");
+        if(StringUtils.isNotBlank(origin)){
+            String customerSLD = origin.substring(7,origin.indexOf("."));
+            String customerKey = CUSTOMERID_PREIX+customerSLD;
+            if(!"www".equals(customerSLD)){
+                if(!fromServer){
+                    customerId = stringRedisTemplate.opsForValue().get(customerKey);
+                    if(null!=customerId){
+                        return Integer.parseInt(customerId);
+                    }else{
+                        obtainCustomerId(true);
+                    }
+
+                }else{
+                    CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
+                    if(customerPo!=null){
+                        customerId = customerPo.getId().toString();
+                        stringRedisTemplate.opsForValue().set(customerKey, customerId);
+                        stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
+                        return Integer.parseInt(customerId);
+                    }
+                }
+
+            }else {
+                return null;
+            }
+        }else{
+            return null;
+        }
+
+
+        return null;
     }
 }
