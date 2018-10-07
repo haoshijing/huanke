@@ -44,4 +44,12 @@ public interface DeviceTeamConstants {
      * 不存在联动设备
      */
     int DEVICE_TEAM_LINKAGE_NO = 2;
+
+    //场景表中存入的为图册
+    int IMAGE_VIDEO_MARK_IMAGE = 1;
+
+    //场景表中存入的为视频
+    int IMAGE_VIDEO_MARK_VIDEO = 2;
+
+
 }
