@@ -27,14 +27,31 @@ public class TeamCreateOrUpdateRequest {
 
     private String sceneDescription;
 
-    private List<imgOrVideo> imgOrVideoList;
+    private List<Images> imagesList;
+
+    private List<Videos> videosList;
 
     private List<TeamDeviceCreateRequest> teamDeviceCreateRequestList;
 
     @Data
-    public static class imgOrVideo{
+    public static class Images{
         //图片或视频
-        private String imgVideo;
+        private String image;
+    }
+
+    @Data
+    public static class Videos{
+        private String video;
+    }
+
+    @Data
+    public static class TeamDeviceCreateRequest {
+
+        private String name;
+        private String mac;
+        private String manageName;
+        //联动状态，1-联动，2-不联动
+        private Integer linkAgeStatus;
     }
 
 }

@@ -13,7 +13,7 @@ public interface DeviceTeamSceneMapper extends BaseMapper<DeviceTeamScenePo> {
     Integer insertBatch(List<DeviceTeamScenePo> deviceTeamScenePoList);
 
 
-    List<DeviceTeamScenePo> selectImgVideoList(@Param("teamId") Integer teamId);
+    List<DeviceTeamScenePo> selectImgVideoList(@Param("teamId") Integer teamId,@Param("imgVideoMark") Integer imgVideoMark);
 
     Integer deleteByTeamId(Integer teamId);
 

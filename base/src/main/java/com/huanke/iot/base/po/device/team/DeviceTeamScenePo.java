@@ -8,6 +8,7 @@ public class DeviceTeamScenePo {
     private Integer id;
     private Integer teamId;
     private String imgVideo;
+    private Integer imgVideoMark;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;

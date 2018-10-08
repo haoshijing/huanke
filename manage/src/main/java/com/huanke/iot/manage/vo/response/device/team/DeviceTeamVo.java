@@ -20,7 +20,8 @@ public class DeviceTeamVo {
     private Integer masterUserId;
     private String masterNickName;
     private String cover;
-    private List<ImgVideos> imgVideosList;
+    private List<Images> imagesList;
+    private List<Videos> videosList;
     private String sceneDescription;
     private Integer status = CommonConstant.STATUS_YES;
     private Integer teamStatus;
@@ -32,8 +33,14 @@ public class DeviceTeamVo {
 
 
     @Data
-    public static class ImgVideos {
-        private String imgVideo;
+    public static class Images{
+        //图片或视频
+        private String image;
+    }
+
+    @Data
+    public static class Videos{
+        private String video;
     }
 
     @Data

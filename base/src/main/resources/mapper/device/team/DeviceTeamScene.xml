@@ -15,6 +15,7 @@
         id,
         teamId,
         imgVideo,
+        imgVideoMark,
         status,
         createTime,
         lastUpdateTime
@@ -23,6 +24,7 @@
         #{id},
         #{teamId},
         #{imgVideo},
+        #{imgVideoMark},
         #{status},
         #{createTime},
         #{lastUpdateTime}
@@ -37,6 +39,7 @@
         id,
         teamId,
         imgVideo,
+        imgVideoMark,
         status,
         createTime,
         lastUpdateTime
@@ -47,6 +50,7 @@
             #{teamScene.id},
             #{teamScene.teamId},
             #{teamScene.imgVideo},
+            #{teamScene.imgVideoMark},
             #{teamScene.status},
             #{teamScene.createTime},
             #{teamScene.lastUpdateTime}
@@ -57,7 +61,10 @@
     <select id="selectImgVideoList" resultType="com.huanke.iot.base.po.device.team.DeviceTeamScenePo">
         select * from
         <include refid="tableName"/>
-        where teamId = #{teamId}
+        where
+        teamId = #{teamId}
+        and
+        imgVideoMark = #{imgVideoMark}
     </select>
 
     <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.team.DeviceTeamScenePo">

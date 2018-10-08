@@ -12,6 +12,7 @@ import lombok.Data;
 public class DeviceListQueryRequest {
 
 
+    private Integer customerId;
     /**
      * 设备id
      */
@@ -40,7 +41,7 @@ public class DeviceListQueryRequest {
     //工作状态 或 租赁状态
     private Integer workStatus;
 
-    private int status = CommonConstant.STATUS_YES;
+    private Integer status = CommonConstant.STATUS_YES;
 
     private Integer page = 1;
     private Integer limit = 20;

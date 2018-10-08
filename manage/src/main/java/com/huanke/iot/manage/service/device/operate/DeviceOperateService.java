@@ -25,6 +25,7 @@ import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
@@ -42,12 +43,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Repository
@@ -99,6 +107,16 @@ public class DeviceOperateService {
 
     @Autowired
     private WxConfigMapper wxConfigMapper;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    private static final String CUSTOMERID_PREIX = "customerId.";
+
+    private static String[] keys = {"name","mac","customerName","deviceType","bindStatus","enableStatus","groupName",
+                                    "workStatus","onlineStatus","modelId","modelName","birthTime","lastUpdateTime","location"};
+
+    private static String[] texts = {"名称","MAC","归属","类型","绑定状态","启用状态","集群名","工作状态","在线状态","设备型号ID","设备型号名称","注册时间","最后上上线时间","地理位置"};
 
     /**
      * 2018-08-15
@@ -159,6 +177,8 @@ public class DeviceOperateService {
 
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
+        Integer customerId = obtainCustomerId(false);
+
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
@@ -166,6 +186,8 @@ public class DeviceOperateService {
             BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
         }
         queryPo.setStatus(null);
+        queryPo.setCustomerId(customerId);
+
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
         if(0 == devicePos.size() || null == devicePos){
             return new ApiResponse<>(RetCode.OK,"暂无设备",null);
@@ -184,9 +206,9 @@ public class DeviceOperateService {
             }
             deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
             if (null != deviceCustomerRelationPo) {
-                Integer customerId = deviceCustomerRelationPo.getCustomerId();
+                Integer tempCustomerId = deviceCustomerRelationPo.getCustomerId();
                 deviceQueryVo.setCustomerId(customerId);
-                deviceQueryVo.setCustomerName(customerMapper.selectById(customerId).getName());
+                deviceQueryVo.setCustomerName(customerMapper.selectById(tempCustomerId).getName());
             }
             //查询客户信息
             deviceQueryVo.setModelId(devicePo.getModelId());
@@ -215,7 +237,7 @@ public class DeviceOperateService {
                 deviceQueryVo.setGroupName("无集群");
             }
             deviceQueryVo.setId(devicePo.getId());
-            deviceQueryVo.setCreateTime(devicePo.getCreateTime());
+            deviceQueryVo.setBirthTime(devicePo.getBirthTime());
             deviceQueryVo.setLastUpdateTime(devicePo.getLastUpdateTime());
             //查询绑定信息
             DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
@@ -230,21 +252,50 @@ public class DeviceOperateService {
         return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
     }
 
-    public ApiResponse<Boolean> exportDeviceList(DeviceListExportRequest deviceListExportRequest){
+
+    /**
+     * 导出设备列表
+     * @param response
+     * @param deviceListExportRequest
+     * @return
+     * @throws Exception
+     */
+    public ApiResponse<Boolean> exportDeviceList(HttpServletResponse response, DeviceListExportRequest deviceListExportRequest) throws Exception{
+        //生成列名map
+        Map<String,String> titleMap = new HashMap<>();
+        for(int i = 0; i< keys.length; i++){
+            titleMap.put(keys[i],texts[i]);
+        }
         //根据条件筛选excel列名
         Class cls =deviceListExportRequest.getClass();
         Field[] fields = cls.getDeclaredFields();
-        List<String> titles = new ArrayList<>();
+        List<String> titleKeys = new ArrayList<>();
+        List<String> titleNames = new ArrayList<>();
+        Map<String,String> filterMap = new HashMap<>();
         for (Field field : fields){
             field.setAccessible(true);
-            try {
-                Boolean result =(Boolean) field.get(deviceListExportRequest);
-                if(result){
-                    titles.add(field.getName());
+            String getMethodName = "get" + field.getName().substring(0, 1).toUpperCase()
+                    + field.getName().substring(1);
+            Method getMethod = cls.getMethod(getMethodName, new Class[]{});
+            Object value = getMethod.invoke(deviceListExportRequest, new Object[]{});
+            if(value instanceof Boolean) {
+                Boolean result = (Boolean) field.get(deviceListExportRequest);
+                if (result) {
+                    titleKeys.add(field.getName());
+                    titleNames.add(titleMap.get(field.getName()));
+                    filterMap.put(field.getName(), field.getName());
                 }
-            }catch (Exception e){
-
             }
+        }
+        //生成列后按列条件筛选device数据
+        ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListExportRequest.getDeviceListQueryRequest());
+        if(RetCode.OK == result.getCode())
+        {
+            List<DeviceListVo> deviceListVoList = result.getData();
+            String[] titles = new String[titleNames.size()];
+            titleNames.toArray(titles);
+            ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();
+            deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(),response,deviceListExportRequest.getSheetTitle(),titles,deviceListVoList,filterMap,deviceListVoExcelUtil.EXCEl_FILE_2007);
         }
         return new ApiResponse<>(RetCode.OK,"ss");
     }
@@ -305,6 +356,8 @@ public class DeviceOperateService {
                     queryDevicePo.setWxDeviceId(null);
                     queryDevicePo.setWxDevicelicence(null);
                     queryDevicePo.setWxQrticket(null);
+
+                    queryDevicePo.setCustomerId(null);
 
                     //设定工作状态为空闲
                     queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
@@ -429,6 +482,7 @@ public class DeviceOperateService {
                     DevicePo devicePo = new DevicePo();
                     devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
                     devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
+                    devicePo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
                     devicePo.setStatus(CommonConstant.STATUS_YES);
                     devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_YES);
                     devicePo.setAssignTime(System.currentTimeMillis());
@@ -494,6 +548,8 @@ public class DeviceOperateService {
                         devicePo.setWxDevicelicence(null);
                         devicePo.setWxQrticket(null);
                         devicePo.setProductId(null);
+                        devicePo.setCustomerId(null);
+
                         devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
                         devicePo.setLastUpdateTime(System.currentTimeMillis());
                         devicePoList.add(devicePo);
@@ -1057,5 +1113,42 @@ public class DeviceOperateService {
             log.error("", e);
         }
         return new ApiResponse<>(RetCode.PARAM_ERROR, "获取设备配额失败", null);
+    }
+
+    public Integer obtainCustomerId(boolean fromServer){
+
+        String customerId;
+        String origin = httpServletRequest.getHeader("origin");
+        if(StringUtils.isNotBlank(origin)){
+            String customerSLD = origin.substring(7,origin.indexOf("."));
+            String customerKey = CUSTOMERID_PREIX+customerSLD;
+            if(!"www".equals(customerSLD)){
+                if(!fromServer){
+                    customerId = stringRedisTemplate.opsForValue().get(customerKey);
+                    if(null!=customerId){
+                        return Integer.parseInt(customerId);
+                    }else{
+                        obtainCustomerId(true);
+                    }
+
+                }else{
+                    CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
+                    if(customerPo!=null){
+                        customerId = customerPo.getId().toString();
+                        stringRedisTemplate.opsForValue().set(customerKey, customerId);
+                        stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
+                        return Integer.parseInt(customerId);
+                    }
+                }
+
+            }else {
+                return null;
+            }
+        }else{
+            return null;
+        }
+
+
+        return null;
     }
 }
