@@ -126,6 +126,7 @@
             t_customer_user u
         WHERE
             FROM_UNIXTIME( u.createTime / 1000, '%Y' ) = #{userYear}
+            and u.status =1
         GROUP BY
             FROM_UNIXTIME( u.createTime / 1000, '%m月' )
     </select>

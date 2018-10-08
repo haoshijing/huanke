@@ -21,15 +21,6 @@ import java.util.List;
 @Slf4j
 public class CustomerUserController {
 
-    @Autowired
-    private CustomerUserService customerUserService;
 
-    @ApiOperation("用户统计")
-    @GetMapping(value = "/selectCustomerUserCount")
-    public ApiResponse<List<CustomerUserVo>> selectCustomerUserCount() {
-        List<CustomerUserVo> deviceTypePercentList = customerUserService.selectCustomerUserCount();
-
-        return new ApiResponse<>(deviceTypePercentList);
-    }
 
 }

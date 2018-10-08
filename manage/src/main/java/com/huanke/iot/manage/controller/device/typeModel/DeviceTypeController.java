@@ -27,8 +27,6 @@ public class DeviceTypeController {
     @Autowired
     private DeviceTypeService deviceTypeService;
 
-    @Autowired
-    private DeviceTypeAbilitySetService deviceTypeAbilitySetService;
 
     /**
      * 添加新类型
@@ -215,13 +213,7 @@ public class DeviceTypeController {
     }
 
 
-    @ApiOperation("设备类型统计")
-    @GetMapping(value = "/selectTypePercent")
-    public ApiResponse<List<DeviceTypeVo.DeviceTypePercent>> selectTypePercent() {
-        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercentList = deviceTypeService.selectTypePercent();
 
-        return new ApiResponse<>(deviceTypePercentList);
-    }
 
 //    /**
 //     * 根据 类型主键查询 该类型的能力集

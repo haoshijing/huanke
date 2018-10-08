@@ -538,9 +538,9 @@
             bindTime = #{bindTime}
             lastUpdateTime = #{lastUpdateTime}
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
-            <!--#{item}-->
+        <!--#{item}-->
         <!--</foreach>-->
     </update>
 
@@ -552,9 +552,9 @@
             assignTime = #{assignTime}
             lastUpdateTime = #{lastUpdateTime}
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
-            <!--#{item}-->
+        <!--#{item}-->
         <!--</foreach>-->
     </update>
 
@@ -593,7 +593,8 @@
         where deviceId = #{id}
     </select>
 
-    <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         <include refid="tableName"/>
         WHERE hostDeviceId = #{hostDeviceId}
@@ -606,7 +607,7 @@
         <set>
             status = 2
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
     </update>
 
     <select id="getByHostDeviceIdAndTypeId" resultType="com.huanke.iot.base.po.device.DevicePo">
@@ -637,5 +638,40 @@
         WHERE hostDeviceId = #{hostDeviceId}
         AND childId = #{childId}
         and status = 1
+    </select>
+
+    <select id="selectDeviceCountByCustomer" resultType="java.util.HashMap">
+
+        SELECT
+        FROM_UNIXTIME( d.assignTime / 1000, '%m月' ) deviceMonth,
+        count( 1 ) deviceCount
+        FROM
+        t_device d
+        WHERE
+        1=1
+        and d.customerId = #{customerId}
+        GROUP BY
+        FROM_UNIXTIME( d.assignTime / 1000, '%m月' )
+        <if test="status != null">
+            and d.status = #{status}
+        </if>
+
+    </select>
+
+    <select id="selectDeviceCount" resultType="java.util.HashMap">
+
+        SELECT
+        FROM_UNIXTIME( d.createTime / 1000, '%m月' ) deviceMonth,
+        count( 1 ) deviceCount
+        FROM
+        t_device d
+        WHERE
+        1=1
+        <if test="status != null">
+            and d.status = #{status}
+        </if>
+        GROUP BY
+        FROM_UNIXTIME( d.createTime / 1000, '%m月' )
+
     </select>
 </mapper>

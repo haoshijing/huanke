@@ -20,24 +20,21 @@ import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.common.util.ExcelUtil;
-import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
+import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
-//import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,14 +47,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+//import com.huanke.iot.user.model.user.User;
 
 @Repository
 @Slf4j
@@ -1158,4 +1154,109 @@ public class DeviceOperateService {
 
         return null;
     }
+
+    /**
+     * 首页面板-统计用户
+     *
+     * @param
+     * @return
+     */
+
+    public List<DeviceStatisticsVo> selectDeviceCount() {
+        List rtnList = new ArrayList();
+        List nowDeviceConutList = new ArrayList();
+        List preYearDeviceList = new ArrayList();
+        Integer customerId = obtainCustomerId(false);
+
+        Calendar cal = Calendar.getInstance();
+        int nowYear = cal.get(Calendar.YEAR);
+        int preYear = nowYear-1;
+
+        if(customerId==null){
+            //今年的设备数据
+            nowDeviceConutList = deviceMapper.selectDeviceCount(nowYear,CommonConstant.STATUS_YES);
+            //去年的设备数据
+            preYearDeviceList = deviceMapper.selectDeviceCount(preYear,CommonConstant.STATUS_YES);
+        }else{
+            //今年的设备数据
+            nowDeviceConutList = deviceMapper.selectDeviceCountByCustomer(nowYear,CommonConstant.STATUS_YES,customerId);
+            //去年的设备数据
+            preYearDeviceList = deviceMapper.selectDeviceCountByCustomer(preYear,CommonConstant.STATUS_YES,customerId);
+        }
+
+        //上个月的设备数量
+        Long prevMonthCount = new Long(0);
+        //去年的上个月的设备数量
+        Long prevYearMonthCount = new Long(0);
+
+        String addPercent = "0.00%";
+        for(int i=1;i<=12;i++){
+            DeviceStatisticsVo deviceStatisticsVo = new DeviceStatisticsVo();
+            String nowMonth = i +"月";
+            if(i<10){
+                nowMonth = "0"+i+"月";
+            }
+            //今年某月的用户量
+            Long deviceCount = new Long(0);
+            //今年某月用户增长量
+            Long addCount = new Long(0);
+            //去年某月用户量
+            Long preYearDeviceCount =  new Long(0);
+            //去年某月用户增长量
+            Long preYearAddCount =  new Long(0);
+
+            if(nowDeviceConutList!=null&&nowDeviceConutList.size()>0){
+                for(int m=0;m<nowDeviceConutList.size();m++){
+                    Map tempMap = (Map)nowDeviceConutList.get(m);
+                    String tempMonth = (String)tempMap.get("deviceMonth");
+                    Long tempDeviceCount = (Long)tempMap.get("deviceCount");
+                    if(tempMonth.equals(nowMonth)){
+                        deviceCount = tempDeviceCount;
+                        addCount = deviceCount-prevMonthCount;
+                        prevMonthCount = deviceCount;
+                        break;
+                    }
+                }
+            }
+
+            if(preYearDeviceList!=null&&preYearDeviceList.size()>0){
+                for(int m=0;m<preYearDeviceList.size();m++){
+                    Map preMap = (Map)preYearDeviceList.get(m);
+                    String tempMonth = (String)preMap.get("deviceMonth");
+                    Long tempDeviceCount = (Long)preMap.get("deviceCount");
+                    if(tempMonth.equals(nowMonth)){
+                        preYearDeviceCount = tempDeviceCount;
+                        preYearAddCount = preYearDeviceCount-prevYearMonthCount;
+
+                        prevYearMonthCount = preYearDeviceCount;
+                        break;
+                    }
+                }
+            }
+
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(2);
+            df.setMinimumFractionDigits(2);
+            //如果除数为0
+            if(preYearAddCount==0){
+                //被除数为0
+                if(addCount==0){
+                    addPercent = "--";
+                }else{
+                    addPercent = df.format(addCount * 100.00 / 1) + "%";
+                }
+            }else {
+                addPercent = df.format((addCount-preYearAddCount) * 100.00 / preYearAddCount) + "%";
+            }
+
+            deviceStatisticsVo.setMonth(nowMonth);
+            deviceStatisticsVo.setAddCount(addCount);
+            deviceStatisticsVo.setDeviceCount(deviceCount);
+            deviceStatisticsVo.setAddPercent(addPercent);
+            rtnList.add(deviceStatisticsVo);
+        }
+
+        return rtnList;
+    }
+
 }
