@@ -118,4 +118,16 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectCustomerUserCount" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+       SELECT
+            FROM_UNIXTIME( u.createTime / 1000, '%m月' ) userMonth,
+            count( 1 ) userCount
+        FROM
+            t_customer_user u
+        WHERE
+            FROM_UNIXTIME( u.createTime / 1000, '%Y' ) = #{userYear}
+        GROUP BY
+            FROM_UNIXTIME( u.createTime / 1000, '%m月' )
+    </select>
+
 </mapper>

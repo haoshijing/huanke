@@ -144,4 +144,20 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectTypePercent" resultType="java.util.HashMap">
+       SELECT
+        t.id typeId,
+        t.`name` typeName,
+        count( 1 ) deviceCount
+        FROM
+            t_device_type t,
+            t_device d
+        WHERE
+            t.id = d.typeId
+            AND d.`status` = 1
+            AND t.`status` = 1
+        GROUP BY
+            t.id
+    </select>
+
 </mapper>

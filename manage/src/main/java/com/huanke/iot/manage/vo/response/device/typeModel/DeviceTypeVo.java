@@ -22,4 +22,13 @@ public class DeviceTypeVo {
 
     private List<DeviceTypeAbilitysVo> DeviceTypeAbilitys;
 
+    @Data
+    public static class DeviceTypePercent{
+        private Integer typeId;
+        private String typeName;
+        private Long deviceCount;
+        private String typePercent;
+
+    }
 }
+

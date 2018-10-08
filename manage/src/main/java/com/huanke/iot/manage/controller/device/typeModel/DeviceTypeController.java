@@ -46,8 +46,8 @@ public class DeviceTypeController {
         try {
             return deviceTypeService.createOrUpdate(typeRrequest);
         } catch (Exception e) {
-            log.error("添加新类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"添加类型失败");
+            log.error("添加新类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "添加类型失败");
         }
     }
 
@@ -71,9 +71,9 @@ public class DeviceTypeController {
 
         try {
             return deviceTypeService.createOrUpdate(typeRrequest);
-        }catch (Exception e) {
-            log.error("修改类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"修改类型失败");
+        } catch (Exception e) {
+            log.error("修改类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "修改类型失败");
         }
     }
 
@@ -92,8 +92,8 @@ public class DeviceTypeController {
         try {
             ret = deviceTypeService.deleteDeviceType(typeId);
         } catch (Exception e) {
-            log.error("删除类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"删除类型失败");
+            log.error("删除类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "删除类型失败");
         }
         return new ApiResponse<>(ret);
     }
@@ -113,8 +113,8 @@ public class DeviceTypeController {
         try {
             ret = deviceTypeService.destoryDeviceType(typeId);
         } catch (Exception e) {
-            log.error("删除类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"删除类型失败");
+            log.error("删除类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "删除类型失败");
         }
         return new ApiResponse<>(ret);
     }
@@ -212,6 +212,15 @@ public class DeviceTypeController {
         } else {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "类型主键格式不正确");
         }
+    }
+
+
+    @ApiOperation("设备类型统计")
+    @GetMapping(value = "/selectTypePercent")
+    public ApiResponse<List<DeviceTypeVo.DeviceTypePercent>> selectTypePercent() {
+        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercentList = deviceTypeService.selectTypePercent();
+
+        return new ApiResponse<>(deviceTypePercentList);
     }
 
 //    /**

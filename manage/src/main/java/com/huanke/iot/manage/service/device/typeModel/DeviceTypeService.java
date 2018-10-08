@@ -3,12 +3,14 @@ package com.huanke.iot.manage.service.device.typeModel;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilitySetMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAbilitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilitySetPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
@@ -27,8 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 //import com.huanke.iot.base.dao.device.ability.DeviceAbilitySetMapper;
@@ -58,6 +63,9 @@ public class DeviceTypeService {
     @Autowired
     private DeviceAbilitySetMapper deviceAbilitySetMapper;
 
+    @Autowired
+    private DeviceMapper deviceMapper;
+
     @Value("${accessKeyId}")
     private String accessKeyId;
 
@@ -81,13 +89,13 @@ public class DeviceTypeService {
 
         //先保存 类型基本信息
         DeviceTypePo deviceTypePo = new DeviceTypePo();
-        if(typeRequest!=null){
+        if (typeRequest != null) {
             BeanUtils.copyProperties(typeRequest, deviceTypePo);
         }
         if (typeRequest.getId() != null && typeRequest.getId() > 0) {
-            if(CommonConstant.STATUS_DEL.equals(deviceTypePo.getStatus())){
+            if (CommonConstant.STATUS_DEL.equals(deviceTypePo.getStatus())) {
                 deviceTypePo.setStatus(CommonConstant.STATUS_DEL);
-            }else{
+            } else {
                 deviceTypePo.setStatus(CommonConstant.STATUS_YES);
             }
             deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
@@ -145,7 +153,7 @@ public class DeviceTypeService {
     public Boolean deleteDeviceType(Integer typeId) {
 
         Boolean ret = false;
-        ret = deviceTypeMapper.updateStatusById(typeId,CommonConstant.STATUS_DEL) > 0;
+        ret = deviceTypeMapper.updateStatusById(typeId, CommonConstant.STATUS_DEL) > 0;
         return ret;
     }
 
@@ -227,7 +235,7 @@ public class DeviceTypeService {
         List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectList(queryDeviceTypePo, limit, offset);
         return deviceTypePos.stream().map(deviceTypePo -> {
             DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
-            if(deviceTypePo!=null){
+            if (deviceTypePo != null) {
                 deviceTypeVo.setName(deviceTypePo.getName());
                 deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
                 deviceTypeVo.setIcon(deviceTypePo.getIcon());
@@ -259,7 +267,7 @@ public class DeviceTypeService {
         List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectListByTypeIds(typeIdList);
         return deviceTypePos.stream().map(deviceTypePo -> {
             DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
-            if(deviceTypePo!=null){
+            if (deviceTypePo != null) {
                 deviceTypeVo.setName(deviceTypePo.getName());
                 deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
                 deviceTypeVo.setIcon(deviceTypePo.getIcon());
@@ -289,7 +297,7 @@ public class DeviceTypeService {
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
 
         DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
-        if(deviceTypePo!=null){
+        if (deviceTypePo != null) {
             deviceTypeVo.setName(deviceTypePo.getName());
             deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
             deviceTypeVo.setIcon(deviceTypePo.getIcon());
@@ -318,7 +326,7 @@ public class DeviceTypeService {
         List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = deviceTypeAbilitysPos.stream().map(deviceTypeAbilitysPo -> {
 
             DeviceTypeAbilitysVo deviceTypeAbilitysVo = new DeviceTypeAbilitysVo();
-            if(deviceTypeAbilitysPo!=null){
+            if (deviceTypeAbilitysPo != null) {
                 deviceTypeAbilitysVo.setAbilityId(deviceTypeAbilitysPo.getAbilityId());
                 deviceTypeAbilitysVo.setAbilityName(deviceTypeAbilitysPo.getAbilityName());
                 deviceTypeAbilitysVo.setId(deviceTypeAbilitysPo.getId());
@@ -326,7 +334,7 @@ public class DeviceTypeService {
                 deviceTypeAbilitysVo.setAbilityType(deviceTypeAbilitysPo.getAbilityType());
 
                 List<DeviceAbilityOptionPo> deviceAbilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(deviceTypeAbilitysPo.getAbilityId());
-                if(deviceAbilityOptionPos!=null&&deviceAbilityOptionPos.size()>0){
+                if (deviceAbilityOptionPos != null && deviceAbilityOptionPos.size() > 0) {
                     List<DeviceAbilityOptionVo> deviceAbilityOptionVos = deviceAbilityOptionPos.stream().map(deviceAbilityOptionPo -> {
                         DeviceAbilityOptionVo deviceAbilityOptionVo = new DeviceAbilityOptionVo();
 
@@ -347,6 +355,49 @@ public class DeviceTypeService {
 
 
         return deviceTypeAbilitysVos;
+
+    }
+
+    /**
+     * 首页大数据面板-设备类型统计
+     *
+     * @return
+     */
+    public List<DeviceTypeVo.DeviceTypePercent> selectTypePercent() {
+
+        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercents = new ArrayList<DeviceTypeVo.DeviceTypePercent>();
+        /*查询设备总量*/
+        DevicePo queryDevicePo = new DevicePo();
+        queryDevicePo.setStatus(CommonConstant.STATUS_YES);
+        Integer deviceTotal = deviceMapper.selectCount(queryDevicePo);
+
+        if(deviceTotal!=null&&deviceTotal!=0){
+            List deviceTypePercentList = deviceTypeMapper.selectTypePercent();
+
+            if (deviceTypePercentList != null && deviceTypePercentList.size() > 0) {
+                for(int i=0;i<deviceTypePercentList.size();i++){
+                    DeviceTypeVo.DeviceTypePercent deviceTypePercent = new DeviceTypeVo.DeviceTypePercent();
+                    Map deviceTypePercentMap = (Map)deviceTypePercentList.get(i);
+                    Integer typeId = (Integer)deviceTypePercentMap.get("typeId");
+                    String typeName = (String)deviceTypePercentMap.get("typeName");
+                    Long deviceCount = (Long)deviceTypePercentMap.get("deviceCount");
+
+                    DecimalFormat df = new DecimalFormat();
+                    df.setMaximumFractionDigits(2);
+                    df.setMinimumFractionDigits(2);
+                    String typePercent = df.format(deviceCount * 100.00 / deviceTotal) + "%";
+
+                    deviceTypePercent.setTypeId(typeId);
+                    deviceTypePercent.setTypeName(typeName);
+                    deviceTypePercent.setDeviceCount(deviceCount);
+                    deviceTypePercent.setTypePercent(typePercent);
+
+                    deviceTypePercents.add(deviceTypePercent);
+                }
+            }
+        }
+
+        return deviceTypePercents;
 
     }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {

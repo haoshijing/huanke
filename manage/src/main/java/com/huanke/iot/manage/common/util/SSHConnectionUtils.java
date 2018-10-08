@@ -9,8 +9,8 @@ public class SSHConnectionUtils {
 
 
 
-    private final static String S_PATH_FILE_PRIVATE_KEY = "~/.ssh/id_rsa";
-    private final static String S_PATH_FILE_KNOWN_HOSTS = "~/.ssh/known_hosts";
+    private final static String S_PATH_FILE_PRIVATE_KEY = "C:/Users/caikun/.ssh/id_rsa";
+    private final static String S_PATH_FILE_KNOWN_HOSTS = "C:/Users/caikun/.ssh/known_hosts";
     private final static String S_PASS_PHRASE = "";
     private final static int LOCAl_PORT = 3307;
     private final static int REMOTE_PORT = 3306;

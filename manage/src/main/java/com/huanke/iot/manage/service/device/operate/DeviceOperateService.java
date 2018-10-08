@@ -40,6 +40,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -112,6 +113,9 @@ public class DeviceOperateService {
     private HttpServletRequest httpServletRequest;
 
     private static final String CUSTOMERID_PREIX = "customerId.";
+
+    @Value("${localOrigin}")
+    private String localOrigin;
 
     private static String[] keys = {"name","mac","customerName","deviceType","bindStatus","enableStatus","groupName",
                                     "workStatus","onlineStatus","modelId","modelName","birthTime","lastUpdateTime","location"};
@@ -1120,30 +1124,33 @@ public class DeviceOperateService {
         String customerId;
         String origin = httpServletRequest.getHeader("origin");
         if(StringUtils.isNotBlank(origin)){
-            String customerSLD = origin.substring(7,origin.indexOf("."));
-            String customerKey = CUSTOMERID_PREIX+customerSLD;
-            if(!"www".equals(customerSLD)){
-                if(!fromServer){
-                    customerId = stringRedisTemplate.opsForValue().get(customerKey);
-                    if(null!=customerId){
-                        return Integer.parseInt(customerId);
+            if(!StringUtils.contains(origin,localOrigin)){
+                String customerSLD = origin.substring(7,origin.indexOf("."));
+                String customerKey = CUSTOMERID_PREIX+customerSLD;
+                if(!"www".equals(customerSLD)){
+                    if(!fromServer){
+                        customerId = stringRedisTemplate.opsForValue().get(customerKey);
+                        if(null!=customerId){
+                            return Integer.parseInt(customerId);
+                        }else{
+                            obtainCustomerId(true);
+                        }
+
                     }else{
-                        obtainCustomerId(true);
+                        CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
+                        if(customerPo!=null){
+                            customerId = customerPo.getId().toString();
+                            stringRedisTemplate.opsForValue().set(customerKey, customerId);
+                            stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
+                            return Integer.parseInt(customerId);
+                        }
                     }
 
-                }else{
-                    CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
-                    if(customerPo!=null){
-                        customerId = customerPo.getId().toString();
-                        stringRedisTemplate.opsForValue().set(customerKey, customerId);
-                        stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
-                        return Integer.parseInt(customerId);
-                    }
+                }else {
+                    return null;
                 }
-
-            }else {
-                return null;
             }
+
         }else{
             return null;
         }
