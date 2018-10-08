@@ -649,6 +649,7 @@
         t_device d
         WHERE
         1=1
+        and FROM_UNIXTIME( d.assignTime / 1000, '%Y' ) = #{nowYear}
         and d.customerId = #{customerId}
         GROUP BY
         FROM_UNIXTIME( d.assignTime / 1000, '%m月' )
@@ -667,11 +668,11 @@
         t_device d
         WHERE
         1=1
+        and FROM_UNIXTIME( d.createTime / 1000, '%Y' ) = #{nowYear}
         <if test="status != null">
             and d.status = #{status}
         </if>
         GROUP BY
         FROM_UNIXTIME( d.createTime / 1000, '%m月' )
-
     </select>
 </mapper>
