@@ -621,6 +621,13 @@
         and status = 1
     </select>
 
+    <select id="queryChildDeviceIds" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select id from
+        <include refid="tableName"/>
+        WHERE hostDeviceId = #{hostDeviceId}
+        and status = 1
+    </select>
+
     <select id="queryChildDevice" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         <include refid="tableName"/>
