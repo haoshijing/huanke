@@ -278,7 +278,7 @@
             <if test="param.status != null">
                 AND status = #{param.status}
             </if>
-
+            AND hostDeviceId is null
         </where>
     </select>
 

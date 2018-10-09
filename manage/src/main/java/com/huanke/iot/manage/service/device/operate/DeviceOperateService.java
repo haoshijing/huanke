@@ -854,8 +854,9 @@ public class DeviceOperateService {
      * @param
      * @return
      */
-    public ApiResponse<Integer> selectCount() throws Exception{
+    public ApiResponse<Integer> selectCount(Integer status) throws Exception{
         DevicePo queryDevicePo = new DevicePo();
+        queryDevicePo.setStatus(status);
         return new ApiResponse<>(RetCode.OK,"查询总数成功",deviceMapper.selectCount(queryDevicePo));
     }
 

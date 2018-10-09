@@ -130,10 +130,10 @@ public class DeviceOperateController {
      * @return
      */
     @ApiOperation("获取设备总数")
-    @RequestMapping(value = "/queryCount", method = RequestMethod.GET)
-    public ApiResponse<Integer> queryCount() {
+    @RequestMapping(value = "/queryCount/{status}", method = RequestMethod.POST)
+    public ApiResponse<Integer> queryCount(@PathVariable("status") Integer status) {
         try {
-            return this.deviceService.selectCount();
+            return this.deviceService.selectCount(status);
         } catch (Exception e) {
             log.error("设备总数查询异常 = {}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备总数查询异常");
@@ -378,7 +378,7 @@ public class DeviceOperateController {
     }
 
     @ApiOperation("导出设备列表")
-    @RequestMapping(value = "/exportDeviceData", method = RequestMethod.POST)
+    @RequestMapping(value = "/exportDeviceData", method = RequestMethod.GET)
     public ApiResponse<String> exportDeviceData(@RequestBody DeviceListExportRequest deviceListExportRequest,HttpServletResponse response){
         try {
             this.deviceService.exportDeviceList(response,deviceListExportRequest);
