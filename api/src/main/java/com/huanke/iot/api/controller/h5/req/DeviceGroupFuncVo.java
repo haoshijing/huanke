@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class DeviceGroupFuncVo {
-    private List<String> wxDeviceIdList;
+    private List<Integer> deviceIdList;
     private String funcId;
     private String value;
 }

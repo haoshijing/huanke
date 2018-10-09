@@ -21,4 +21,6 @@ public interface DeviceTypeMapper extends BaseMapper<DeviceTypePo> {
     List<DeviceTypePo> selectListByCustomerId(Integer customerID);
 
     List selectTypePercent();
+
+    void updateStopWatch(@Param("id")Integer id, @Param("stopWatch")String stopWatch);
 }

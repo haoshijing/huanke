@@ -1,7 +1,9 @@
 package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceSensorPo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import lombok.Data;
@@ -22,10 +24,14 @@ public class SensorHandler  extends AbstractHandler {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
     @Data
     public static class SensorMessage{
         private String type;
         private Integer value;
+        private String childid;
         //根据硬件要求，重新设定type，value
         private String t;
         private Integer v;
@@ -49,6 +55,10 @@ public class SensorHandler  extends AbstractHandler {
 
         sensorListMessage.getDatas().forEach(sensorMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
+            if(sensorMessage.getChildid() != null){
+                DevicePo childDevice = deviceMapper.getChildDevice(deviceId, sensorMessage.getChildid());
+                deviceId = childDevice.getId();
+            }
             DeviceSensorPo deviceSensorPo = new DeviceSensorPo();
             String type = sensorMessage.getType();
             if(StringUtils.isBlank(type)){
@@ -61,6 +71,8 @@ public class SensorHandler  extends AbstractHandler {
             }
             deviceSensorPo.setSensorValue(value);
             deviceSensorPo.setCreateTime(System.currentTimeMillis());
+
+
             deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
             try {
                 deviceSensorDataMapper.insert(deviceSensorPo);

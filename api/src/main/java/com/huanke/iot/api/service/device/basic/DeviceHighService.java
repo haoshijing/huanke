@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
@@ -47,6 +48,8 @@ public class DeviceHighService {
     private DeviceTypeMapper deviceTypeMapper;
     @Autowired
     private DeviceTeamItemMapper deviceTeamItemMapper;
+    @Autowired
+    private DeviceDataService deviceDataService;
 
     public String getHighToken(Integer customerId, String password) throws Exception {
         WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(customerId, password);
@@ -90,12 +93,29 @@ public class DeviceHighService {
 
         Integer childDeviceId = addOrUpdate(devicePo);
         //缓存设备码表等待设备读取
-        Integer childDeviceTypeId = deviceModelMapper.selectById(modelId).getTypeId();
-        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(childDeviceTypeId);
-        JSONObject stopWatchJson = JSONObject.parseObject(deviceTypePo.getStopWatch());
-        stopWatchJson.put("address", childDeviceId);
-        String redisStopWatch = JSONObject.toJSONString(stopWatchJson);
-        stringRedisTemplate.opsForValue().set("childStopWatch." + childDeviceId, redisStopWatch);
+        DevicePo hostDevice = deviceMapper.selectById(hostDeviceId);
+        Integer hostModelId = hostDevice.getModelId();
+        Integer hostDeviceTypeId = deviceModelMapper.selectById(hostModelId).getTypeId();
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(hostDeviceTypeId);
+
+        String stopWatch = deviceTypePo.getStopWatch();
+        if(stopWatch != null){
+            JSONObject jsonObject = JSONObject.parseObject(stopWatch);
+            JSONObject mb = jsonObject.getJSONObject("mb");
+            JSONArray n = mb.getJSONArray("n");
+            if(!n.contains(childId)){
+                n.add(childId);
+                mb.remove("n");
+                mb.put("n",n);
+                jsonObject.remove("mb");
+                jsonObject.put("mb", mb);
+                stopWatch = jsonObject.toString();
+            }
+            deviceTypeMapper.updateStopWatch(hostDeviceTypeId, stopWatch);
+            deviceDataService.sendMb(hostDeviceId, stopWatch);
+        }else{
+            log.info("码表为空：hostDeviceId ={}, childId={}, modelId={}", hostDeviceId, childId, modelId);
+        }
         return childDeviceId;
     }
 
@@ -125,6 +145,10 @@ public class DeviceHighService {
             childDeviceVo.setDeviceName(devicePo.getName());
             childDeviceVo.setChildId(devicePo.getChildId());
             childDeviceVos.add(childDeviceVo);
+            Integer modelId = devicePo.getModelId();
+            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+            childDeviceVo.setDeviceTypeName(deviceTypePo.getName());
         }
         return childDeviceVos;
     }

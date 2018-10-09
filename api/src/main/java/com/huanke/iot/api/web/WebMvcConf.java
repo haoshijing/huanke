@@ -42,7 +42,7 @@ public  class WebMvcConf extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/app/api/bind");
         registry.addInterceptor(deviceHighSetInterceptor)
                 .addPathPatterns("/h5/high/**")
-                .excludePathPatterns("/h5/high/getToken");
+                .excludePathPatterns("/h5/high/getToken").excludePathPatterns("/h5/high/childDeviceList/**");
 
 
 

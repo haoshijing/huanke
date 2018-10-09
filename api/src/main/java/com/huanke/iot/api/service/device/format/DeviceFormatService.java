@@ -72,12 +72,12 @@ public class DeviceFormatService {
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);
         deviceModelVo.setFormatId(formatId);
         deviceModelVo.setModelId(modelId);
-        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, pageNo);
+        WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectByJoinId(formatId, pageNo);
+        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, wxFormatPagePo.getId());
         Integer modelFormatId = deviceModelFormatPo.getId();
         deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
         //查型号版式配置项
         List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
-        WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectByJoinId(formatId, pageNo);
         deviceModelVo.setPageName(wxFormatPagePo.getName());
         List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByJoinId(formatId, wxFormatPagePo.getId());
         for (WxFormatItemPo wxFormatItemPo : wxFormatItemPos) {
