@@ -74,7 +74,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>api</finalName>
+        <finalName>hcApi</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
