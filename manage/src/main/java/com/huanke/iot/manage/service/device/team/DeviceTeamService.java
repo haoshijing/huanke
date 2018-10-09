@@ -241,7 +241,7 @@ public class DeviceTeamService {
         queryPo.setTeamType(teamListQueryRequest.getTeamType());
         queryPo.setMasterUserId(teamListQueryRequest.getMasterUserId());
         queryPo.setCreateUserId(teamListQueryRequest.getCreateUserId());
-        queryPo.setStatus(teamListQueryRequest.getStatus());
+        queryPo.setStatus(null==teamListQueryRequest.getStatus()?CommonConstant.STATUS_YES:teamListQueryRequest.getStatus());
         queryPo.setCustomerId(teamListQueryRequest.getCustomerId());
 
         List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectList(queryPo, limit, offset);
