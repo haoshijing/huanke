@@ -41,7 +41,7 @@ public class DeviceListQueryRequest {
     //工作状态 或 租赁状态
     private Integer workStatus;
 
-    private Integer status = CommonConstant.STATUS_YES;
+    private Integer status;
 
     private Integer page = 1;
     private Integer limit = 20;

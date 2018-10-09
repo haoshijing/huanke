@@ -185,7 +185,6 @@ public class DeviceOperateService {
         if(deviceListQueryRequest!=null){
             BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
         }
-        queryPo.setStatus(null);
         queryPo.setCustomerId(customerId);
 
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
