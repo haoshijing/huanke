@@ -9,6 +9,8 @@ import lombok.Data;
 
 @Data
 public class DevicePo {
+
+    private Integer customerId;
     /**
      * 设备id
      */

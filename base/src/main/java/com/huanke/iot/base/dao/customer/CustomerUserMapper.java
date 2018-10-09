@@ -16,5 +16,5 @@ public interface CustomerUserMapper extends BaseMapper<CustomerUserPo>{
      List<CustomerUserPo> selectByCustomerId(Integer customerId);
      CustomerUserPo selectCustomerByMasterUserId(Integer masterUserId);
      int updatevisitTimeByOpenId(String openId);
-
+     List selectCustomerUserCount(int userYear);
 }

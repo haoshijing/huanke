@@ -71,6 +71,19 @@
         WHERE deviceId = #{deviceId}
     </select>
 
+    <select id="selectByDeviceMac" parameterType="java.lang.String"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        t_device_team_item ti,t_device td
+        WHERE td.mac = #{mac}
+        AND
+        ti.deviceId = td.id
+        AND
+        td.status = 1
+    </select>
+
     <select id="selectByJoinId" parameterType="java.lang.Integer"
             resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
@@ -91,7 +104,6 @@
         and cu.openId = #{userOpenId}
         and ti.userId = cu.id
         and ti.status=1
-        and cu.status = 1
     </select>
 
     <select id="selectItemsByDeviceId" parameterType="java.lang.Integer"
@@ -191,7 +203,7 @@
         <include refid="tableName"/>
         where id in
         <foreach collection="list" item="item" separator="," open="(" close=")">
-            #{item.teamId,jdbcType=BIGINT}
+            #{item.id,jdbcType=BIGINT}
         </foreach>
     </delete>
 

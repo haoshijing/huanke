@@ -27,8 +27,6 @@ public class DeviceTypeController {
     @Autowired
     private DeviceTypeService deviceTypeService;
 
-    @Autowired
-    private DeviceTypeAbilitySetService deviceTypeAbilitySetService;
 
     /**
      * 添加新类型
@@ -46,8 +44,8 @@ public class DeviceTypeController {
         try {
             return deviceTypeService.createOrUpdate(typeRrequest);
         } catch (Exception e) {
-            log.error("添加新类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"添加类型失败");
+            log.error("添加新类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "添加类型失败");
         }
     }
 
@@ -71,9 +69,9 @@ public class DeviceTypeController {
 
         try {
             return deviceTypeService.createOrUpdate(typeRrequest);
-        }catch (Exception e) {
-            log.error("修改类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"修改类型失败");
+        } catch (Exception e) {
+            log.error("修改类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "修改类型失败");
         }
     }
 
@@ -92,8 +90,8 @@ public class DeviceTypeController {
         try {
             ret = deviceTypeService.deleteDeviceType(typeId);
         } catch (Exception e) {
-            log.error("删除类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"删除类型失败");
+            log.error("删除类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "删除类型失败");
         }
         return new ApiResponse<>(ret);
     }
@@ -113,8 +111,8 @@ public class DeviceTypeController {
         try {
             ret = deviceTypeService.destoryDeviceType(typeId);
         } catch (Exception e) {
-            log.error("删除类型失败={}",e);
-            return new ApiResponse<>(RetCode.ERROR,"删除类型失败");
+            log.error("删除类型失败={}", e);
+            return new ApiResponse<>(RetCode.ERROR, "删除类型失败");
         }
         return new ApiResponse<>(ret);
     }
@@ -213,6 +211,9 @@ public class DeviceTypeController {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "类型主键格式不正确");
         }
     }
+
+
+
 
 //    /**
 //     * 根据 类型主键查询 该类型的能力集

@@ -50,4 +50,8 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DevicePo> queryChildDevice(Integer hostDeviceId);
 
     DevicePo getChildDevice(@Param("hostDeviceId")Integer hostDeviceId, @Param("address")String address);
+
+    List selectDeviceCount(@Param("nowYear")int nowYear,@Param("status")int status);
+    List selectDeviceCountByCustomer(@Param("nowYear")int nowYear,@Param("status")int status , @Param("customerId")int customerId);
+
 }

@@ -208,37 +208,40 @@
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
-        <include refid="tableName"/>
+        t_device d
         <where>
             1=1
             <if test="param.mac != null and param.mac != ''">
-                AND mac = #{param.mac}
+                AND d.mac = #{param.mac}
             </if>
             <if test="param.saNo != null and param.saNo != ''">
-                AND saNo = #{param.saNo}
+                AND d.saNo = #{param.saNo}
             </if>
             <if test="param.name != null  and param.name != ''  ">
-                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+                AND d.name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.customerId != null">
+                AND customerId = #{param.customerId}
             </if>
             <if test="param.onlineStatus != null">
-                AND onlineStatus = #{param.onlineStatus}
+                AND d.onlineStatus = #{param.onlineStatus}
             </if>
             <if test="param.bindStatus != null">
-                AND bindStatus = #{param.bindStatus}
+                AND d.bindStatus = #{param.bindStatus}
             </if>
             <if test="param.assignStatus != null">
-                AND assignStatus = #{param.assignStatus}
+                AND d.assignStatus = #{param.assignStatus}
             </if>
             <if test="param.enableStatus != null">
-                AND enableStatus = #{param.enableStatus}
+                AND d.enableStatus = #{param.enableStatus}
             </if>
             <if test="param.workStatus != null">
-                AND workStatus = #{param.workStatus}
+                AND d.workStatus = #{param.workStatus}
             </if>
             <if test="param.status != null">
-                AND status = #{param.status}
+                AND d.status = #{param.status}
             </if>
-            AND hostDeviceId is null
+            AND d.hostDeviceId is null
         </where>
         limit #{offset},#{limit}
     </select>
@@ -275,7 +278,7 @@
             <if test="param.status != null">
                 AND status = #{param.status}
             </if>
-
+            AND hostDeviceId is null
         </where>
     </select>
 
@@ -535,9 +538,9 @@
             bindTime = #{bindTime}
             lastUpdateTime = #{lastUpdateTime}
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
-            <!--#{item}-->
+        <!--#{item}-->
         <!--</foreach>-->
     </update>
 
@@ -549,9 +552,9 @@
             assignTime = #{assignTime}
             lastUpdateTime = #{lastUpdateTime}
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
-            <!--#{item}-->
+        <!--#{item}-->
         <!--</foreach>-->
     </update>
 
@@ -590,7 +593,8 @@
         where deviceId = #{id}
     </select>
 
-    <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+    <select id="selectChildDeviceListByHostDeviceId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         <include refid="tableName"/>
         WHERE hostDeviceId = #{hostDeviceId}
@@ -603,7 +607,7 @@
         <set>
             status = 2
         </set>
-        WHERE id  = #{id}
+        WHERE id = #{id}
     </update>
 
     <select id="getByHostDeviceIdAndTypeId" resultType="com.huanke.iot.base.po.device.DevicePo">
@@ -634,5 +638,41 @@
         WHERE hostDeviceId = #{hostDeviceId}
         AND childId = #{childId}
         and status = 1
+    </select>
+
+    <select id="selectDeviceCountByCustomer" resultType="java.util.HashMap">
+
+        SELECT
+        FROM_UNIXTIME( d.assignTime / 1000, '%m月' ) deviceMonth,
+        count( 1 ) deviceCount
+        FROM
+        t_device d
+        WHERE
+        1=1
+        and FROM_UNIXTIME( d.assignTime / 1000, '%Y' ) = #{nowYear}
+        and d.customerId = #{customerId}
+        GROUP BY
+        FROM_UNIXTIME( d.assignTime / 1000, '%m月' )
+        <if test="status != null">
+            and d.status = #{status}
+        </if>
+
+    </select>
+
+    <select id="selectDeviceCount" resultType="java.util.HashMap">
+
+        SELECT
+        FROM_UNIXTIME( d.createTime / 1000, '%m月' ) deviceMonth,
+        count( 1 ) deviceCount
+        FROM
+        t_device d
+        WHERE
+        1=1
+        and FROM_UNIXTIME( d.createTime / 1000, '%Y' ) = #{nowYear}
+        <if test="status != null">
+            and d.status = #{status}
+        </if>
+        GROUP BY
+        FROM_UNIXTIME( d.createTime / 1000, '%m月' )
     </select>
 </mapper>

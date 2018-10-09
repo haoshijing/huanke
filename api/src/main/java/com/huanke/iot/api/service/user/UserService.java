@@ -13,6 +13,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 @Repository
 @Slf4j
 public class UserService {
@@ -58,6 +61,31 @@ public class UserService {
             customerUserMapper.insert(dbCustomerUserPo);
         }
     }
+
+//    /**
+//     * 用户关注公众号，新增用户
+//     */
+//    public void attentionPublicNumber(HttpServletRequest request, Map<String, String> requestMap, String event){
+////                reqMap = {CreateTime=1538207654, EventKey=, Event=subscribe, ToUserName=gh_f5f0fdaff947,
+//// FromUserName=oOSkz0XQn4q-6HWEpfeNRaSbkhY4, MsgType=event}
+//
+//        // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6,
+//        // Content=, CreateTime=1523200569, Event=unbind, ToUserName=gh_7f3ba47c70a3,
+//        // FromUserName=okOTjwpDwxJR666hVWnj_L_jp87w,
+//        // MsgType=device_event, SessionID=0, OpenID=okOTjwpDwxJR666hVWnj_L_jp87w}
+//        String openId = requestMap.get("FromUserName");
+//        CustomerUserPo queryCustomerUserPo = getUserByTicket(openId);
+//        if(null==queryCustomerUserPo){
+//
+//            CustomerUserPo newCustomerUserPo = new CustomerUserPo();
+//            newCustomerUserPo.setCreateTime(System.currentTimeMillis());
+//            newCustomerUserPo.setOpenId(openId);
+//            newCustomerUserPo.setCustomerId(customerId);
+//            customerUserMapper.insert(newCustomerUserPo);
+//            userId = newCustomerUserPo.getId();
+//        }
+//
+//    }
 
     public Integer getUserIdByTicket(String openId) {
         String userIdStr = stringRedisTemplate.opsForValue().get(openId);

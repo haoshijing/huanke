@@ -3,7 +3,6 @@ package com.huanke.iot.manage.controller.customer;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.manage.service.customer.CustomerService;
-import com.huanke.iot.manage.service.device.ability.DeviceAbilityService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,12 +23,6 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
-
-    @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private DeviceAbilityService deviceAbilityService;
 
     /**
      * 添加客户信息
