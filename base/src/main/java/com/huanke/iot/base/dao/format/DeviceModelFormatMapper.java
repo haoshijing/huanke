@@ -16,4 +16,6 @@ public interface DeviceModelFormatMapper extends BaseMapper<DeviceModelFormatPo>
     List<DeviceModelFormatPo> obtainModelFormatPages(@Param("modelId") Integer modelId, @Param("formatId") Integer formatId);
 
     DeviceModelFormatPo selectByJoinId(@Param("modelId") Integer modelId, @Param("formatId") Integer formatId, @Param("pageNo") Integer pageNo);
+
+    Integer getFormatIdByModelId(Integer modelId);
 }
