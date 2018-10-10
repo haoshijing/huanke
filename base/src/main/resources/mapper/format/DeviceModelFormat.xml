@@ -100,14 +100,12 @@
         select
         *
         FROM
-        t_device_model_format f,wx_format_page p
+        t_device_model_format
         WHERE
-        1=1
-        AND f.modelId = #{modelId}
-        AND f.formatId = #{formatId}
-        and f.formatId = p.formatId
-		AND f.pageId = p.id
-		and p.pageNo = #{pageNo}
-        AND f.status = 1
+        modelId = #{modelId}
+        AND formatId = #{formatId}
+		AND pageId = #{pageId}
+        AND status = 1
     </select>
+
 </mapper>

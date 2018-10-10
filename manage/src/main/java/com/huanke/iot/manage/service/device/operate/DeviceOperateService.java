@@ -135,6 +135,8 @@ public class DeviceOperateService {
             insertPo.setMac(device.getMac());
             //设定绑定状态为未绑定
             insertPo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+            //设定分配状态为未分配
+            insertPo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
             //设定工作状态为空闲
             insertPo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
             insertPo.setStatus(CommonConstant.STATUS_YES);
@@ -209,7 +211,7 @@ public class DeviceOperateService {
                 deviceQueryVo.setCustomerId(customerId);
                 deviceQueryVo.setCustomerName(customerMapper.selectById(tempCustomerId).getName());
             }
-            //查询客户信息
+            //查询设备信息
             deviceQueryVo.setModelId(devicePo.getModelId());
             DeviceModelPo queryDeviceModel = deviceModelMapper.selectById(devicePo.getModelId());
             if(queryDeviceModel!=null){
@@ -355,9 +357,6 @@ public class DeviceOperateService {
                     queryDevicePo.setWxDeviceId(null);
                     queryDevicePo.setWxDevicelicence(null);
                     queryDevicePo.setWxQrticket(null);
-
-                    queryDevicePo.setCustomerId(null);
-
                     //设定工作状态为空闲
                     queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
                     //设定在线状态为离线
@@ -478,10 +477,8 @@ public class DeviceOperateService {
                     deviceIdPoolPoList.add(resultPo);
                     offset++;
                     //在设备表中更新deviceModelId字段，将设备与设备型号表关联
-                    DevicePo devicePo = new DevicePo();
-                    devicePo.setId(deviceMapper.selectByMac(device.getMac()).getId());
+                    DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
                     devicePo.setModelId(deviceAssignToCustomerRequest.getModelId());
-                    devicePo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
                     devicePo.setStatus(CommonConstant.STATUS_YES);
                     devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_YES);
                     devicePo.setAssignTime(System.currentTimeMillis());
@@ -547,9 +544,9 @@ public class DeviceOperateService {
                         devicePo.setWxDevicelicence(null);
                         devicePo.setWxQrticket(null);
                         devicePo.setProductId(null);
-                        devicePo.setCustomerId(null);
 
                         devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
+                        devicePo.setAssignTime(null);
                         devicePo.setLastUpdateTime(System.currentTimeMillis());
                         devicePoList.add(devicePo);
                     }

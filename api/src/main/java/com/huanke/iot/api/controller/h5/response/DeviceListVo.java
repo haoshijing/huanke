@@ -61,6 +61,7 @@ public class DeviceListVo {
         private String tvoc;
         private String hcho;
         private String deviceTypeName;
+        private String formatName;
         /**
          * 1-在线，2-离线
          */
