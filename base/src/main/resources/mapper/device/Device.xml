@@ -96,6 +96,7 @@
         saNo,
         typeId,
         modelId,
+        modelId,
         productId,
         onlineStatus,
         bindStatus,
@@ -209,6 +210,9 @@
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         t_device d
+        <if test="param.customerId != null">
+            ,t_device_customer_relation r
+        </if>
         <where>
             1=1
             <if test="param.mac != null and param.mac != ''">
@@ -221,7 +225,8 @@
                 AND d.name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test="param.customerId != null">
-                AND customerId = #{param.customerId}
+                AND r.customerId = #{param.customerId}
+                and d.id = r.deviceId
             </if>
             <if test="param.onlineStatus != null">
                 AND d.onlineStatus = #{param.onlineStatus}
@@ -461,6 +466,7 @@
                     when id=#{device.id} then #{device.modelId}
                 </foreach>
             </trim>
+
             <trim prefix="productId =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
                     when id=#{device.id} then #{device.productId}
@@ -474,6 +480,18 @@
             <trim prefix="wxDevicelicence =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
                     when id=#{device.id} then #{device.wxDevicelicence}
+                </foreach>
+            </trim>
+            <trim prefix="assignStatus =case" suffix="end,">
+                <foreach collection="list" item="device" index="index">
+                    <if test="device.assignStatus !=null">
+                        when id=#{device.id} then #{device.assignStatus}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="assignTime =case" suffix="end,">
+                <foreach collection="list" item="device" index="index">
+                    when id=#{device.id} then #{device.assignTime}
                 </foreach>
             </trim>
             <trim prefix="bindStatus =case" suffix="end,">
@@ -648,21 +666,21 @@
     </select>
 
     <select id="selectDeviceCountByCustomer" resultType="java.util.HashMap">
-
         SELECT
         FROM_UNIXTIME( d.assignTime / 1000, '%m月' ) deviceMonth,
         count( 1 ) deviceCount
         FROM
-        t_device d
+        t_device d,t_device_customer_relation r
         WHERE
         1=1
+        and d.id= r.deviceId
+        and r.customerId = #{customerId}
         and FROM_UNIXTIME( d.assignTime / 1000, '%Y' ) = #{nowYear}
-        and d.customerId = #{customerId}
-        GROUP BY
-        FROM_UNIXTIME( d.assignTime / 1000, '%m月' )
         <if test="status != null">
             and d.status = #{status}
         </if>
+        GROUP BY
+        FROM_UNIXTIME( d.assignTime / 1000, '%m月' )
 
     </select>
 
