@@ -1,6 +1,7 @@
 *.iml
 *.idea
 *.log
+*.DS_Store
 target
 /application_dev.properties
 base/src/main/resources/application_dev.properties
