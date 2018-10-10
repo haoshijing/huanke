@@ -18,7 +18,6 @@ import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
@@ -81,9 +80,6 @@ public class DeviceService {
 
     @Autowired
     private MqttSendService mqttSendService;
-
-    @Autowired
-    private DeviceModelFormatMapper deviceModelFormatMapper;
 
     @Autowired
     private WxFormatMapper wxFormatMapper;
@@ -158,7 +154,7 @@ public class DeviceService {
                         int childDeviceCount = deviceMapper.queryChildDeviceCount(devicePo.getId());
                         deviceItemPo.setChildDeviceCount(childDeviceCount);
                         Integer modelId = devicePo.getModelId();
-                        deviceItemPo.setFormatName(wxFormatMapper.selectById(deviceModelFormatMapper.getFormatIdByModelId(modelId)).getName());
+                        deviceItemPo.setFormatName(wxFormatMapper.selectById(deviceModelMapper.selectById(modelId).getFormatId()).getName());
                         Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
