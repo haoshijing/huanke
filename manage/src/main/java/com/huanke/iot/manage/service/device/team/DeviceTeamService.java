@@ -266,7 +266,6 @@ public class DeviceTeamService {
             //获取当前管理员的相关信息
             customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
             deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
-            deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
             deviceTeamVo.setMasterNickName(customerUserPo.getNickname());
             deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
             deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
