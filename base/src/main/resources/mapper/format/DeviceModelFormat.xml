@@ -110,4 +110,14 @@
 		and p.pageNo = #{pageNo}
         AND f.status = 1
     </select>
+
+    <select id="getFormatIdByModelId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select
+        formatId
+        FROM
+        t_device_model_format
+        WHERE
+        modelId = #{modelId}
+        AND status = 1
+    </select>
 </mapper>
