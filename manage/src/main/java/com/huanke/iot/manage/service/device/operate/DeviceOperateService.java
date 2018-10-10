@@ -211,7 +211,7 @@ public class DeviceOperateService {
                 deviceQueryVo.setCustomerId(customerId);
                 deviceQueryVo.setCustomerName(customerMapper.selectById(tempCustomerId).getName());
             }
-            //查询客户信息
+            //查询设备信息
             deviceQueryVo.setModelId(devicePo.getModelId());
             DeviceModelPo queryDeviceModel = deviceModelMapper.selectById(devicePo.getModelId());
             if(queryDeviceModel!=null){
