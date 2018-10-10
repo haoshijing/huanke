@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +51,15 @@ public class CustomerService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    private static final String CUSTOMERID_PREIX = "customerId.";
+
+    @Value("${localOrigin}")
+    private String localOrigin;
+
     /**
      * 保存详情
      *
@@ -438,5 +449,44 @@ public class CustomerService {
         return ret;
     }
 
+    public Integer obtainCustomerId(boolean fromServer){
+
+        String customerId;
+        String origin = httpServletRequest.getHeader("origin");
+        if(StringUtils.isNotBlank(origin)){
+            if(!org.apache.commons.lang3.StringUtils.contains(origin,localOrigin)){
+                String customerSLD = origin.substring(7,origin.indexOf("."));
+                String customerKey = CUSTOMERID_PREIX+customerSLD;
+                if(!"www".equals(customerSLD)){
+                    if(!fromServer){
+                        customerId = stringRedisTemplate.opsForValue().get(customerKey);
+                        if(null!=customerId){
+                            return Integer.parseInt(customerId);
+                        }else{
+                            obtainCustomerId(true);
+                        }
+
+                    }else{
+                        CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
+                        if(customerPo!=null){
+                            customerId = customerPo.getId().toString();
+                            stringRedisTemplate.opsForValue().set(customerKey, customerId);
+                            stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
+                            return Integer.parseInt(customerId);
+                        }
+                    }
+
+                }else {
+                    return null;
+                }
+            }
+
+        }else{
+            return null;
+        }
+
+
+        return null;
+    }
 
 }

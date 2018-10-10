@@ -25,6 +25,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.manage.common.util.ExcelUtil;
+import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
@@ -37,11 +38,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -50,7 +49,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 //import com.huanke.iot.user.model.user.User;
@@ -106,12 +104,9 @@ public class DeviceOperateService {
     private WxConfigMapper wxConfigMapper;
 
     @Autowired
-    private HttpServletRequest httpServletRequest;
+    private CustomerService customerService;
 
-    private static final String CUSTOMERID_PREIX = "customerId.";
 
-    @Value("${localOrigin}")
-    private String localOrigin;
 
     private static String[] keys = {"name","mac","customerName","deviceType","bindStatus","enableStatus","groupName",
                                     "workStatus","onlineStatus","modelId","modelName","birthTime","lastUpdateTime","location"};
@@ -179,7 +174,7 @@ public class DeviceOperateService {
 
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
-        Integer customerId = obtainCustomerId(false);
+        Integer customerId = customerService.obtainCustomerId(false);
 
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
@@ -1112,45 +1107,7 @@ public class DeviceOperateService {
         return new ApiResponse<>(RetCode.PARAM_ERROR, "获取设备配额失败", null);
     }
 
-    public Integer obtainCustomerId(boolean fromServer){
 
-        String customerId;
-        String origin = httpServletRequest.getHeader("origin");
-        if(StringUtils.isNotBlank(origin)){
-            if(!StringUtils.contains(origin,localOrigin)){
-                String customerSLD = origin.substring(7,origin.indexOf("."));
-                String customerKey = CUSTOMERID_PREIX+customerSLD;
-                if(!"www".equals(customerSLD)){
-                    if(!fromServer){
-                        customerId = stringRedisTemplate.opsForValue().get(customerKey);
-                        if(null!=customerId){
-                            return Integer.parseInt(customerId);
-                        }else{
-                            obtainCustomerId(true);
-                        }
-
-                    }else{
-                        CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
-                        if(customerPo!=null){
-                            customerId = customerPo.getId().toString();
-                            stringRedisTemplate.opsForValue().set(customerKey, customerId);
-                            stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
-                            return Integer.parseInt(customerId);
-                        }
-                    }
-
-                }else {
-                    return null;
-                }
-            }
-
-        }else{
-            return null;
-        }
-
-
-        return null;
-    }
 
     /**
      * 首页面板-统计用户
@@ -1163,7 +1120,7 @@ public class DeviceOperateService {
         List rtnList = new ArrayList();
         List nowDeviceConutList = new ArrayList();
         List preYearDeviceList = new ArrayList();
-        Integer customerId = obtainCustomerId(false);
+        Integer customerId = customerService.obtainCustomerId(false);
 
         Calendar cal = Calendar.getInstance();
         int nowYear = cal.get(Calendar.YEAR);

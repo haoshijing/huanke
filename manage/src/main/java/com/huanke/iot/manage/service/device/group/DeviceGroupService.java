@@ -15,6 +15,7 @@ import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.group.DeviceGroupScenePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
@@ -65,17 +66,21 @@ public class DeviceGroupService {
     @Autowired
     private DeviceGroupSceneMapper deviceGroupSceneMapper;
 
+    @Autowired
+    private CustomerService customerService;
+
     /**
      * 2018-08-18
      * 添加或更新集群，向集群中添加设备
      * sixiaojun
+     *
      * @param groupCreateOrUpdateRequest
      * @return
      */
-    public ApiResponse<DeviceGroupPo> createOrUpdateGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception{
-        DeviceGroupPo insertOrUpdatePo=new DeviceGroupPo();
-        BeanUtils.copyProperties(groupCreateOrUpdateRequest,insertOrUpdatePo);
-        if(null != groupCreateOrUpdateRequest.getId() && 0 <groupCreateOrUpdateRequest.getId()){
+    public ApiResponse<DeviceGroupPo> createOrUpdateGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception {
+        DeviceGroupPo insertOrUpdatePo = new DeviceGroupPo();
+        BeanUtils.copyProperties(groupCreateOrUpdateRequest, insertOrUpdatePo);
+        if (null != groupCreateOrUpdateRequest.getId() && 0 < groupCreateOrUpdateRequest.getId()) {
             //若id为非空则进行更新操作
             insertOrUpdatePo.setLastUpdateTime(System.currentTimeMillis());
             this.deviceGroupMapper.updateById(insertOrUpdatePo);
@@ -92,11 +97,11 @@ public class DeviceGroupService {
         //更新集群相册
         List<DeviceGroupScenePo> deviceGroupScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(groupCreateOrUpdateRequest.getId());
         //数据库中已存有记录则先删除记录
-        if(null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()){
+        if (null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()) {
             this.deviceGroupSceneMapper.deleteBatch(deviceGroupScenePoList);
         }
         deviceGroupScenePoList.clear();
-        if(null != groupCreateOrUpdateRequest.getImageVideoList() && 0 < groupCreateOrUpdateRequest.getImageVideoList().size()) {
+        if (null != groupCreateOrUpdateRequest.getImageVideoList() && 0 < groupCreateOrUpdateRequest.getImageVideoList().size()) {
             groupCreateOrUpdateRequest.getImageVideoList().forEach(imageVideo -> {
                 DeviceGroupScenePo deviceGroupScenePo = new DeviceGroupScenePo();
                 deviceGroupScenePo.setGroupId(groupCreateOrUpdateRequest.getId());
@@ -110,14 +115,13 @@ public class DeviceGroupService {
         }
         //向集群中添加设备
         //如设备列表中无设备则不进行任何操作
-        if(null == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList() || 0 == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList().size()){
-            return new ApiResponse<>(RetCode.OK,"新增或更新成功",insertOrUpdatePo);
-        }
-        else {
+        if (null == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList() || 0 == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList().size()) {
+            return new ApiResponse<>(RetCode.OK, "新增或更新成功", insertOrUpdatePo);
+        } else {
             //查询并删除集群中已有的设备
             List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(insertOrUpdatePo.getId());
             //存在已有设备时才进行删除
-            if(null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
+            if (null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
                 this.deviceGroupItemMapper.deleteBatch(deviceGroupItemPoList);
             }
             deviceGroupItemPoList.clear();
@@ -134,7 +138,7 @@ public class DeviceGroupService {
             }
             //进行批量插入
             this.deviceGroupItemMapper.insertBatch(deviceGroupItemPoList);
-            return new ApiResponse<>(RetCode.OK,"新增集群及设备成功",insertOrUpdatePo);
+            return new ApiResponse<>(RetCode.OK, "新增集群及设备成功", insertOrUpdatePo);
         }
     }
 
@@ -142,19 +146,27 @@ public class DeviceGroupService {
      * 分页查询群列表
      * 2018-09-25
      * sixiaojun
+     *
      * @param groupQueryRequest
      * @return
      * @throws Exception
      */
-    public ApiResponse<List<DeviceGroupListVo>> queryGroupByPage(GroupQueryRequest groupQueryRequest)throws Exception{
+    public ApiResponse<List<DeviceGroupListVo>> queryGroupByPage(GroupQueryRequest groupQueryRequest) throws Exception {
+        //获取该二级域名客户的主键
+        Integer customerId = customerService.obtainCustomerId(false);
+
         List<DeviceGroupListVo> deviceGroupListVoList = new ArrayList<>();
         Integer offset = (groupQueryRequest.getPage() - 1) * groupQueryRequest.getLimit();
         Integer limit = groupQueryRequest.getLimit();
         DeviceGroupPo queryPo = new DeviceGroupPo();
         queryPo.setStatus(null);
-        BeanUtils.copyProperties(groupQueryRequest,queryPo);
-        List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo,limit,offset);
-        if(null != deviceGroupPoList){
+        BeanUtils.copyProperties(groupQueryRequest, queryPo);
+
+        if(queryPo.getCustomerId()==null){
+            queryPo.setCustomerId(customerId);
+        }
+        List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo, limit, offset);
+        if (null != deviceGroupPoList) {
             deviceGroupPoList.stream().forEach(deviceGroupPo -> {
                 DeviceGroupListVo deviceGroupListVo = new DeviceGroupListVo();
                 deviceGroupListVo.setId(deviceGroupPo.getId());
@@ -164,7 +176,7 @@ public class DeviceGroupService {
                 deviceGroupListVo.setStatus(deviceGroupPo.getStatus());
                 deviceGroupListVo.setLocation(deviceGroupPo.getCreateLocation());
                 //查询当前集群的客户信息
-                CustomerPo customerPo=this.customerMapper.selectById(deviceGroupPo.getCustomerId());
+                CustomerPo customerPo = this.customerMapper.selectById(deviceGroupPo.getCustomerId());
                 deviceGroupListVo.setCustomerId(customerPo.getId());
                 deviceGroupListVo.setCustomerName(customerPo.getName());
                 //查询当前集群中的设备总量
@@ -176,7 +188,7 @@ public class DeviceGroupService {
                 deviceGroupListVoList.add(deviceGroupListVo);
             });
         }
-        return new ApiResponse<>(RetCode.OK,"集群查询成功",deviceGroupListVoList);
+        return new ApiResponse<>(RetCode.OK, "集群查询成功", deviceGroupListVoList);
     }
 
 
@@ -184,33 +196,39 @@ public class DeviceGroupService {
      * 查询集群总数
      * sixiaojun
      * 2018-09-25
+     *
      * @return
      * @throws Exception
      */
-    public ApiResponse<Integer> queryGroupCount(Integer status) throws Exception{
+    public ApiResponse<Integer> queryGroupCount(Integer status) throws Exception {
+        //获取该二级域名客户的主键
+        Integer customerId = customerService.obtainCustomerId(false);
+
         DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
         deviceGroupPo.setStatus(status);
+        deviceGroupPo.setCustomerId(customerId);
         Integer groupCount = this.deviceGroupMapper.selectCount(deviceGroupPo);
-        return new ApiResponse<>(RetCode.OK,"查询集群总数成功",groupCount);
+        return new ApiResponse<>(RetCode.OK, "查询集群总数成功", groupCount);
     }
 
     /**
      * 根据id查询集群详情
      * sixiaojun
      * 2018-09-26
+     *
      * @param groupId
      * @return
      * @throws Exception
      */
-    public ApiResponse<DeviceGroupDetailVo> queryGroupById(Integer groupId)throws Exception{
+    public ApiResponse<DeviceGroupDetailVo> queryGroupById(Integer groupId) throws Exception {
         DeviceGroupDetailVo deviceGroupDetailVo = new DeviceGroupDetailVo();
         DeviceGroupPo deviceGroupPo = this.deviceGroupMapper.selectById(groupId);
-        if(null != deviceGroupPo){
-            BeanUtils.copyProperties(deviceGroupPo,deviceGroupDetailVo);
+        if (null != deviceGroupPo) {
+            BeanUtils.copyProperties(deviceGroupPo, deviceGroupDetailVo);
             //查询集群下设备
             List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(groupId);
-            if(null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
-                List<DeviceGroupDetailVo.DeviceInGroup> deviceInGroupList =new ArrayList<>();
+            if (null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
+                List<DeviceGroupDetailVo.DeviceInGroup> deviceInGroupList = new ArrayList<>();
                 deviceGroupItemPoList.stream().forEach(deviceGroupItemPo -> {
                     DeviceGroupDetailVo.DeviceInGroup device = new DeviceGroupDetailVo.DeviceInGroup();
                     DevicePo devicePo = this.deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
@@ -221,7 +239,7 @@ public class DeviceGroupService {
             }
             //查询集群相册
             List<DeviceGroupScenePo> deviceGroupScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(deviceGroupPo.getId());
-            if(null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()){
+            if (null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()) {
                 List<DeviceGroupDetailVo.ImageVideo> imageVideoList = new ArrayList<>();
                 deviceGroupScenePoList.stream().forEach(deviceGroupScenePo -> {
                     DeviceGroupDetailVo.ImageVideo imageVideo = new DeviceGroupDetailVo.ImageVideo();
@@ -230,89 +248,90 @@ public class DeviceGroupService {
                 });
                 deviceGroupDetailVo.setImageVideoList(imageVideoList);
             }
-            return new ApiResponse<>(RetCode.OK,"查询集群详情成功",deviceGroupDetailVo);
-        }
-        else {
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"集群不存在");
+            return new ApiResponse<>(RetCode.OK, "查询集群详情成功", deviceGroupDetailVo);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "集群不存在");
         }
     }
 
-    public ApiResponse<Boolean> deleteOneGroup(Integer groupId)throws Exception{
+    public ApiResponse<Boolean> deleteOneGroup(Integer groupId) throws Exception {
         DeviceGroupPo deviceGroupPo = this.deviceGroupMapper.selectById(groupId);
-        if(null != deviceGroupPo){
+        if (null != deviceGroupPo) {
             //首先删除集群的中设备
             List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(groupId);
-            if(null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
+            if (null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
                 //删除集群下的设备
                 this.deviceGroupItemMapper.deleteBatch(deviceGroupItemPoList);
             }
             //查询集群相册
             List<DeviceGroupScenePo> deviceGroupScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(deviceGroupPo.getId());
-            if(null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()){
+            if (null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()) {
                 //删除集群相册
                 this.deviceGroupSceneMapper.deleteBatch(deviceGroupScenePoList);
             }
             //最后删除集群
             this.deviceGroupMapper.deleteById(deviceGroupPo.getId());
-            return new ApiResponse<>(RetCode.OK,"删除集群成功",true);
-        }
-        else {
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"集群不存在",false);
+            return new ApiResponse<>(RetCode.OK, "删除集群成功", true);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "集群不存在", false);
         }
     }
 
     /**
      * 查询设备列的集群信息，若存在直接返回集群的相关信息
+     *
      * @param deviceLists
      * @return
      */
-    public DeviceGroupPo queryGroupName(List<DeviceQueryRequest.DeviceQueryList> deviceLists){
-        DeviceGroupPo deviceGroupPo=null;
+    public DeviceGroupPo queryGroupName(List<DeviceQueryRequest.DeviceQueryList> deviceLists) {
+        DeviceGroupPo deviceGroupPo = null;
         for (DeviceQueryRequest.DeviceQueryList deviceList : deviceLists) {
             DevicePo devicePo = deviceMapper.selectByMac(deviceList.getMac());
             //若查询到有设备存在集群中，返回该集群的相关信息
             if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
-                DeviceGroupItemPo deviceGroupItemPo=deviceGroupItemMapper.selectByDeviceId(devicePo.getId());
-                deviceGroupPo= deviceGroupMapper.selectById(deviceGroupItemPo.getGroupId());
+                DeviceGroupItemPo deviceGroupItemPo = deviceGroupItemMapper.selectByDeviceId(devicePo.getId());
+                deviceGroupPo = deviceGroupMapper.selectById(deviceGroupItemPo.getGroupId());
             }
         }
         return deviceGroupPo;
     }
+
     /**
      * 通过集群名查询集群ID
+     *
      * @param groupCreateOrUpdateRequest
      * @return
      */
-    public DeviceGroupPo queryIdByName(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest){
-        DeviceGroupPo queryPo=new DeviceGroupPo();
+    public DeviceGroupPo queryIdByName(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) {
+        DeviceGroupPo queryPo = new DeviceGroupPo();
         queryPo.setName(groupCreateOrUpdateRequest.getName());
         queryPo.setCustomerId(groupCreateOrUpdateRequest.getCustomerId());
-        DeviceGroupPo deviceGroupPo=deviceGroupMapper.queryByName(queryPo);
-        if(null != deviceGroupPo){
+        DeviceGroupPo deviceGroupPo = deviceGroupMapper.queryByName(queryPo);
+        if (null != deviceGroupPo) {
             return deviceGroupPo;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     /**
      * 判定设备列表中的设备是否存在集群冲突
+     *
      * @param deviceLists
      * @return
      */
-    public Boolean isGroupConflict(List<DeviceQueryRequest.DeviceQueryList> deviceLists){
+    public Boolean isGroupConflict(List<DeviceQueryRequest.DeviceQueryList> deviceLists) {
         //获取设备列表中第一个不为空的设备的集群ID
-        int compareGroupId=-1;
-        for(DeviceQueryRequest.DeviceQueryList device:deviceLists){
-            DevicePo devicePo=deviceMapper.selectByMac(device.getMac());
-            if(null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())){
-                compareGroupId=deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId();
+        int compareGroupId = -1;
+        for (DeviceQueryRequest.DeviceQueryList device : deviceLists) {
+            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
+            if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
+                compareGroupId = deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId();
             }
         }
         //存在有集群的设备才进行比较
-        if(-1 != compareGroupId) {
-            for (DeviceQueryRequest.DeviceQueryList device: deviceLists) {
+        if (-1 != compareGroupId) {
+            for (DeviceQueryRequest.DeviceQueryList device : deviceLists) {
                 DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
                 if (null != deviceGroupItemMapper.selectByDeviceId(devicePo.getId())) {
                     Integer currentGroupId = deviceGroupItemMapper.selectByDeviceId(devicePo.getId()).getGroupId();

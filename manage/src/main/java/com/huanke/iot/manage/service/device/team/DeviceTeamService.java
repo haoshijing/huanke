@@ -17,6 +17,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamScenePo;
 import com.huanke.iot.manage.common.util.QRCodeUtil;
+import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.QueryInfoByCustomerRequest;
 import com.huanke.iot.manage.vo.request.device.team.*;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
@@ -57,6 +58,9 @@ public class DeviceTeamService {
 
     @Autowired
     private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
+
+    @Autowired
+    private CustomerService customerService;
 
 
     /**
@@ -229,6 +233,10 @@ public class DeviceTeamService {
      * @return
      */
     public ApiResponse<List<DeviceTeamVo>> queryTeamList(TeamListQueryRequest teamListQueryRequest) throws Exception {
+
+        //获取该二级域名客户的主键
+        Integer customerId = customerService.obtainCustomerId(false);
+
         //当期要查询的页
         Integer currentPage = teamListQueryRequest.getPage();
         //每页显示的数量
@@ -242,7 +250,8 @@ public class DeviceTeamService {
         queryPo.setMasterUserId(teamListQueryRequest.getMasterUserId());
         queryPo.setCreateUserId(teamListQueryRequest.getCreateUserId());
         queryPo.setStatus(null==teamListQueryRequest.getStatus()?CommonConstant.STATUS_YES:teamListQueryRequest.getStatus());
-        queryPo.setCustomerId(teamListQueryRequest.getCustomerId());
+
+        queryPo.setCustomerId(teamListQueryRequest.getCustomerId()==null?customerId:customerId);
 
         List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectList(queryPo, limit, offset);
         List<DeviceTeamVo> deviceTeamVoList = deviceTeamPoList.stream().map(deviceTeamPo -> {

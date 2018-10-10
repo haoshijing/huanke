@@ -21,6 +21,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
+import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
@@ -76,6 +77,8 @@ public class DeviceModelService {
     @Autowired
     private WxFormatItemMapper wxFormatItemMapper;
 
+    @Autowired
+    private CustomerService customerService;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -299,9 +302,13 @@ public class DeviceModelService {
      */
     public List<DeviceModelVo> selectList(DeviceModelQueryRequest request) {
 
+        //获取该二级域名的客户主键
+        Integer customerId = customerService.obtainCustomerId(false);
+
         DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
         queryDeviceModelPo.setName(request.getName());
-        queryDeviceModelPo.setCustomerId(request.getCustomerId());
+        //如果查询条件未带入 客户主键，则默认查询当前客户的型号
+        queryDeviceModelPo.setCustomerId(request.getCustomerId()==null?customerId:request.getCustomerId());
         queryDeviceModelPo.setProductId(request.getProductId());
         queryDeviceModelPo.setTypeId(request.getTypeId());
         queryDeviceModelPo.setStatus(request.getStatus());
