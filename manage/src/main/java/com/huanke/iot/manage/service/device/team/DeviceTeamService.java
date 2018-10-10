@@ -521,8 +521,9 @@ public class DeviceTeamService {
      *
      * @return
      */
-    public Integer selectTeamCount() {
+    public Integer selectTeamCount(Integer status) {
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+        deviceTeamPo.setStatus(status);
         return this.deviceTeamMapper.selectCount(deviceTeamPo);
     }
 

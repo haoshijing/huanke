@@ -187,9 +187,9 @@ public class DeviceGroupService {
      * @return
      * @throws Exception
      */
-    public ApiResponse<Integer> queryGroupCount() throws Exception{
+    public ApiResponse<Integer> queryGroupCount(Integer status) throws Exception{
         DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
-        deviceGroupPo.setStatus(CommonConstant.STATUS_YES);
+        deviceGroupPo.setStatus(status);
         Integer groupCount = this.deviceGroupMapper.selectCount(deviceGroupPo);
         return new ApiResponse<>(RetCode.OK,"查询集群总数成功",groupCount);
     }

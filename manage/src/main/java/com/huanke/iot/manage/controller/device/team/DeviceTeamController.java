@@ -78,9 +78,9 @@ public class DeviceTeamController {
     }
 
     @ApiOperation("查询组的数量")
-    @RequestMapping(value = "/queryTeamCount",method = RequestMethod.GET)
-    public ApiResponse<Integer> queryTeamCount(){
-        return new ApiResponse<>(this.deviceTeamService.selectTeamCount());
+    @RequestMapping(value = "/queryTeamCount/{status}",method = RequestMethod.GET)
+    public ApiResponse<Integer> queryTeamCount(@PathVariable("status") Integer status){
+        return new ApiResponse<>(this.deviceTeamService.selectTeamCount(status));
     }
 
 

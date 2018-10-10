@@ -94,10 +94,10 @@ public class DeviceGroupController {
     }
 
     @ApiOperation("查询集群总数")
-    @RequestMapping(value = "/queryGroupCount",method = RequestMethod.GET)
-    public ApiResponse<Integer> queryGroupCount(){
+    @RequestMapping(value = "/queryGroupCount/{status}",method = RequestMethod.GET)
+    public ApiResponse<Integer> queryGroupCount(@PathVariable("status") Integer status){
         try{
-            return this.deviceGroupService.queryGroupCount();
+            return this.deviceGroupService.queryGroupCount(status);
         }catch (Exception e){
             log.error("查询集群数量错误 =  {}",e);
             return new ApiResponse<>(RetCode.ERROR,"查询集群总数异常");

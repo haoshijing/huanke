@@ -8,6 +8,7 @@ public class GroupQueryRequest {
     private String name;
     private Integer customerId;
     private String createLocation;
+    private Integer status;
     private Integer page = 1;
     private Integer limit = 20;
 }
