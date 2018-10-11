@@ -192,7 +192,7 @@ public class DeviceService {
                             String[] locationArray = devicePo.getLocation().split(",");
                             deviceItemPo.setLocation(Joiner.on(" ").join(locationArray));
                         }
-                        Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
+                        Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
                         deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
                         deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
                         deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
@@ -411,7 +411,7 @@ public class DeviceService {
                 deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                 deviceItemPo.setIcon(deviceTypePo.getIcon());
             }
-            Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor." + devicePo.getId());
+            Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
             deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
             deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
             deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
