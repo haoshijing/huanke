@@ -43,7 +43,7 @@ public class MqttService {
                 connOpts.setAutomaticReconnect(true);
                 mqttClient.connect(connOpts);
                 MqttMessageListener listener = new MqttMessageListener();
-                mqttClient.subscribe("/up/#",listener);
+                mqttClient.subscribe("/up2/#",listener);
             }catch (Exception e){
                 log.error("",e);
             }

@@ -387,8 +387,8 @@ public class DeviceDataService {
      */
     public List<DeviceAbilitysVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds) {
         List<DeviceAbilitysVo> deviceAbilitysVoList = new ArrayList<>();
-        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
-        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
+        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
+        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
         for (Integer abilityId : abilityIds) {
             DeviceAbilityPo deviceabilityPo = deviceAbilityMapper.selectById(abilityId);
             String dirValue = deviceabilityPo.getDirValue();
@@ -586,13 +586,9 @@ public class DeviceDataService {
 
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
         DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
-        if(devicePo.getHostDeviceId() != null){
-            //子设备
-            devicePo = deviceMapper.selectById(devicePo.getHostDeviceId());
-        }
         if (devicePo != null) {
             Integer deviceId = devicePo.getId();
-            String topic = "/down/control/" + deviceId;
+            String topic = "/down2/control/" + deviceId;
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
@@ -609,30 +605,19 @@ public class DeviceDataService {
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(deviceFuncVo.getValue());
-            DevicePo devicePo1 = deviceMapper.selectById(deviceFuncVo.getDeviceId());
-            if(devicePo1.getHostDeviceId() != null){
-                funcItemMessage.setChildid(devicePo1.getChildId());
-            }
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
-
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
-
-            stringRedisTemplate.opsForHash().put("control." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
+            stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             return requestId;
         }
         return "";
     }
 
-    public void sendMb(Integer deviceId, String stopWatch) {
-        String topic = "/down/stopWatch/" + deviceId;
-        mqttSendService.sendMessage(topic, stopWatch);
-    }
-
 
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
-        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor." + deviceId);
-        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control." + deviceId);
+        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
+        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
 
         DeviceDetailVo.PmDataItem pm = new DeviceDetailVo.PmDataItem();
         pm.setData(getData(datas, SensorTypeEnums.PM25_IN.getCode()));

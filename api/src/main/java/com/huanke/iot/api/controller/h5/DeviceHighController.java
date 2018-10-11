@@ -99,7 +99,7 @@ public class DeviceHighController extends BaseController{
         log.info("添加从设备：request={}", JSON.toJSONString(request));
         Integer deviceId;
         try {
-            deviceId = deviceHighService.addChildDevice(request, userId);
+            deviceId = deviceHighService.addChildDevice(request);
         } catch (Exception e) {
             log.error( e.getMessage());
             return new ApiResponse<>(RetCode.ERROR, "设备地址已存在");

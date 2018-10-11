@@ -44,7 +44,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>gateway</finalName>
+        <finalName>hcGateway</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
