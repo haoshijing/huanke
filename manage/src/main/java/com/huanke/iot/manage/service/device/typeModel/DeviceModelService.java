@@ -488,6 +488,7 @@ public class DeviceModelService {
                 deviceModelAbilityVo.setId(deviceModelAbilityPo.getId());
                 deviceModelAbilityVo.setModelId(deviceModelAbilityPo.getModelId());
                 deviceModelAbilityVo.setAbilityId(deviceModelAbilityPo.getAbilityId());
+                deviceModelAbilityVo.setAbilityType(deviceModelAbilityPo.getAbilityType());
                 deviceModelAbilityVo.setDefinedName(deviceModelAbilityPo.getDefinedName());
                 deviceModelAbilityVo.setMinVal(deviceModelAbilityPo.getMinVal());
                 deviceModelAbilityVo.setMaxVal(deviceModelAbilityPo.getMaxVal());

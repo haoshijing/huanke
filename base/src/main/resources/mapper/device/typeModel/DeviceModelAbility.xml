@@ -90,9 +90,10 @@
 
     <select id="selectByModelId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo">
         select
-        *
-        FROM <include refid="tableName"/>
-        WHERE modelId = #{modelId}
+        ma.*,a.abilitytype
+        FROM t_device_model_ability ma,t_device_ability a
+        WHERE ma.modelId = #{modelId}
+        and ma.abilityId = a.id
     </select>
 
     <select id = "selectCount" resultType="java.lang.Integer">
