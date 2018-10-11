@@ -48,6 +48,10 @@ public class DeviceListVo {
          */
         private String deviceName;
         /**
+         * 客户名称
+         */
+        private String customerName;
+        /**
          * 设备图标
          */
         private String icon;

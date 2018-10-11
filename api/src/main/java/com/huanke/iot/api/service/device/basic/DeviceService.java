@@ -12,6 +12,7 @@ import com.huanke.iot.api.controller.h5.response.WeatherVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
@@ -20,6 +21,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -62,6 +64,8 @@ public class DeviceService {
     @Autowired
     private DeviceModelMapper deviceModelMapper;
 
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Autowired
     private CustomerUserMapper customerUserMapper;
@@ -88,6 +92,9 @@ public class DeviceService {
     private int speed;
 
     public DeviceListVo obtainMyDevice(Integer userId) {
+
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
         DeviceListVo deviceListVo = new DeviceListVo();
 
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
@@ -158,6 +165,9 @@ public class DeviceService {
                         Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
+
+                        //添加返回客户名称
+                        deviceItemPo.setCustomerName(customerPo.getName());
                         deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
                         if (deviceTypePo != null) {
                             deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
