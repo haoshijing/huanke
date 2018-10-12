@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -208,7 +205,7 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(data);
     }
 
-    @RequestMapping("/getHistoryData")
+    @GetMapping("/getHistoryData")
     public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId, Integer type) {
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
 
