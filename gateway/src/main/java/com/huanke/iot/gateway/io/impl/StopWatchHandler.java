@@ -50,12 +50,13 @@ public class StopWatchHandler extends AbstractHandler {
         List<String> childIdList = new ArrayList<>();
         int flag = 1;
         Map<Integer, String> mMap = new HashMap<>();
-        for (Integer childId : childIds) {
-            childIdList.add(String.valueOf(childId));
-            Integer modelId = deviceMapper.selectById(deviceId).getModelId();
+        for (Integer childDeviceId : childIds) {
+            String childId = deviceMapper.selectById(childDeviceId).getChildId();
+            childIdList.add(childId);
+            Integer modelId = deviceMapper.selectById(childDeviceId).getModelId();
             if(mMap.containsKey(modelId)){
                 String mValue = mMap.get(modelId);
-                mbMap.put(String.valueOf(childId), mValue);
+                mbMap.put(childId, mValue);
                 continue;
             }
             Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
@@ -65,7 +66,7 @@ public class StopWatchHandler extends AbstractHandler {
             mMap.put(modelId, mName);
             mbMap.put(mName, JSONObject.parseObject(stopWatch));
             flag++;
-            mbMap.put(String.valueOf(childId), mName);
+            mbMap.put(childId, mName);
         }
         mbMap.put("n", childIdList);
         mb.put("mb", mbMap);
