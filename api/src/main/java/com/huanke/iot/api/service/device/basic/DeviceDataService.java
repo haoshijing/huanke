@@ -143,7 +143,7 @@ public class DeviceDataService {
         String storeToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + deviceIdStr);
         if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
             log.error("找不到Token，deviceIdStr={}", deviceIdStr);
-            // return false;
+            return false;
         }
         if (customerUserPo.getId().equals(toId)) {
             log.error("无法给自己分享设备");
@@ -198,16 +198,6 @@ public class DeviceDataService {
         queryItemPo.setUserId(toId);
         queryItemPo.setCreateTime(System.currentTimeMillis());
         deviceTeamItemMapper.insert(queryItemPo);
-
-        CustomerUserPo customerUserPo1 = customerUserMapper.selectById(toId);
-        DeviceCustomerUserRelationPo deviceRelationPo = new DeviceCustomerUserRelationPo();
-        deviceRelationPo.setDeviceId(deviceId);
-        deviceRelationPo.setOpenId(customerUserPo1.getOpenId());
-        deviceRelationPo.setParentOpenId(customerUserPo.getOpenId());
-        deviceRelationPo.setCustomerId(customerId);
-        deviceRelationPo.setStatus(1);
-        deviceRelationPo.setCreateTime(System.currentTimeMillis());
-        deviceCustomerUserRelationMapper.insert(deviceRelationPo);
 
         return true;
     }
