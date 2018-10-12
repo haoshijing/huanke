@@ -931,7 +931,7 @@ public class DeviceDataService {
         return (int) (((tbl_aqi[i + 1] - tbl_aqi[i]) / (tbl_pm2_5[i + 1] - tbl_pm2_5[i]) * (pm2_5 - tbl_pm2_5[i]) + tbl_aqi[i]));
     }
 
-    public boolean verifyUser(Integer userId, Integer deviceId) {
+    /*public boolean verifyUser(Integer userId, Integer deviceId) {
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         Integer hostDeviceId = devicePo.getHostDeviceId();
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
@@ -948,5 +948,5 @@ public class DeviceDataService {
             return true;
         }
         return false;
-    }
+    }*/
 }

@@ -91,11 +91,6 @@ public class DeviceHighController extends BaseController{
      */
     @RequestMapping("addChildDevice")
     public Object addChildDevice(@RequestBody ChildDeviceRequest request){
-        Integer userId = getCurrentUserId();
-        Integer hostDeviceId = request.getHostDeviceId();
-        if(!deviceDataService.verifyUser(userId, hostDeviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
         log.info("添加从设备：request={}", JSON.toJSONString(request));
         Integer deviceId;
         try {
@@ -113,10 +108,6 @@ public class DeviceHighController extends BaseController{
      */
     @RequestMapping("childDeviceList/{hostDeviceId}")
     public Object childDeviceList(@PathVariable("hostDeviceId") Integer hostDeviceId){
-        Integer userId = getCurrentUserId();
-        if(!deviceDataService.verifyUser(userId, hostDeviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
         log.info("从设备列表：hostDeviceId={}", hostDeviceId);
         List<ChildDeviceVo> childDeviceVoList = deviceHighService.childDeviceList(hostDeviceId);
         return new ApiResponse<>(childDeviceVoList);

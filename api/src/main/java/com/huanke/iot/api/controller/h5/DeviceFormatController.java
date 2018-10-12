@@ -5,7 +5,6 @@ import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.format.DeviceFormatService;
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.base.constant.RetCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,10 +36,7 @@ public class DeviceFormatController extends BaseController{
     public ApiResponse<DeviceModelVo> getModelVo(@Valid @RequestBody DeviceFormatRequest request) {
         Integer deviceId = request.getDeviceId();
         Integer pageNo = request.getPageNo();
-        Integer userId = getCurrentUserId();
-        if(!deviceDataService.verifyUser(userId, deviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
+
         log.info("获取h5页面配置项及功能项，deviceId={},pageNo={}", deviceId, pageNo);
         DeviceModelVo deviceModelVo = deviceFormatService.getModelVo(deviceId, pageNo);
         return new ApiResponse<>(deviceModelVo);
