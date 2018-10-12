@@ -26,5 +26,22 @@ public class DeviceAbilityVo {
     private List<DeviceAbilityOptionVo> deviceAbilityOptions;
 
 
+    @Data
+    public static class DeviceAbilitysVo {
+        private Integer id;
+        private String dirValue;
+        private String abilityName;
+        private Integer abilityType;
+        private String currValue;
+        private String unit;
+        private List<abilityOption> abilityOptionList;
+
+    }
+
+    @Data
+    public static class abilityOption{
+        private String dirValue;
+        private Integer isSelect;
+    }
 
 }
