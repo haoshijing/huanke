@@ -41,7 +41,7 @@ public class DeviceTimerJob {
         sensorDataMapper.clearData(dateTime.getMillis());
     }
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0/2 * * * * ?")
     public void doWork() {
         try {
             Long t = System.currentTimeMillis();
