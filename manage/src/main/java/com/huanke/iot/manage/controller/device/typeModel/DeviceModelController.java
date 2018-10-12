@@ -107,6 +107,17 @@ public class DeviceModelController {
 //        return new ApiResponse<>(deviceModelVos);
 //    }
 
+    @ApiOperation("查询型号总数")
+    @PostMapping(value = "/selectCount/{status}")
+    public ApiResponse<Integer> selcetCount(@PathVariable("status") Integer status){
+        try {
+            return this.deviceModelService.selectCount(status);
+        }catch (Exception e){
+            log.error("型号总数查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"型号总数查询失败");
+        }
+    }
+
     /**
      * 根据id查询型号
      * @param id

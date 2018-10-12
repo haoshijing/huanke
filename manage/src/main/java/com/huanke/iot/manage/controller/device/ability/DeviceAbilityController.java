@@ -107,6 +107,16 @@ public class DeviceAbilityController {
         return new ApiResponse<>(deviceAbilityVos);
     }
 
+    @ApiOperation("查询功能总数")
+    @PostMapping(value = "/select/{status}")
+    public ApiResponse<Integer> selectCount(@PathVariable("status") Integer status){
+        try {
+            return this.deviceAbilityService.selectCount(status);
+        }catch (Exception e){
+            log.error("设备功能总数查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备功能总数查询失败");
+        }
+    }
     /**
      * 查询功能列表
      * @param typeId

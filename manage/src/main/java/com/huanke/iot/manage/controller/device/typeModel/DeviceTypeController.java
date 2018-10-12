@@ -8,6 +8,7 @@ import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdat
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +173,16 @@ public class DeviceTypeController {
         return new ApiResponse<>(deviceTypeVos);
     }
 
-
+    @ApiOperation("查询类型总数")
+    @PostMapping(value = "/selectCount/{status}")
+    public ApiResponse<Integer> selectCount(@PathVariable("status") Integer status){
+        try {
+            return this.deviceTypeService.selectCount(status);
+        }catch (Exception e){
+            log.error("设备类型总数查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备类型总数查询失败");
+        }
+    }
     /**
      * 根据id查询 类型
      *

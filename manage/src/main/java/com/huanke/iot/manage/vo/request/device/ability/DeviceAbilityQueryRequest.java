@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.vo.request.device.ability;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
 /**
@@ -17,6 +18,7 @@ public class DeviceAbilityQueryRequest {
     private Integer runStatus; //可执行状态
     private Integer configType;//配置方式
     private Integer abilityType;//能力类型
+    private Integer status=CommonConstant.STATUS_YES;
 
     private Integer page = 1;
     private Integer limit = 20;

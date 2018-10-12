@@ -73,8 +73,22 @@
             <if test="param.abilityType != null">
                 AND abilityType = #{param.abilityType}
             </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
         </where>
         limit #{offset},#{limit}
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <if test="param.status != null">
+                and status = #{param.status}
+            </if>
+        </where>
     </select>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">

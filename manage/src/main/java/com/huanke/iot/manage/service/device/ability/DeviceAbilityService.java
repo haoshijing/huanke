@@ -128,7 +128,7 @@ public class DeviceAbilityService {
         queryDeviceAbilityPo.setRunStatus(request.getRunStatus());
         queryDeviceAbilityPo.setConfigType(request.getConfigType());
         queryDeviceAbilityPo.setAbilityType(request.getAbilityType());
-
+        queryDeviceAbilityPo.setStatus(request.getStatus());
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 
@@ -166,6 +166,12 @@ public class DeviceAbilityService {
         }).collect(Collectors.toList());
 
         return deviceAbilityVos;
+    }
+
+    public ApiResponse<Integer> selectCount(Integer status){
+        DeviceAbilityPo deviceAbilityPo =new DeviceAbilityPo();
+        deviceAbilityPo.setStatus(status);
+        return new ApiResponse<>(RetCode.OK,"设备功能总数查询成功",this.deviceAbilityMapper.selectCount(deviceAbilityPo));
     }
 
 

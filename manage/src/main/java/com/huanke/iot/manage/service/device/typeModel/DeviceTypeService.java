@@ -225,7 +225,7 @@ public class DeviceTypeService {
         queryDeviceTypePo.setName(request.getName());
         queryDeviceTypePo.setTypeNo(request.getTypeNo());
 
-        queryDeviceTypePo.setStatus(CommonConstant.STATUS_YES);
+        queryDeviceTypePo.setStatus(request.getStatus());
 
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
@@ -253,6 +253,11 @@ public class DeviceTypeService {
         }).collect(Collectors.toList());
     }
 
+    public ApiResponse<Integer> selectCount(Integer status)throws Exception{
+        DeviceTypePo deviceTypePo =new DeviceTypePo();
+        deviceTypePo.setStatus(status);
+        return new ApiResponse<>(RetCode.OK,"查询类型总数成功",deviceTypeMapper.selectCount(deviceTypePo));
+    }
     /**
      * 根据类型集合查询该客户可用的设备类型信息
      *

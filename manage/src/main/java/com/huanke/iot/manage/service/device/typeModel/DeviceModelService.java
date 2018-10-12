@@ -31,6 +31,7 @@ import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.format.ModelFormatVo;
 import com.huanke.iot.manage.vo.response.format.WxFormatVo;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -353,6 +354,12 @@ public class DeviceModelService {
             deviceModelVo.setDevicePoolCount(devicePoolCount);
             return deviceModelVo;
         }).collect(Collectors.toList());
+    }
+
+    public ApiResponse<Integer> selectCount(Integer status)throws Exception{
+        DeviceModelPo deviceModelPo =new DeviceModelPo();
+        deviceModelPo.setStatus(status);
+        return new ApiResponse<>(RetCode.OK,"查询总数成功",this.deviceModelMapper.selectCount(deviceModelPo));
     }
 
     /**
