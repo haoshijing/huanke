@@ -7,17 +7,18 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
-import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 //2018-08-15
 //import com.huanke.iot.manage.response.DeviceVo;
-import com.huanke.iot.manage.service.DeviceOperLogService;
+import com.huanke.iot.manage.service.device.operate.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceWeatherVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -388,6 +389,28 @@ public class DeviceOperateController {
         }
 
         return new ApiResponse<>(RetCode.OK,"导出excel成功");
+    }
+
+    @ApiOperation("查询设备位置")
+    @RequestMapping(value = "/queryDevicePosition{id}", method = RequestMethod.POST)
+    public ApiResponse<DeviceLocationVo> queryDevicePosition(@PathVariable("id") Integer id){
+        try {
+            return this.deviceService.queryDeviceLocation(id);
+        }catch (Exception e){
+            log.error("设备位置查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备位置查询错误");
+        }
+    }
+
+    @ApiOperation("查询设备天气")
+    @RequestMapping(value = "/queryDeviceWeather{id}", method = RequestMethod.POST)
+    public ApiResponse<DeviceWeatherVo> queryDeviceWeather(@PathVariable("id") Integer id){
+        try {
+            return this.deviceService.queryDeviceWeather(id);
+        }catch (Exception e){
+            log.error("设备天气查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备天气查询错误");
+        }
     }
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){

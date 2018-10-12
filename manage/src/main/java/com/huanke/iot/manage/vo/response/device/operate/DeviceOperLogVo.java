@@ -1,4 +1,4 @@
-package com.huanke.iot.manage.controller.device.response;
+package com.huanke.iot.manage.vo.response.device.operate;
 
 import lombok.Data;
 
@@ -9,23 +9,29 @@ public class DeviceOperLogVo {
      */
     private String funcId;
 
+    private String funcName;
+
+    private String funcRemark;
+
     /**
      * 设置的值
      */
-    private String value;
+    private String funcValue;
     /**
      * 操作时间
      */
-    private Long createTime;
+    private Long operateTime;
     /**
-     * 操作来源
+     * 操作人id
      */
-    private Integer source;
+    private Integer operUserId;
+
+    private String operName;
 
     /**
      * 操作来源
      */
-    private String operator;
+    private Integer operType;
 
     /**
      * 设备返回时间
@@ -36,6 +42,6 @@ public class DeviceOperLogVo {
      * 响应数据
      */
 
-    private String responseData;
+    private String retMsg;
 
 }

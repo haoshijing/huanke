@@ -2,6 +2,7 @@ package com.huanke.iot.manage.service.device.operate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
@@ -24,13 +25,12 @@ import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
+import com.huanke.iot.manage.vo.response.device.operate.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -105,6 +105,9 @@ public class DeviceOperateService {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private LocationUtils locationUtils;
 
 
 
@@ -851,6 +854,55 @@ public class DeviceOperateService {
         queryDevicePo.setStatus(status);
         return new ApiResponse<>(RetCode.OK,"查询总数成功",deviceMapper.selectCount(queryDevicePo));
     }
+
+    public ApiResponse<DeviceLocationVo> queryDeviceLocation(Integer deviceId)throws Exception{
+        DeviceLocationVo locationVo = new DeviceLocationVo();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        if (StringUtils.isEmpty(devicePo.getLocation())) {
+            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), true);
+            if (locationJson != null) {
+                if (locationJson.containsKey("content")) {
+                    JSONObject content = locationJson.getJSONObject("content");
+                    if (content != null) {
+                        if (content.containsKey("address_detail")) {
+                            JSONObject addressDetail = content.getJSONObject("address_detail");
+                            if (addressDetail != null) {
+                                locationVo.setProvince(addressDetail.getString("province"));
+                                locationVo.setCity(addressDetail.getString("city"));
+                                locationVo.setArea(locationVo.getCity());
+                                locationVo.setLocation(locationVo.getProvince() + "," + locationVo.getCity());
+                            }
+                        }
+
+                    }
+                }
+            }
+        }else {
+            String[] locationArray = devicePo.getLocation().split(",");
+            locationVo.setArea(Joiner.on(" ").join(locationArray));
+            locationVo.setLocation(devicePo.getLocation());
+        }
+        return new ApiResponse<>(RetCode.OK,"设备位置查询成功",locationVo);
+    }
+
+    public ApiResponse<DeviceWeatherVo> queryDeviceWeather(Integer deviceId){
+        DeviceWeatherVo deviceWeatherVo=new DeviceWeatherVo();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), true);
+        if (weatherJson != null) {
+            if (weatherJson.containsKey("result")) {
+                JSONObject result = weatherJson.getJSONObject("result");
+                if (result != null) {
+                    deviceWeatherVo.setOuterHum(result.getString("humidity"));
+                    deviceWeatherVo.setOuterPm(result.getString("aqi"));
+                    deviceWeatherVo.setOuterTem(result.getString("temperature_curr"));
+                    deviceWeatherVo.setWeather(result.getString("weather_curr"));
+                }
+            }
+        }
+        return new ApiResponse<>(RetCode.OK,"设备天气查询成功",deviceWeatherVo);
+    }
+
 
     /**
      * 2018-08-20
