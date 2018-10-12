@@ -8,6 +8,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.manage.common.util.ExcelUtil;
+import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
@@ -16,6 +17,7 @@ import com.huanke.iot.manage.service.gateway.MqttSendService;
 //import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.DeviceOperLogService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
+import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
 import io.swagger.annotations.ApiOperation;
@@ -388,6 +390,22 @@ public class DeviceOperateController {
         }
 
         return new ApiResponse<>(RetCode.OK,"导出excel成功");
+    }
+
+    /**
+     * 新版首页查询我的设备
+     * @return
+     */
+    @ApiOperation("新版首页查询我的设备")
+    @GetMapping("/newQueryDetailByDeviceId")
+    public ApiResponse<List<DeviceAbilityVo.DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilityQueryRequest.DeviceAbilitysRequest request) {
+        Integer deviceId = request.getDeviceId();
+        List<Integer> abilityIds = request.getAbilityIds();
+        if(deviceId == null || abilityIds.isEmpty()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
+        }
+        List<DeviceAbilityVo.DeviceAbilitysVo> deviceAbilityVos = deviceService.queryDetailAbilitysValue(deviceId, abilityIds);
+        return new ApiResponse<>(deviceAbilityVos);
     }
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
