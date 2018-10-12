@@ -127,7 +127,7 @@ public class DeviceTimerJob {
     }*/
 
     public String sendFunc(Integer deviceId, String funcId, Integer funcValue) {
-        String topic = "/down/control/" + deviceId;
+        String topic = "/down2/control/" + deviceId;
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId(funcId);
