@@ -115,6 +115,7 @@ public class DeviceFormatService {
                 abilityOption.setOptionValue(deviceabilityOptionPo.getOptionValue());
                 abilityOption.setMaxVal(deviceabilityOptionPo.getMaxVal());
                 abilityOption.setMinVal(deviceabilityOptionPo.getMinVal());
+                abilityOption.setStatus(deviceabilityOptionPo.getStatus());
                 DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelabilityOptionMapper.getByJoinId(deviceModelabilityPo.getId(), deviceabilityOptionPo.getId());
                 if(deviceModelabilityOptionPo != null){
                     abilityOption.setOptionDefinedName(deviceModelabilityOptionPo.getDefinedName());
