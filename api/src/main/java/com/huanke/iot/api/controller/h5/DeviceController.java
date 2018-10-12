@@ -170,12 +170,12 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(clearOk);
     }
 
-    /*@RequestMapping("/shareList")
+    @RequestMapping("/shareList")
     public ApiResponse<List<DeviceShareVo>> shareList(String deviceId) {
         Integer userId = getCurrentUserId();
         List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId, deviceId);
         return new ApiResponse<>(deviceShareVos);
-    }*/
+    }
 
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
@@ -209,7 +209,7 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/getHistoryData")
-    public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
+    public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId, Integer type) {
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
     }
 
