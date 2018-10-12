@@ -51,15 +51,15 @@
     <select id = "selectTimerList" resultType="com.huanke.iot.base.po.device.DeviceTimerPo">
         select * from <include refid="tableName" />
         <where>
-            <if test = "userId != null">
-                AND userId =#{userId}
+            <if test = "deviceId != null">
+                AND deviceId =#{deviceId}
             </if>
             <if test = "type != null">
                 AND type = #{type}
 
             </if>
             and status IN(1,2)
-           order by executeTime asc
+           order by createTime desc
 
         </where>
     </select>

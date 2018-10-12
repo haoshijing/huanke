@@ -211,6 +211,7 @@ public class DeviceController extends BaseController {
     @RequestMapping("/getHistoryData")
     public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId, Integer type) {
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+
     }
 
 }

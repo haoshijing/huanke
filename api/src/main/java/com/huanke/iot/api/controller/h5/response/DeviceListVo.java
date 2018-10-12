@@ -36,6 +36,10 @@ public class DeviceListVo {
          */
         private Integer deviceId;
         /**
+         * MAC
+         */
+        private String mac;
+        /**
          * 微信生成设备deviceId
          */
         private String wxDeviceId;

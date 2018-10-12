@@ -155,7 +155,6 @@ public class DeviceTimerService {
             return Lists.newArrayList();
         }
         DeviceTimerPo queryPo = new DeviceTimerPo();
-        queryPo.setUserId(userId);
         queryPo.setType(type);
         queryPo.setDeviceId(devicePo.getId());
         List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.selectTimerList(queryPo);

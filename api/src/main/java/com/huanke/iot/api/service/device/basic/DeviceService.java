@@ -157,6 +157,7 @@ public class DeviceService {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
                         DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getId());
+                        deviceItemPo.setMac(devicePo.getMac());
                         deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
                         int childDeviceCount = deviceMapper.queryChildDeviceCount(devicePo.getId());
                         deviceItemPo.setChildDeviceCount(childDeviceCount);
