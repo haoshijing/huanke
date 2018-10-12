@@ -53,8 +53,8 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/getHistoryData")
-    public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
-        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+    public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId) {
+        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId));
     }
 
     @RequestMapping("/editDevice")

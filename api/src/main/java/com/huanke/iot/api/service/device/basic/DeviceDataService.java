@@ -234,12 +234,12 @@ public class DeviceDataService {
 
     }
 
-    public List<SensorDataVo> getHistoryData(String deviceId, Integer type) {
+    public List<SensorDataVo> getHistoryData(Integer deviceId) {
         Long startTimestamp = new DateTime().plusDays(-1).getMillis();
         Long endTimeStamp = System.currentTimeMillis();
 
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
             return null;
         }
