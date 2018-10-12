@@ -73,7 +73,7 @@ public class DeviceTimerJob {
         try {
             Calendar calendar = Calendar.getInstance();
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-            int hour = calendar.get(Calendar.HOUR);
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             log.info("start ideaType timer job dayOfWeek = {}, hour={}, minute={}", dayOfWeek, hour, minute);
             List<DeviceTimerPo> deviceTimerPos = deviceTimerMapper.queryIdeaTypeTimers(dayOfWeek);
@@ -127,7 +127,7 @@ public class DeviceTimerJob {
     }*/
 
     public String sendFunc(Integer deviceId, String funcId, Integer funcValue) {
-        String topic = "/down/control/" + deviceId;
+        String topic = "/down2/control/" + deviceId;
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId(funcId);
