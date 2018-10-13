@@ -96,7 +96,6 @@
         saNo,
         typeId,
         modelId,
-        modelId,
         productId,
         onlineStatus,
         bindStatus,
