@@ -148,12 +148,15 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(ret);
     }
 
-    /*@RequestMapping("/clearRelation")
-    public ApiResponse<Boolean> clearRelation(String deviceId, String joinOpenId) {
+    @RequestMapping("/clearRelation")
+    public ApiResponse<Boolean> clearRelation(@RequestBody ClearShareRequest request) {
         Integer userId = getCurrentUserId();
-        Boolean clearOk = deviceDataService.clearRelation(joinOpenId, userId, deviceId);
+        Integer deviceId = request.getDeviceId();
+        String openId = request.getOpenId();
+        log.info("删除用户管理设备权限，删除人userId={}, 设备Id={}, 被删除用户openId={}", userId, deviceId, openId);
+        Boolean clearOk = deviceDataService.clearRelation(openId, userId, deviceId);
         return new ApiResponse<>(clearOk);
-    }*/
+    }
 
     @RequestMapping("/updateDeviceLocation")
     public ApiResponse<Boolean> updateDeviceLocation(@RequestBody DeviceLocationRequest request){

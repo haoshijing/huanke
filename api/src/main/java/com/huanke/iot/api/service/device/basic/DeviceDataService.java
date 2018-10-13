@@ -15,6 +15,7 @@ import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.service.device.team.DeviceTeamService;
 import com.huanke.iot.api.util.FloatDataUtil;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
@@ -197,36 +198,43 @@ public class DeviceDataService {
         return true;
     }
 
-    public Boolean clearRelation(String joinOpenId, Integer userId, String deviceIdStr) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
+    public Boolean clearRelation(String joinOpenId, Integer userId, Integer deviceId) {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
-            log.error("找不到设备，deviceIdStr={}", deviceIdStr);
+            log.error("找不到设备，deviceId={}", deviceId);
             return false;
         }
-        Integer deviceId = devicePo.getId();
-        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(joinOpenId);
-        if (customerUserPo == null) {
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+        deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        DeviceCustomerUserRelationPo byDeviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
+        if (byDeviceCustomerUserRelationPo == null) {
+            log.error("操作人无权限，deviceId={}", deviceId);
             return false;
         }
-        if (customerUserPo.getId().equals(userId)) {
+
+        CustomerUserPo beClearCustomerUserPo = customerUserMapper.selectByOpenId(joinOpenId);
+        if (beClearCustomerUserPo == null) {
+            log.error("被删除用户不存在，deviceId={}", deviceId);
+            return false;
+        }
+        if (beClearCustomerUserPo.getId().equals(userId)) {
+            log.error("主管理员无法删除，deviceId={}", deviceId);
             return false;
         }
 
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
-        queryItemPo.setUserId(userId);
+        queryItemPo.setUserId(beClearCustomerUserPo.getId());
         queryItemPo.setDeviceId(deviceId);
-
+        queryItemPo.setStatus(CommonConstant.STATUS_YES);
         List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamMapper.queryTeamItems(queryItemPo);
         if (deviceTeamItemPos.size() == 0) {
+            log.error("被删除用户无此设备，deviceId={}", deviceId);
             return false;
         }
-        DeviceTeamItemPo DeviceTeamItemPo = deviceTeamItemPos.get(0);
-        DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(DeviceTeamItemPo.getTeamId());
-        if (deviceTeamPo.getMasterUserId() != userId) {
-            return false;
-        }
-        return deleteDevice(customerUserPo.getId(), deviceId);
-
+        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPos.get(0);
+        return deviceTeamItemMapper.updateStatus(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId(), CommonConstant.STATUS_DEL) > 0;
     }
 
 
@@ -304,7 +312,7 @@ public class DeviceDataService {
                 List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
                 List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().filter(deviceTeamItem -> deviceTeamItem.getStatus() == 1).sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
                 List<DeviceShareVo> shareVos = finalDeviceTeamItemPos.stream()
-                        .map(finalDeviceTeamItemPo ->{
+                        .map(finalDeviceTeamItemPo -> {
                             Integer deviceUserId = finalDeviceTeamItemPo.getUserId();
                             CustomerUserPo deviceCustomerUserPo = customerUserMapper.selectById(deviceUserId);
                             DeviceShareVo deviceShareVo = new DeviceShareVo();
