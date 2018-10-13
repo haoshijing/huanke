@@ -197,7 +197,7 @@
             and deviceId = #{deviceId}
         </if>
         <if test="userId != null">
-            and masterUserId = #{userId}
+            and userId = #{userId}
         </if>
     </select>
 
