@@ -187,16 +187,6 @@ public class DeviceTimerService {
     }
 
     public Boolean updateTimerStatus(Integer userId, Integer timerId, Integer status) {
-
-        DeviceTimerPo timerPo = deviceTimerMapper.selectById(timerId);
-        if (timerPo != null) {
-            if (!timerPo.getUserId().equals(userId)) {
-                return false;
-            }
-        }
-        if (status == timerPo.getStatus()) {
-            return false;
-        }
         DeviceTimerPo updatePo = new DeviceTimerPo();
         updatePo.setUserId(userId);
         updatePo.setId(timerId);
@@ -210,11 +200,13 @@ public class DeviceTimerService {
         if (deviceTimerPo != null) {
             DeviceTimerVo deviceTimerVo = new DeviceTimerVo();
             deviceTimerVo.setName(deviceTimerPo.getName());
-            Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
-            if (t < 0) {
-                t = 0L;
+            if(deviceTimerPo.getType() != 2){
+                Long t = deviceTimerPo.getExecuteTime() - System.currentTimeMillis();
+                if (t < 0) {
+                    t = 0L;
+                }
+                deviceTimerVo.setRemainTime(t);
             }
-            deviceTimerVo.setRemainTime(t);
             deviceTimerVo.setId(deviceTimerPo.getId());
             deviceTimerVo.setTimerType(deviceTimerPo.getTimerType());
             deviceTimerVo.setStatus(deviceTimerPo.getStatus());
