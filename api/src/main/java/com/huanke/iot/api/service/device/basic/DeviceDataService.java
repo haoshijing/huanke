@@ -48,10 +48,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -292,43 +289,34 @@ public class DeviceDataService {
         return sensorDataVos;
     }
 
-    public List<DeviceShareVo> shareList(Integer userId, String deviceIdStr) {
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceIdStr);
+    public List<DeviceShareVo> shareList(Integer userId, Integer deviceId) {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo != null) {
-            Integer deviceId = devicePo.getId();
-            DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
-            deviceTeamItemPo.setUserId(userId);
-            deviceTeamItemPo.setDeviceId(deviceId);
-            deviceTeamItemPo.setStatus(1);
+            CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+            deviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+            deviceCustomerUserRelationPo.setDeviceId(deviceId);
+            DeviceCustomerUserRelationPo byDeviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
 
-            List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamMapper.queryTeamItems(deviceTeamItemPo);
-            if (deviceTeamItemPos.size() > 0) {
-                DeviceTeamItemPo itemPo = deviceTeamItemPos.get(0);
-                DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(itemPo.getTeamId());
-                if (deviceTeamPo.getMasterUserId() == userId) {
-                    DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
-                    deviceCustomerUserRelationPo.setDeviceId(deviceId);
-                    deviceCustomerUserRelationPo.setStatus(1);
-                    List<DeviceCustomerUserRelationPo> userRelationPos = deviceCustomerUserRelationMapper.selectList(deviceCustomerUserRelationPo, 100, 0);
-                    List<DeviceShareVo> shareVos = userRelationPos.stream()
-                            .map(userRelationPo -> {
-                                DeviceShareVo deviceShareVo = new DeviceShareVo();
-                                String openId = userRelationPo.getOpenId();
-                                CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
+            if (byDeviceCustomerUserRelationPo != null) {
+                DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
+                deviceTeamItemPo.setDeviceId(deviceId);
+                List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
+                List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().filter(deviceTeamItem -> deviceTeamItem.getStatus() == 1).sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
+                List<DeviceShareVo> shareVos = finalDeviceTeamItemPos.stream()
+                        .map(finalDeviceTeamItemPo ->{
+                            Integer deviceUserId = finalDeviceTeamItemPo.getUserId();
+                            CustomerUserPo deviceCustomerUserPo = customerUserMapper.selectById(deviceUserId);
+                            DeviceShareVo deviceShareVo = new DeviceShareVo();
+                            deviceShareVo.setUserId(deviceCustomerUserPo.getId());
+                            deviceShareVo.setNickname(deviceCustomerUserPo.getNickname());
+                            deviceShareVo.setJoinTime(finalDeviceTeamItemPo.getCreateTime());
+                            deviceShareVo.setOpenId(deviceCustomerUserPo.getOpenId());
+                            deviceShareVo.setHeadImg(deviceCustomerUserPo.getHeadimgurl());
+                            return deviceShareVo;
+                        }).collect(Collectors.toList());
 
-                                if (customerUserPo != null) {
-                                    deviceShareVo.setOpenId(customerUserPo.getOpenId());
-                                    deviceShareVo.setAvatar(customerUserPo.getHeadimgurl());
-                                    deviceShareVo.setNickname(customerUserPo.getNickname());
-                                    deviceShareVo.setJoinTime(customerUserPo.getCreateTime());
-                                    deviceShareVo.setDeviceId(devicePo.getWxDeviceId());
-                                    deviceShareVo.setDeviceName(devicePo.getName());
-
-                                }
-                                return deviceShareVo;
-                            }).collect(Collectors.toList());
-                    return shareVos;
-                }
+                return shareVos;
             }
         }
         return Lists.newArrayList();
