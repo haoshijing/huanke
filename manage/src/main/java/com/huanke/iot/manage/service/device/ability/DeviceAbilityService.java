@@ -79,7 +79,7 @@ public class DeviceAbilityService {
                     deviceAbilityOptionPo.setOptionName(deviceAbilityOptionRequest.getOptionName());
                     deviceAbilityOptionPo.setOptionValue(deviceAbilityOptionRequest.getOptionValue());
                     deviceAbilityOptionPo.setMinVal(deviceAbilityOptionRequest.getMinVal());
-                    deviceAbilityOptionPo.setMaxVal(deviceAbilityOptionRequest.getMinVal());
+                    deviceAbilityOptionPo.setMaxVal(deviceAbilityOptionRequest.getMaxVal());
                     deviceAbilityOptionPo.setStatus(CommonConstant.STATUS_YES);
                     //如果 该选项有id 则为更新 ，否则为新增
                     if (deviceAbilityOptionRequest.getId() != null && deviceAbilityOptionRequest.getId() > 0) {
