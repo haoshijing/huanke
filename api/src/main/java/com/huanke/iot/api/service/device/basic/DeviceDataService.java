@@ -428,7 +428,16 @@ public class DeviceDataService {
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_threshholdselect:
-
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    String optionValue5 = getData(controlDatas, dirValue);
+                    List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
+                    for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
+                        DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
+                        abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                        abilityOption.setCurrValue(optionValue5);
+                        abilityOptionList5.add(abilityOption);
+                    }
+                    deviceAbilitysVo.setAbilityOptionList(abilityOptionList5);
                     break;
                 default:
                     break;
