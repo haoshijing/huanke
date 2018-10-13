@@ -166,6 +166,7 @@ public class DeviceController extends BaseController {
             return new ApiResponse(RetCode.PARAM_ERROR, "参数错误");
         }
         Integer userId = getCurrentUserId();
+        log.info("更新设备地址，userId={}, 设备Id={}, location={}", userId, deviceId, location);
         Boolean clearOk = deviceService.editDeviceLoc(userId, deviceId,location);
         return new ApiResponse<>(clearOk);
     }

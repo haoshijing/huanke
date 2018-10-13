@@ -25,5 +25,6 @@ public class DeviceAbilitysVo {
     public static class abilityOption{
         private String dirValue;
         private Integer isSelect;
+        private String currValue;
     }
 }
