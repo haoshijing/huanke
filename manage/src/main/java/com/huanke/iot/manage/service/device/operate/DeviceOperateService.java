@@ -448,8 +448,8 @@ public class DeviceOperateService {
             deviceIdPoolPo.setCustomerId(deviceAssignToCustomerRequest.getCustomerId());
             deviceIdPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
             deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-            deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
             Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
+            log.info("devicePoolCount = {}",devicePoolCount);
             //若当前设备池中当前产品的配额的数量不够，则向微信公众号请求所需要的新的设备证书
             if (deviceList.size() > devicePoolCount) {
                 Integer addCount = deviceList.size() - devicePoolCount;
