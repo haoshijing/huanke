@@ -8,6 +8,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.manage.common.util.ExcelUtil;
+import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
