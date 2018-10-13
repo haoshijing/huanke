@@ -168,8 +168,10 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/shareList")
-    public ApiResponse<List<DeviceShareVo>> shareList(String deviceId) {
+    public ApiResponse<List<DeviceShareVo>> shareList(@RequestBody BaseRequest<Integer> request) {
         Integer userId = getCurrentUserId();
+        Integer deviceId = request.getValue();
+        log.info("查询共享权限列表，userId={}, deviceId={}", userId, deviceId);
         List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId, deviceId);
         return new ApiResponse<>(deviceShareVos);
     }

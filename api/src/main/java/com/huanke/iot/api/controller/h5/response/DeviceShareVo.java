@@ -4,10 +4,9 @@ import lombok.Data;
 
 @Data
 public class DeviceShareVo {
+    private Integer userId;
     private String openId;
     private String nickname;
-    private String avatar;
-    private String deviceId;
-    private String deviceName;
+    private String headImg;
     private Long joinTime;
 }
