@@ -6,7 +6,6 @@ import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
-import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.base.api.ApiResponse;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 
 @RequestMapping("/app/api")
@@ -52,10 +49,10 @@ public class AppController extends BaseController {
         return new ApiResponse<>(deviceDetailVo);
     }
 
-    @RequestMapping("/getHistoryData")
-    public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
-        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
-    }
+    /*@RequestMapping("/getHistoryData")
+    public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId) {
+        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId), null);
+    }*/
 
     @RequestMapping("/editDevice")
     public ApiResponse<Boolean> editDevice(Integer deviceId, String deviceName) {
@@ -76,7 +73,7 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<Boolean> sendFuc(String deviceId,String funcId){
+    public ApiResponse<Boolean> sendFuc(Integer deviceId,String funcId){
         DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
         /*if(StringUtils.equals("1", funcId)){
             deviceFuncVo.setWxDeviceId(deviceId);

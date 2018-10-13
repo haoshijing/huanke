@@ -4,16 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.base.constant.CommonConstant;
-import com.huanke.iot.base.constant.DeviceConstant;
-import com.huanke.iot.base.constant.DeviceTeamConstants;
-import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.constant.*;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
@@ -21,6 +21,8 @@ import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
@@ -31,6 +33,10 @@ import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.operate.*;
+import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -89,6 +95,12 @@ public class DeviceOperateService {
 
     @Autowired
     private DeviceTeamMapper deviceTeamMapper;
+
+    @Autowired
+    private DeviceAbilityMapper deviceAbilityMapper;
+
+    @Autowired
+    private DeviceAbilityOptionMapper deviceAbilityOptionMapper;
 
     @Autowired
     private DeviceTeamItemMapper deviceTeamItemMapper;
@@ -1265,4 +1277,107 @@ public class DeviceOperateService {
         return rtnList;
     }
 
+    /**
+     * 查询设备功能项值
+     *
+     * @param abilityIds
+     * @return
+     */
+    public List<DeviceAbilityVo.DeviceAbilitysVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds) {
+        List<DeviceAbilityVo.DeviceAbilitysVo> deviceAbilitysVoList = new ArrayList<>();
+        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
+        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
+        for (Integer abilityId : abilityIds) {
+            DeviceAbilityPo deviceabilityPo = deviceAbilityMapper.selectById(abilityId);
+            String dirValue = deviceabilityPo.getDirValue();
+            Integer abilityType = deviceabilityPo.getAbilityType();
+
+            DeviceAbilityVo.DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilityVo.DeviceAbilitysVo();
+            deviceAbilitysVo.setAbilityName(deviceabilityPo.getAbilityName());
+            deviceAbilitysVo.setId(abilityId);
+            deviceAbilitysVo.setAbilityType(abilityType);
+            deviceAbilitysVo.setDirValue(dirValue);
+            switch (abilityType) {
+                case DeviceAbilityTypeContants.ability_type_text:
+                    deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
+                    deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
+                    break;
+                case DeviceAbilityTypeContants.ability_type_single:
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    String optionValue = getData(controlDatas, dirValue);
+                    List<DeviceAbilityVo.abilityOption> abilityOptionList = new ArrayList<>();
+                    for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
+                        DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
+                        abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                        if (optionValue.equals(deviceabilityOptionPo.getOptionValue())) {
+                            abilityOption.setIsSelect(1);
+                        } else {
+                            abilityOption.setIsSelect(0);
+                        }
+                        abilityOptionList.add(abilityOption);
+                    }
+                    deviceAbilitysVo.setAbilityOptionList(abilityOptionList);
+                    break;
+                case DeviceAbilityTypeContants.ability_type_checkbox:
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    List<DeviceAbilityVo.abilityOption> abilityOptionList1 = new ArrayList<>();
+                    for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos1) {
+                        String targetOptionValue = deviceabilityOptionPo.getOptionValue();
+                        String finalOptionValue = getData(controlDatas, targetOptionValue);
+                        DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
+                        abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                        if (Integer.valueOf(finalOptionValue) == 1) {
+                            abilityOption.setIsSelect(1);
+                        } else {
+                            abilityOption.setIsSelect(0);
+                        }
+                        abilityOptionList1.add(abilityOption);
+                    }
+                    deviceAbilitysVo.setAbilityOptionList(abilityOptionList1);
+                    break;
+                case DeviceAbilityTypeContants.ability_type_threshhold:
+                    deviceAbilitysVo.setCurrValue(getData(controlDatas, dirValue));
+                    deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
+                    break;
+                case DeviceAbilityTypeContants.ability_type_threshholdselect:
+
+                    break;
+                default:
+                    break;
+
+            }
+            deviceAbilitysVoList.add(deviceAbilitysVo);
+        }
+        //添加空气质量判定
+        if (datas.containsKey(SensorTypeEnums.PM25_IN.getCode())) {
+            DeviceAbilityVo.DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilityVo.DeviceAbilitysVo();
+            deviceAbilitysVo.setDirValue("0");
+            deviceAbilitysVo.setAbilityName("空气质量");
+
+            String data = getData(datas, SensorTypeEnums.PM25_IN.getCode());
+            if (StringUtils.isNotEmpty(data)) {
+                Integer diData = Integer.valueOf(data);
+                if (diData >= 0 && diData <= 35) {
+                    deviceAbilitysVo.setCurrValue("优");
+                } else if (diData > 35 && diData <= 75) {
+                    deviceAbilitysVo.setCurrValue("良");
+                } else if (diData > 75 && diData <= 150) {
+                    deviceAbilitysVo.setCurrValue("中");
+                } else {
+                    deviceAbilitysVo.setCurrValue("差");
+                }
+            } else {
+                deviceAbilitysVo.setCurrValue("优");
+            }
+            deviceAbilitysVoList.add(deviceAbilitysVo);
+        }
+        return deviceAbilitysVoList;
+    }
+
+    private String getData(Map<Object, Object> map, String key) {
+        if (map.containsKey(key)) {
+            return (String) map.get(key);
+        }
+        return "0";
+    }
 }

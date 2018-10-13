@@ -37,6 +37,7 @@ public class DeviceModelVo {
         private String optionValue;
         private Integer minVal;
         private Integer maxVal;
+        private Integer status;
     }
 
     @Data

@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -101,11 +98,7 @@ public class DeviceController extends BaseController {
      */
     @RequestMapping("/newQueryDetailByDeviceId")
     public ApiResponse<List<DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
-        Integer userId = getCurrentUserId();
         Integer deviceId = request.getDeviceId();
-        if(!deviceDataService.verifyUser(userId, deviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
         List<Integer> abilityIds = request.getAbilityIds();
         if(deviceId == null || abilityIds.isEmpty()){
             return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
@@ -118,9 +111,6 @@ public class DeviceController extends BaseController {
     public ApiResponse<Boolean> editDevice(@RequestBody DeviceRequest request) {
         Integer deviceId = request.getDeviceId();
         Integer userId = getCurrentUserId();
-        if(!deviceDataService.verifyUser(userId, deviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
         String deviceName = request.getDeviceName();
         log.info("编辑设备，deviceId={}，deviceName={}，userId={}", deviceId, deviceName, userId);
         boolean ret = deviceService.editDevice(userId, deviceId, deviceName);
@@ -153,9 +143,6 @@ public class DeviceController extends BaseController {
     public ApiResponse<Boolean> deleteDevice(@RequestBody BaseRequest<Integer> request){
         Integer deviceId = request.getValue();
         Integer userId = getCurrentUserId();
-        if(!deviceDataService.verifyUser(userId, deviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
         log.info("删除设备，deviceId={}，userId={}", deviceId, userId);
         Boolean ret = deviceDataService.deleteDevice(userId,deviceId);
         return new ApiResponse<>(ret);
@@ -176,19 +163,16 @@ public class DeviceController extends BaseController {
             return new ApiResponse(RetCode.PARAM_ERROR, "参数错误");
         }
         Integer userId = getCurrentUserId();
-        if(!deviceDataService.verifyUser(userId, deviceId)){
-            return new ApiResponse<>(RetCode.ERROR, "用户设备不匹配，无法操作");
-        }
         Boolean clearOk = deviceService.editDeviceLoc(userId, deviceId,location);
         return new ApiResponse<>(clearOk);
     }
 
-    /*@RequestMapping("/shareList")
+    @RequestMapping("/shareList")
     public ApiResponse<List<DeviceShareVo>> shareList(String deviceId) {
         Integer userId = getCurrentUserId();
         List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId, deviceId);
         return new ApiResponse<>(deviceShareVos);
-    }*/
+    }
 
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
@@ -221,9 +205,10 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(data);
     }
 
-    @RequestMapping("/getHistoryData")
-    public ApiResponse<List<SensorDataVo>> getHistoryData(String deviceId, Integer type) {
+    @GetMapping("/getHistoryData")
+    public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId, Integer type) {
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+
     }
 
 }

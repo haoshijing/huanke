@@ -126,7 +126,6 @@ public class DeviceDataService {
         Integer deviceId = request.getDeviceId();
         String master = request.getMasterOpenId();
         String token = request.getToken();
-        Integer teamId = request.getTeamId();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         String deviceIdStr = devicePo.getWxDeviceId();
         if (devicePo == null) {
@@ -143,7 +142,7 @@ public class DeviceDataService {
         String storeToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + deviceIdStr);
         if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
             log.error("找不到Token，deviceIdStr={}", deviceIdStr);
-            // return false;
+            return false;
         }
         if (customerUserPo.getId().equals(toId)) {
             log.error("无法给自己分享设备");
@@ -172,22 +171,21 @@ public class DeviceDataService {
             }
             return deviceTeamVoList;
         }*/
-        if (teamId == null) {
-            DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
-            String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
-            deviceTeamPo.setName(defaultTeamName);
-            deviceTeamPo.setMasterUserId(toId);
-            deviceTeamPo.setCreateUserId(toId);
-            deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
-            deviceTeamPo.setStatus(1);
-            deviceTeamPo.setCreateTime(System.currentTimeMillis());
-            deviceTeamPo.setTeamStatus(1);
-            deviceTeamPo.setTeamType(3);
-            deviceTeamPo.setCreateUserId(toId);
-            deviceTeamPo.setCustomerId(customerId);
-            deviceTeamMapper.insert(deviceTeamPo);
-            teamId = deviceTeamPo.getId();
-        }
+
+        DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+        String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
+        deviceTeamPo.setName(defaultTeamName);
+        deviceTeamPo.setMasterUserId(toId);
+        deviceTeamPo.setCreateUserId(toId);
+        deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
+        deviceTeamPo.setStatus(1);
+        deviceTeamPo.setCreateTime(System.currentTimeMillis());
+        deviceTeamPo.setTeamStatus(1);
+        deviceTeamPo.setTeamType(3);
+        deviceTeamPo.setCreateUserId(toId);
+        deviceTeamPo.setCustomerId(customerId);
+        deviceTeamMapper.insert(deviceTeamPo);
+        Integer teamId = deviceTeamPo.getId();
 
 
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
@@ -198,16 +196,6 @@ public class DeviceDataService {
         queryItemPo.setUserId(toId);
         queryItemPo.setCreateTime(System.currentTimeMillis());
         deviceTeamItemMapper.insert(queryItemPo);
-
-        CustomerUserPo customerUserPo1 = customerUserMapper.selectById(toId);
-        DeviceCustomerUserRelationPo deviceRelationPo = new DeviceCustomerUserRelationPo();
-        deviceRelationPo.setDeviceId(deviceId);
-        deviceRelationPo.setOpenId(customerUserPo1.getOpenId());
-        deviceRelationPo.setParentOpenId(customerUserPo.getOpenId());
-        deviceRelationPo.setCustomerId(customerId);
-        deviceRelationPo.setStatus(1);
-        deviceRelationPo.setCreateTime(System.currentTimeMillis());
-        deviceCustomerUserRelationMapper.insert(deviceRelationPo);
 
         return true;
     }
@@ -244,12 +232,14 @@ public class DeviceDataService {
 
     }
 
-    public List<SensorDataVo> getHistoryData(String deviceId, Integer type) {
+
+    public List<SensorDataVo> getHistoryData(Integer deviceId, Integer type) {
+
         Long startTimestamp = new DateTime().plusDays(-1).getMillis();
         Long endTimeStamp = System.currentTimeMillis();
 
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
             return null;
         }
@@ -931,7 +921,7 @@ public class DeviceDataService {
         return (int) (((tbl_aqi[i + 1] - tbl_aqi[i]) / (tbl_pm2_5[i + 1] - tbl_pm2_5[i]) * (pm2_5 - tbl_pm2_5[i]) + tbl_aqi[i]));
     }
 
-    public boolean verifyUser(Integer userId, Integer deviceId) {
+    /*public boolean verifyUser(Integer userId, Integer deviceId) {
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         Integer hostDeviceId = devicePo.getHostDeviceId();
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
@@ -948,5 +938,5 @@ public class DeviceDataService {
             return true;
         }
         return false;
-    }
+    }*/
 }
