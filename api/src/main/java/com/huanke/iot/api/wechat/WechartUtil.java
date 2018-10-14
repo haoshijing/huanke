@@ -131,6 +131,11 @@ public class WechartUtil {
             apiResult = obtainRemoteTicket();
             json = JSONObject.parseObject(apiResult);
         }
+        if(!json.containsKey("ticket")){
+            getAccessToken(true);
+            apiResult = obtainRemoteTicket();
+            json = JSONObject.parseObject(apiResult);
+        }
         if (json.containsKey("ticket")) {
             String queryTicket = json.getString("ticket");
             if (StringUtils.isNotEmpty(queryTicket)) {
