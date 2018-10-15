@@ -162,7 +162,9 @@ public class DeviceService {
                         int childDeviceCount = deviceMapper.queryChildDeviceCount(devicePo.getId());
                         deviceItemPo.setChildDeviceCount(childDeviceCount);
                         Integer modelId = devicePo.getModelId();
-                        deviceItemPo.setFormatName(wxFormatMapper.selectById(deviceModelMapper.selectById(modelId).getFormatId()).getName());
+                        Integer formatId = deviceModelMapper.selectById(modelId).getFormatId();
+                        deviceItemPo.setFormatId(formatId.toString());
+                        deviceItemPo.setFormatName(wxFormatMapper.selectById(formatId).getName());
                         Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
