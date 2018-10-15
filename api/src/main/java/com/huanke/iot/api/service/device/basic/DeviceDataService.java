@@ -175,15 +175,20 @@ public class DeviceDataService {
         deviceTeamPo.setCreateUserId(toId);
         deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
         deviceTeamPo.setStatus(1);
-        deviceTeamPo.setCreateTime(System.currentTimeMillis());
-        deviceTeamPo.setTeamStatus(1);
-        deviceTeamPo.setTeamType(3);
-        deviceTeamPo.setCreateUserId(toId);
-        deviceTeamPo.setCustomerId(customerId);
-        deviceTeamMapper.insert(deviceTeamPo);
-        Integer teamId = deviceTeamPo.getId();
-
-
+        //检查是否已经拥有默认组
+        DeviceTeamPo toDeviceTeamPo = deviceTeamMapper.queryByName(deviceTeamPo);
+        Integer teamId;
+        if(toDeviceTeamPo != null && toDeviceTeamPo.getStatus().equals(CommonConstant.STATUS_YES)){
+            teamId = toDeviceTeamPo.getId();
+        }else{
+            deviceTeamPo.setCreateTime(System.currentTimeMillis());
+            deviceTeamPo.setTeamStatus(1);
+            deviceTeamPo.setTeamType(3);
+            deviceTeamPo.setCreateUserId(toId);
+            deviceTeamPo.setCustomerId(customerId);
+            deviceTeamMapper.insert(deviceTeamPo);
+            teamId = deviceTeamPo.getId();
+        }
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         queryItemPo.setDeviceId(deviceId);
         queryItemPo.setUserId(toId);
