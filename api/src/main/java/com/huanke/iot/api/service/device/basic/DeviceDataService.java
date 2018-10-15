@@ -146,6 +146,16 @@ public class DeviceDataService {
             log.error("无法给自己分享设备");
             return false;
         }
+        //TODO检查deviceId和要分享用户是不是已存在
+        DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
+        toQueryTeamItemPo.setDeviceId(deviceId);
+        toQueryTeamItemPo.setUserId(toId);
+        toQueryTeamItemPo.setStatus(1);
+        Integer toItemCount = deviceTeamMapper.queryItemCount(toQueryTeamItemPo);
+        if (toItemCount > 0) {
+            log.error("该用户已拥有此设备");
+            return false;
+        }
         //TODO检查deviceId和用户是不是可以对应上的
         DeviceTeamItemPo queryTeamItemPo = new DeviceTeamItemPo();
         queryTeamItemPo.setDeviceId(deviceId);
@@ -157,18 +167,6 @@ public class DeviceDataService {
             return false;
         }
 
-        /*List<DeviceTeamPo> deviceTeamPoList = deviceTeamService.selectByUserId(toId);
-        if (!deviceTeamPoList.isEmpty()) {
-            List<DeviceTeamVo> deviceTeamVoList = new ArrayList<>();
-            for (DeviceTeamPo deviceTeamPo : deviceTeamPoList) {
-                DeviceTeamVo deviceTeamVo = new DeviceTeamVo();
-                deviceTeamVo.setId(deviceTeamPo.getId());
-                deviceTeamVo.setName(deviceTeamPo.getName());
-                deviceTeamVo.setIcon(deviceTeamPo.getIcon());
-                deviceTeamVoList.add(deviceTeamVo);
-            }
-            return deviceTeamVoList;
-        }*/
 
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
