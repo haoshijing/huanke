@@ -406,7 +406,7 @@ public class DeviceOperateController {
     }
 
     @ApiOperation("查询设备天气")
-    @RequestMapping(value = "/queryDeviceWeather{id}", method = RequestMethod.POST)
+    @GetMapping(value = "/queryDeviceWeather{id}")
     public ApiResponse<DeviceWeatherVo> queryDeviceWeather(@PathVariable("id") Integer id){
         try {
             return this.deviceService.queryDeviceWeather(id);
