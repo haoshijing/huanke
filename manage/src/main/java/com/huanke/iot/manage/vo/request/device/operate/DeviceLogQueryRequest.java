@@ -11,5 +11,4 @@ public class DeviceLogQueryRequest {
     private Integer deviceId;
     private Integer page = 1;
     private Integer limit = 20;
-    private String nickname;
 }

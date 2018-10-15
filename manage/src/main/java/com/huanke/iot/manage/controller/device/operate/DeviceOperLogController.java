@@ -22,9 +22,9 @@ public class DeviceOperLogController {
     @Autowired
     private DeviceOperLogService deviceOperLogService;
 
-    @ApiOperation("删除选中设备")
-    @RequestMapping(value = "/deleteDevice", method = RequestMethod.POST)
-    public ApiResponse<List<DeviceOperLogVo>> selectOperList(DeviceLogQueryRequest deviceLogQueryRequest){
+    @ApiOperation("查看操作日志")
+    @RequestMapping(value = "/queryOperLog", method = RequestMethod.POST)
+    public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceLogQueryRequest deviceLogQueryRequest){
         try {
             return this.deviceOperLogService.queryOperLogList(deviceLogQueryRequest);
         }catch (Exception e){
