@@ -9,6 +9,7 @@ import com.huanke.iot.manage.vo.response.device.operate.DeviceOperLogVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,7 @@ public class DeviceOperLogController {
 
     @ApiOperation("查看操作日志")
     @RequestMapping(value = "/queryOperLog", method = RequestMethod.POST)
-    public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceLogQueryRequest deviceLogQueryRequest){
+    public ApiResponse<List<DeviceOperLogVo>> queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
         try {
             return this.deviceOperLogService.queryOperLogList(deviceLogQueryRequest);
         }catch (Exception e){

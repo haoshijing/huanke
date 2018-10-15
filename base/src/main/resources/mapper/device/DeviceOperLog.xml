@@ -36,6 +36,19 @@
         limit #{limit} offset #{offset}
     </select>
 
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1=1
+            <if test="param.deviceId != null">
+                AND deviceId = #{param.deviceId}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
     <!-- 根据信息筛选返回数据 -->
     <select id="updateByRequestId"  parameterType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" resultType="java.lang.Integer" >
         update
