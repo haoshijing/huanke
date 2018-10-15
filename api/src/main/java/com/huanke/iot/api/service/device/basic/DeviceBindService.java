@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author haoshijing
@@ -51,7 +52,7 @@ public class DeviceBindService {
 
     // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6, Con
     // tent=, CreateTime=1523200569, Event=unbind, ToUserName=gh_7f3ba47c70a3, FromUserName=okOTjwpDwxJR666hVWnj_L_jp87w, MsgType=device_event, SessionID=0, OpenID=okOTjwpDwxJR666hVWnj_L_jp87w}
-    public void handlerDeviceEvent(HttpServletRequest request,Map<String, String> requestMap, String event) {
+    public void handlerDeviceEvent(HttpServletRequest request, Map<String, String> requestMap, String event) {
         String openId = requestMap.get("OpenID");
         String wxDeviceId = requestMap.get("DeviceID");
         DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
@@ -65,9 +66,9 @@ public class DeviceBindService {
 
         Integer userId = null;
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
-        if(customerUserPo != null){
+        if (customerUserPo != null) {
             userId = customerUserPo.getId();
-        }else{
+        } else {
             CustomerUserPo newCustomerUserPo = new CustomerUserPo();
             newCustomerUserPo.setCreateTime(System.currentTimeMillis());
             newCustomerUserPo.setOpenId(openId);
@@ -75,6 +76,7 @@ public class DeviceBindService {
             customerUserMapper.insert(newCustomerUserPo);
             userId = newCustomerUserPo.getId();
         }
+        String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
 
         if (StringUtils.equals("bind", event)) {
             DevicePo updateDevicePo = new DevicePo();
@@ -84,11 +86,11 @@ public class DeviceBindService {
             deviceMapper.updateById(updateDevicePo);
 
             List<DeviceTeamPo> deviceTeamPoList = deviceTeamMapper.selectByMasterUserId(userId);
+            List<String> deviceTeamNameList = deviceTeamPoList.stream().map(deviceTeamPo -> deviceTeamPo.getName()).collect(Collectors.toList());
             int teamId = 0;
-            if(deviceTeamPoList.isEmpty()){
+            if (deviceTeamPoList.isEmpty() || !deviceTeamNameList.contains(defaultTeamName)) {
                 //根据配置创建新组
                 DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
-                String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
                 deviceTeamPo.setName(defaultTeamName);
                 deviceTeamPo.setMasterUserId(userId);
                 deviceTeamPo.setCreateUserId(userId);
@@ -101,10 +103,13 @@ public class DeviceBindService {
                 deviceTeamPo.setCustomerId(customerId);
                 deviceTeamMapper.insert(deviceTeamPo);
                 teamId = deviceTeamPo.getId();
-            }else{
-                //使用第一个组
-                DeviceTeamPo deviceTeamPo = deviceTeamPoList.get(0);
-                teamId = deviceTeamPo.getId();
+            } else {
+                //使用默认组名称的组
+                for (DeviceTeamPo deviceTeamPo : deviceTeamPoList) {
+                    if(deviceTeamPo.getName().equals(defaultTeamName)){
+                        teamId = deviceTeamPo.getId();
+                    }
+                }
             }
 
             DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
@@ -119,7 +124,7 @@ public class DeviceBindService {
                 deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
                 deviceTeamItemPo.setStatus(1);
                 deviceTeamItemMapper.insert(deviceTeamItemPo);
-            }else{
+            } else {
                 deviceTeamItemMapper.updateStatus(devicePo.getId(), userId, 1);
             }
 
@@ -136,7 +141,7 @@ public class DeviceBindService {
                 newDeviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
                 newDeviceCustomerUserRelationPo.setOpenId(openId);
                 deviceCustomerUserRelationMapper.insert(newDeviceCustomerUserRelationPo);
-            }else{
+            } else {
                 deviceCustomerUserRelationPo.setStatus(1);
                 deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
                 deviceCustomerUserRelationMapper.updateStatus(deviceCustomerUserRelationPo);
@@ -151,7 +156,7 @@ public class DeviceBindService {
             deviceMapper.updateById(updatePo);
             userId = customerUserPo.getId();
             //删除对应的设备
-            deviceDataService.deleteDevice(userId,devicePo.getId());
+            deviceDataService.deleteDevice(userId, devicePo.getId());
         }
     }
 }
