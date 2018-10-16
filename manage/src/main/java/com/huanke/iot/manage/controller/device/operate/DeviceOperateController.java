@@ -259,10 +259,12 @@ public class DeviceOperateController {
         } else {
             try {
                 DevicePo devicePo = deviceService.isDeviceHasCustomer(deviceList);
-                if (null == devicePo) {
-                    return new ApiResponse<>(RetCode.PARAM_ERROR, "当前设别列表设备 " + devicePo.getName() + " 尚未被分配", false);
+                if (null != devicePo) {
+                    return this.deviceService.callBackDeviceFromCustomer(deviceList);
+                }else{
+                    return new ApiResponse<>(RetCode.PARAM_ERROR, "当前列表设备中存在未分配设备，无法召回", false);
                 }
-                return this.deviceService.callBackDeviceFromCustomer(deviceList);
+
             } catch (Exception e) {
                 log.error("设备召回异常 = {}", e);
                 return new ApiResponse<>(RetCode.ERROR, "设备召回异常");

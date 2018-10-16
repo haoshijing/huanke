@@ -12,6 +12,7 @@
         INSERT INTO
         <include refid="tableName"/>
         (
+        parentCustomerId,
         name,
         loginName,
         userType,
@@ -28,6 +29,7 @@
         creatUser
         )
         VALUES (
+        #{parentCustomerId},
         #{name},
         #{loginName},
         #{userType},
@@ -115,6 +117,9 @@
             <if test="param.status != null  ">
                 AND status = #{param.status}
             </if>
+            <if test="param.parentCustomerId != null  ">
+                AND parentCustomerId = #{param.parentCustomerId}
+            </if>
         </where>
         limit #{limit} offset #{offset}
     </select>
@@ -130,10 +135,16 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="selectAllCustomers" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+    <select id="selectAllCustomers" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select *
-        from <include refid="tableName"/>
+        from
+        <include refid="tableName"/>
         where status = 1
+        <set>
+            <if test="parentCustomerId != null ">
+                parentCustomerId = #{parentCustomerId},
+            </if>
+        </set>
     </select>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">

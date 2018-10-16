@@ -31,7 +31,7 @@ public class DeviceModelVo {
 
     private List<DeviceModelAbilityVo> deviceModelAbilitys;
 
-    private ModelFormatVo modelFormatVo;
+    private ModelFormatVo deviceModelFormat;
 
     private Integer devicePoolCount;
 

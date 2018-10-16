@@ -10,12 +10,15 @@ import com.huanke.iot.base.dao.device.ability.DeviceAbilitySetMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAbilitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilitySetPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAbilitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
+import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import com.huanke.iot.manage.vo.request.device.ability.DeviceTypeAbilitysCreateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAbilitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
@@ -65,6 +68,9 @@ public class DeviceTypeService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private CustomerService customerService;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -230,7 +236,6 @@ public class DeviceTypeService {
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
 
-
         //查询 类型列表
         List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectList(queryDeviceTypePo, limit, offset);
         return deviceTypePos.stream().map(deviceTypePo -> {
@@ -258,6 +263,7 @@ public class DeviceTypeService {
         deviceTypePo.setStatus(status);
         return new ApiResponse<>(RetCode.OK,"查询类型总数成功",deviceTypeMapper.selectCount(deviceTypePo));
     }
+
     /**
      * 根据类型集合查询该客户可用的设备类型信息
      *
@@ -267,7 +273,6 @@ public class DeviceTypeService {
     public List<DeviceTypeVo> selectListByTypeIds(String typeIds) {
 
         List<String> typeIdList = Arrays.asList(typeIds.split(","));
-
         //查询 类型列表
         List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectListByTypeIds(typeIdList);
         return deviceTypePos.stream().map(deviceTypePo -> {
@@ -290,6 +295,35 @@ public class DeviceTypeService {
         }).collect(Collectors.toList());
     }
 
+
+    /**
+     * 查询所有的设备类型
+     *
+     * @return
+     */
+    public List<DeviceTypeVo> selectAllTypes() {
+
+        //查询 类型列表
+        List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectAllTypes();
+        return deviceTypePos.stream().map(deviceTypePo -> {
+            DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
+            if (deviceTypePo != null) {
+                deviceTypeVo.setName(deviceTypePo.getName());
+                deviceTypeVo.setTypeNo(deviceTypePo.getTypeNo());
+                deviceTypeVo.setIcon(deviceTypePo.getIcon());
+                deviceTypeVo.setStopWatch(deviceTypePo.getStopWatch());
+                deviceTypeVo.setSource(deviceTypePo.getSource());
+                deviceTypeVo.setRemark(deviceTypePo.getRemark());
+                deviceTypeVo.setId(deviceTypePo.getId());
+            }
+
+            //查询该 类型的 功能集合
+            List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = selectAbilitysByTypeId(deviceTypePo.getId());
+
+            deviceTypeVo.setDeviceTypeAbilitys(deviceTypeAbilitysVos);
+            return deviceTypeVo;
+        }).collect(Collectors.toList());
+    }
 
     /**
      * 根据主键查询类型

@@ -463,7 +463,7 @@ public class DeviceModelService {
 
             //型号的版式
             ModelFormatVo modelFormatVo = selectModelFormatPages(deviceModelPo.getId(), deviceModelPo.getFormatId());
-            deviceModelVo.setModelFormatVo(modelFormatVo);
+            deviceModelVo.setDeviceModelFormat(modelFormatVo);
 
             //首先查询device_pool表中 该型号可用的 wxDeviceId数量
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();

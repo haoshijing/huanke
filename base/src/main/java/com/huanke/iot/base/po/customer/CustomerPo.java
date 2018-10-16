@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class CustomerPo {
     private Integer id;
+    private Integer parentCustomerId;
     private String name;
     private String loginName;
     private Integer userType;

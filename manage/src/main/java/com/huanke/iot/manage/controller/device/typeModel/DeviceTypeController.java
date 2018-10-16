@@ -2,13 +2,13 @@ package com.huanke.iot.manage.controller.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.manage.service.device.typeModel.DeviceTypeAbilitySetService;
+import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
+import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeQueryRequest;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,8 @@ public class DeviceTypeController {
     @Autowired
     private DeviceTypeService deviceTypeService;
 
+    @Autowired
+    private CustomerService customerService;
 
     /**
      * 添加新类型
@@ -175,14 +177,15 @@ public class DeviceTypeController {
 
     @ApiOperation("查询类型总数")
     @PostMapping(value = "/selectCount/{status}")
-    public ApiResponse<Integer> selectCount(@PathVariable("status") Integer status){
+    public ApiResponse<Integer> selectCount(@PathVariable("status") Integer status) {
         try {
             return this.deviceTypeService.selectCount(status);
-        }catch (Exception e){
-            log.error("设备类型总数查询异常 = {}",e);
-            return new ApiResponse<>(RetCode.ERROR,"设备类型总数查询失败");
+        } catch (Exception e) {
+            log.error("设备类型总数查询异常 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备类型总数查询失败");
         }
     }
+
     /**
      * 根据id查询 类型
      *
@@ -214,7 +217,7 @@ public class DeviceTypeController {
     @ApiOperation("根据设备类型主键集合，查询所有设备类型 ")
     @GetMapping(value = "/selectListByTypeIds/{typeIds}")
     public ApiResponse<List<DeviceTypeVo>> selectListByTypeIds(@PathVariable("typeIds") String typeIds) {
-        if (typeIds.split(",").length > 0) {
+        if (null!=typeIds&&typeIds.split(",").length > 0) {
             List<DeviceTypeVo> deviceTypeVos = deviceTypeService.selectListByTypeIds(typeIds);
             return new ApiResponse<>(deviceTypeVos);
         } else {
@@ -223,6 +226,27 @@ public class DeviceTypeController {
     }
 
 
+    @ApiOperation("根据当前二级域名，查询可用的设备类型 ")
+    @GetMapping(value = "/selectTypesBySLD")
+    public ApiResponse<List<DeviceTypeVo>> selectTypesBySLD() {
+
+        Integer customerId = customerService.obtainCustomerId(false);
+        String typeIds = null;
+        if(customerId!=null){
+            CustomerVo curCustomerVo = customerService.selectById(customerId);
+            typeIds = curCustomerVo.getTypeIds();
+            if (null!=typeIds&&typeIds.split(",").length > 0) {
+                List<DeviceTypeVo> deviceTypeVos = deviceTypeService.selectListByTypeIds(typeIds);
+                return new ApiResponse<>(deviceTypeVos);
+            }else{
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "当前客户，配置的类型格式不正确");
+            }
+        }else{
+            List<DeviceTypeVo> deviceTypeVos = deviceTypeService.selectAllTypes();
+            return new ApiResponse<>(deviceTypeVos);
+        }
+
+    }
 
 
 //    /**

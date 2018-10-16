@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.po.customer.*;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 /**
  * 客户
  */
+@Slf4j
 @Repository
 public class CustomerService {
 
@@ -67,6 +69,8 @@ public class CustomerService {
      */
     public ApiResponse<Integer> saveDetail(CustomerVo customerVo) {
 
+        //获取当前二级域名的客户主键
+        Integer curCustomerId = obtainCustomerId(false);
         //客户信息
         CustomerPo customerPo = new CustomerPo();
         customerPo.setName(customerVo.getName());
@@ -102,6 +106,7 @@ public class CustomerService {
         } else {
             customerPo.setStatus(CommonConstant.STATUS_YES);
             customerPo.setCreateTime(System.currentTimeMillis());
+            customerPo.setParentCustomerId(curCustomerId); //如果是通过二级域名访问 并新增客户，则需要保存其父级 客户的主键
             this.customerMapper.insert(customerPo);
         }
 
@@ -260,10 +265,18 @@ public class CustomerService {
      */
     public List<CustomerVo> selectList(CustomerQueryRequest request) {
 
+        //获取当前二级域名的客户主键
+        Integer curCustomerId = obtainCustomerId(false);
+
         CustomerPo queryCustomerPo = new CustomerPo();
         BeanUtils.copyProperties(request, queryCustomerPo);
         Integer offset = (request.getPage() - 1) * request.getLimit();
         Integer limit = request.getLimit();
+
+        //如果 当前二级域名客户存在，则 只查询 该客户的客户。
+        if(curCustomerId!=null){
+            queryCustomerPo.setParentCustomerId(curCustomerId);
+        }
         //如果 没有指定状态，则默认查出 非删除的数据
         if (queryCustomerPo.getStatus() == null) {
             queryCustomerPo.setStatus(CommonConstant.STATUS_YES);
@@ -285,8 +298,9 @@ public class CustomerService {
      * @return
      */
     public List<CustomerVo> selectAllCustomers() {
-
-        List<CustomerPo> customerPos = customerMapper.selectAllCustomers();
+        //获取当前二级域名的客户主键
+        Integer curCustomerId = obtainCustomerId(false);
+        List<CustomerPo> customerPos = customerMapper.selectAllCustomers(curCustomerId);
         List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
             CustomerVo customerVo = new CustomerVo();
             BeanUtils.copyProperties(customerPo, customerVo);
@@ -459,19 +473,31 @@ public class CustomerService {
                 String customerKey = CUSTOMERID_PREIX+customerSLD;
                 if(!"www".equals(customerSLD)){
                     if(!fromServer){
-                        customerId = stringRedisTemplate.opsForValue().get(customerKey);
-                        if(null!=customerId){
-                            return Integer.parseInt(customerId);
-                        }else{
-                            obtainCustomerId(true);
+                        try{
+                            customerId = stringRedisTemplate.opsForValue().get(customerKey);
+                            if(null!=customerId){
+                                return Integer.parseInt(customerId);
+                            }else{
+                                return obtainCustomerId(true);
+                            }
+                        }catch (Exception e){
+                            log.error("从Redis获取当前域名的客户主键失败={}", e);
+                            return  obtainCustomerId(true);
                         }
+
 
                     }else{
                         CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
                         if(customerPo!=null){
                             customerId = customerPo.getId().toString();
-                            stringRedisTemplate.opsForValue().set(customerKey, customerId);
-                            stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
+                            try{
+                                stringRedisTemplate.opsForValue().set(customerKey, customerId);
+                                stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
+                            }catch (Exception e){
+                                log.error("往Redis存储当前域名的客户主键失败={}",e);
+                                return Integer.parseInt(customerId);
+                            }
+
                             return Integer.parseInt(customerId);
                         }
                     }

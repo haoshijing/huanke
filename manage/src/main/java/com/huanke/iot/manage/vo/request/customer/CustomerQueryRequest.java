@@ -12,6 +12,7 @@ import java.util.List;
 public class CustomerQueryRequest {
 
     private Integer id;
+    private Integer parentCustomerId;
     private String name;
     private String publicName;
     private String publicId;
