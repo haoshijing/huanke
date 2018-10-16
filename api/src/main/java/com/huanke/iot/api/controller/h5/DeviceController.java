@@ -126,7 +126,7 @@ public class DeviceController extends BaseController {
         }
         String token = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
         stringRedisTemplate.opsForValue().set("token." + wxDeviceId, token);
-        stringRedisTemplate.expire("token." + wxDeviceId, 10, TimeUnit.MINUTES);
+        stringRedisTemplate.expire("token." + wxDeviceId, 10, TimeUnit.HOURS);
         return new ApiResponse<>(token);
     }
 
