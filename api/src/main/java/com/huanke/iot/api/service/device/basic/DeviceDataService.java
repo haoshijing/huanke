@@ -146,16 +146,7 @@ public class DeviceDataService {
             log.error("无法给自己分享设备");
             return false;
         }
-        //TODO检查deviceId和要分享用户是不是已存在
-        DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
-        toQueryTeamItemPo.setDeviceId(deviceId);
-        toQueryTeamItemPo.setUserId(toId);
-        toQueryTeamItemPo.setStatus(1);
-        Integer toItemCount = deviceTeamMapper.queryItemCount(toQueryTeamItemPo);
-        if (toItemCount > 0) {
-            log.error("该用户已拥有此设备");
-            return false;
-        }
+
         //TODO检查deviceId和用户是不是可以对应上的
         DeviceTeamItemPo queryTeamItemPo = new DeviceTeamItemPo();
         queryTeamItemPo.setDeviceId(deviceId);
@@ -166,7 +157,16 @@ public class DeviceDataService {
             log.error("用户组下无设备");
             return false;
         }
-
+        //TODO检查deviceId和要分享用户是不是已存在
+        DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
+        toQueryTeamItemPo.setDeviceId(deviceId);
+        toQueryTeamItemPo.setUserId(toId);
+        toQueryTeamItemPo.setStatus(null);
+        List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(toQueryTeamItemPo);
+        if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_YES)) {
+            log.error("该用户已拥有此设备");
+            return false;
+        }
 
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
@@ -189,19 +189,25 @@ public class DeviceDataService {
             deviceTeamMapper.insert(deviceTeamPo);
             teamId = deviceTeamPo.getId();
         }
+        if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_DEL)) {
+            DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPoList.get(0);
+            deviceTeamItemPo.setTeamId(teamId);
+            deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+            deviceTeamItemMapper.updateById(deviceTeamItemPo);
+            return true;
+        }
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         queryItemPo.setDeviceId(deviceId);
         queryItemPo.setUserId(toId);
         queryItemPo.setTeamId(teamId);
         queryItemPo.setStatus(1);
-        queryItemPo.setUserId(toId);
         queryItemPo.setCreateTime(System.currentTimeMillis());
         deviceTeamItemMapper.insert(queryItemPo);
-
         return true;
     }
 
-    public Boolean clearRelation(String joinOpenId, Integer userId, Integer deviceId) {
+    public Boolean updateRelation(String joinOpenId, Integer userId, Integer deviceId, Integer status) {
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
             log.error("找不到设备，deviceId={}", deviceId);
@@ -219,25 +225,25 @@ public class DeviceDataService {
 
         CustomerUserPo beClearCustomerUserPo = customerUserMapper.selectByOpenId(joinOpenId);
         if (beClearCustomerUserPo == null) {
-            log.error("被删除用户不存在，deviceId={}", deviceId);
+            log.error("被更改用户不存在，deviceId={}", deviceId);
             return false;
         }
         if (beClearCustomerUserPo.getId().equals(userId)) {
-            log.error("主管理员无法删除，deviceId={}", deviceId);
+            log.error("主管理员无法更改自己，deviceId={}", deviceId);
             return false;
         }
 
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         queryItemPo.setUserId(beClearCustomerUserPo.getId());
         queryItemPo.setDeviceId(deviceId);
-        queryItemPo.setStatus(CommonConstant.STATUS_YES);
+        queryItemPo.setStatus(null);
         List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamMapper.queryTeamItems(queryItemPo);
         if (deviceTeamItemPos.size() == 0) {
-            log.error("被删除用户无此设备，deviceId={}", deviceId);
+            log.error("被更改用户无此设备，deviceId={}", deviceId);
             return false;
         }
         DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPos.get(0);
-        return deviceTeamItemMapper.updateStatus(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId(), CommonConstant.STATUS_DEL) > 0;
+        return deviceTeamItemMapper.updateStatus(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId(), status) > 0;
     }
 
 
@@ -313,7 +319,7 @@ public class DeviceDataService {
                 DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
                 deviceTeamItemPo.setDeviceId(deviceId);
                 List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
-                List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().filter(deviceTeamItem -> deviceTeamItem.getStatus() == 1).sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
+                List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
                 List<DeviceShareVo> shareVos = finalDeviceTeamItemPos.stream()
                         .map(finalDeviceTeamItemPo -> {
                             Integer deviceUserId = finalDeviceTeamItemPo.getUserId();
@@ -324,6 +330,7 @@ public class DeviceDataService {
                             deviceShareVo.setJoinTime(finalDeviceTeamItemPo.getCreateTime());
                             deviceShareVo.setOpenId(deviceCustomerUserPo.getOpenId());
                             deviceShareVo.setHeadImg(deviceCustomerUserPo.getHeadimgurl());
+                            deviceShareVo.setStatus(finalDeviceTeamItemPo.getStatus());
                             return deviceShareVo;
                         }).collect(Collectors.toList());
 

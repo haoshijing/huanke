@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
@@ -60,6 +61,7 @@ public class DeviceBindService {
             log.warn("wxDeviceId = {} not in db", wxDeviceId);
             return;
         }
+
         Integer deviceId = devicePo.getId();
         DeviceCustomerRelationPo deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(deviceId);
         Integer customerId = deviceCustomerRelationPo.getCustomerId();
@@ -76,8 +78,17 @@ public class DeviceBindService {
             customerUserMapper.insert(newCustomerUserPo);
             userId = newCustomerUserPo.getId();
         }
-        String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
 
+        DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
+        toQueryTeamItemPo.setDeviceId(deviceId);
+        toQueryTeamItemPo.setUserId(userId);
+        toQueryTeamItemPo.setStatus(null);
+        List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(toQueryTeamItemPo);
+        if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_YES)) {
+            log.error("该用户已拥有此设备");
+            return;
+        }
+        String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
         if (StringUtils.equals("bind", event)) {
             DevicePo updateDevicePo = new DevicePo();
             updateDevicePo.setBindTime(System.currentTimeMillis());
@@ -111,12 +122,14 @@ public class DeviceBindService {
                     }
                 }
             }
-
-            DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
-            queryItemPo.setDeviceId(devicePo.getId());
-            queryItemPo.setTeamId(teamId);
-            Integer itemCount = deviceTeamMapper.queryItemCount(queryItemPo);
-            if (itemCount == 0) {
+            //创建用户设备组关系表
+            if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_DEL)) {
+                DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPoList.get(0);
+                deviceTeamItemPo.setTeamId(teamId);
+                deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
+                deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+                deviceTeamItemMapper.updateById(deviceTeamItemPo);
+            }else {
                 DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
                 deviceTeamItemPo.setUserId(userId);
                 deviceTeamItemPo.setDeviceId(devicePo.getId());
@@ -124,11 +137,7 @@ public class DeviceBindService {
                 deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
                 deviceTeamItemPo.setStatus(1);
                 deviceTeamItemMapper.insert(deviceTeamItemPo);
-            } else {
-                deviceTeamItemMapper.updateStatus(devicePo.getId(), userId, 1);
             }
-
-
             //通过设备查customerId
             DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
             deviceCustomerUserRelationPo.setOpenId(openId);

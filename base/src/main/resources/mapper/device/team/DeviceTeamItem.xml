@@ -33,6 +33,23 @@
         )
     </insert>
 
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="teamId != null">
+                teamId = #{teamId},
+            </if>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            <if test="lastUpdateTime != null ">
+                lastUpdateTime = #{lastUpdateTime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
     <!-- 批量插入数条记录 -->
     <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="List">
         INSERT INTO
