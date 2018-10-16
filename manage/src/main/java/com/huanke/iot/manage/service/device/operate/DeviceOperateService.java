@@ -455,7 +455,7 @@ public class DeviceOperateService {
                 Integer addCount = deviceList.size() - devicePoolCount;
                 //获取数据
                 ApiResponse<Integer> result = createWxDeviceIdPools(deviceAssignToCustomerRequest.getCustomerId(), deviceAssignToCustomerRequest.getProductId(), addCount);
-                if (result == null || RetCode.PARAM_ERROR == result.getCode()) {
+                if (result == null || RetCode.PARAM_ERROR == result.getCode() || RetCode.ERROR == result.getCode()) {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, result.getMsg(), false);
                 }
             }
@@ -1031,7 +1031,7 @@ public class DeviceOperateService {
                         String wxDevicelicence = jsonObject.getString("devicelicence");
                         String wxQrticket = jsonObject.getString("qrticket");
 
-                        if (wxDeviceId != null && wxDevicelicence != null) {
+                        if (wxDeviceId != null) {
                             DeviceIdPoolPo insertPo = new DeviceIdPoolPo();
 
                             insertPo.setCustomerId(customerId);
