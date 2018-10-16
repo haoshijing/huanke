@@ -6,6 +6,8 @@ import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,13 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
             throws Exception {
         String imei = request.getHeader(TICKET);
         if(StringUtils.isNotEmpty(imei)){
-            Integer userId = userService.getUserIdByIMei(imei);
-            if(userId != 0){
+            CustomerUserPo customerUserPo = userService.getUserByIMei(imei);
+            if(customerUserPo != null){
+                CustomerPo customerByOpenId = userService.getCustomerByOpenId(customerUserPo.getOpenId());
                 UserRequestContext requestContext = UserRequestContextHolder.get();
-                requestContext.setCurrentId(userId);
-                userService.getUser(userId);
+                requestContext.setCurrentId(customerUserPo.getId());
+                requestContext.getCustomerVo().setCustomerId(customerUserPo.getCustomerId());
+                requestContext.getCustomerVo().setAppId(customerByOpenId.getAppid());
                 return  true;
             }
         }

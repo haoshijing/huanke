@@ -2,8 +2,10 @@ package com.huanke.iot.api.service.user;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.wechat.WechartUtil;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMacMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceMacPo;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,9 @@ public class UserService {
 
     @Autowired
     private CustomerUserMapper customerUserMapper;
+
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Autowired
     private WechartUtil wechartUtil;
@@ -113,7 +118,7 @@ public class UserService {
         return customerUserPo;
     }
 
-    public Integer getUserIdByIMei(String imei) {
+    public CustomerUserPo getUserByIMei(String imei) {
 //        DeviceMacPo deviceMacPo = deviceMacMapper.selectByMac(imei);
 //        if(deviceMacPo == null){
 //            log.error(" imei = {} , data is null" ,imei);
@@ -123,8 +128,15 @@ public class UserService {
         CustomerUserPo customerUserPo = customerUserMapper.selectByMac(imei);
         if(customerUserPo == null){
             log.info(" imei = {} , data is null" ,imei);
-            return 0;
+            return null;
         }
-        return customerUserPo.getId();
+        return customerUserPo;
+    }
+    public CustomerPo getCustomerByOpenId(String openId){
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
+        CustomerPo customerPo = new CustomerPo();
+        customerPo.setId(customerUserPo.getCustomerId());
+        customerPo = customerMapper.selectList(customerPo,1,0).get(0);
+        return customerPo;
     }
 }
