@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.device.typeModel;
 
+import com.fasterxml.jackson.databind.cfg.MutableConfigOverride;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
@@ -7,6 +8,7 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
@@ -15,6 +17,7 @@ import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
+import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
@@ -30,8 +33,6 @@ import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.format.ModelFormatVo;
-import com.huanke.iot.manage.vo.response.format.WxFormatVo;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +42,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +63,7 @@ public class DeviceModelService {
     private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
 
     @Autowired
-    private DeviceAbilityOptionMapper deviceAbilityOptionMapper;
+    private DeviceTypeAbilitysMapper deviceTypeAbilitysMapper;
 
     @Autowired
     private CustomerMapper customerMapper;
@@ -305,7 +307,6 @@ public class DeviceModelService {
 
         //获取该二级域名的客户主键
         Integer customerId = customerService.obtainCustomerId(false);
-
         DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
         queryDeviceModelPo.setName(request.getName());
         //如果查询条件未带入 客户主键，则默认查询当前客户的型号
@@ -336,13 +337,13 @@ public class DeviceModelService {
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
-            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId());
+//            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(),deviceModelPo.getTypeId());
+//
+//            deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
 
-            deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
-
-            //型号的版式
-            ModelFormatVo modelFormatVo = selectModelFormatPages(deviceModelPo.getId(), deviceModelPo.getFormatId());
-            deviceModelVo.setModelFormatVo(modelFormatVo);
+//            //型号的版式
+//            ModelFormatVo modelFormatVo = selectModelFormatPages(deviceModelPo.getId(), deviceModelPo.getFormatId());
+//            deviceModelVo.setModelFormatVo(modelFormatVo);
 
             //首先查询device_pool表中 该型号可用的 wxDeviceId数量
             DeviceIdPoolPo deviceIdPoolPo = new DeviceIdPoolPo();
@@ -386,7 +387,7 @@ public class DeviceModelService {
             deviceModelVo.setIcon(deviceModelVo.getIcon());
             deviceModelVo.setId(deviceModelPo.getId());
 
-            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId());
+            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(),deviceModelPo.getTypeId());
             deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
             return deviceModelVo;
         }).collect(Collectors.toList());
@@ -418,7 +419,7 @@ public class DeviceModelService {
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
             deviceModelVo.setId(deviceModelPo.getId());
 
-            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId());
+            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(),deviceModelPo.getTypeId());
             deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
 
             return deviceModelVo;
@@ -456,7 +457,7 @@ public class DeviceModelService {
             deviceModelVo.setId(deviceModelPo.getId());
 
             //型号的功能集
-            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId());
+            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(),deviceModelPo.getTypeId());
 
             deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
 
@@ -483,14 +484,18 @@ public class DeviceModelService {
      * @param modelId
      * @return
      */
-    public List<DeviceModelAbilityVo> selectModelAbilitysByModelId(Integer modelId) {
+    public List<DeviceModelAbilityVo> selectModelAbilitysByModelId(Integer modelId,Integer typeId) {
 
         //查询型号的自定义能力项
         List<DeviceModelAbilityPo> deviceModelAbilityPos = deviceModelAbilityMapper.selectByModelId(modelId);
+        List<DeviceTypeAbilitysPo> deviceTypeAbilitysPos = deviceTypeAbilitysMapper.selectByTypeId( typeId);
+        List modelAbilitys = new ArrayList();
 
+        /* 以 型号能力项为原数据 对比 类型 的功能项，找出 类型删除的功能项*/
         List<DeviceModelAbilityVo> deviceModelAbilityVos = new ArrayList<DeviceModelAbilityVo>();
         if (deviceModelAbilityPos != null && deviceModelAbilityPos.size() > 0) {
             deviceModelAbilityVos = deviceModelAbilityPos.stream().map(deviceModelAbilityPo -> {
+
                 DeviceModelAbilityVo deviceModelAbilityVo = new DeviceModelAbilityVo();
                 deviceModelAbilityVo.setId(deviceModelAbilityPo.getId());
                 deviceModelAbilityVo.setModelId(deviceModelAbilityPo.getModelId());
@@ -501,15 +506,75 @@ public class DeviceModelService {
                 deviceModelAbilityVo.setMaxVal(deviceModelAbilityPo.getMaxVal());
                 deviceModelAbilityVo.setStatus(deviceModelAbilityPo.getStatus());
 
+                /*对比型号的功能项与 类型的功能项*/
+                if(deviceTypeAbilitysPos!=null&&deviceTypeAbilitysPos.size()>0){
+                    for(int m=0;m<deviceTypeAbilitysPos.size();m++){
+                        DeviceTypeAbilitysPo deviceTypeAbilitysPo = deviceTypeAbilitysPos.get(m);
+                        Integer typeAbilityId = deviceTypeAbilitysPo.getAbilityId();
+                        //当 型号的功能项和 类型的功能项相等，则代表 正常
+                        if(typeAbilityId.equals(deviceModelAbilityPo.getAbilityId())){
+                            deviceModelAbilityVo.setUpdateStatus(DeviceConstant.DEVICE_MODEL_ABILITY_UPDATE_NORMAL);
+                            break;
+                        }
+                        //当 类型的功能项中 不存在 此功能项，则代表 ，类型的功能项被删除。
+                        if(!typeAbilityId.equals(deviceModelAbilityPo.getAbilityId())&&m==deviceTypeAbilitysPos.size()-1){
+                            deviceModelAbilityVo.setUpdateStatus(DeviceConstant.DEVICE_MODEL_ABILITY_UPDATE_MINUS);
+                            break;
+                        }
+                    }
+                }
                 //查询 型号的能力项的 选项
                 List<DeviceModelAbilityVo.DeviceModelAbilityOptionVo> deviceModelAbilityOptionVos = selectModelAbilityOptionsByModelAbilityId(deviceModelAbilityPo.getId());
 
                 deviceModelAbilityVo.setDeviceModelAbilityOptions(deviceModelAbilityOptionVos);
-
-
                 return deviceModelAbilityVo;
             }).collect(Collectors.toList());
         }
+
+        /* 以 类型 能力项为原数据 对比 型号 的功能项，找出 类型添加的功能项*/
+        if(deviceTypeAbilitysPos!=null&&deviceTypeAbilitysPos.size()>0){
+             for(int m=0;m<deviceTypeAbilitysPos.size();m++){
+                 DeviceTypeAbilitysPo deviceTypeAbilitysPo = deviceTypeAbilitysPos.get(m);
+                 Integer typeAbilityId = deviceTypeAbilitysPo.getAbilityId();
+                 if(deviceModelAbilityPos!=null&&deviceModelAbilityPos.size()>0){
+                     for(int a=0;a<deviceModelAbilityPos.size();a++){
+                         DeviceModelAbilityPo deviceModelAbilitypo = deviceModelAbilityPos.get(a);
+                         if(typeAbilityId.equals(deviceModelAbilitypo.getAbilityId())){
+                             break;
+                         }
+                         if(!typeAbilityId.equals(deviceModelAbilitypo.getAbilityId())&& a== deviceModelAbilityPos.size()-1){
+
+                             DeviceModelAbilityVo deviceModelAbilityVo = new DeviceModelAbilityVo();
+                             deviceModelAbilityVo.setId(null);
+                             deviceModelAbilityVo.setModelId(modelId);
+                             deviceModelAbilityVo.setAbilityId(typeAbilityId);
+                             deviceModelAbilityVo.setAbilityType(deviceTypeAbilitysPo.getAbilityType());
+                             deviceModelAbilityVo.setDefinedName(deviceTypeAbilitysPo.getAbilityName());
+                             deviceModelAbilityVo.setMinVal(deviceTypeAbilitysPo.getMinVal());
+                             deviceModelAbilityVo.setMaxVal(deviceTypeAbilitysPo.getMaxVal());
+                             deviceModelAbilityVo.setStatus(null);
+                             deviceModelAbilityVo.setUpdateStatus(DeviceConstant.DEVICE_MODEL_ABILITY_UPDATE_ADD);
+                             deviceModelAbilityVos.add(deviceModelAbilityVo);
+                         }
+                     }
+
+                 }else{
+                     DeviceModelAbilityVo deviceModelAbilityVo = new DeviceModelAbilityVo();
+                     deviceModelAbilityVo.setId(null);
+                     deviceModelAbilityVo.setModelId(modelId);
+                     deviceModelAbilityVo.setAbilityId(typeAbilityId);
+                     deviceModelAbilityVo.setAbilityType(deviceTypeAbilitysPo.getAbilityType());
+                     deviceModelAbilityVo.setDefinedName(deviceTypeAbilitysPo.getAbilityName());
+                     deviceModelAbilityVo.setMinVal(deviceTypeAbilitysPo.getMinVal());
+                     deviceModelAbilityVo.setMaxVal(deviceTypeAbilitysPo.getMaxVal());
+                     deviceModelAbilityVo.setStatus(null);
+                     deviceModelAbilityVo.setUpdateStatus(DeviceConstant.DEVICE_MODEL_ABILITY_UPDATE_ADD);
+                     deviceModelAbilityVos.add(deviceModelAbilityVo);
+                 }
+             }
+        }
+
+
         return deviceModelAbilityVos;
     }
 

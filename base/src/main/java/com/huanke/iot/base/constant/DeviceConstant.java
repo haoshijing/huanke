@@ -48,4 +48,8 @@ public class DeviceConstant {
     /*型号的版式配置项是否显示*/
     public static final Integer DEVICE_MODEL_FORMAT_ITEM_SHOW_YES = 1; // 是
     public static final Integer DEVICE_MODEL_FORMAT_ITEM_SHOW_NO = 0; //否
+
+    public static final Integer DEVICE_MODEL_ABILITY_UPDATE_MINUS = -1;//减去
+    public static final Integer DEVICE_MODEL_ABILITY_UPDATE_NORMAL = 0;//正常
+    public static final Integer DEVICE_MODEL_ABILITY_UPDATE_ADD = 1;//增加
 }

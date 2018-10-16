@@ -58,11 +58,13 @@
     </select>
     <select id="selectByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo">
         select
-        *
+        s.*,a.abilityName,a.minVal,a.maxVal,a.abilityType
         FROM
-        <include refid="tableName"/>
+        t_device_type_abilitys s,t_device_ability a
 
-        WHERE typeId = #{typeId}
+        WHERE 1=1
+        and s.abilityId = a.id
+        and s.typeId = #{typeId}
     </select>
 
     <select id="selectByAbilityId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo">
