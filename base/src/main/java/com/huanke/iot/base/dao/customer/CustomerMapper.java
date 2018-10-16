@@ -15,6 +15,8 @@ public interface CustomerMapper extends BaseMapper<CustomerPo>{
 
      CustomerPo selectByTeamId(Integer teamId);
 
+     CustomerPo selectByAppId(String appId);
+
      List<CustomerPo> selectAllCustomers(Integer parentCustomerId);
 
      Integer updateStatusById(CustomerPo customerPo);
