@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.wechat.WechartUtil;
+import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
@@ -29,11 +30,13 @@ public class AppBasicService {
     private CustomerMapper customerMapper;
 
     @Transactional
-    public boolean addUserAppInfo(HttpServletRequest request){
+    public Object addUserAppInfo(HttpServletRequest request){
+        log.info("appAddUser,appId={},iMei={}",request.getParameter("appId"),request.getParameter("iMei"));
         String appId = request.getParameter("appId");
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
         if(customerPo == null){
-            return false;
+            log.error("appAddUser,不存在的appId={}",appId);
+            return  new ApiResponse<>(false);
         }
         UserRequestContext context = UserRequestContextHolder.get();
         if(context.getCustomerVo() == null){
@@ -43,10 +46,12 @@ public class AppBasicService {
         context.getCustomerVo().setCustomerId(customerPo.getId());
         JSONObject resp = wechartUtil.obtainAuthAccessToken(request.getParameter("code"));
         if(resp == null || StringUtils.isEmpty(resp.get("openId"))){
-            return false;
+            log.error("appAddUser,获取openId异常，code={}，resp={}",request.getParameter("code"),resp);
+            return  new ApiResponse<>(false);
         }
         String iMei = request.getParameter("iMei");
         String openId = resp.getString("openId");
+        log.info("appAddUser,openId={}",openId);
         CustomerUserPo customerUserPo = customerUserMapper.selectByMac(iMei);
         while(customerUserPo != null){
             customerUserPo.setMac(iMei);
@@ -54,8 +59,12 @@ public class AppBasicService {
             customerUserPo = customerUserMapper.selectByMac(iMei);
         }
         customerUserPo = customerUserMapper.selectByOpenId(openId);
+        if(customerUserPo == null){
+            log.info("appAddUser,未注册的openId={}",openId);
+            return  new ApiResponse<>(false);
+        }
         customerUserPo.setMac(iMei);
         customerUserMapper.updateById(customerUserPo);
-        return true;
+        return new ApiResponse<>(true);
     }
 }
