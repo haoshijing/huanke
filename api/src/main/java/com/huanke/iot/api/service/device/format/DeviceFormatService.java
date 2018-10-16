@@ -103,6 +103,8 @@ public class DeviceFormatService {
             DeviceModelAbilityPo deviceModelabilityPo = deviceModelabilityMapper.getByJoinId(modelId, abilityId);
             if(deviceModelabilityPo != null){
                 abilitys.setDefinedName(deviceModelabilityPo.getDefinedName());
+            }else{
+                continue;
             }
             BeanUtils.copyProperties(deviceabilityPo, abilitys);
             List<DeviceModelVo.AbilityOption> abilityOptionList = new ArrayList<>();

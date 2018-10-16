@@ -5,14 +5,15 @@ import lombok.NoArgsConstructor;
 
 /**
  * 描述:
- * 删除用户设备关系数据request
+ * 更改用户设备关系数据request
  *
  * @author onlymark
  * @create 2018-10-13 下午2:13
  */
 @Data
 @NoArgsConstructor
-public class ClearShareRequest {
+public class UpdateShareRequest {
     private Integer deviceId;
     private String openId;
+    private Integer status;
 }

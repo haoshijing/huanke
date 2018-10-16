@@ -134,7 +134,6 @@ public class DeviceController extends BaseController {
     public Object shareDevice(@RequestBody ShareRequest request) throws InvocationTargetException, IllegalAccessException {
     //public Object shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
         Integer userId = getCurrentUserId();
-
         Object shareOk = deviceDataService.shareDevice(userId, request);
         return new ApiResponse<>(shareOk);
     }
@@ -148,13 +147,14 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/clearRelation")
-    public ApiResponse<Boolean> clearRelation(@RequestBody ClearShareRequest request) {
+    @RequestMapping("/updateRelation")
+    public ApiResponse<Boolean> updateRelation(@RequestBody UpdateShareRequest request) {
         Integer userId = getCurrentUserId();
         Integer deviceId = request.getDeviceId();
         String openId = request.getOpenId();
-        log.info("删除用户管理设备权限，删除人userId={}, 设备Id={}, 被删除用户openId={}", userId, deviceId, openId);
-        Boolean clearOk = deviceDataService.clearRelation(openId, userId, deviceId);
+        Integer status = request.getStatus();
+        log.info("更改用户管理设备权限，更改人userId={}, 设备Id={}, 被更改用户openId={}, 更改状态={}", userId, deviceId, openId, status);
+        Boolean clearOk = deviceDataService.updateRelation(openId, userId, deviceId, status);
         return new ApiResponse<>(clearOk);
     }
 
