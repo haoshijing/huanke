@@ -78,9 +78,9 @@ public class DeviceTeamService {
         //根据当前用户找到用户归属的customer，将改组的customerId设为当前customer
         deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
         deviceTeamPo.setName(teamCreateOrUpdateRequest.getName());
-        deviceTeamPo.setIcon(teamCreateOrUpdateRequest.getTeamIcon());
+        deviceTeamPo.setIcon(teamCreateOrUpdateRequest.getIcon());
         //封面
-        deviceTeamPo.setVideoCover(teamCreateOrUpdateRequest.getTeamCover());
+        deviceTeamPo.setVideoCover(teamCreateOrUpdateRequest.getCover());
         //创建之后为托管之前，创建人和materUser为同一人
         deviceTeamPo.setCreateUserId(customerUserPo.getId());
         deviceTeamPo.setMasterUserId(customerUserPo.getId());

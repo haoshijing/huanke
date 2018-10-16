@@ -11,7 +11,7 @@ public class TeamCreateOrUpdateRequest {
     //组名
     private String name;
 
-    private String teamIcon;
+    private String icon;
 
     private String remark;
 
@@ -23,7 +23,7 @@ public class TeamCreateOrUpdateRequest {
 
     //组缩略图
     //安卓场景的介绍封面
-    private String teamCover;
+    private String cover;
 
     private String sceneDescription;
 
