@@ -28,7 +28,7 @@ public class AppBasicService {
         String openId = resp.getString("openId");
         CustomerUserPo customerUserPo = customerUserMapper.selectByMac(iMei);
         while(customerUserPo != null){
-            customerUserPo.setMac("");
+            customerUserPo.setMac(iMei);
             customerUserMapper.updateById(customerUserPo);
             customerUserPo = customerUserMapper.selectByMac(iMei);
         }
