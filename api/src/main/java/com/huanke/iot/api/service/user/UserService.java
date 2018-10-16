@@ -125,6 +125,6 @@ public class UserService {
             log.info(" imei = {} , data is null" ,imei);
             return 0;
         }
-        return Integer.valueOf(customerUserPo.getOpenId());
+        return customerUserPo.getId();
     }
 }

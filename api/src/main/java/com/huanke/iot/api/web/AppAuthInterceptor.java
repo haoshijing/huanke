@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 @Repository
 public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
     private static final String TICKET = "Ticket";
-    private static final String APP_ID = "customerId";
     @Autowired
     private UserService userService;
     @Override
@@ -28,10 +27,9 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
         if(StringUtils.isNotEmpty(imei)){
             Integer userId = userService.getUserIdByIMei(imei);
             if(userId != 0){
-                String appId = request.getHeader(APP_ID);
                 UserRequestContext requestContext = UserRequestContextHolder.get();
-                requestContext.getCustomerVo().setAppId(appId);
                 requestContext.setCurrentId(userId);
+                userService.getUser(userId);
                 return  true;
             }
         }
