@@ -8,6 +8,7 @@ import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
+import com.huanke.iot.api.service.device.basic.AppBasicService;
 import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/app/api")
@@ -27,6 +30,9 @@ public class AppController extends BaseController {
     private DeviceDataService deviceDataService;
 
     @Autowired
+    private AppBasicService appBasicService;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
 
@@ -35,6 +41,13 @@ public class AppController extends BaseController {
 
     @Value("${apkKey}")
     private String apkKey;
+
+
+    @RequestMapping("/setApkInfo")
+    public boolean setApkInfo(HttpServletRequest request) {
+        return appBasicService.addUserAppInfo(request);
+    }
+
 
     @RequestMapping("/queryDeviceList")
     public ApiResponse<DeviceListVo> queryDeviceList() {

@@ -63,6 +63,13 @@
         limit 1
     </select>
 
+    <select id="selectByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        select *
+        from <include refid="tableName"/>
+        where mac = #{mac}
+        limit 1
+    </select>
+
     <select id="selectCustomerByMasterUserId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
         select
         t_customer_user.*
