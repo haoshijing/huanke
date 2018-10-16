@@ -134,9 +134,7 @@ public class UserService {
     }
     public CustomerPo getCustomerByOpenId(String openId){
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
-        CustomerPo customerPo = new CustomerPo();
-        customerPo.setId(customerUserPo.getCustomerId());
-        customerPo = customerMapper.selectList(customerPo,1,0).get(0);
+        CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
         return customerPo;
     }
 }
