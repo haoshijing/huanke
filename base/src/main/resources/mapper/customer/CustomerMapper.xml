@@ -143,6 +143,13 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectByAppId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+        select
+        *
+        FROM <include refid="tableName"/>
+        WHERE appid = #{appId} limit 1
+    </select>
+
     <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
         t_customer.*
