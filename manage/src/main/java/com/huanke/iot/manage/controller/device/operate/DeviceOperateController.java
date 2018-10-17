@@ -7,7 +7,6 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
-import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 //2018-08-15
@@ -15,7 +14,7 @@ import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 //2018-08-15
 //import com.huanke.iot.manage.response.DeviceVo;
-import com.huanke.iot.manage.service.device.operate.DeviceOperLogService;
+import com.huanke.iot.manage.service.device.operate.DeviceDataService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
@@ -64,7 +63,7 @@ public class DeviceOperateController {
     private DeviceOperLogMapper deviceOperLogMapper;
 
     @Autowired
-    private DeviceOperLogService deviceOperLogService;
+    private DeviceDataService deviceOperLogService;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
