@@ -57,8 +57,11 @@ public class UserService {
         LoginRsp rsp = new LoginRsp();
         User user = (User) subject.getSession().getAttribute("user");
 
-        if (!StringUtils.equals(userHost, user.getSecondDomain())) {
-            throw new AccountException("用户名或密码错误！");
+        /*过滤 特殊域名*/
+        if(!StringUtils.contains(userHost,skipRemoteHost)){
+            if(!StringUtils.equals(userHost,user.getSecondDomain())){
+                throw new AccountException("用户名或密码错误");
+            }
         }
 
         user.setPassword(null);
