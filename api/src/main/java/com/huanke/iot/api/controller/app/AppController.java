@@ -67,6 +67,7 @@ public class AppController extends BaseController {
     @RequestMapping("/queryDeviceList")
     public ApiResponse<DeviceListVo> queryDeviceList() {
         Integer userId = getCurrentUserIdForApp();
+        log.info("查询我的设备列表，userId={}", userId);
         DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
         return new ApiResponse<>(deviceListVo);
     }
