@@ -263,7 +263,7 @@ public class DeviceDataService {
         for (String sensorType : dirValues) {
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
-            if(sensorTypeEnums == null){
+            if (sensorTypeEnums == null) {
                 continue;
             }
             sensorDataVo.setName(sensorTypeEnums.getMark());
@@ -455,7 +455,7 @@ public class DeviceDataService {
                     break;
                 case DeviceAbilityTypeContants.ability_type_threshholdselect:
                     DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(abilityId);
-                    if(deviceAbilityPo.getDirValue().equals("-1")){//滤网临时妥协办法，后期再想更优方式
+                    if (deviceAbilityPo.getDirValue().equals("-1")) {//滤网临时妥协办法，后期再想更优方式
                         List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
                         String optionValue5 = getData(controlDatas, dirValue);
                         List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
@@ -466,7 +466,7 @@ public class DeviceDataService {
                             abilityOptionList5.add(abilityOption);
                         }
                         deviceAbilitysVo.setAbilityOptionList(abilityOptionList5);
-                    }else{
+                    } else {
                         List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
                         String optionValue5 = getData(controlDatas, dirValue);
                         List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
@@ -532,6 +532,21 @@ public class DeviceDataService {
             deviceTeamItemMapper.updateById(deviceTeamItemPo);
         }
         return true;
+    }
+
+    public Boolean clearRelation(String openId, Integer userId, Integer deviceId) {
+        DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
+        CustomerUserPo beClearCustomerUserPo = customerUserMapper.selectByOpenId(openId);
+        queryItemPo.setUserId(beClearCustomerUserPo.getId());
+        queryItemPo.setDeviceId(deviceId);
+        queryItemPo.setStatus(null);
+        List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamMapper.queryTeamItems(queryItemPo);
+        if (deviceTeamItemPos.size() == 0) {
+            log.error("被删除用户无此设备，deviceId={}", deviceId);
+            return false;
+        }
+        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPos.get(0);
+        return deviceTeamItemMapper.deleteByJoinId(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId()) > 0;
     }
 
 

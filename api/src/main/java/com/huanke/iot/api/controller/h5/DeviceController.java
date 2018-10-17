@@ -150,7 +150,17 @@ public class DeviceController extends BaseController {
         String openId = request.getOpenId();
         Integer status = request.getStatus();
         log.info("更改用户管理设备权限，更改人userId={}, 设备Id={}, 被更改用户openId={}, 更改状态={}", userId, deviceId, openId, status);
-        Boolean clearOk = deviceDataService.updateRelation(openId, userId, deviceId, status);
+        Boolean updateOk = deviceDataService.updateRelation(openId, userId, deviceId, status);
+        return new ApiResponse<>(updateOk);
+    }
+
+    @RequestMapping("/clearRelation")
+    public ApiResponse<Boolean> clearRelation(@RequestBody UpdateShareRequest request) {
+        Integer userId = getCurrentUserId();
+        Integer deviceId = request.getDeviceId();
+        String openId = request.getOpenId();
+        log.info("删除用户管理设备权限，删除人userId={}, 设备Id={}, 被删除用户openId={}", userId, deviceId, openId);
+        Boolean clearOk = deviceDataService.clearRelation(openId, userId, deviceId);
         return new ApiResponse<>(clearOk);
     }
 
