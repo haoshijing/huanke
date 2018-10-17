@@ -189,7 +189,7 @@ public class DeviceOperateService {
     public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
         //todo 显示从设备
         Subject subject = SecurityUtils.getSubject();
-        UserPo user = (UserPo) subject.getSession().getAttribute("user");
+//        UserPo user = (UserPo) subject.getSession().getAttribute("user");
 
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
