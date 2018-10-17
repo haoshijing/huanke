@@ -454,16 +454,34 @@ public class DeviceDataService {
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_threshholdselect:
-                    List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
-                    String optionValue5 = getData(controlDatas, dirValue);
-                    List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
-                    for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
-                        DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
-                        abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
-                        abilityOption.setCurrValue(optionValue5);
-                        abilityOptionList5.add(abilityOption);
+                    DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(abilityId);
+                    if(deviceAbilityPo.getDirValue().equals("-1")){//滤网临时妥协办法，后期再想更优方式
+                        List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                        String optionValue5 = getData(controlDatas, dirValue);
+                        List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
+                        for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
+                            DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
+                            abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                            abilityOption.setCurrValue(optionValue5);
+                            abilityOptionList5.add(abilityOption);
+                        }
+                        deviceAbilitysVo.setAbilityOptionList(abilityOptionList5);
+                    }else{
+                        List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                        String optionValue5 = getData(controlDatas, dirValue);
+                        List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
+                        for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
+                            DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
+                            abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                            if (optionValue5.equals(deviceabilityOptionPo.getOptionValue())) {
+                                abilityOption.setIsSelect(1);
+                            } else {
+                                abilityOption.setIsSelect(0);
+                            }
+                            abilityOptionList5.add(abilityOption);
+                        }
+                        deviceAbilitysVo.setAbilityOptionList(abilityOptionList5);
                     }
-                    deviceAbilitysVo.setAbilityOptionList(abilityOptionList5);
                     break;
                 default:
                     break;
