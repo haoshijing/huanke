@@ -58,7 +58,7 @@ public class UserService {
         User user = (User) subject.getSession().getAttribute("user");
 
         if (!StringUtils.equals(userHost, user.getSecondDomain())) {
-            throw new AccountException("用户名或密码错误");
+            throw new AccountException("用户名或密码错误！");
         }
 
         user.setPassword(null);
