@@ -54,7 +54,8 @@ public class AppBasicService {
         log.info("appAddUser,openId={}",openId);
         CustomerUserPo customerUserPo = customerUserMapper.selectByMac(iMei);
         while(customerUserPo != null){
-            customerUserPo.setMac(iMei);
+            //清空现有的imei关联，以及脏数据
+            customerUserPo.setMac("");
             customerUserMapper.updateById(customerUserPo);
             customerUserPo = customerUserMapper.selectByMac(iMei);
         }
