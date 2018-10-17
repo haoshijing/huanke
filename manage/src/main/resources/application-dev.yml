@@ -3,12 +3,11 @@
 #服务器配置
 server:
   address: 0.0.0.0
-  port: 8070
+  port: 70
 
 swaggerUrl:
   #driftingjane.s1.natapp.cc
-  dev.hcocloud.com:8070
-#  218.2.177.210:70
+#  dev.hcocloud.com:8070
+  218.2.177.210:70
 #  vancem.s1.natapp.cc
-localOrigin:
-  localhost
+skipRemoteHost: localhost

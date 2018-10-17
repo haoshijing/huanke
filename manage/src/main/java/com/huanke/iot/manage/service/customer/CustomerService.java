@@ -59,8 +59,8 @@ public class CustomerService {
 
     private static final String CUSTOMERID_PREIX = "customerId.";
 
-    @Value("${localOrigin}")
-    private String localOrigin;
+    @Value("${skipRemoteHost}")
+    private String skipRemoteHost;
 
     /**
      * 保存详情
@@ -468,7 +468,7 @@ public class CustomerService {
         String customerId;
         String origin = httpServletRequest.getHeader("origin");
         if(StringUtils.isNotBlank(origin)){
-            if(!org.apache.commons.lang3.StringUtils.contains(origin,localOrigin)){
+            if(!StringUtils.contains(origin,skipRemoteHost)){
                 String customerSLD = origin.substring(7,origin.indexOf("."));
                 String customerKey = CUSTOMERID_PREIX+customerSLD;
                 if(!"www".equals(customerSLD)){

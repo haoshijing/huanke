@@ -35,12 +35,12 @@ public class UserController {
     @ApiOperation("登录，返回用户信息（置空密码）和权限")
     @PostMapping("/login")
     public ApiResponse<LoginRsp> login(HttpServletRequest request,@RequestParam("userName") String userName, @RequestParam("pwd") String pwd) {
-        String requestHost = request.getRemoteHost();
+        String requestHost =  request.getHeader("origin");
         String userHost = "";
-        if(StringUtils.isEmpty(requestHost)){
+        if(!StringUtils.isEmpty(requestHost)){
           int userHostIdx =   requestHost.indexOf("."+serverConfigHost);
-          if(userHostIdx == -1){
-              userHost = requestHost.substring(0,userHostIdx);
+          if(userHostIdx > -1){
+              userHost = requestHost.substring(7,userHostIdx);
           }
         }
         return new ApiResponse<>(userService.login(userHost,userName, pwd));

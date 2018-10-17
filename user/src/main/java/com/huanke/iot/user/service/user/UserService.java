@@ -11,10 +11,12 @@ import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -23,8 +25,17 @@ public class UserService {
     @Resource
     private UserManagerMapper userManagerMapper;
 
+    @Resource
+    private HttpServletRequest httpServletRequest;
+
     @Value("${saltEncrypt}")
     private String saltEncrypt;
+
+    @Value("${skipRemoteHost}")
+    private String skipRemoteHost;
+
+    @Value("${serverConfigHost}")
+    private String serverConfigHost;
 
     @SuppressWarnings("unchecked")
     public LoginRsp login(String userHost,String userName, String pwd) {
@@ -45,9 +56,14 @@ public class UserService {
         //返回用户信息（置空密码）和权限
         LoginRsp rsp = new LoginRsp();
         User user = (User) subject.getSession().getAttribute("user");
-        if(!StringUtils.equals(userHost,user.getSecondDomain())){
-            throw new AccountException("用户名或密码错误");
+
+        /*过滤 特殊域名*/
+        if(!StringUtils.contains(userHost,skipRemoteHost)){
+            if(!StringUtils.equals(userHost,user.getSecondDomain())){
+                throw new AccountException("用户名或密码错误");
+            }
         }
+
         user.setPassword(null);
         rsp.setUser(user);
         rsp.setPermissions((List<String>) subject.getSession().getAttribute("permission"));
@@ -76,6 +92,9 @@ public class UserService {
         if (null != userManagerMapper.selectByUserName(user.getUserName())) {
             throw new BusinessException("用户名已存在");
         }
+        /*获取当前域名*/
+        String userHost = obtainSecondHost();
+        user.setSecondDomain(userHost);
         user.setPassword(MD5Util.md5(MD5Util.md5(user.getPassword()) + saltEncrypt));
         userManagerMapper.insert(user);
         return user.getId();
@@ -99,5 +118,18 @@ public class UserService {
         List<User> users = userManagerMapper.selectAll();
         users.forEach(user -> user.setPassword(null));
         return users;
+    }
+
+    public String obtainSecondHost(){
+        String requestHost =  httpServletRequest.getHeader("origin");
+        String userHost = "";
+        if(!StringUtils.isEmpty(requestHost)){
+            int userHostIdx =   requestHost.indexOf("."+serverConfigHost);
+            if(userHostIdx > -1){
+                userHost = requestHost.substring(7,userHostIdx);
+            }
+        }
+
+        return userHost;
     }
 }

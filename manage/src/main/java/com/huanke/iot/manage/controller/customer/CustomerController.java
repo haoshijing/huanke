@@ -9,8 +9,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -23,7 +25,11 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
+    @Value("${skipRemoteHost}")
+    private String skipRemoteHost;
     /**
      * 添加客户信息
      *
@@ -129,15 +135,21 @@ public class CustomerController {
     /**
      * 根据二级域名查询客户详情
      *
-     * @param SLD
      * @return
      * @throws Exception
      */
     @ApiOperation("根据设备类型和功能项类型 查询功能列表")
-    @GetMapping(value = "/selectBackendConfigBySLD/{SLD}")
-    public ApiResponse<CustomerVo.BackendLogo> selectBackendConfigBySLD(@PathVariable("SLD") String SLD) throws Exception {
-//
-        CustomerVo.BackendLogo backendLogoVo = customerService.selectBackendConfigBySLD(SLD);
+    @GetMapping(value = "/selectBackendConfigBySLD")
+    public ApiResponse<CustomerVo.BackendLogo> selectBackendConfigBySLD() throws Exception {
+        String origin = httpServletRequest.getHeader("origin");
+        CustomerVo.BackendLogo backendLogoVo = null;
+        if(StringUtils.isNotBlank(origin)){
+            if(!StringUtils.contains(origin,skipRemoteHost)){
+                String customerSLD = origin.substring(7,origin.indexOf("."));
+                backendLogoVo = customerService.selectBackendConfigBySLD(customerSLD);
+            }
+        }
+
         if (backendLogoVo != null) {
             return new ApiResponse<>(backendLogoVo);
         } else {
