@@ -320,7 +320,7 @@ public class DeviceDataService {
                 List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
                 List<DeviceCustomerUserRelationPo> masterDeviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
                 List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().filter(deviceTeamItemPo1 -> {
-                    List<String> openIdsList = masterDeviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo1 -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
+                    List<String> openIdsList = masterDeviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo1 -> deviceCustomerUserRelationPo1.getOpenId()).collect(Collectors.toList());
                     Integer userId1 = deviceTeamItemPo1.getUserId();
                     CustomerUserPo customerUserPo1 = customerUserMapper.selectById(userId1);
                     if (!openIdsList.contains(customerUserPo1.getOpenId())) {
