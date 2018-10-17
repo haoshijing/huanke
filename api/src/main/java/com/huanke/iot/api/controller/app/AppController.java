@@ -6,9 +6,11 @@ import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.DeviceAbilitysRequest;
 import com.huanke.iot.api.controller.h5.req.DeviceFormatRequest;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
+import com.huanke.iot.api.controller.h5.req.HistoryDataRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
+import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.service.device.basic.AppBasicService;
@@ -91,10 +93,14 @@ public class AppController extends BaseController {
         return new ApiResponse<>(deviceAbilityVos);
     }
 
-    /*@RequestMapping("/getHistoryData")
-    public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId) {
-        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId), null);
-    }*/
+    @RequestMapping("/getHistoryData")
+    public ApiResponse<List<SensorDataVo>> getHistoryData(@RequestBody HistoryDataRequest request) {
+        Integer deviceId = request.getDeviceId();
+        Integer type = request.getType();
+        Integer userId = getCurrentUserIdForApp();
+        log.info("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
+        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+    }
 
     @RequestMapping("/editDevice")
     public ApiResponse<Boolean> editDevice(Integer deviceId, String deviceName) {
