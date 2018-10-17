@@ -217,10 +217,13 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(data);
     }
 
-    @GetMapping("/getHistoryData")
-    public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId, Integer type) {
+    @RequestMapping("/getHistoryData")
+    public ApiResponse<List<SensorDataVo>> getHistoryData(@RequestBody HistoryDataRequest request) {
+        Integer deviceId = request.getDeviceId();
+        Integer type = request.getType();
+        Integer userId = getCurrentUserId();
+        log.info("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
-
     }
 
 }
