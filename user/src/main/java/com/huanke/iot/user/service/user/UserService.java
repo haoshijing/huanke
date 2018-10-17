@@ -5,6 +5,7 @@ import com.huanke.iot.base.util.MD5Util;
 import com.huanke.iot.user.dao.user.UserManagerMapper;
 import com.huanke.iot.user.model.user.LoginRsp;
 import com.huanke.iot.user.model.user.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -26,9 +27,9 @@ public class UserService {
     private String saltEncrypt;
 
     @SuppressWarnings("unchecked")
-    public LoginRsp login(String userName, String pwd) {
+    public LoginRsp login(String userHost,String userName, String pwd) {
 
-        UserValidator.getInstance().validateLogin(userName, pwd);
+        UserValidator.validateLogin(userName, pwd);
 
         String password = MD5Util.md5(MD5Util.md5(pwd) + saltEncrypt);
         UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
@@ -44,6 +45,9 @@ public class UserService {
         //返回用户信息（置空密码）和权限
         LoginRsp rsp = new LoginRsp();
         User user = (User) subject.getSession().getAttribute("user");
+        if(!StringUtils.equals(userHost,user.getSecondDomain())){
+            throw new AccountException("用户名或密码错误");
+        }
         user.setPassword(null);
         rsp.setUser(user);
         rsp.setPermissions((List<String>) subject.getSession().getAttribute("permission"));

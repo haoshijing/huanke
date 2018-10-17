@@ -5,7 +5,9 @@ import com.huanke.iot.user.model.user.LoginRsp;
 import com.huanke.iot.user.model.user.User;
 import com.huanke.iot.user.service.user.UserService;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -26,11 +29,21 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @Value("${serverConfigHost}")
+    private String serverConfigHost;
+
     @ApiOperation("登录，返回用户信息（置空密码）和权限")
     @PostMapping("/login")
-    public ApiResponse<LoginRsp> login(@RequestParam("userName") String userName, @RequestParam("pwd") String pwd) {
-
-        return new ApiResponse<>(userService.login(userName, pwd));
+    public ApiResponse<LoginRsp> login(HttpServletRequest request,@RequestParam("userName") String userName, @RequestParam("pwd") String pwd) {
+        String requestHost = request.getRemoteHost();
+        String userHost = "";
+        if(StringUtils.isEmpty(requestHost)){
+          int userHostIdx =   requestHost.indexOf(serverConfigHost);
+          if(userHostIdx == -1){
+              userHost = requestHost.substring(0,userHostIdx);
+          }
+        }
+        return new ApiResponse<>(userService.login(userHost,userName, pwd));
     }
 
     @ApiOperation("登出")
