@@ -38,7 +38,7 @@ public class UserController {
         String requestHost = request.getRemoteHost();
         String userHost = "";
         if(StringUtils.isEmpty(requestHost)){
-          int userHostIdx =   requestHost.indexOf(serverConfigHost);
+          int userHostIdx =   requestHost.indexOf("."+serverConfigHost);
           if(userHostIdx == -1){
               userHost = requestHost.substring(0,userHostIdx);
           }
@@ -93,5 +93,6 @@ public class UserController {
 
         return new ApiResponse<>(userService.getUserList());
     }
+
 
 }
