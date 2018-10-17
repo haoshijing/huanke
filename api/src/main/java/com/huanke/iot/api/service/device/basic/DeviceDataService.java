@@ -549,6 +549,16 @@ public class DeviceDataService {
         return deviceTeamItemMapper.deleteByJoinId(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId()) > 0;
     }
 
+    public Map<String, String> queryStrainerData(Integer deviceId, List<String> dirValueList) {
+        Map<String, String> strainerMap = new HashMap<>();
+        Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
+        for (String dirValue : dirValueList) {
+            String optionValue = getData(controlDatas, dirValue);
+            strainerMap.put(dirValue, optionValue);
+        }
+        return strainerMap;
+    }
+
 
     @Data
     public static class FuncItemMessage {

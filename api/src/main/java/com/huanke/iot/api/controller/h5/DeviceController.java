@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -234,6 +235,16 @@ public class DeviceController extends BaseController {
         Integer userId = getCurrentUserId();
         log.info("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+    }
+
+    @RequestMapping("/getStrainerData")
+    public ApiResponse<Map<String, String>> getStrainerData(@RequestBody StrainerRequest request) {
+        Integer deviceId = request.getDeviceId();
+        Integer userId = getCurrentUserId();
+        List<String> dirValueList = request.getDirValueList();
+        log.info("查询滤网数据：userId={}, deviceId={}", userId, deviceId);
+        Map<String, String> stringStringMap = deviceDataService.queryStrainerData(deviceId, dirValueList);
+        return new ApiResponse<>(stringStringMap);
     }
 
 }

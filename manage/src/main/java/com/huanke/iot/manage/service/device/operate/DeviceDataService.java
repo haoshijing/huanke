@@ -9,7 +9,8 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceLogQueryRequest;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceOperLogVo;
+import com.huanke.iot.manage.vo.response.device.data.DeviceOperLogVo;
+import com.huanke.iot.manage.vo.response.device.data.DeviceSensorDataVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
  * @version 2018年05月30日 13:25
  **/
 @Service
-public class DeviceOperLogService {
+public class DeviceDataService {
 
     @Autowired
     private DeviceOperLogMapper deviceOperLogMapper;
@@ -60,5 +61,9 @@ public class DeviceOperLogService {
             return deviceOperLogVo;
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"设备日志查询成功",deviceOperLogVoList);
+    }
+
+    public ApiResponse<List<DeviceSensorDataVo>> queryDeivceSensorData(){
+        return new ApiResponse<>(RetCode.OK,"查询成功");
     }
 }
