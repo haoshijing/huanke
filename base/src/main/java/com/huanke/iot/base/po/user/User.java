@@ -1,4 +1,4 @@
-package com.huanke.iot.user.model.user;
+package com.huanke.iot.base.po.user;
 
 import lombok.Data;
 

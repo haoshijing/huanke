@@ -1,7 +1,7 @@
 package com.huanke.iot.user.service.user;
 
 import com.huanke.iot.base.exception.BusinessException;
-import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.base.po.user.User;
 import org.springframework.util.StringUtils;
 
 public class UserValidator {

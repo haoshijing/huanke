@@ -1,9 +1,8 @@
-package com.huanke.iot.user.model.role;
+package com.huanke.iot.base.po.role;
 
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 public class Role {

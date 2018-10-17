@@ -1,9 +1,9 @@
 package com.huanke.iot.user.shiro;
 
-import com.huanke.iot.user.dao.role.RoleManagerMapper;
-import com.huanke.iot.user.dao.user.UserManagerMapper;
-import com.huanke.iot.user.model.role.Permission;
-import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.base.dao.role.RoleManagerMapper;
+import com.huanke.iot.base.dao.user.UserManagerMapper;
+import com.huanke.iot.base.po.role.Permission;
+import com.huanke.iot.base.po.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;

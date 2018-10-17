@@ -1,12 +1,12 @@
 package com.huanke.iot.user.service.role;
 
+import com.huanke.iot.base.dao.role.RoleManagerMapper;
 import com.huanke.iot.base.exception.BusinessException;
-import com.huanke.iot.user.dao.role.RoleManagerMapper;
-import com.huanke.iot.user.model.role.Permission;
-import com.huanke.iot.user.model.role.Role;
-import com.huanke.iot.user.model.role.Role2PermissionReq;
-import com.huanke.iot.user.model.role.Role2PermissionRsp;
-import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.base.po.role.Permission;
+import com.huanke.iot.base.po.role.Role;
+import com.huanke.iot.base.po.role.Role2PermissionReq;
+import com.huanke.iot.base.po.role.Role2PermissionRsp;
+import com.huanke.iot.base.po.user.User;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
