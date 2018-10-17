@@ -79,17 +79,18 @@ public class DeviceBindService {
             userId = newCustomerUserPo.getId();
         }
 
-        DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
-        toQueryTeamItemPo.setDeviceId(deviceId);
-        toQueryTeamItemPo.setUserId(userId);
-        toQueryTeamItemPo.setStatus(null);
-        List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(toQueryTeamItemPo);
-        if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_YES)) {
-            log.error("该用户已拥有此设备");
-            return;
-        }
+
         String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
         if (StringUtils.equals("bind", event)) {
+            DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
+            toQueryTeamItemPo.setDeviceId(deviceId);
+            toQueryTeamItemPo.setUserId(userId);
+            toQueryTeamItemPo.setStatus(null);
+            List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(toQueryTeamItemPo);
+            if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_YES)) {
+                log.error("该用户已拥有此设备");
+                return;
+            }
             DevicePo updateDevicePo = new DevicePo();
             updateDevicePo.setBindTime(System.currentTimeMillis());
             updateDevicePo.setId(devicePo.getId());

@@ -4,10 +4,10 @@ spring:
   application:
     name: user
   # redis
-  redis:
-    host: localhost
-    port: 6379
-    password:
+#  redis:
+#    host: 39.104.96.141
+#    port: 8379
+#    password:
   http:
     multipart:
       max-file-size: 10MB

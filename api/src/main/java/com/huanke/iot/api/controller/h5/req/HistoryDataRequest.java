@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HistoryDataRequest {
     private Integer deviceId;
+    private Integer type;
 }

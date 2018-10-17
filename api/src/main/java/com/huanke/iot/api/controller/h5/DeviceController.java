@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -150,7 +151,17 @@ public class DeviceController extends BaseController {
         String openId = request.getOpenId();
         Integer status = request.getStatus();
         log.info("更改用户管理设备权限，更改人userId={}, 设备Id={}, 被更改用户openId={}, 更改状态={}", userId, deviceId, openId, status);
-        Boolean clearOk = deviceDataService.updateRelation(openId, userId, deviceId, status);
+        Boolean updateOk = deviceDataService.updateRelation(openId, userId, deviceId, status);
+        return new ApiResponse<>(updateOk);
+    }
+
+    @RequestMapping("/clearRelation")
+    public ApiResponse<Boolean> clearRelation(@RequestBody UpdateShareRequest request) {
+        Integer userId = getCurrentUserId();
+        Integer deviceId = request.getDeviceId();
+        String openId = request.getOpenId();
+        log.info("删除用户管理设备权限，删除人userId={}, 设备Id={}, 被删除用户openId={}", userId, deviceId, openId);
+        Boolean clearOk = deviceDataService.clearRelation(openId, userId, deviceId);
         return new ApiResponse<>(clearOk);
     }
 
@@ -217,10 +228,23 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(data);
     }
 
-    @GetMapping("/getHistoryData")
-    public ApiResponse<List<SensorDataVo>> getHistoryData(Integer deviceId, Integer type) {
+    @RequestMapping("/getHistoryData")
+    public ApiResponse<List<SensorDataVo>> getHistoryData(@RequestBody HistoryDataRequest request) {
+        Integer deviceId = request.getDeviceId();
+        Integer type = request.getType();
+        Integer userId = getCurrentUserId();
+        log.info("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
         return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+    }
 
+    @RequestMapping("/getStrainerData")
+    public ApiResponse<Map<String, String>> getStrainerData(@RequestBody StrainerRequest request) {
+        Integer deviceId = request.getDeviceId();
+        Integer userId = getCurrentUserId();
+        List<String> dirValueList = request.getDirValueList();
+        log.info("查询滤网数据：userId={}, deviceId={}", userId, deviceId);
+        Map<String, String> stringStringMap = deviceDataService.queryStrainerData(deviceId, dirValueList);
+        return new ApiResponse<>(stringStringMap);
     }
 
 }
