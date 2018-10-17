@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @Repository
@@ -28,6 +29,35 @@ public class AppBasicService {
     private CustomerUserMapper customerUserMapper;
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Transactional
+    public ApiResponse<Object> removeIMeiInfo(HttpServletRequest request){
+        String appId = request.getParameter("appId");
+        String iMei = request.getParameter("iMei");
+        log.info("重置iMei，appId={}，iMei={}",appId,iMei);
+        boolean respFlag = false;
+        CustomerPo customerPo = customerMapper.selectByAppId(appId);
+        if(customerPo == null){
+            log.error("重置iMei，没有该公众号appId={}",appId);
+            return new ApiResponse<>(respFlag);
+        }
+        CustomerUserPo customerUserPo = new CustomerUserPo();
+        customerUserPo.setMac(iMei);
+        customerUserPo.setCustomerId(customerPo.getId());
+        List<CustomerUserPo> customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
+        if(customerUserPos != null && customerUserPos.size()>0){
+            //清空对应公众号下绑定的用户关系
+            customerUserPos.forEach(customerUserPoTemp ->{
+                customerUserPoTemp.setMac("");
+                customerUserMapper.updateById(customerUserPoTemp);
+            });
+        }
+        log.info("重置iMei，成功，appId={}，iMei={}",appId,iMei);
+        respFlag=true;
+        return new ApiResponse<>(respFlag);
+    }
+
+
 
     @Transactional
     public ApiResponse<Object> addUserAppInfo(HttpServletRequest request){
@@ -52,12 +82,17 @@ public class AppBasicService {
         String iMei = request.getParameter("iMei");
         String openId = resp.getString("openId");
         log.info("appAddUser,openId={}",openId);
-        CustomerUserPo customerUserPo = customerUserMapper.selectByMac(iMei);
-        while(customerUserPo != null){
-            //清空现有的imei关联，以及脏数据
-            customerUserPo.setMac("");
-            customerUserMapper.updateById(customerUserPo);
-            customerUserPo = customerUserMapper.selectByMac(iMei);
+        CustomerUserPo customerUserPo = new CustomerUserPo();
+        customerUserPo.setMac(iMei);
+        customerUserPo.setCustomerId(customerPo.getId());
+        List<CustomerUserPo> customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
+        while(customerUserPos != null && customerUserPos.size()>0){
+            //清空公众号下现有的imei关联，以及脏数据，理论上不会进来
+            customerUserPos.forEach(customerUserPoTemp ->{
+                customerUserPoTemp.setMac("");
+                customerUserMapper.updateById(customerUserPoTemp);
+            });
+            customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
         }
         customerUserPo = customerUserMapper.selectByOpenId(openId);
         if(customerUserPo == null){
@@ -66,6 +101,7 @@ public class AppBasicService {
         }
         customerUserPo.setMac(iMei);
         customerUserMapper.updateById(customerUserPo);
+        log.info("appAddUser,绑定成功，openId={}，iMei={}",openId,iMei);
         return new ApiResponse<>(true);
     }
 }

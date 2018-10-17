@@ -138,4 +138,53 @@
             FROM_UNIXTIME( u.createTime / 1000, '%m月' )
     </select>
 
+    <select id="selectList" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            <if test = "param.id != null and param.id != ''">
+                AND id = #{param.id}
+            </if>
+            <if test="param.customerId != null">
+                AND customerId = #{param.customerId}
+            </if>
+            <if test = "param.openId != null">
+                and openId = #{param.openId}
+            </if>
+            <if test = "param.nickname != null and param.nickname != ''">
+                and nickname = #{param.nickname}
+            </if>
+            <if test = "param.unionid != null and param.unionid != ''">
+                and unionid = #{param.unionid}
+            </if>
+            <if test = "param.headimgurl != null and param.headimgurl != ''">
+                and headimgurl = #{param.headimgurl}
+            </if>
+            <if test = "param.sex != null and param.sex != ''">
+                and sex = #{param.sex}
+            </if>
+            <if test = "param.province != null and param.province != ''">
+                and province = #{param.province}
+            </if>
+            <if test = "param.city != null and param.city != ''">
+                and city = #{param.city}
+            </if>
+            <if test = "param.status != null and param.status != ''">
+                and status = #{param.status}
+            </if>
+            <if test = "param.createTime != null and param.createTime != ''">
+                and createTime = #{param.createTime}
+            </if>
+            <if test = "param.lastUpdateTime != null and param.lastUpdateTime != ''">
+                and lastUpdateTime = #{param.lastUpdateTime}
+            </if>
+            <if test = "param.lastVisitTime != null and param.lastVisitTime != ''">
+                and lastVisitTime = #{param.lastVisitTime}
+            </if>
+            <if test = "param.mac != null and param.mac != ''">
+                and mac = #{param.mac}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
 </mapper>
