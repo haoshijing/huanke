@@ -38,7 +38,7 @@ public class UserService {
     private String serverConfigHost;
 
     @SuppressWarnings("unchecked")
-    public LoginRsp login(String userHost,String userName, String pwd) {
+    public LoginRsp login(String userHost, String userName, String pwd) {
 
         UserValidator.validateLogin(userName, pwd);
 
@@ -57,11 +57,8 @@ public class UserService {
         LoginRsp rsp = new LoginRsp();
         User user = (User) subject.getSession().getAttribute("user");
 
-        /*过滤 特殊域名*/
-        if(!StringUtils.contains(userHost,skipRemoteHost)){
-            if(!StringUtils.equals(userHost,user.getSecondDomain())){
-                throw new AccountException("用户名或密码错误");
-            }
+        if (!StringUtils.equals(userHost, user.getSecondDomain())) {
+            throw new AccountException("用户名或密码错误");
         }
 
         user.setPassword(null);
@@ -120,13 +117,13 @@ public class UserService {
         return users;
     }
 
-    public String obtainSecondHost(){
-        String requestHost =  httpServletRequest.getHeader("origin");
+    public String obtainSecondHost() {
+        String requestHost = httpServletRequest.getHeader("origin");
         String userHost = "";
-        if(!StringUtils.isEmpty(requestHost)){
-            int userHostIdx =   requestHost.indexOf("."+serverConfigHost);
-            if(userHostIdx > -1){
-                userHost = requestHost.substring(7,userHostIdx);
+        if (!StringUtils.isEmpty(requestHost)) {
+            int userHostIdx = requestHost.indexOf("." + serverConfigHost);
+            if (userHostIdx > -1) {
+                userHost = requestHost.substring(7, userHostIdx);
             }
         }
 
