@@ -7,7 +7,6 @@ import com.huanke.iot.api.controller.h5.req.DeviceAbilitysRequest;
 import com.huanke.iot.api.controller.h5.req.DeviceFormatRequest;
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
-import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
