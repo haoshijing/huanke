@@ -156,7 +156,9 @@ public class DeviceBindService {
                 deviceCustomerUserRelationMapper.updateStatus(deviceCustomerUserRelationPo);
             }
         } else if (StringUtils.equals("unbind", event)) {
+            log.info("用户解绑设备，userId={}, openId={}, deviceId={}", userId, openId, deviceId);
             if (customerUserPo == null) {
+                log.error("找不到客户");
                 return;
             }
             DevicePo updatePo = new DevicePo();
