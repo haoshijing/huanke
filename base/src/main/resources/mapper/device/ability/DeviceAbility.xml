@@ -186,7 +186,7 @@
         AND t_device_ability.abilityType = #{abilityType}
     </select>
 
-    <select id="getDirValuesByDeviceTypeId">
+    <select id="getDirValuesByDeviceTypeId" resultType="java.lang.String">
         select dirValue from <include refid="tableName"/>
         where id IN
         (

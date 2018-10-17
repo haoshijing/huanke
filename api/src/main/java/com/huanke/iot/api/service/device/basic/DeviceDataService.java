@@ -263,6 +263,9 @@ public class DeviceDataService {
         for (String sensorType : dirValues) {
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
+            if(sensorTypeEnums == null){
+                continue;
+            }
             sensorDataVo.setName(sensorTypeEnums.getMark());
             sensorDataVo.setUnit(sensorTypeEnums.getUnit());
             sensorDataVo.setType(sensorType);
