@@ -338,7 +338,7 @@ public class DeviceDataService {
                             deviceShareVo.setJoinTime(finalDeviceTeamItemPo.getCreateTime());
                             deviceShareVo.setOpenId(deviceCustomerUserPo.getOpenId());
                             deviceShareVo.setHeadImg(deviceCustomerUserPo.getHeadimgurl());
-                            deviceShareVo.setStatus(finalDeviceTeamItemPo.getStatus());
+                            deviceShareVo.setStatus(finalDeviceTeamItemPo.getStatus() == 1 ? true : false);
                             return deviceShareVo;
                         }).collect(Collectors.toList());
 

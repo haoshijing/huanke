@@ -35,7 +35,7 @@ public class DeviceTimerJob {
     @Autowired
     private DeviceSensorDataMapper sensorDataMapper;
 
-    @Scheduled(cron = "0 0/30 * * *  ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void cleanSensorData() {
         DateTime dateTime = new DateTime().plusMinutes(-120);
         sensorDataMapper.clearData(dateTime.getMillis());
