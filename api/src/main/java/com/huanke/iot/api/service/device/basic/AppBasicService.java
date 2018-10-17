@@ -30,7 +30,7 @@ public class AppBasicService {
     private CustomerMapper customerMapper;
 
     @Transactional
-    public Object addUserAppInfo(HttpServletRequest request){
+    public ApiResponse<Object> addUserAppInfo(HttpServletRequest request){
         log.info("appAddUser,appId={},iMei={}",request.getParameter("appId"),request.getParameter("iMei"));
         String appId = request.getParameter("appId");
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
