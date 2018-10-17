@@ -42,6 +42,10 @@ public class AppController extends BaseController {
     @Value("${apkKey}")
     private String apkKey;
 
+    @RequestMapping("/removeIMeiInfo")
+    public ApiResponse<Object> removeIMeiInfo(HttpServletRequest request) {
+        return appBasicService.removeIMeiInfo(request);
+    }
 
     @RequestMapping("/setApkInfo")
     public ApiResponse<Object> setApkInfo(HttpServletRequest request) {
