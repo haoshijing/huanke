@@ -7,6 +7,8 @@ import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.po.customer.*;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
+import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.user.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -57,10 +59,16 @@ public class CustomerService {
     @Autowired
     private HttpServletRequest httpServletRequest;
 
+    @Autowired
+    private UserService userService;
+
     private static final String CUSTOMERID_PREIX = "customerId.";
 
     @Value("${skipRemoteHost}")
     private String skipRemoteHost;
+
+    @Value("${defaultPassWord}")
+    private String defaultPassWord;
 
     /**
      * 保存详情
@@ -107,6 +115,25 @@ public class CustomerService {
             customerPo.setStatus(CommonConstant.STATUS_YES);
             customerPo.setCreateTime(System.currentTimeMillis());
             customerPo.setParentCustomerId(curCustomerId); //如果是通过二级域名访问 并新增客户，则需要保存其父级 客户的主键
+
+            String loginName = customerPo.getLoginName();
+            if(StringUtils.isNotEmpty(loginName)){
+                boolean hasSameUser = userService.hasSameUser(loginName);
+                if(!hasSameUser){
+                    User user = new User();
+                    user.setNickName(customerPo.getName());
+                    user.setSecondDomain(customerPo.getSLD());
+                    user.setUserName(loginName);
+                    user.setPassword(defaultPassWord);
+                    userService.createUser(user);
+                }else {
+                    return new ApiResponse<>(RetCode.PARAM_ERROR, "用户名已存在！");
+                }
+
+            }else{
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名称不可为空！");
+            }
+
             this.customerMapper.insert(customerPo);
         }
 
@@ -251,6 +278,7 @@ public class CustomerService {
             backendConfigPo.setCreateTime(System.currentTimeMillis());
             backendConfigPo.setStatus(CommonConstant.STATUS_YES);
             backendConfigMapper.insert(backendConfigPo);
+
         }
 
         return new ApiResponse<>(customerPo.getId());

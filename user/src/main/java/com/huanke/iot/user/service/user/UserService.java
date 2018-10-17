@@ -129,4 +129,12 @@ public class UserService {
 
         return userHost;
     }
+
+    public boolean hasSameUser(String userName){
+        boolean hasUser = false;
+        if (null != userManagerMapper.selectByUserName(userName)) {
+            hasUser = true;
+        }
+        return  hasUser;
+    }
 }
