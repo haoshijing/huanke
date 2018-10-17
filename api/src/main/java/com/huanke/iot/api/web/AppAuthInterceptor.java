@@ -35,6 +35,7 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
                 requestContext.setCurrentId(customerUserPo.getId());
                 if(customerByOpenId != null){
                     //此处必进入
+                    requestContext.setCustomerVo(new UserRequestContext.CustomerVo());
                     requestContext.getCustomerVo().setCustomerId(customerUserPo.getCustomerId());
                     requestContext.getCustomerVo().setAppId(customerByOpenId.getAppid());
                     return  true;

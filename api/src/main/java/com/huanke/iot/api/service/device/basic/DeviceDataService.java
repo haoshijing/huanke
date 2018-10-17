@@ -320,7 +320,7 @@ public class DeviceDataService {
                 List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
                 List<DeviceCustomerUserRelationPo> masterDeviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
                 List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().filter(deviceTeamItemPo1 -> {
-                    List<String> openIdsList = masterDeviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo1 -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
+                    List<String> openIdsList = masterDeviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo1 -> deviceCustomerUserRelationPo1.getOpenId()).collect(Collectors.toList());
                     Integer userId1 = deviceTeamItemPo1.getUserId();
                     CustomerUserPo customerUserPo1 = customerUserMapper.selectById(userId1);
                     if (!openIdsList.contains(customerUserPo1.getOpenId())) {
@@ -351,10 +351,12 @@ public class DeviceDataService {
     @Transactional
     public Boolean deleteDevice(Integer userId, Integer deviceId) {
         if (deviceId == null) {
+            log.error("deviceId不能为空");
             return false;
         }
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
+            log.error("找不到此设备");
             return false;
         }
         Boolean ret = false;
@@ -363,17 +365,20 @@ public class DeviceDataService {
 
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
         DeviceCustomerUserRelationPo querydeviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
-        querydeviceCustomerUserRelationPo.setOpenId(customerUserPo.getOpenId());
+        String openId = customerUserPo.getOpenId();
+        querydeviceCustomerUserRelationPo.setOpenId(openId);
         querydeviceCustomerUserRelationPo.setDeviceId(iDeviceId);
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(querydeviceCustomerUserRelationPo);
         if (deviceCustomerUserRelationPo == null) {
+            log.error("找不到绑定关系, userId={}, deviceId={}, openId={}", userId, deviceId, openId);
             return false;
         }
 
         if (deviceCustomerUserRelationPo.getParentOpenId() == null) {
             //主控制人
-            ret = deviceCustomerUserRelationMapper.deleteRelationByDeviceId(iDeviceId) > 0;
-            ret = ret && deviceTeamItemMapper.deleteItemsByDeviceId(iDeviceId) > 0;
+            log.info("主控制人解绑设备，userId={}, deviceId={}", userId, deviceId);
+            ret = deviceCustomerUserRelationMapper.deleteRelationByJoinId(openId, iDeviceId) > 0;
+            ret = ret && deviceTeamItemMapper.deleteByJoinId(iDeviceId, userId) > 0;
             //deviceGroupItemMapper.deleteByJoinId(iDeviceId, userId);
         } else {
             ret = deviceCustomerUserRelationMapper.deleteRelationByJoinId(customerUserPo.getOpenId(), iDeviceId) > 0;
