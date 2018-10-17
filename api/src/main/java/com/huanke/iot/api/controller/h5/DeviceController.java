@@ -5,7 +5,6 @@ import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.response.*;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
-import com.huanke.iot.api.service.device.team.DeviceTeamService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
@@ -39,9 +38,6 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private DeviceDataService deviceDataService;
-
-    @Autowired
-    private DeviceTeamService deviceTeamService;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -167,8 +163,8 @@ public class DeviceController extends BaseController {
         }
         Integer userId = getCurrentUserId();
         log.info("更新设备地址，userId={}, 设备Id={}, location={}", userId, deviceId, location);
-        Boolean clearOk = deviceService.editDeviceLoc(userId, deviceId,location);
-        return new ApiResponse<>(clearOk);
+        Boolean updateOk = deviceService.editDeviceLoc(userId, deviceId,location);
+        return new ApiResponse<>(updateOk);
     }
 
     @RequestMapping("/shareList")
@@ -178,6 +174,16 @@ public class DeviceController extends BaseController {
         log.info("查询共享权限列表，userId={}, deviceId={}", userId, deviceId);
         List<DeviceShareVo> deviceShareVos = deviceDataService.shareList(userId, deviceId);
         return new ApiResponse<>(deviceShareVos);
+    }
+
+    @RequestMapping("/updateAllRelation")
+    public ApiResponse<Boolean> updateAllRelation(@RequestBody UpdateShareRequest request) {
+        Integer userId = getCurrentUserId();
+        Integer deviceId = request.getDeviceId();
+        Integer status = request.getStatus();
+        log.info("删除共享权限列表，userId={}, deviceId={}, status={}", userId, deviceId, status);
+        Boolean clearOk = deviceDataService.updateAllRelation(deviceId, status);
+        return new ApiResponse<>(clearOk);
     }
 
     @RequestMapping("/sendFunc")

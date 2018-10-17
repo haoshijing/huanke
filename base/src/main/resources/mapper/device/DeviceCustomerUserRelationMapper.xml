@@ -189,6 +189,13 @@
         </if>
     </select>
 
+    <select id="queryByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
+        select * FROM
+        <include refid="tableName"/>
+        where 1=1
+        and deviceId = #{deviceId}
+    </select>
+
     <delete id="deleteRealationByDeviceId">
         delete from
         <include refid="tableName"/>

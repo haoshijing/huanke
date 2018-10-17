@@ -178,9 +178,9 @@ public class DeviceDataService {
         //检查是否已经拥有默认组
         DeviceTeamPo toDeviceTeamPo = deviceTeamMapper.queryByName(deviceTeamPo);
         Integer teamId;
-        if(toDeviceTeamPo != null && toDeviceTeamPo.getStatus().equals(CommonConstant.STATUS_YES)){
+        if (toDeviceTeamPo != null && toDeviceTeamPo.getStatus().equals(CommonConstant.STATUS_YES)) {
             teamId = toDeviceTeamPo.getId();
-        }else{
+        } else {
             deviceTeamPo.setCreateTime(System.currentTimeMillis());
             deviceTeamPo.setTeamStatus(1);
             deviceTeamPo.setTeamType(3);
@@ -232,7 +232,6 @@ public class DeviceDataService {
             log.error("主管理员无法更改自己，deviceId={}", deviceId);
             return false;
         }
-
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         queryItemPo.setUserId(beClearCustomerUserPo.getId());
         queryItemPo.setDeviceId(deviceId);
@@ -319,7 +318,16 @@ public class DeviceDataService {
                 DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
                 deviceTeamItemPo.setDeviceId(deviceId);
                 List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
-                List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
+                List<DeviceCustomerUserRelationPo> masterDeviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
+                List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().filter(deviceTeamItemPo1 -> {
+                    List<String> openIdsList = masterDeviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo1 -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
+                    Integer userId1 = deviceTeamItemPo1.getUserId();
+                    CustomerUserPo customerUserPo1 = customerUserMapper.selectById(userId1);
+                    if (!openIdsList.contains(customerUserPo1.getOpenId())) {
+                        return true;
+                    }
+                    return false;
+                }).sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
                 List<DeviceShareVo> shareVos = finalDeviceTeamItemPos.stream()
                         .map(finalDeviceTeamItemPo -> {
                             Integer deviceUserId = finalDeviceTeamItemPo.getUserId();
@@ -479,6 +487,25 @@ public class DeviceDataService {
             deviceAbilitysVoList.add(deviceAbilitysVo);
         }
         return deviceAbilitysVoList;
+    }
+
+    public Boolean updateAllRelation(Integer deviceId, Integer status) {
+        List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
+        List<DeviceTeamItemPo> finalDeviceTeamItemPos = deviceTeamItemPos.stream().filter(deviceTeamItemPo -> {
+            List<String> openIdsList = deviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
+            Integer userId = deviceTeamItemPo.getUserId();
+            CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+            if (!openIdsList.contains(customerUserPo.getOpenId())) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        for (DeviceTeamItemPo deviceTeamItemPo : finalDeviceTeamItemPos) {
+            deviceTeamItemPo.setStatus(status);
+            deviceTeamItemMapper.updateById(deviceTeamItemPo);
+        }
+        return true;
     }
 
 
