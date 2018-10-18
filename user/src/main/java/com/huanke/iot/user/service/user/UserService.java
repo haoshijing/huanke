@@ -59,7 +59,7 @@ public class UserService {
         User user = (User) subject.getSession().getAttribute("user");
 
         /*过滤 特殊域名*/
-        if(!StringUtils.contains(userHost,skipRemoteHost)){
+        if(!StringUtils.contains(skipRemoteHost,userHost)){
             if(!StringUtils.equals(userHost,user.getSecondDomain())){
                 throw new AccountException("用户名与当前域名不匹配");
             }
@@ -118,8 +118,9 @@ public class UserService {
 
         /*获取当前域名*/
         String userHost = obtainSecondHost();
+
         List<User> users = new ArrayList<>();
-        if(!StringUtils.contains(userHost,skipRemoteHost)){
+        if(!StringUtils.contains(skipRemoteHost,userHost)){
             users = userManagerMapper.selectAll();
         }else{
             users = userManagerMapper.selectAllBySLD(userHost);
