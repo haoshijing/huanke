@@ -7,6 +7,7 @@ import com.huanke.iot.base.po.role.Role;
 import com.huanke.iot.base.po.role.Role2PermissionReq;
 import com.huanke.iot.base.po.role.Role2PermissionRsp;
 import com.huanke.iot.base.po.user.User;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j
 @Service
 public class RoleService {
 
@@ -34,16 +36,20 @@ public class RoleService {
     @Value("${serverConfigHost}")
     private String serverConfigHost;
 
+
+
     public List<Role> getRoleList() {
 
         /*获取当前域名*/
         String userHost = obtainSecondHost();
-
         /*过滤特殊域名 pro*/
-        List<User> users = new ArrayList<>();
         if(!StringUtils.contains(skipRemoteHost,userHost)){
+            System.out.println("查询全部");
+            log.error("查询全部:{}");
             return roleManagerMapper.selectAll();
+
         }else{
+            System.out.println("查询域名="+userHost);
             return roleManagerMapper.selectAllBySLD(userHost);
         }
 
