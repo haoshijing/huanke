@@ -12,5 +12,7 @@ public interface UserManagerMapper extends BaseMapper<User> {
 
     User selectByUserName(@Param("userName") String userName);
 
+    List<User> selectAllBySLD(@Param("secondDomain")String secondDomain);
     List<User> selectAll();
+
 }

@@ -125,4 +125,12 @@
         FROM
         <include refid="tableName"/>
     </select>
+
+    <select id="selectAllBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.user.User">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        where secondDomain = #{secondDomain}
+    </select>
 </mapper>
