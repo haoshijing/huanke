@@ -32,6 +32,14 @@ public class ExceptionHandlerAdvice {
         return new ApiResponse(RetCode.NEED_LOGIN_ERROR, "请登录", null);
     }
 
+    @ResponseBody
+    @ExceptionHandler
+    public ApiResponse processException(Exception e){
+        log.error("{123}",e);
+        ApiResponse apiResponse = ApiResponse.responseError(e);
+        return apiResponse;
+    }
+
     //@ResponseBody
     //@ExceptionHandler
     //public ApiResponse processException(Exception e) {
