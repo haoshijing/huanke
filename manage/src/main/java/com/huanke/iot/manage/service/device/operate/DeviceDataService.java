@@ -82,6 +82,6 @@ public class DeviceDataService {
             BeanUtils.copyProperties(eachPo,deviceSensorStatVo);
             return deviceSensorStatVo;
         }).collect(Collectors.toList());
-        return new ApiResponse<>(RetCode.OK,"查询成功");
+        return new ApiResponse<>(RetCode.OK,"查询成功",deviceSensorStatVoList);
     }
 }
