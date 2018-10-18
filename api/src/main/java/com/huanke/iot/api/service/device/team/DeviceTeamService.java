@@ -148,14 +148,13 @@ public class DeviceTeamService {
         }
         List<String> wxDeviceIds = deviceTeamRequest.getDeviceIds();
         for (String wxDeviceId : wxDeviceIds) {
-            DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
+            DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
+            DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemMapper.selectByJoinId(devicePo.getId(),userId);
             deviceTeamItemPo.setTeamId(teamId);
-            deviceTeamItemPo.setUserId(userId);
-            deviceTeamItemPo.setDeviceId(deviceMapper.selectByWxDeviceId(wxDeviceId).getId());
             deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
-            deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
-            deviceTeamItemMapper.insert(deviceTeamItemPo);
+            deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceTeamItemMapper.updateById(deviceTeamItemPo);
         }
-        return new ApiResponse<>();
+        return new ApiResponse<>(true);
     }
 }
