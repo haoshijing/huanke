@@ -4,6 +4,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.manage.service.customer.CustomerUserService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
+import com.huanke.iot.manage.service.statistic.StatisticService;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
@@ -27,18 +28,11 @@ import java.util.List;
 public class StatisticController {
 
     @Autowired
-    private CustomerUserService customerUserService;
-
-    @Autowired
-    private DeviceTypeService deviceTypeService;
-
-    @Autowired
-    private DeviceOperateService deviceOperateService;
-
+    private StatisticService statisticService;
     @ApiOperation("用户统计")
     @GetMapping(value = "/selectCustomerUserCount")
     public ApiResponse<List<CustomerUserVo>> selectCustomerUserCount() {
-        List<CustomerUserVo> deviceTypePercentList = customerUserService.selectCustomerUserCount();
+        List<CustomerUserVo> deviceTypePercentList = statisticService.selectCustomerUserCount();
 
         return new ApiResponse<>(deviceTypePercentList);
     }
@@ -46,7 +40,7 @@ public class StatisticController {
     @ApiOperation("设备类型统计")
     @GetMapping(value = "/selectTypePercent")
     public ApiResponse<List<DeviceTypeVo.DeviceTypePercent>> selectTypePercent() {
-        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercentList = deviceTypeService.selectTypePercent();
+        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercentList = statisticService.selectTypePercent();
 
         return new ApiResponse<>(deviceTypePercentList);
     }
@@ -54,8 +48,14 @@ public class StatisticController {
     @ApiOperation("设备统计")
     @GetMapping(value = "/selectDeviceCount")
     public ApiResponse<List<DeviceStatisticsVo>> selectDeviceCount() {
-        List<DeviceStatisticsVo> deviceStatisticsVos = deviceOperateService.selectDeviceCount();
+        List<DeviceStatisticsVo> deviceStatisticsVos = statisticService.selectDeviceCount();
 
         return new ApiResponse<>(deviceStatisticsVos);
     }
+    @ApiOperation("今日新增设备统计")
+    @GetMapping(value = "/selectDeviceCountOfToday")
+    public ApiResponse<Integer> selectDeviceCountOfToday(){
+        return this.statisticService.selectDeviceByDay();
+    }
+
 }
