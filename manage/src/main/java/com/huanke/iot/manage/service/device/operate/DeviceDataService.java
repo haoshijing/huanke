@@ -5,12 +5,14 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceLogQueryRequest;
+import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
 import com.huanke.iot.manage.vo.response.device.data.DeviceOperLogVo;
-import com.huanke.iot.manage.vo.response.device.data.DeviceSensorDataVo;
+import com.huanke.iot.manage.vo.response.device.data.DeviceSensorStatVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +31,15 @@ public class DeviceDataService {
     private DeviceOperLogMapper deviceOperLogMapper;
 
     @Autowired
+    private DeviceSensorStatMapper deviceSensorStatMapper;
+
+    @Autowired
     private CustomerUserMapper customerUserMapper;
 
     @Autowired
     private CustomerMapper customerMapper;
 
-    public ApiResponse<List<DeviceOperLogVo>> queryOperLogList(DeviceLogQueryRequest request) throws Exception{
+    public ApiResponse<List<DeviceOperLogVo>> queryOperLogList(DeviceDataQueryRequest request) throws Exception{
         DeviceOperLogPo queryPo = new DeviceOperLogPo();
         queryPo.setDeviceId(request.getDeviceId());
         Integer offset = (request.getPage() - 1)*request.getLimit();
@@ -62,8 +67,21 @@ public class DeviceDataService {
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"设备日志查询成功",deviceOperLogVoList);
     }
-
-    public ApiResponse<List<DeviceSensorDataVo>> queryDeivceSensorData(){
+    //按页和开始结束时间查询设备数据
+    public ApiResponse<List<DeviceSensorStatVo>> queryDeivceSensorData(DeviceDataQueryRequest deviceDataQueryRequest)throws Exception{
+        DeviceSensorStatPo deviceSensorStatPo =new DeviceSensorStatPo();
+        deviceSensorStatPo.setDeviceId(deviceDataQueryRequest.getDeviceId());
+        Integer offset = (deviceDataQueryRequest.getPage() - 1)*deviceDataQueryRequest.getLimit();
+        Integer limit = deviceDataQueryRequest.getLimit();
+        List<DeviceSensorStatPo> deviceSensorStatPoList = this.deviceSensorStatMapper.selectList(deviceSensorStatPo,limit,offset);
+        if(null == deviceSensorStatPoList || 0 == deviceSensorStatPoList.size()){
+            return new ApiResponse<>(RetCode.OK,"暂无数据");
+        }
+        List<DeviceSensorStatVo> deviceSensorStatVoList = deviceSensorStatPoList.stream().map(eachPo ->{
+            DeviceSensorStatVo deviceSensorStatVo = new DeviceSensorStatVo();
+            BeanUtils.copyProperties(eachPo,deviceSensorStatVo);
+            return deviceSensorStatVo;
+        }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"查询成功");
     }
 }

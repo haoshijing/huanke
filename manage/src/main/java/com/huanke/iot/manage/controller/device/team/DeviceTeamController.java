@@ -12,6 +12,7 @@ import com.huanke.iot.manage.vo.request.device.team.*;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,13 @@ public class DeviceTeamController {
     @ApiOperation("创建新的组或更新已有组，并向其中添加或更新设备")
     @RequestMapping(value = "/createNewTeam",method = RequestMethod.POST)
     public ApiResponse<DeviceTeamPo> createNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
-        if (null==teamCreateOrUpdateRequest||null==teamCreateOrUpdateRequest.getId()||teamCreateOrUpdateRequest.getId()<0){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"参数错误");
+        //组名不可为空
+        if(!StringUtils.isNotEmpty(teamCreateOrUpdateRequest.getName())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"组名不可为空");
+        }
+        //用户openid不可为空
+        if(null == teamCreateOrUpdateRequest.getCreateUserOpenId()||StringUtils.isEmpty(teamCreateOrUpdateRequest.getCreateUserOpenId())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"用户openid不可为空");
         }
         //查询客户是否存在
         CustomerUserPo customerUserPo = this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId());

@@ -3,7 +3,7 @@ package com.huanke.iot.manage.vo.response.device.data;
 import lombok.Data;
 
 @Data
-public class DeviceSensorDataVo {
+public class DeviceSensorStatVo {
     private Integer deviceId;
     private Integer co2;
     private Integer hcho;
