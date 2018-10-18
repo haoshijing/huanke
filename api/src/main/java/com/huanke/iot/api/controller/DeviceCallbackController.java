@@ -31,6 +31,7 @@ public class DeviceCallbackController {
     @ResponseBody
     @RequestMapping("/onEvent")
     public String checkCode(HttpServletRequest request) {
+        log.info("微信调用服务。。。");
         try {
             String method = request.getMethod();
             if (StringUtils.equalsIgnoreCase(method, "get")) {
