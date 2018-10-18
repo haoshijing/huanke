@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.customer;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface CustomerUserMapper extends BaseMapper<CustomerUserPo>{
      List<CustomerUserPo> selectByCustomerId(Integer customerId);
      CustomerUserPo selectCustomerByMasterUserId(Integer masterUserId);
      int updatevisitTimeByOpenId(String openId);
-     List selectCustomerUserCount(int userYear);
+     List selectCustomerUserCount(@Param("userYear") int userYear,@Param("customerId") Integer customerId);
 }

@@ -66,11 +66,6 @@ public class DeviceTypeService {
     @Autowired
     private DeviceAbilitySetMapper deviceAbilitySetMapper;
 
-    @Autowired
-    private DeviceMapper deviceMapper;
-
-    @Autowired
-    private CustomerService customerService;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -397,48 +392,7 @@ public class DeviceTypeService {
 
     }
 
-    /**
-     * 首页大数据面板-设备类型统计
-     *
-     * @return
-     */
-    public List<DeviceTypeVo.DeviceTypePercent> selectTypePercent() {
 
-        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercents = new ArrayList<DeviceTypeVo.DeviceTypePercent>();
-        /*查询设备总量*/
-        DevicePo queryDevicePo = new DevicePo();
-        queryDevicePo.setStatus(CommonConstant.STATUS_YES);
-        Integer deviceTotal = deviceMapper.selectCount(queryDevicePo);
-
-        if(deviceTotal!=null&&deviceTotal!=0){
-            List deviceTypePercentList = deviceTypeMapper.selectTypePercent();
-
-            if (deviceTypePercentList != null && deviceTypePercentList.size() > 0) {
-                for(int i=0;i<deviceTypePercentList.size();i++){
-                    DeviceTypeVo.DeviceTypePercent deviceTypePercent = new DeviceTypeVo.DeviceTypePercent();
-                    Map deviceTypePercentMap = (Map)deviceTypePercentList.get(i);
-                    Integer typeId = (Integer)deviceTypePercentMap.get("typeId");
-                    String typeName = (String)deviceTypePercentMap.get("typeName");
-                    Long deviceCount = (Long)deviceTypePercentMap.get("deviceCount");
-
-                    DecimalFormat df = new DecimalFormat();
-                    df.setMaximumFractionDigits(2);
-                    df.setMinimumFractionDigits(2);
-                    String typePercent = df.format(deviceCount * 100.00 / deviceTotal) + "%";
-
-                    deviceTypePercent.setTypeId(typeId);
-                    deviceTypePercent.setTypeName(typeName);
-                    deviceTypePercent.setDeviceCount(deviceCount);
-                    deviceTypePercent.setTypePercent(typePercent);
-
-                    deviceTypePercents.add(deviceTypePercent);
-                }
-            }
-        }
-
-        return deviceTypePercents;
-
-    }
 //    public Integer selectCount(DeviceTypeQueryRequest queryRequest) {
 //        DeviceTypePo queryTypePo = new DeviceTypePo();
 //        queryTypePo.setName(queryRequest.getName());

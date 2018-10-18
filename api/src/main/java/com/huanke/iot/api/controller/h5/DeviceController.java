@@ -247,4 +247,12 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(stringStringMap);
     }
 
+    @RequestMapping("/getServerUser")
+    public ApiResponse<String> getServerUser() {
+        Integer userId = getCurrentUserId();
+        log.info("查询客服信息：userId={}", userId);
+        String serverUser = deviceDataService.queryServerUser(userId);
+        return new ApiResponse<>(serverUser);
+    }
+
 }

@@ -134,6 +134,9 @@
         WHERE
             FROM_UNIXTIME( u.createTime / 1000, '%Y' ) = #{userYear}
             and u.status =1
+            <if test="customerId != null">
+                and u.customerId = #{customerId}
+            </if>
         GROUP BY
             FROM_UNIXTIME( u.createTime / 1000, '%m月' )
     </select>

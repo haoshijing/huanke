@@ -35,7 +35,7 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     Integer updateBatch(List<DevicePo> devicePoList);
 
-    Integer updateBindStatus(DevicePo devicePo);
+    Integer selectData(@Param("startTime")Long startTime,@Param("endTime") Long endTime);
 
     Integer deleteDeviceBatch(List<DevicePo> devicePoList);
 
