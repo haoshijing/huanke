@@ -40,9 +40,6 @@ public class AppController extends BaseController {
     private AppBasicService appBasicService;
 
     @Autowired
-    private DeviceFormatService deviceFormatService;
-
-    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
 
