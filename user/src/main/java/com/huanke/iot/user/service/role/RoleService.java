@@ -36,20 +36,14 @@ public class RoleService {
     @Value("${serverConfigHost}")
     private String serverConfigHost;
 
-
-
     public List<Role> getRoleList() {
 
         /*获取当前域名*/
         String userHost = obtainSecondHost();
         /*过滤特殊域名 pro*/
         if(!StringUtils.contains(skipRemoteHost,userHost)){
-            System.out.println("查询全部");
-            log.error("查询全部:{}");
             return roleManagerMapper.selectAll();
-
         }else{
-            System.out.println("查询域名="+userHost);
             return roleManagerMapper.selectAllBySLD(userHost);
         }
 
