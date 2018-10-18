@@ -38,6 +38,9 @@ public class UserService {
     @Value("${serverConfigHost}")
     private String serverConfigHost;
 
+    @Value("${env}")
+    private String env;
+
     @SuppressWarnings("unchecked")
     public LoginRsp login(String userHost, String userName, String pwd) {
 
@@ -58,8 +61,8 @@ public class UserService {
         LoginRsp rsp = new LoginRsp();
         User user = (User) subject.getSession().getAttribute("user");
 
-        /*过滤 特殊域名*/
-        if(!StringUtils.contains(skipRemoteHost,userHost)){
+        /*当是开发环境的时候，过滤 特殊域名*/
+        if("dev".equals(env)&&!StringUtils.contains(skipRemoteHost,userHost)){
             if(!StringUtils.equals(userHost,user.getSecondDomain())){
                 throw new AccountException("用户名与当前域名不匹配");
             }
@@ -119,6 +122,7 @@ public class UserService {
         /*获取当前域名*/
         String userHost = obtainSecondHost();
 
+        /*过滤特殊域名 pro*/
         List<User> users = new ArrayList<>();
         if(!StringUtils.contains(skipRemoteHost,userHost)){
             users = userManagerMapper.selectAll();

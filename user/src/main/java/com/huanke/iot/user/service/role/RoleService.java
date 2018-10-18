@@ -9,12 +9,14 @@ import com.huanke.iot.base.po.role.Role2PermissionRsp;
 import com.huanke.iot.base.po.user.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,9 +28,25 @@ public class RoleService {
     @Resource
     private HttpServletRequest request;
 
+    @Value("${skipRemoteHost}")
+    private String skipRemoteHost;
+
+    @Value("${serverConfigHost}")
+    private String serverConfigHost;
+
     public List<Role> getRoleList() {
 
-        return roleManagerMapper.selectAll();
+        /*获取当前域名*/
+        String userHost = obtainSecondHost();
+
+        /*过滤特殊域名 pro*/
+        List<User> users = new ArrayList<>();
+        if(!StringUtils.contains(skipRemoteHost,userHost)){
+            return roleManagerMapper.selectAll();
+        }else{
+            return roleManagerMapper.selectAllBySLD(userHost);
+        }
+
     }
 
     @Transactional
@@ -99,5 +117,18 @@ public class RoleService {
         });
         rsp.setPermissions(permissions);
         return rsp;
+    }
+
+    public String obtainSecondHost() {
+        String requestHost = request.getHeader("origin");
+        String userHost = "";
+        if (!StringUtils.isEmpty(requestHost)) {
+            int userHostIdx = requestHost.indexOf("." + serverConfigHost);
+            if (userHostIdx > -1) {
+                userHost = requestHost.substring(7, userHostIdx);
+            }
+        }
+
+        return userHost;
     }
 }
