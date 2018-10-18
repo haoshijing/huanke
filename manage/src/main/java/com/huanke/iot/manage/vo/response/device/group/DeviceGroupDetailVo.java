@@ -15,7 +15,8 @@ public class DeviceGroupDetailVo {
     private Integer deviceCount;
     private Long createTime;
     private List<DeviceInGroup> deviceList;
-    private List<ImageVideo> imageVideoList;
+    private List<Images> imagesList;
+    private List<Videos> videosList;
     @Data
     public static class DeviceInGroup{
         private Integer id;
@@ -31,7 +32,11 @@ public class DeviceGroupDetailVo {
         private String icon;
     }
     @Data
-    public static class ImageVideo{
-        private String imgVideo;
+    public static class Images{
+        private String image;
+    }
+    @Data
+    public static class Videos{
+        private String video;
     }
 }

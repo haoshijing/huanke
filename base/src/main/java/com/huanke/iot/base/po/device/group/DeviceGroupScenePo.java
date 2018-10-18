@@ -7,6 +7,7 @@ public class DeviceGroupScenePo {
     private Integer id;
     private Integer groupId;
     private String imgVideo;
+    private Integer imgVideoMark;
     private Integer status;
     private Long createTime;
     private Long lastUpdateTime;

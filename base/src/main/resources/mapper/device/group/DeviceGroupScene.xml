@@ -58,6 +58,8 @@
         select * from
         <include refid="tableName"/>
         where groupId = #{groupId}
+        and
+        imgVideoMark = #{imgVideoMark}
     </select>
 
     <select id="selectByGroupId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.group.DeviceGroupScenePo">

@@ -2,6 +2,7 @@ package com.huanke.iot.manage.service.device.group;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceGroupConstants;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
@@ -94,24 +95,47 @@ public class DeviceGroupService {
             //新增完之后获取groupId
             groupCreateOrUpdateRequest.setId(insertOrUpdatePo.getId());
         }
-        //更新集群相册
-        List<DeviceGroupScenePo> deviceGroupScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(groupCreateOrUpdateRequest.getId());
+        //查询已有的集群相册
+        List<DeviceGroupScenePo> deviceGroupImgScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(groupCreateOrUpdateRequest.getId(),DeviceGroupConstants.IMAGE_VIDEO_MARK_IMAGE);
         //数据库中已存有记录则先删除记录
-        if (null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()) {
-            this.deviceGroupSceneMapper.deleteBatch(deviceGroupScenePoList);
+        if (null != deviceGroupImgScenePoList && 0 < deviceGroupImgScenePoList.size()) {
+            this.deviceGroupSceneMapper.deleteBatch(deviceGroupImgScenePoList);
         }
-        deviceGroupScenePoList.clear();
-        if (null != groupCreateOrUpdateRequest.getImageVideoList() && 0 < groupCreateOrUpdateRequest.getImageVideoList().size()) {
-            groupCreateOrUpdateRequest.getImageVideoList().forEach(imageVideo -> {
+        //查询已有的集群视频
+        List<DeviceGroupScenePo> deviceGroupVideoScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(groupCreateOrUpdateRequest.getId(),DeviceGroupConstants.IMAGE_VIDEO_MARK_VIDEO);
+        //数据库中已存有记录则先删除记录
+        if (null != deviceGroupVideoScenePoList && 0 < deviceGroupVideoScenePoList.size()) {
+            this.deviceGroupSceneMapper.deleteBatch(deviceGroupVideoScenePoList);
+        }
+        deviceGroupImgScenePoList.clear();
+        deviceGroupVideoScenePoList.clear();
+        //重新插入图册相关数据
+        if (null != groupCreateOrUpdateRequest.getImagesList() && 0 < groupCreateOrUpdateRequest.getImagesList().size()) {
+            groupCreateOrUpdateRequest.getImagesList().stream().forEach(image -> {
                 DeviceGroupScenePo deviceGroupScenePo = new DeviceGroupScenePo();
                 deviceGroupScenePo.setGroupId(groupCreateOrUpdateRequest.getId());
-                deviceGroupScenePo.setImgVideo(imageVideo.getImgVideo());
+                deviceGroupScenePo.setImgVideo(image.getImage());
+                deviceGroupScenePo.setImgVideoMark(DeviceGroupConstants.IMAGE_VIDEO_MARK_IMAGE);
                 deviceGroupScenePo.setCreateTime(System.currentTimeMillis());
                 deviceGroupScenePo.setLastUpdateTime(System.currentTimeMillis());
                 deviceGroupScenePo.setStatus(CommonConstant.STATUS_YES);
-                deviceGroupScenePoList.add(deviceGroupScenePo);
+                deviceGroupImgScenePoList.add(deviceGroupScenePo);
             });
-            this.deviceGroupSceneMapper.insertBatch(deviceGroupScenePoList);
+            this.deviceGroupSceneMapper.insertBatch(deviceGroupImgScenePoList);
+        }
+        //重新插入视频相关数据
+        if (null != groupCreateOrUpdateRequest.getVideosList() && 0 < groupCreateOrUpdateRequest.getVideosList().size()) {
+            groupCreateOrUpdateRequest.getVideosList().stream().forEach(video -> {
+                DeviceGroupScenePo deviceGroupScenePo = new DeviceGroupScenePo();
+                deviceGroupScenePo.setGroupId(groupCreateOrUpdateRequest.getId());
+                deviceGroupScenePo.setImgVideo(video.getVideo());
+                deviceGroupScenePo.setImgVideoMark(DeviceGroupConstants.IMAGE_VIDEO_MARK_VIDEO);
+                deviceGroupScenePo.setCreateTime(System.currentTimeMillis());
+                deviceGroupScenePo.setLastUpdateTime(System.currentTimeMillis());
+                deviceGroupScenePo.setStatus(CommonConstant.STATUS_YES);
+                deviceGroupVideoScenePoList.add(deviceGroupScenePo);
+            });
+            this.deviceGroupSceneMapper.insertBatch(deviceGroupVideoScenePoList);
         }
         //向集群中添加设备
         //如设备列表中无设备则不进行任何操作
@@ -238,15 +262,26 @@ public class DeviceGroupService {
                 deviceGroupDetailVo.setDeviceList(deviceInGroupList);
             }
             //查询集群相册
-            List<DeviceGroupScenePo> deviceGroupScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(deviceGroupPo.getId());
-            if (null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()) {
-                List<DeviceGroupDetailVo.ImageVideo> imageVideoList = new ArrayList<>();
-                deviceGroupScenePoList.stream().forEach(deviceGroupScenePo -> {
-                    DeviceGroupDetailVo.ImageVideo imageVideo = new DeviceGroupDetailVo.ImageVideo();
-                    imageVideo.setImgVideo(deviceGroupScenePo.getImgVideo());
-                    imageVideoList.add(imageVideo);
+            List<DeviceGroupScenePo> deviceGroupImgScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(deviceGroupPo.getId(),DeviceGroupConstants.IMAGE_VIDEO_MARK_IMAGE);
+            if (null != deviceGroupImgScenePoList && 0 < deviceGroupImgScenePoList.size()) {
+                List<DeviceGroupDetailVo.Images> imagesList = new ArrayList<>();
+                deviceGroupImgScenePoList.stream().forEach(eachPo -> {
+                    DeviceGroupDetailVo.Images image = new DeviceGroupDetailVo.Images();
+                    image.setImage(eachPo.getImgVideo());
+                    imagesList.add(image);
                 });
-                deviceGroupDetailVo.setImageVideoList(imageVideoList);
+                deviceGroupDetailVo.setImagesList(imagesList);
+            }
+            //查询集群视频
+            List<DeviceGroupScenePo> deviceGroupVideoScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(deviceGroupPo.getId(),DeviceGroupConstants.IMAGE_VIDEO_MARK_VIDEO);
+            if (null != deviceGroupVideoScenePoList && 0 < deviceGroupVideoScenePoList.size()) {
+                List<DeviceGroupDetailVo.Videos> videosList = new ArrayList<>();
+                deviceGroupVideoScenePoList.stream().forEach(eachPo -> {
+                    DeviceGroupDetailVo.Videos video = new DeviceGroupDetailVo.Videos();
+                    video.setVideo(eachPo.getImgVideo());
+                    videosList.add(video);
+                });
+                deviceGroupDetailVo.setVideosList(videosList);
             }
             return new ApiResponse<>(RetCode.OK, "查询集群详情成功", deviceGroupDetailVo);
         } else {
@@ -263,12 +298,8 @@ public class DeviceGroupService {
                 //删除集群下的设备
                 this.deviceGroupItemMapper.deleteBatch(deviceGroupItemPoList);
             }
-            //查询集群相册
-            List<DeviceGroupScenePo> deviceGroupScenePoList = this.deviceGroupSceneMapper.selectImgVideoList(deviceGroupPo.getId());
-            if (null != deviceGroupScenePoList && 0 < deviceGroupScenePoList.size()) {
-                //删除集群相册
-                this.deviceGroupSceneMapper.deleteBatch(deviceGroupScenePoList);
-            }
+            //删除集群相册和视频信息
+            this.deviceGroupSceneMapper.deleteByGroupId(groupId);
             //最后删除集群
             this.deviceGroupMapper.deleteById(deviceGroupPo.getId());
             return new ApiResponse<>(RetCode.OK, "删除集群成功", true);

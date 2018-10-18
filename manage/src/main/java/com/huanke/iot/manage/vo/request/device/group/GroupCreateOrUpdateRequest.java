@@ -25,13 +25,20 @@ public class GroupCreateOrUpdateRequest {
 
     private String createLocation;
 
-    private List<ImageVideo> imageVideoList;
+    private List<Images> imagesList;
+
+    private List<Videos> videosList;
 
     private DeviceQueryRequest deviceQueryRequest;
 
     @Data
-    public static class ImageVideo{
-        private String imgVideo;
+    public static class Images{
+        private String image;
+    }
+
+    @Data
+    public static class Videos{
+        private String video;
     }
 
 }

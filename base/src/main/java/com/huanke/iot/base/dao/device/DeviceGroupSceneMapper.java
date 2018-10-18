@@ -10,7 +10,7 @@ public interface DeviceGroupSceneMapper extends BaseMapper<DeviceGroupScenePo> {
     Integer insertBatch(List<DeviceGroupScenePo> deviceGroupScenePoList);
 
 
-    List<DeviceGroupScenePo> selectImgVideoList(@Param("groupId") Integer groupId);
+    List<DeviceGroupScenePo> selectImgVideoList(@Param("groupId") Integer groupId,@Param("imgVideoMark") Integer imgVideoMark);
 
     Integer deleteByGroupId(Integer groupId);
 
