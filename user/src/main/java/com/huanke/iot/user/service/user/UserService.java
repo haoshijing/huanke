@@ -65,7 +65,7 @@ public class UserService {
         User user = (User) subject.getSession().getAttribute("user");
 
         /*当是开发环境的时候，过滤 特殊域名*/
-        if("dev".equals(env)&&!StringUtils.contains(skipRemoteHost,userHost)){
+        if(!"dev".equals(env)||!StringUtils.contains(skipRemoteHost,userHost)){
             if(!StringUtils.equals(userHost,user.getSecondDomain())){
                 throw new AccountException("用户名与当前域名不匹配");
             }
