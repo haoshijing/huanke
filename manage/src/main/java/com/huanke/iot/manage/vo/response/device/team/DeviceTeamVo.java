@@ -29,7 +29,7 @@ public class DeviceTeamVo {
     private String remark;
     private Integer deviceCount;
 
-    private List<DeviceTeamItemVo> deviceTeamItemVos;
+    private List<DeviceTeamItemVo> teamDeviceCreateRequestList;
 
 
     @Data

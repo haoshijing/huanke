@@ -37,7 +37,7 @@ public class DeviceGroupController {
      */
     @ApiOperation("创建或更新集群，向其中添加指定mac地址的设备(如果从设备列表进入，则添加已经选中的设备)")
     @RequestMapping(value = "/addOrUpdateGroupAndDevice",method = RequestMethod.POST)
-    public  ApiResponse<DeviceGroupPo> addOrUpdateGroupAndDevice(@RequestBody GroupCreateOrUpdateRequest groupCreateOrUpdateRequest){
+    public  ApiResponse<Integer> addOrUpdateGroupAndDevice(@RequestBody GroupCreateOrUpdateRequest groupCreateOrUpdateRequest){
         //集群名不可为空
         if(!StringUtils.isNotEmpty(groupCreateOrUpdateRequest.getName())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"集群名不可为空");

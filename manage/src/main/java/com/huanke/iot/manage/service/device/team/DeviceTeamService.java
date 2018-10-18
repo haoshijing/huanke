@@ -71,7 +71,7 @@ public class DeviceTeamService {
      * @param teamCreateOrUpdateRequest
      * @return
      */
-    public ApiResponse<DeviceTeamPo> createNewOrUpdateTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest) throws Exception{
+    public ApiResponse<Integer> createNewOrUpdateTeam(TeamCreateOrUpdateRequest teamCreateOrUpdateRequest) throws Exception{
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         //根据微信用户openId查询对应的userId
         CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(teamCreateOrUpdateRequest.getCreateUserOpenId());
@@ -145,7 +145,7 @@ public class DeviceTeamService {
         //进行场景图册和视频册的批量更新
         this.deviceTeamSceneMapper.insertBatch(deviceTeamImgScenePoList);
         if(null == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList() || 0 == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList().size()){
-            return new ApiResponse<>(RetCode.OK,"新建或更新组成功",deviceTeamPo);
+            return new ApiResponse<>(RetCode.OK,"新建或更新组成功",deviceTeamPo.getId());
         }
         //向组中加入设备
         else {
@@ -220,7 +220,7 @@ public class DeviceTeamService {
             this.deviceCustomerUserRelationMapper.insertBatch(deviceCustomerUserRelationPoList);
             //进行设备的批量绑定
             this.deviceTeamItemMapper.insertBatch(deviceTeamItemPoList);
-            return new ApiResponse<>(RetCode.OK,"新建或更新组及设备成功",deviceTeamPo);
+            return new ApiResponse<>(RetCode.OK,"新建或更新组及设备成功",deviceTeamPo.getId());
         }
     }
 

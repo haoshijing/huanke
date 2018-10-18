@@ -78,7 +78,7 @@ public class DeviceGroupService {
      * @param groupCreateOrUpdateRequest
      * @return
      */
-    public ApiResponse<DeviceGroupPo> createOrUpdateGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception {
+    public ApiResponse<Integer> createOrUpdateGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception {
         DeviceGroupPo insertOrUpdatePo = new DeviceGroupPo();
         BeanUtils.copyProperties(groupCreateOrUpdateRequest, insertOrUpdatePo);
         if (null != groupCreateOrUpdateRequest.getId() && 0 < groupCreateOrUpdateRequest.getId()) {
@@ -140,7 +140,7 @@ public class DeviceGroupService {
         //向集群中添加设备
         //如设备列表中无设备则不进行任何操作
         if (null == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList() || 0 == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList().size()) {
-            return new ApiResponse<>(RetCode.OK, "新增或更新成功", insertOrUpdatePo);
+            return new ApiResponse<>(RetCode.OK, "新增或更新成功", insertOrUpdatePo.getId());
         } else {
             //查询并删除集群中已有的设备
             List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(insertOrUpdatePo.getId());
@@ -162,7 +162,7 @@ public class DeviceGroupService {
             }
             //进行批量插入
             this.deviceGroupItemMapper.insertBatch(deviceGroupItemPoList);
-            return new ApiResponse<>(RetCode.OK, "新增集群及设备成功", insertOrUpdatePo);
+            return new ApiResponse<>(RetCode.OK, "新增集群及设备成功", insertOrUpdatePo.getId());
         }
     }
 
