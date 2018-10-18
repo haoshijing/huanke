@@ -123,8 +123,8 @@ public class DeviceFormatService {
                     abilityOption.setMaxVal(deviceModelabilityOptionPo.getMaxVal());
                     abilityOption.setMinVal(deviceModelabilityOptionPo.getMinVal());
                     abilityOption.setStatus(deviceModelabilityOptionPo.getStatus());
+                    abilityOptionList.add(abilityOption);
                 }
-                abilityOptionList.add(abilityOption);
             }
             abilitys.setAbilityOptionList(abilityOptionList);
             abilitysList.add(abilitys);

@@ -54,6 +54,7 @@ public class DeviceBindService {
     // reqMap = {DeviceType=gh_7f3ba47c70a3, DeviceID=gh_7f3ba47c70a3_f1c1cd2015ab27b6, Con
     // tent=, CreateTime=1523200569, Event=unbind, ToUserName=gh_7f3ba47c70a3, FromUserName=okOTjwpDwxJR666hVWnj_L_jp87w, MsgType=device_event, SessionID=0, OpenID=okOTjwpDwxJR666hVWnj_L_jp87w}
     public void handlerDeviceEvent(HttpServletRequest request, Map<String, String> requestMap, String event) {
+        log.info("微信post调用。。。");
         String openId = requestMap.get("OpenID");
         String wxDeviceId = requestMap.get("DeviceID");
         DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
@@ -82,6 +83,7 @@ public class DeviceBindService {
 
         String defaultTeamName = wxConfigMapper.selectConfigByCustomerId(customerId).getDefaultTeamName();
         if (StringUtils.equals("bind", event)) {
+            log.info("用户绑定设备，userId={}, openId={}, deviceId={}", userId, openId, deviceId);
             DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
             toQueryTeamItemPo.setDeviceId(deviceId);
             toQueryTeamItemPo.setUserId(userId);
