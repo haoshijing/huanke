@@ -26,6 +26,7 @@ import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
@@ -39,6 +40,7 @@ import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.Data;
@@ -101,6 +103,9 @@ public class DeviceDataService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
 
     @Value("${unit}")
     private Integer unit;
@@ -396,6 +401,7 @@ public class DeviceDataService {
      * @return
      */
     public List<DeviceAbilitysVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds) {
+        Integer modelId = deviceMapper.selectById(deviceId).getModelId();
         List<DeviceAbilitysVo> deviceAbilitysVoList = new ArrayList<>();
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
@@ -403,7 +409,6 @@ public class DeviceDataService {
             DeviceAbilityPo deviceabilityPo = deviceAbilityMapper.selectById(abilityId);
             String dirValue = deviceabilityPo.getDirValue();
             Integer abilityType = deviceabilityPo.getAbilityType();
-
             DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilitysVo();
             deviceAbilitysVo.setAbilityName(deviceabilityPo.getAbilityName());
             deviceAbilitysVo.setId(abilityId);
@@ -419,6 +424,10 @@ public class DeviceDataService {
                     String optionValue = getData(controlDatas, dirValue);
                     List<DeviceAbilitysVo.abilityOption> abilityOptionList = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
+                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
+                        if(deviceModelAbilityOptionPo == null){
+                            continue;
+                        }
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                         if (optionValue.equals(deviceabilityOptionPo.getOptionValue())) {
@@ -434,6 +443,10 @@ public class DeviceDataService {
                     List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
                     List<DeviceAbilitysVo.abilityOption> abilityOptionList1 = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos1) {
+                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
+                        if(deviceModelAbilityOptionPo == null){
+                            continue;
+                        }
                         String targetOptionValue = deviceabilityOptionPo.getOptionValue();
                         String finalOptionValue = getData(controlDatas, targetOptionValue);
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
@@ -469,6 +482,10 @@ public class DeviceDataService {
                         String optionValue5 = getData(controlDatas, dirValue);
                         List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
                         for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
+                            DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
+                            if(deviceModelAbilityOptionPo == null){
+                                continue;
+                            }
                             DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                             abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                             if (optionValue5.equals(deviceabilityOptionPo.getOptionValue())) {
