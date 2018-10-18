@@ -396,10 +396,10 @@ public class DeviceTeamService {
                     deviceTeamItemVo.setUserId(deviceTeamItemPo.getUserId());
                     return  deviceTeamItemVo;
                 }).collect(Collectors.toList());
-                deviceTeamVo.setDeviceTeamItemVos(deviceTeamItemVos);
+                deviceTeamVo.setTeamDeviceCreateRequestList(deviceTeamItemVos);
                 deviceTeamVo.setDeviceCount(deviceTeamItemVos.size());
             }else {
-                deviceTeamVo.setDeviceTeamItemVos(null);
+                deviceTeamVo.setTeamDeviceCreateRequestList(null);
                 deviceTeamVo.setDeviceCount(0);
             }
 
