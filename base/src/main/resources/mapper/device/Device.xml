@@ -699,4 +699,13 @@
         GROUP BY
         FROM_UNIXTIME( d.createTime / 1000, '%m月' )
     </select>
+
+    <select id = "selectData" resultType="java.lang.Integer">
+        select count(*) from  <include refid="tableName"/>
+        where
+        createTime >= #{startTime}
+        <![CDATA[
+        and createTime <= #{endTime}
+            ]]>
+    </select>
 </mapper>
