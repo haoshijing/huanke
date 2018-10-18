@@ -24,6 +24,7 @@
         <include refid="role_permission_table"/>
         where roleId=#{roleId})
     </select>
+
     <select id="selectAll" resultType="com.huanke.iot.base.po.role.Role">
         select r.*,COUNT(u.id) as userCount from
         <include refid="role_table"/>
@@ -31,6 +32,18 @@
         <include refid="user_table"/>
         u on r.id=u.roleId GROUP BY r.id
     </select>
+
+    <select id="selectAllBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.role.Role">
+        select r.*,COUNT(u.id) as userCount from
+        <include refid="role_table"/>
+        r LEFT JOIN
+        <include refid="user_table"/>
+        u on r.id=u.roleId
+        where r.secondDomain = #{secondDomain}
+        GROUP BY r.id
+
+    </select>
+
     <insert id="insert" parameterType="com.huanke.iot.base.po.role.Role"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO
@@ -38,6 +51,7 @@
         (
         roleName,
         roleDesc,
+        secondDomain,
         creater,
         createTime,
         lastUpdateTime
@@ -45,6 +59,7 @@
         VALUE (
         #{roleName},
         #{roleDesc},
+        #{secondDomain},
         #{creater},
         now(),
         now()

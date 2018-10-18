@@ -28,7 +28,7 @@ public class DeviceTeamController {
 
     @ApiOperation("创建新的组或更新已有组，并向其中添加或更新设备")
     @RequestMapping(value = "/createNewTeam",method = RequestMethod.POST)
-    public ApiResponse<DeviceTeamPo> createNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
+    public ApiResponse<Integer> createNewTeam(@RequestBody TeamCreateOrUpdateRequest teamCreateOrUpdateRequest){
         //组名不可为空
         if(!StringUtils.isNotEmpty(teamCreateOrUpdateRequest.getName())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"组名不可为空");

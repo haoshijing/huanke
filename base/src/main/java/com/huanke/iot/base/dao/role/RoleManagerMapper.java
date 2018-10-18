@@ -16,6 +16,9 @@ public interface RoleManagerMapper extends BaseMapper<Role> {
 
     List<Role> selectAll();
 
+    List<Role> selectAllBySLD(@Param("secondDomain")String secondDomain);
+
+
     int insertRole2Permission(@Param("roleId") Integer roleId, @Param("permissions") List<Integer> ids);
 
     int delRole2PermissionByRoleId(@Param("roleId") Integer roleId);
