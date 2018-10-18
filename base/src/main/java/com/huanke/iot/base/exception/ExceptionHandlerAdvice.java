@@ -4,6 +4,7 @@ package com.huanke.iot.base.exception;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,6 +31,13 @@ public class ExceptionHandlerAdvice {
     public ApiResponse processException(UnauthenticatedException e) {
         log.error("exception msg is:{}", e);
         return new ApiResponse(RetCode.NEED_LOGIN_ERROR, "请登录", null);
+    }
+
+    @ResponseBody
+    @ExceptionHandler
+    public ApiResponse processException(AccountException e){
+        log.error("exception msg is:{}", e);
+        return new ApiResponse(RetCode.PARAM_ERROR, e.getMessage(), null);
     }
 
     @ResponseBody
