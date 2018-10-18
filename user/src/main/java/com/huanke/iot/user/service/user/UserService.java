@@ -60,7 +60,7 @@ public class UserService {
         /*过滤 特殊域名*/
         if(!StringUtils.contains(userHost,skipRemoteHost)){
             if(!StringUtils.equals(userHost,user.getSecondDomain())){
-                throw new AccountException("用户名或密码错误");
+                throw new AccountException("用户名与当前域名不匹配");
             }
         }
 
