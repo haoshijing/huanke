@@ -3,6 +3,7 @@ package com.huanke.iot.manage.service.user;
 import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.base.util.MD5Util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -30,6 +31,8 @@ public class UserService {
     @Value("${serverConfigHost}")
     private String serverConfigHost;
 
+    @Resource
+    private CommonUtil commonUtil;
 
     public User getCurrentUser() {
 
@@ -44,25 +47,11 @@ public class UserService {
             throw new BusinessException("用户名已存在");
         }
         /*获取当前域名*/
-        String userHost = obtainSecondHost();
+        String userHost = commonUtil.obtainSecondHost();
         user.setSecondDomain(userHost);
         user.setPassword(MD5Util.md5(MD5Util.md5(user.getPassword()) + saltEncrypt));
         userManagerMapper.insert(user);
         return user.getId();
-    }
-
-
-    public String obtainSecondHost() {
-        String requestHost = httpServletRequest.getHeader("origin");
-        String userHost = "";
-        if (!StringUtils.isEmpty(requestHost)) {
-            int userHostIdx = requestHost.indexOf("." + serverConfigHost);
-            if (userHostIdx > -1) {
-                userHost = requestHost.substring(7, userHostIdx);
-            }
-        }
-
-        return userHost;
     }
 
     public boolean hasSameUser(String userName){
