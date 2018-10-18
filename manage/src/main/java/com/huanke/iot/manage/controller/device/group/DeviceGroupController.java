@@ -55,7 +55,7 @@ public class DeviceGroupController {
             return this.deviceGroupService.createOrUpdateGroup(groupCreateOrUpdateRequest);
         } catch (Exception e) {
             log.error("添加群失败={}", e);
-            return new ApiResponse<>(RetCode.ERROR, "添加集群异常");
+            return new ApiResponse<>(RetCode.ERROR, "添加或更新集群异常");
         }
     }
 

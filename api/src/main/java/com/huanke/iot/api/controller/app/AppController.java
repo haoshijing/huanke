@@ -28,7 +28,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 
-@RequestMapping("/app/api")
+@RequestMapping("/app/api/base")
 @Slf4j
 @RestController
 public class AppController extends BaseController {
