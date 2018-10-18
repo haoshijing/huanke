@@ -14,6 +14,7 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,6 +109,11 @@ public class DeviceTeamService {
     @Transactional
     public Boolean updateDeviceTeam(Integer userId, DeviceTeamRequest deviceTeamRequest) {
         final Integer teamId = deviceTeamRequest.getTeamId();
+        log.info("添加设备至组，teamId={}，wxdeviceIds={}",teamId,deviceTeamRequest.getDeviceIds());
+        if(deviceTeamMapper.selectById(teamId) == null){
+            log.error("不存在的teamId={}",teamId);
+            return false;
+        }
         deviceTeamRequest.getDeviceIds().forEach((deviceId) -> {
                     DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
                     if (devicePo != null) {
@@ -116,6 +122,7 @@ public class DeviceTeamService {
                     }
                 }
         );
+        log.info("添加设备至组成功");
         return true;
     }
 
