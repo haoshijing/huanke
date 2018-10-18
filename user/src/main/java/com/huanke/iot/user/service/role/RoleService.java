@@ -7,12 +7,14 @@ import com.huanke.iot.base.po.role.Role;
 import com.huanke.iot.base.po.role.Role2PermissionReq;
 import com.huanke.iot.base.po.role.Role2PermissionRsp;
 import com.huanke.iot.base.po.user.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -20,6 +22,9 @@ public class RoleService {
 
     @Resource
     private RoleManagerMapper roleManagerMapper;
+
+    @Resource
+    private HttpServletRequest request;
 
     public List<Role> getRoleList() {
 
@@ -32,6 +37,17 @@ public class RoleService {
         User user = (User) SecurityUtils.getSubject().getSession().getAttribute("user");
         Role role = req.getRole();
         role.setCreater(user.getId());
+        role.setSecondDomain(user.getSecondDomain());
+
+//        String requestHost =  request.getHeader("origin");
+//        String userHost = "";
+//        if(!StringUtils.isEmpty(requestHost)){
+//            int userHostIdx =   requestHost.indexOf("."+serverConfigHost);
+//            if(userHostIdx > -1){
+//                userHost = requestHost.substring(7,userHostIdx);
+//            }
+//        }
+
         roleManagerMapper.insert(role);
         if (!CollectionUtils.isEmpty(req.getPermissions())) {
             roleManagerMapper.insertRole2Permission(role.getId(), req.getPermissions());

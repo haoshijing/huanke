@@ -38,6 +38,7 @@
         (
         roleName,
         roleDesc,
+        secondDomain,
         creater,
         createTime,
         lastUpdateTime
@@ -45,6 +46,7 @@
         VALUE (
         #{roleName},
         #{roleDesc},
+        #{secondDomain},
         #{creater},
         now(),
         now()

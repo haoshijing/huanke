@@ -15,6 +15,8 @@ public class Role {
 
     private Integer userCount;
 
+    private String secondDomain;
+
     private Integer creater;
 
     private Date createTime;
