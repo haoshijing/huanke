@@ -43,15 +43,16 @@ public class StatisticService {
      * @return
      */
 
-    public List<CustomerUserVo> selectCustomerUserCount() {
+    public List<CustomerUserVo> selectUserCountPerMonth() {
         Calendar cal = Calendar.getInstance();
         int nowYear = cal.get(Calendar.YEAR);
         int preYear = nowYear-1;
         List rtnList = new ArrayList();
+        Integer customerId = customerService.obtainCustomerId(false);
         //今年的用户数据
-        List nowUserConutList = customerUserMapper.selectCustomerUserCount(nowYear);
+        List nowUserConutList = customerUserMapper.selectCustomerUserCount(nowYear,customerId);
         //去年的用户数据
-        List preYearUserList = customerUserMapper.selectCustomerUserCount(preYear);
+        List preYearUserList = customerUserMapper.selectCustomerUserCount(preYear,customerId);
         //上个月的用户数量
         Long prevMonthCount = new Long(0);
         //去年的上个月的用户数量
@@ -132,7 +133,7 @@ public class StatisticService {
      *
      * @return
      */
-    public List<DeviceTypeVo.DeviceTypePercent> selectTypePercent() {
+    public List<DeviceTypeVo.DeviceTypePercent> selectTypePercentPerMonth() {
 
         List<DeviceTypeVo.DeviceTypePercent> deviceTypePercents = new ArrayList<DeviceTypeVo.DeviceTypePercent>();
         /*查询设备总量*/
@@ -177,7 +178,7 @@ public class StatisticService {
      * @return
      */
 
-    public List<DeviceStatisticsVo> selectDeviceCount() {
+    public List<DeviceStatisticsVo> selectDeviceCountPerMonth() {
         List rtnList = new ArrayList();
         List nowDeviceConutList = new ArrayList();
         List preYearDeviceList = new ArrayList();

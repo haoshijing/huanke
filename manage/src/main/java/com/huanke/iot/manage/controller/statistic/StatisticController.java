@@ -29,32 +29,33 @@ public class StatisticController {
 
     @Autowired
     private StatisticService statisticService;
-    @ApiOperation("用户统计")
-    @GetMapping(value = "/selectCustomerUserCount")
-    public ApiResponse<List<CustomerUserVo>> selectCustomerUserCount() {
-        List<CustomerUserVo> deviceTypePercentList = statisticService.selectCustomerUserCount();
+    @ApiOperation("每月新增用户统计")
+    @GetMapping(value = "/customerUserCountPerMonth")
+    public ApiResponse<List<CustomerUserVo>> customerUserCountPerMonth() {
+        List<CustomerUserVo> deviceTypePercentList = statisticService.selectUserCountPerMonth();
 
         return new ApiResponse<>(deviceTypePercentList);
     }
 
     @ApiOperation("设备类型统计")
-    @GetMapping(value = "/selectTypePercent")
-    public ApiResponse<List<DeviceTypeVo.DeviceTypePercent>> selectTypePercent() {
-        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercentList = statisticService.selectTypePercent();
+    @GetMapping(value = "/typePercent")
+    public ApiResponse<List<DeviceTypeVo.DeviceTypePercent>> typePercent() {
+        List<DeviceTypeVo.DeviceTypePercent> deviceTypePercentList = statisticService.selectTypePercentPerMonth();
 
         return new ApiResponse<>(deviceTypePercentList);
     }
 
-    @ApiOperation("设备统计")
-    @GetMapping(value = "/selectDeviceCount")
-    public ApiResponse<List<DeviceStatisticsVo>> selectDeviceCount() {
-        List<DeviceStatisticsVo> deviceStatisticsVos = statisticService.selectDeviceCount();
+    @ApiOperation("每月新增设备统计")
+    @GetMapping(value = "/deviceCountPerMonth")
+    public ApiResponse<List<DeviceStatisticsVo>> deviceCountPerMonth() {
+        List<DeviceStatisticsVo> deviceStatisticsVos = statisticService.selectDeviceCountPerMonth();
 
         return new ApiResponse<>(deviceStatisticsVos);
     }
+
     @ApiOperation("今日新增设备统计")
-    @GetMapping(value = "/selectDeviceCountOfToday")
-    public ApiResponse<Integer> selectDeviceCountOfToday(){
+    @GetMapping(value = "/newDeviceCountOfToday")
+    public ApiResponse<Integer> newDeviceCountOfToday(){
         return this.statisticService.selectDeviceByDay();
     }
 
