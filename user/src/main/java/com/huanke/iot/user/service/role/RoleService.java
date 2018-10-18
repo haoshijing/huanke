@@ -45,13 +45,12 @@ public class RoleService {
         /*获取当前域名*/
         String userHost = commonUtil.obtainSecondHost();
         /*过滤特殊域名 pro*/
-        if(!StringUtils.contains(skipRemoteHost,userHost)){
-            System.out.println("查询全部");
-            log.error("查询全部:{}");
+        if(StringUtils.contains(skipRemoteHost,userHost)){
+            log.info("查询全部角色:{}");
             return roleManagerMapper.selectAll();
 
         }else{
-            System.out.println("查询域名="+userHost);
+            log.info("查询域名："+userHost+"的角色");
             return roleManagerMapper.selectAllBySLD(userHost);
         }
 
