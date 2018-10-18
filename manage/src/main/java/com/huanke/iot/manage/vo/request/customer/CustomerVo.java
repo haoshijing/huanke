@@ -19,6 +19,7 @@ public class CustomerVo {
     private String appsecret;
     private Integer userType;
     private String loginName;
+    private String serviceUser;
     private String SLD;
     private String remark;  //备注
     private String typeIds;  //设备类型id 集合

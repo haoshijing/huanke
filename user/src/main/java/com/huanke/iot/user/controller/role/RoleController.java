@@ -1,10 +1,10 @@
 package com.huanke.iot.user.controller.role;
 
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.user.model.role.Permission;
-import com.huanke.iot.user.model.role.Role;
-import com.huanke.iot.user.model.role.Role2PermissionReq;
-import com.huanke.iot.user.model.role.Role2PermissionRsp;
+import com.huanke.iot.base.po.role.Permission;
+import com.huanke.iot.base.po.role.Role;
+import com.huanke.iot.base.po.role.Role2PermissionReq;
+import com.huanke.iot.base.po.role.Role2PermissionRsp;
 import com.huanke.iot.user.service.role.RoleService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;

@@ -15,6 +15,7 @@
         parentCustomerId,
         name,
         loginName,
+        serviceUser,
         userType,
         remark,
         publicName,
@@ -32,6 +33,7 @@
         #{parentCustomerId},
         #{name},
         #{loginName},
+        #{serviceUser},
         #{userType},
         #{remark},
         #{publicName},
@@ -57,6 +59,9 @@
             </if>
             <if test="loginName != null  and loginName != ''">
                 loginName = #{loginName},
+            </if>
+            <if test="serviceUser != null  and serviceUser != ''">
+                serviceUser = #{serviceUser},
             </if>
             <if test="userType != null">
                 userType = #{userType},

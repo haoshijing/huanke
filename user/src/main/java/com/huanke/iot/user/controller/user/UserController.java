@@ -1,8 +1,8 @@
 package com.huanke.iot.user.controller.user;
 
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.user.model.user.LoginRsp;
-import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.base.po.user.LoginRsp;
+import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.user.service.user.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +34,7 @@ public class UserController {
 
     @ApiOperation("登录，返回用户信息（置空密码）和权限")
     @PostMapping("/login")
-    public ApiResponse<LoginRsp> login(HttpServletRequest request,@RequestParam("userName") String userName, @RequestParam("pwd") String pwd) {
+    public ApiResponse<LoginRsp> login(HttpServletRequest request, @RequestParam("userName") String userName, @RequestParam("pwd") String pwd) {
         String requestHost =  request.getHeader("origin");
         String userHost = "";
         if(!StringUtils.isEmpty(requestHost)){

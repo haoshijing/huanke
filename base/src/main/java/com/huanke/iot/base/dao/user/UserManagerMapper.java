@@ -1,7 +1,7 @@
-package com.huanke.iot.user.dao.user;
+package com.huanke.iot.base.dao.user;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.base.po.user.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

@@ -1,10 +1,10 @@
 package com.huanke.iot.user.service.user;
 
+import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.exception.BusinessException;
+import com.huanke.iot.base.po.user.LoginRsp;
+import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.MD5Util;
-import com.huanke.iot.user.dao.user.UserManagerMapper;
-import com.huanke.iot.user.model.user.LoginRsp;
-import com.huanke.iot.user.model.user.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
@@ -57,8 +57,11 @@ public class UserService {
         LoginRsp rsp = new LoginRsp();
         User user = (User) subject.getSession().getAttribute("user");
 
-        if (!StringUtils.equals(userHost, user.getSecondDomain())) {
-            throw new AccountException("用户名或密码错误！");
+        /*过滤 特殊域名*/
+        if(!StringUtils.contains(userHost,skipRemoteHost)){
+            if(!StringUtils.equals(userHost,user.getSecondDomain())){
+                throw new AccountException("用户名或密码错误");
+            }
         }
 
         user.setPassword(null);
@@ -128,5 +131,13 @@ public class UserService {
         }
 
         return userHost;
+    }
+
+    public boolean hasSameUser(String userName){
+        boolean hasUser = false;
+        if (null != userManagerMapper.selectByUserName(userName)) {
+            hasUser = true;
+        }
+        return  hasUser;
     }
 }

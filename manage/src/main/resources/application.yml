@@ -20,5 +20,6 @@ accessKeySecret: k6DqH7zUE0JFyjuroCasU2dIDI1Fxl
 bucketUrl: oss-cn-hangzhou.aliyuncs.com
 bucketName: idcfota
 skipRemoteHost: pro,dev
+defaultPassWord: 123456
 
 

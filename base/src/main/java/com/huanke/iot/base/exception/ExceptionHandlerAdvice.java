@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author haoshijing
  * @version 2018年01月10日 10:16
  **/
-//@ControllerAdvice
+@ControllerAdvice
 @Slf4j
 public class ExceptionHandlerAdvice {
 
@@ -32,12 +32,12 @@ public class ExceptionHandlerAdvice {
         return new ApiResponse(RetCode.NEED_LOGIN_ERROR, "请登录", null);
     }
 
-    @ResponseBody
-    @ExceptionHandler
-    public ApiResponse processException(Exception e) {
-        log.error("exception msg is:{}", e);
-        ApiResponse apiResponse = ApiResponse.responseError(e);
-        return apiResponse;
-    }
+    //@ResponseBody
+    //@ExceptionHandler
+    //public ApiResponse processException(Exception e) {
+    //    log.error("exception msg is:{}", e);
+    //    ApiResponse apiResponse = ApiResponse.responseError(e);
+    //    return apiResponse;
+    //}
 }
 

@@ -23,4 +23,4 @@ logging:
 #自定义参数
 saltEncrypt: 123
 serverConfigHost:
-skipRemoteHost:
+skipRemoteHost: dev

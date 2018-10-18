@@ -1,6 +1,5 @@
-package com.huanke.iot.user.model.user;
+package com.huanke.iot.base.po.user;
 
-import com.huanke.iot.user.model.role.Permission;
 import lombok.Data;
 
 import java.util.List;

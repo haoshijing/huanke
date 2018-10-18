@@ -1,13 +1,12 @@
-package com.huanke.iot.user.dao.role;
+package com.huanke.iot.base.dao.role;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.user.model.role.Permission;
-import com.huanke.iot.user.model.role.Role;
-import com.huanke.iot.user.model.user.User;
+import com.huanke.iot.base.po.role.Permission;
+import com.huanke.iot.base.po.role.Role;
+import com.huanke.iot.base.po.user.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 
 @Repository

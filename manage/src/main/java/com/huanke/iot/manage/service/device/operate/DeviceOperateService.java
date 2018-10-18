@@ -27,7 +27,6 @@ import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
-import com.huanke.iot.base.po.user.UserPo;
 import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
@@ -43,8 +42,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+//import org.apache.shiro.SecurityUtils;
+//import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -188,8 +187,8 @@ public class DeviceOperateService {
      */
     public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
         //todo 显示从设备
-        Subject subject = SecurityUtils.getSubject();
-        UserPo user = (UserPo) subject.getSession().getAttribute("user");
+//        Subject subject = SecurityUtils.getSubject();
+//        UserPo user = (UserPo) subject.getSession().getAttribute("user");
 
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();

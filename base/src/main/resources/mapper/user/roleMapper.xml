@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.user.dao.role.RoleManagerMapper">
+<mapper namespace="com.huanke.iot.base.dao.role.RoleManagerMapper">
 
     <sql id="role_table">
         t_role
@@ -16,7 +16,7 @@
         t_user
     </sql>
 
-    <select id="getPermissionsByRoleId" resultType="com.huanke.iot.user.model.role.Permission">
+    <select id="getPermissionsByRoleId" resultType="com.huanke.iot.base.po.role.Permission">
         select * from
         <include refid="permission_table"/>
         where id in
@@ -24,14 +24,14 @@
         <include refid="role_permission_table"/>
         where roleId=#{roleId})
     </select>
-    <select id="selectAll" resultType="com.huanke.iot.user.model.role.Role">
+    <select id="selectAll" resultType="com.huanke.iot.base.po.role.Role">
         select r.*,COUNT(u.id) as userCount from
         <include refid="role_table"/>
         r LEFT JOIN
         <include refid="user_table"/>
         u on r.id=u.roleId GROUP BY r.id
     </select>
-    <insert id="insert" parameterType="com.huanke.iot.user.model.role.Role"
+    <insert id="insert" parameterType="com.huanke.iot.base.po.role.Role"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO
         <include refid="role_table"/>
@@ -67,7 +67,7 @@
         <include refid="role_permission_table"/>
         where roleId=#{roleId}
     </delete>
-    <update id="updateById" parameterType="com.huanke.iot.user.model.role.Role">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.role.Role">
         update
         <include refid="role_table"/>
         <set>
@@ -83,7 +83,7 @@
         </set>
         where id=#{id}
     </update>
-    <select id="getUsersByRoleId" resultType="com.huanke.iot.user.model.user.User">
+    <select id="getUsersByRoleId" resultType="com.huanke.iot.base.po.user.User">
         select * from
         <include refid="user_table"/>
         where roleId=#{roleId}
@@ -93,7 +93,7 @@
         <include refid="role_table"/>
         where id=#{id}
     </delete>
-    <select id="selectById" resultType="com.huanke.iot.user.model.role.Role">
+    <select id="selectById" resultType="com.huanke.iot.base.po.role.Role">
         select * from
         <include refid="role_table"/>,
         (select count(id) as userCount from
