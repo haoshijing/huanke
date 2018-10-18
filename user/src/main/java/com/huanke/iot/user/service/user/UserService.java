@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -115,7 +116,14 @@ public class UserService {
 
     public List<User> getUserList() {
 
-        List<User> users = userManagerMapper.selectAll();
+        /*获取当前域名*/
+        String userHost = obtainSecondHost();
+        List<User> users = new ArrayList<>();
+        if(!StringUtils.contains(userHost,skipRemoteHost)){
+            users = userManagerMapper.selectAll();
+        }else{
+            users = userManagerMapper.selectAllBySLD(userHost);
+        }
         users.forEach(user -> user.setPassword(null));
         return users;
     }
