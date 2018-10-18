@@ -13,12 +13,15 @@ import com.huanke.iot.api.controller.h5.response.DeviceDetailVo;
 import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
-import com.huanke.iot.api.service.device.team.DeviceTeamService;
 import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
-import com.huanke.iot.base.dao.device.*;
+import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
+import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
@@ -26,6 +29,7 @@ import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -69,12 +73,6 @@ public class DeviceDataService {
     private DeviceTypeMapper deviceTypeMapper;
 
     @Autowired
-    private DeviceGroupItemMapper deviceGroupItemMapper;
-
-    @Autowired
-    private DeviceIdPoolMapper deviceIdPoolMapper;
-
-    @Autowired
     private DeviceAbilityMapper deviceAbilityMapper;
 
     @Autowired
@@ -102,7 +100,7 @@ public class DeviceDataService {
     private LocationUtils locationUtils;
 
     @Autowired
-    private DeviceTeamService deviceTeamService;
+    private CustomerMapper customerMapper;
 
     @Value("${unit}")
     private Integer unit;
@@ -557,6 +555,12 @@ public class DeviceDataService {
             strainerMap.put(dirValue, optionValue);
         }
         return strainerMap;
+    }
+
+    public String queryServerUser(Integer userId) {
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
+        return customerPo.getServiceUser();
     }
 
 
