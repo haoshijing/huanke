@@ -135,38 +135,41 @@
         tc.publicName,
         tc.loginname,
         tc.remark
-        from <include refid="tableName"/>
+        from
+        <include refid="tableName"/>
         where status = 1
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="selectAllCustomers" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+    <select id="selectAllCustomers" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select *
         from
         <include refid="tableName"/>
         where status = 1
-        <set>
-            <if test="parentCustomerId != null ">
-                parentCustomerId = #{parentCustomerId},
-            </if>
-        </set>
+        <if test="parentCustomerId != null ">
+            parentCustomerId = #{parentCustomerId},
+        </if>
     </select>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>
 
     <select id="selectByAppId" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
         *
-        FROM <include refid="tableName"/>
+        FROM
+        <include refid="tableName"/>
         WHERE appid = #{appId} limit 1
     </select>
 
-    <select id="selectByTeamId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
+    <select id="selectByTeamId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.customer.CustomerPo">
         select
         t_customer.*
         FROM
