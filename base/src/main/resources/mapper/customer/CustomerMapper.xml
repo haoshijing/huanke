@@ -150,7 +150,7 @@
             1=1
             and status = 1
             <if test="parentCustomerId != null ">
-                and parentCustomerId = #{parentCustomerId},
+                and parentCustomerId = #{parentCustomerId}
             </if>
         </where>
 
