@@ -170,6 +170,7 @@ public class DeviceService {
                         Integer typeId = deviceModelPo.getTypeId();
                         deviceItemPo.setTypeId(typeId);
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+                        deviceItemPo.setTypeNo(deviceTypePo.getTypeNo());
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
 
                         //添加返回客户名称

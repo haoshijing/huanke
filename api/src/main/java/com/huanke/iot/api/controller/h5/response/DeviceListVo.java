@@ -70,6 +70,7 @@ public class DeviceListVo {
         private String hcho;
         private String deviceTypeName;
         private Integer typeId;
+        private String typeNo;
         private String formatName;
         private String formatId;
         /**

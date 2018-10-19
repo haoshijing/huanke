@@ -10,6 +10,7 @@ public class DeviceModelVo {
     private String formatShowName;
     private String pageName;
     private Integer modelId;
+    private String typeNo;
     private List<Abilitys> abilitysList;
     private List<FormatItems> formatItemsList;
 

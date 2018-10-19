@@ -15,6 +15,7 @@ import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
@@ -28,6 +29,7 @@ import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
@@ -60,6 +62,8 @@ public class AppBasicService {
     private WxFormatItemMapper wxFormatItemMapper;
     @Autowired
     private DeviceModelMapper deviceModelMapper;
+    @Autowired
+    private DeviceTypeMapper deviceTypeMapper;
     @Autowired
     private DeviceModelFormatMapper deviceModelFormatMapper;
     @Autowired
@@ -158,9 +162,11 @@ public class AppBasicService {
         Integer modelId = devicePo.getModelId();
         DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
         Integer typeId = deviceModelPo.getTypeId();
-        Integer formatId = deviceModelMapper.getFormatIdById(modelId);
+        Integer formatId = deviceModelPo.getFormatId();
         deviceModelVo.setFormatId(formatId);
         deviceModelVo.setModelId(modelId);
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getTypeId());
+        deviceModelVo.setTypeNo(deviceTypePo.getTypeNo());
         WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectByJoinId(formatId, pageNo);
         DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, wxFormatPagePo.getId());
         Integer modelFormatId = deviceModelFormatPo.getId();
