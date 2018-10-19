@@ -1,6 +1,7 @@
 package com.huanke.iot.api.service.device.format;
 
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
@@ -119,6 +120,9 @@ public class DeviceFormatService {
                 abilityOption.setMinVal(deviceabilityOptionPo.getMinVal());
                 DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelabilityOptionMapper.getByJoinId(deviceModelabilityPo.getId(), deviceabilityOptionPo.getId());
                 if(deviceModelabilityOptionPo != null){
+                    if(deviceModelabilityOptionPo.getStatus().equals(CommonConstant.STATUS_DEL)){
+                        continue;
+                    }
                     abilityOption.setOptionDefinedName(deviceModelabilityOptionPo.getDefinedName());
                     abilityOption.setMaxVal(deviceModelabilityOptionPo.getMaxVal());
                     abilityOption.setMinVal(deviceModelabilityOptionPo.getMinVal());
