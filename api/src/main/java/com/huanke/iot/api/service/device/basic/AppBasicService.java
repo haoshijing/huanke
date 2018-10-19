@@ -122,12 +122,12 @@ public class AppBasicService {
         context.getCustomerVo().setAppId(appId);
         context.getCustomerVo().setCustomerId(customerPo.getId());
         JSONObject resp = wechartUtil.obtainAuthAccessToken(request.getParameter("code"));
-        if(resp == null || StringUtils.isEmpty(resp.get("openId"))){
+        if(resp == null || StringUtils.isEmpty(resp.get("openid"))){
             log.error("appAddUser,获取openId异常，code={}，resp={}",request.getParameter("code"),resp);
             return  new ApiResponse<>(false);
         }
         String iMei = request.getParameter("iMei");
-        String openId = resp.getString("openId");
+        String openId = resp.getString("openid");
         log.info("appAddUser,openId={}",openId);
         CustomerUserPo customerUserPo = new CustomerUserPo();
         customerUserPo.setMac(iMei);
