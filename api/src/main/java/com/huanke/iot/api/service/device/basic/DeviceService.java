@@ -27,6 +27,7 @@ import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import io.netty.buffer.ByteBuf;
@@ -162,10 +163,12 @@ public class DeviceService {
                         int childDeviceCount = deviceMapper.queryChildDeviceCount(devicePo.getId());
                         deviceItemPo.setChildDeviceCount(childDeviceCount);
                         Integer modelId = devicePo.getModelId();
-                        Integer formatId = deviceModelMapper.selectById(modelId).getFormatId();
+                        DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
+                        Integer formatId = deviceModelPo.getFormatId();
                         deviceItemPo.setFormatId(formatId.toString());
                         deviceItemPo.setFormatName(wxFormatMapper.selectById(formatId).getName());
-                        Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+                        Integer typeId = deviceModelPo.getTypeId();
+                        deviceItemPo.setTypeId(typeId);
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
                         deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
 
