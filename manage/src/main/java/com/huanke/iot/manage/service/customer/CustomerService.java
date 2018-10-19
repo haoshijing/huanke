@@ -328,14 +328,20 @@ public class CustomerService {
     public List<CustomerVo> selectAllCustomers() {
         //获取当前二级域名的客户主键
         Integer curCustomerId = obtainCustomerId(false);
+        log.info("selectAllCustomers--> curCustomerId = "+curCustomerId);
         List<CustomerPo> customerPos = customerMapper.selectAllCustomers(curCustomerId);
-        List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
-            CustomerVo customerVo = new CustomerVo();
-            BeanUtils.copyProperties(customerPo, customerVo);
-            return customerVo;
-        }).collect(Collectors.toList());
+        if(customerPos!=null&&customerPos.size()>0){
+            List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
+                CustomerVo customerVo = new CustomerVo();
+                BeanUtils.copyProperties(customerPo, customerVo);
+                return customerVo;
+            }).collect(Collectors.toList());
+            return customerVos;
+        }else {
+            return null;
+        }
 
-        return customerVos;
+
     }
     /**
      * 根据主键查询 客户

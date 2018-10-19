@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.customer;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface CustomerMapper extends BaseMapper<CustomerPo>{
 
      CustomerPo selectByAppId(String appId);
 
-     List<CustomerPo> selectAllCustomers(Integer parentCustomerId);
+     List<CustomerPo> selectAllCustomers(@Param("parentCustomerId")Integer parentCustomerId);
 
      Integer updateStatusById(CustomerPo customerPo);
 
