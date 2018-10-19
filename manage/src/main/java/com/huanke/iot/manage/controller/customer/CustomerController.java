@@ -112,6 +112,19 @@ public class CustomerController {
         return new ApiResponse<>(customerVo);
     }
 
+
+    @ApiOperation("用户自己修改logo和title")
+    @GetMapping(value = "/updateWebsiteInfo")
+    public ApiResponse<Boolean> updateWebsiteInfo(CustomerVo.BackendConfig backendConfig){
+        try {
+            return this.customerService.updateWebsiteInfo(backendConfig);
+        }catch (Exception e){
+            log.error("更改用户logo和title异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"客户logo和title更改错误");
+        }
+    }
+
+
     /**
      * 根据二级域名查询客户详情
      *
