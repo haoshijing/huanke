@@ -36,6 +36,9 @@ public class UserController {
     @PostMapping("/login")
     public ApiResponse<LoginRsp> login(HttpServletRequest request, @RequestParam("userName") String userName, @RequestParam("pwd") String pwd) {
         String requestHost =  request.getHeader("origin");
+        String host =  request.getHeader("Host");
+        String remoteHost = request.getRemoteHost();
+
         String userHost = "";
         if(!StringUtils.isEmpty(requestHost)){
           int userHostIdx =   requestHost.indexOf("."+serverConfigHost);

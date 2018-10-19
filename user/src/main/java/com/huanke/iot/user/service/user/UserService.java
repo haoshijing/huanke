@@ -4,7 +4,9 @@ import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.user.LoginRsp;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.base.util.MD5Util;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j
 @Service
 public class UserService {
 
@@ -27,7 +30,7 @@ public class UserService {
     private UserManagerMapper userManagerMapper;
 
     @Resource
-    private HttpServletRequest httpServletRequest;
+    private CommonUtil commonUtil;
 
     @Value("${saltEncrypt}")
     private String saltEncrypt;
@@ -62,7 +65,7 @@ public class UserService {
         User user = (User) subject.getSession().getAttribute("user");
 
         /*当是开发环境的时候，过滤 特殊域名*/
-        if("dev".equals(env)&&!StringUtils.contains(skipRemoteHost,userHost)){
+        if(!"dev".equals(env)||!StringUtils.contains(skipRemoteHost,userHost)){
             if(!StringUtils.equals(userHost,user.getSecondDomain())){
                 throw new AccountException("用户名与当前域名不匹配");
             }
@@ -97,7 +100,7 @@ public class UserService {
             throw new BusinessException("用户名已存在");
         }
         /*获取当前域名*/
-        String userHost = obtainSecondHost();
+        String userHost = commonUtil.obtainSecondHost();
         user.setSecondDomain(userHost);
         user.setPassword(MD5Util.md5(MD5Util.md5(user.getPassword()) + saltEncrypt));
         userManagerMapper.insert(user);
@@ -120,30 +123,19 @@ public class UserService {
     public List<User> getUserList() {
 
         /*获取当前域名*/
-        String userHost = obtainSecondHost();
+        String userHost = commonUtil.obtainSecondHost();
 
         /*过滤特殊域名 pro*/
         List<User> users = new ArrayList<>();
-        if(!StringUtils.contains(skipRemoteHost,userHost)){
+        if(StringUtils.contains(skipRemoteHost,userHost)){
+            log.info("查询全部用户:{}");
             users = userManagerMapper.selectAll();
         }else{
+            log.info("查询域名："+userHost+"的用户");
             users = userManagerMapper.selectAllBySLD(userHost);
         }
         users.forEach(user -> user.setPassword(null));
         return users;
-    }
-
-    public String obtainSecondHost() {
-        String requestHost = httpServletRequest.getHeader("origin");
-        String userHost = "";
-        if (!StringUtils.isEmpty(requestHost)) {
-            int userHostIdx = requestHost.indexOf("." + serverConfigHost);
-            if (userHostIdx > -1) {
-                userHost = requestHost.substring(7, userHostIdx);
-            }
-        }
-
-        return userHost;
     }
 
     public boolean hasSameUser(String userName){
