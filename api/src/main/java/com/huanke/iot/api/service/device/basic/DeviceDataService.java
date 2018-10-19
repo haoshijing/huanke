@@ -581,9 +581,7 @@ public class DeviceDataService {
     }
 
     public Boolean deleteDeviceItem(Integer userId, Integer deviceId) {
-        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
-        String openId = customerUserPo.getOpenId();
-        return deviceCustomerUserRelationMapper.deleteRelationByJoinId(openId, deviceId) > 0;
+        return deviceTeamItemMapper.deleteByJoinId(deviceId, userId) > 0;
     }
 
 
