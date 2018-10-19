@@ -10,11 +10,15 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -47,6 +51,7 @@ public class DeviceController extends BaseController {
      * 首页查询我的设备
      * @return
      */
+    @ApiOperation("获取设备列表")
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice() {
         Integer userId = getCurrentUserId();
