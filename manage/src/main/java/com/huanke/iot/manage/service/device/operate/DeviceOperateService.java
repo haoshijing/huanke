@@ -576,6 +576,71 @@ public class DeviceOperateService {
         }
     }
 
+
+    /**
+     * 召回 每一台设备的操作。
+     * @param devicePos
+     * @return
+     * @throws Exception
+     */
+    public ApiResponse<Boolean> callBackDeviceList(List<DevicePo> devicePos) throws Exception{
+
+        //客户设备关系集合
+        List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
+        //设备集合
+        List<DevicePo> devicePoList = new ArrayList<>();
+        // wxDeviceId集合
+        List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
+
+        if(devicePos!=null&&devicePos.size()>0){
+
+            devicePos.stream().forEach(devicePo -> {
+
+                DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(devicePo.getMac());
+                //记录需要删除的客户设备关系
+                deviceCustomerRelationPoList.add(deviceCustomerRelationPo);
+                //记录要更新的设备池信息
+                DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(devicePo.getWxDeviceId());
+                deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+                deviceIdPoolPoList.add(deviceIdPoolPo);
+                DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+
+                //若存在绑定设备则先进行解绑
+                if(null != deviceCustomerUserRelationPo){
+                    this.deviceCustomerUserRelationMapper.deleteRelationByDeviceId(devicePo.getId());
+                    this.deviceTeamItemMapper.deleteItemsByDeviceId(devicePo.getId());
+                    devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+                    devicePo.setBindTime(null);
+                    devicePo.setLastUpdateTime(System.currentTimeMillis());
+                }
+                //记录要更新的设备信息
+                devicePo.setModelId(null);
+                devicePo.setWxDeviceId(null);
+                devicePo.setWxDevicelicence(null);
+                devicePo.setWxQrticket(null);
+                devicePo.setProductId(null);
+
+                devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
+                devicePo.setAssignTime(null);
+                devicePo.setLastUpdateTime(System.currentTimeMillis());
+                devicePoList.add(devicePo);
+            });
+
+            this.deviceMapper.updateBatch(devicePoList);
+            this.deviceIdPoolMapper.updateBatch(deviceIdPoolPoList);
+            Boolean ret = this.deviceCustomerRelationMapper.deleteBatch(deviceCustomerRelationPoList) > 0;
+            if (ret) {
+                return new ApiResponse<>(RetCode.OK,"设备召回成功",true);
+            } else {
+                return new ApiResponse<>(RetCode.ERROR,"设备召回失败",false);
+            }
+
+        }else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"不存在可召回的设备",false);
+        }
+    }
+
     /**
      * 绑定设备
      *

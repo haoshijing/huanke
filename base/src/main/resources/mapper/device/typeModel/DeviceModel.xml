@@ -93,6 +93,18 @@
         where id = #{id}
     </delete>
 
+    <update id="updateStatusById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo" >
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where id = #{id}
+    </update>
+
     <select id="selectById" parameterType="java.lang.Integer"
             resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
         select

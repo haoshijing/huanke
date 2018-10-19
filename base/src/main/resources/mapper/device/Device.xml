@@ -206,6 +206,15 @@
     </select>
 
 
+    <select id="selectByModelId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE modelId = #{modelId}
+    </select>
+
+
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from
         t_device d
