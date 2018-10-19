@@ -140,7 +140,7 @@ public class DeviceController extends BaseController {
         Integer deviceId = request.getValue();
         Integer userId = getCurrentUserId();
         log.info("删除设备，deviceId={}，userId={}", deviceId, userId);
-        Boolean ret = deviceDataService.deleteDevice(userId,deviceId);
+        Boolean ret = deviceDataService.deleteDeviceItem(userId,deviceId);
         return new ApiResponse<>(ret);
     }
 
