@@ -146,10 +146,14 @@
         select *
         from
         <include refid="tableName"/>
-        where status = 1
-        <if test="parentCustomerId != null ">
-            parentCustomerId = #{parentCustomerId},
-        </if>
+        <where>
+            1=1
+            and status = 1
+            <if test="parentCustomerId != null ">
+                and parentCustomerId = #{parentCustomerId},
+            </if>
+        </where>
+
     </select>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.CustomerPo">
