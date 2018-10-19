@@ -2,6 +2,7 @@ package com.huanke.iot.manage.controller.customer;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
@@ -26,7 +27,7 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
     @Autowired
-    private HttpServletRequest httpServletRequest;
+    private CommonUtil commonUtil;
 
     @Value("${skipRemoteHost}")
     private String skipRemoteHost;
@@ -141,20 +142,18 @@ public class CustomerController {
     @ApiOperation("根据设备类型和功能项类型 查询功能列表")
     @GetMapping(value = "/selectBackendConfigBySLD")
     public ApiResponse<CustomerVo.BackendLogo> selectBackendConfigBySLD() throws Exception {
-        String origin = httpServletRequest.getHeader("origin");
-        CustomerVo.BackendLogo backendLogoVo = null;
-        if(StringUtils.isNotBlank(origin)){
-            if(!StringUtils.contains(origin,skipRemoteHost)){
-                String customerSLD = origin.substring(7,origin.indexOf("."));
-                backendLogoVo = customerService.selectBackendConfigBySLD(customerSLD);
-            }
-        }
 
-        if (backendLogoVo != null) {
-            return new ApiResponse<>(backendLogoVo);
-        } else {
+        String userHost = commonUtil.obtainSecondHost();
+        CustomerVo.BackendLogo backendLogoVo = null;
+        if(StringUtils.isNotBlank(userHost)){
+            if(!StringUtils.contains(skipRemoteHost,userHost)){
+                backendLogoVo = customerService.selectBackendConfigBySLD(userHost);
+            }
+        }else{
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
         }
+
+        return new ApiResponse<>(backendLogoVo);
 
 //        return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名不可为空");
     }
