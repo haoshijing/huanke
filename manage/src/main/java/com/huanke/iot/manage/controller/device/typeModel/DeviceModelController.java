@@ -167,7 +167,7 @@ public class DeviceModelController {
      * @return 成功返回true，失败返回false
      * @throws Exception
      */
-    @ApiOperation("根据id 删除 型号")
+    @ApiOperation("根据id 强制 删除型号")
     @DeleteMapping(value = "/deleteModelByIdForce /{id}")
     public ApiResponse<Boolean> deleteModelByIdForce(@PathVariable("id") Integer modelId) throws Exception {
         Boolean ret = null;
