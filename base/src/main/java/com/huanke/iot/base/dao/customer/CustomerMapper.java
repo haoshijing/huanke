@@ -20,6 +20,6 @@ public interface CustomerMapper extends BaseMapper<CustomerPo>{
 
      List<CustomerPo> selectAllCustomers(@Param("parentCustomerId")Integer parentCustomerId);
 
-     Integer updateStatusById(CustomerPo customerPo);
+     int updateStatusById(CustomerPo customerPo);
 
 }

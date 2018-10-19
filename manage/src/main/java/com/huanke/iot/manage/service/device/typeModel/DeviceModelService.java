@@ -7,6 +7,7 @@ import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
@@ -15,8 +16,10 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
@@ -87,6 +90,10 @@ public class DeviceModelService {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
+
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -640,13 +647,49 @@ public class DeviceModelService {
      * @param modelId
      * @return
      */
-    public Boolean deleteModelById(Integer modelId) {
+    public ApiResponse<Boolean> deleteModelById(Integer modelId) {
 
-        Boolean ret = true;
-        ret = deviceModelMapper.deleteById(modelId) > 0;
-        return ret;
+        List<DevicePo> devicePos = deviceMapper.selectByModelId(modelId);
+        if (devicePos != null && devicePos.size() > 0) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "当前型号已被分配设备，请召回后再进行删除！");
+        }
+
+        /*逻辑删除型号*/
+
+        DeviceModelPo delModel = new DeviceModelPo();
+        delModel.setId(modelId);
+        delModel.setStatus(CommonConstant.STATUS_DEL);
+        delModel.setLastUpdateTime(System.currentTimeMillis());
+        deviceModelMapper.updateStatusById(delModel);
+
+        return new ApiResponse<>(RetCode.OK, "删除成功");
     }
 
+    /**
+     * 根据主键 删除 型号的业务操作
+     *
+     * @param modelId
+     * @return
+     */
+    public ApiResponse<Boolean> deleteModelOption(Integer modelId) throws Exception {
+
+        List<DevicePo> devicePos = deviceMapper.selectByModelId(modelId);
+        if (devicePos != null && devicePos.size() > 0) {
+            ApiResponse<Boolean> ret =  deviceOperateService.callBackDeviceList(devicePos);
+
+            if(ret.getCode()!=RetCode.OK){
+                throw new BusinessException(ret.getMsg());
+            }
+        }
+        /*逻辑删除型号*/
+        DeviceModelPo delModel = new DeviceModelPo();
+        delModel.setId(modelId);
+        delModel.setStatus(CommonConstant.STATUS_DEL);
+        delModel.setLastUpdateTime(System.currentTimeMillis());
+        deviceModelMapper.updateStatusById(delModel);
+
+        return new ApiResponse<>(RetCode.OK, "删除成功");
+    }
 
     /**
      * 创建 或者更新 型号的版式

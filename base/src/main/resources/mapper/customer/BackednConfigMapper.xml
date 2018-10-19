@@ -12,6 +12,7 @@
         (
         customerId,
         logo,
+        title,
         type,
         enableStatus,
         status,
@@ -20,6 +21,7 @@
         VALUES (
         #{customerId},
         #{logo},
+        #{title},
         #{type},
         #{enableStatus},
         #{status},
@@ -38,6 +40,9 @@
             </if>
             <if test="logo != null  and logo != '' ">
                 logo = #{logo},
+            </if>
+            <if test="title != null  and title != '' ">
+                title = #{title},
             </if>
             <if test="enableStatus != null ">
                 enableStatus = #{enableStatus},

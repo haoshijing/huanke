@@ -292,4 +292,6 @@ public class StatisticService {
         return new ApiResponse<>(RetCode.OK,"查询今日新增成功",newDeviceOfToday);
     }
 
+
+
 }

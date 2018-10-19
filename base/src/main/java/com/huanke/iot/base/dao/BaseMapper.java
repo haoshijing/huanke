@@ -13,6 +13,8 @@ public interface BaseMapper<T> {
 
     int updateById(T bean);
 
+    int updateStatusById(T bean);
+
     List<T> selectList(@Param("param") T queryBean,@Param("limit") int limit ,@Param("offset") int offset);
 
     Integer selectCount(@Param("param") T queryBean);
