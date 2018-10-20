@@ -6,6 +6,7 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.po.customer.*;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
@@ -61,6 +62,9 @@ public class CustomerService {
 
     @Autowired
     private UserService userService;
+
+@Autowired
+    private CommonUtil commonUtil;
 
     private static final String CUSTOMERID_PREIX = "customerId.";
 
@@ -515,12 +519,11 @@ public class CustomerService {
     public Integer obtainCustomerId(boolean fromServer){
 
         String customerId;
-        String origin = httpServletRequest.getHeader("origin");
-        if(StringUtils.isNotBlank(origin)){
-            if(!StringUtils.contains(origin,skipRemoteHost)){
-                String customerSLD = origin.substring(7,origin.indexOf("."));
-                String customerKey = CUSTOMERID_PREIX+customerSLD;
-                if(!"www".equals(customerSLD)){
+        String userHost = commonUtil.obtainSecondHost();
+        if(StringUtils.isNotBlank(userHost)){
+            if(!StringUtils.contains(skipRemoteHost,userHost)){
+                String customerKey = CUSTOMERID_PREIX+userHost;
+                if(!"www".equals(userHost)){
                     if(!fromServer){
                         try{
                             customerId = stringRedisTemplate.opsForValue().get(customerKey);
@@ -536,7 +539,7 @@ public class CustomerService {
 
 
                     }else{
-                        CustomerPo customerPo = customerMapper.selectBySLD(customerSLD);
+                        CustomerPo customerPo = customerMapper.selectBySLD(userHost);
                         if(customerPo!=null){
                             customerId = customerPo.getId().toString();
                             try{
