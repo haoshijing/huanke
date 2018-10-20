@@ -431,6 +431,7 @@ public class DeviceDataService {
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                         if (optionValue.equals(deviceabilityOptionPo.getOptionValue())) {
+                            deviceAbilitysVo.setCurrValue(deviceabilityOptionPo.getOptionValue());
                             abilityOption.setIsSelect(1);
                         } else {
                             abilityOption.setIsSelect(0);

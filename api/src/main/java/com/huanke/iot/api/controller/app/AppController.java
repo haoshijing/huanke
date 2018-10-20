@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.*;
-import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
-import com.huanke.iot.api.controller.h5.response.DeviceListVo;
-import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
-import com.huanke.iot.api.controller.h5.response.SensorDataVo;
+import com.huanke.iot.api.controller.h5.response.*;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.service.device.basic.AppBasicService;
@@ -19,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,6 +83,12 @@ public class AppController extends BaseController {
         }
         List<DeviceAbilitysVo> deviceAbilityVos = deviceDataService.queryDetailAbilitysValue(deviceId,abilityIds);
         return new ApiResponse<>(deviceAbilityVos);
+    }
+
+    @RequestMapping("/getWeather/{deviceId}")
+    public ApiResponse<WeatherVo> queryDeviceWeather(@PathVariable("deviceId") Integer deviceId) {
+        WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
+        return new ApiResponse<>(weatherVo);
     }
 
     @RequestMapping("/getHistoryData")
