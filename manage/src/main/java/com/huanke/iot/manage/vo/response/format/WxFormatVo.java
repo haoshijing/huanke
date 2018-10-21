@@ -49,6 +49,7 @@ public class WxFormatVo {
         //        private Integer formatId;
         private String name;
         private Integer abilityType;
+        private Integer showSelect;
         private Integer status = CommonConstant.STATUS_YES;
     }
 
