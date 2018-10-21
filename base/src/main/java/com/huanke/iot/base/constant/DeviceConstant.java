@@ -52,4 +52,5 @@ public class DeviceConstant {
     public static final Integer DEVICE_MODEL_ABILITY_UPDATE_MINUS = -1;//减去
     public static final Integer DEVICE_MODEL_ABILITY_UPDATE_NORMAL = 0;//正常
     public static final Integer DEVICE_MODEL_ABILITY_UPDATE_ADD = 1;//增加
+    public static final Integer DEVICE_MODEL_ABILITY_UPDATE_DISABIE = 3;//禁用
 }

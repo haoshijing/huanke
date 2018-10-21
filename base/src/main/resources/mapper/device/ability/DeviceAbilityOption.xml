@@ -60,7 +60,7 @@
         select * from
         <include refid="tableName"/>
         <where>
-            status = 1
+            status != 2
             AND abilityId = #{abilityId}
         </where>
     </select>

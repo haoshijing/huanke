@@ -356,6 +356,7 @@ public class DeviceTypeService {
     public List<DeviceTypeAbilitysVo> selectAbilitysByTypeId(Integer typeId) {
 
 
+        /*查询类型的功能项 过滤已删除的，（正常、禁用）*/
         List<DeviceTypeAbilitysPo> deviceTypeAbilitysPos = deviceAbilityMapper.selectAbilityListByTypeId(typeId);
         List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = deviceTypeAbilitysPos.stream().map(deviceTypeAbilitysPo -> {
 

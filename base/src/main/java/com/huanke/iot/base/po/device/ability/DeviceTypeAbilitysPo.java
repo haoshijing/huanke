@@ -16,5 +16,6 @@ public class DeviceTypeAbilitysPo {
     private String abilityName;
     private Integer minVal;
     private Integer maxVal;
+    private Integer abilityStatus;
 
 }

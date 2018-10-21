@@ -170,6 +170,7 @@
         t_device_type.id = t_device_type_abilitys.typeId
         AND t_device_ability.id = t_device_type_abilitys.abilityId
         AND t_device_type.id = #{typeId}
+        and t_device_ability.status != 2
     </select>
 
     <select id="selectAbilitysByType"  resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo">

@@ -19,7 +19,7 @@ public class DeviceModelAbilityVo {
     private Integer minVal;
     private Integer maxVal;
     private Integer status = CommonConstant.STATUS_YES;
-    private Integer updateStatus; // -1 删除，0 正常 ，1-增加
+    private Integer updateStatus; // -1 删除，0 正常 ，1-增加,3,禁用
     private Long createTime;
     private Long lastUpdateTime;
 
@@ -34,6 +34,7 @@ public class DeviceModelAbilityVo {
         private Integer minVal;
         private Integer maxVal;
         private Integer status = CommonConstant.STATUS_YES;
+        private Integer updateStatus; // -1 删除，0 正常 ，1-增加,3,禁用
 
     }
 }

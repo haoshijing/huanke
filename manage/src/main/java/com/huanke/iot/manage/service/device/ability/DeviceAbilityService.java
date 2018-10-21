@@ -168,10 +168,10 @@ public class DeviceAbilityService {
         return deviceAbilityVos;
     }
 
-    public ApiResponse<Integer> selectCount(Integer status){
-        DeviceAbilityPo deviceAbilityPo =new DeviceAbilityPo();
+    public ApiResponse<Integer> selectCount(Integer status) {
+        DeviceAbilityPo deviceAbilityPo = new DeviceAbilityPo();
         deviceAbilityPo.setStatus(status);
-        return new ApiResponse<>(RetCode.OK,"设备功能总数查询成功",this.deviceAbilityMapper.selectCount(deviceAbilityPo));
+        return new ApiResponse<>(RetCode.OK, "设备功能总数查询成功", this.deviceAbilityMapper.selectCount(deviceAbilityPo));
     }
 
 
@@ -268,23 +268,15 @@ public class DeviceAbilityService {
      */
     public ApiResponse<Boolean> deleteAbility(Integer abilityId) throws Exception {
 
-        //如果是开发环境
-        if ("dev".equals(env)) {
-            System.out.println("123");
-        } else {
-            System.out.println("345");
-        }
         try {
             //首先进行判断该 功能是否存在。
             DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(abilityId);
             if (deviceAbilityPo != null) {
 
                 //根据功能项主键 查询是否有类型 进行了配置使用，如果有，则不允许删除。
-                if (!"dev".equals(env)) {
-                    List<DeviceTypeAbilitysPo> deviceTypeAbilitysPos = deviceAbilitysMapper.selectByAbilityId(abilityId);
-                    if (deviceTypeAbilitysPos != null && deviceTypeAbilitysPos.size() > 0) {
-                        return new ApiResponse<>(RetCode.PARAM_ERROR, "该功能项已被设备类型所引用，不可删除");
-                    }
+                List<DeviceTypeAbilitysPo> deviceTypeAbilitysPos = deviceAbilitysMapper.selectByAbilityId(abilityId);
+                if (deviceTypeAbilitysPos != null && deviceTypeAbilitysPos.size() > 0) {
+                    return new ApiResponse<>(RetCode.PARAM_ERROR, "该功能项已被设备类型所引用，不可删除");
                 }
 
                 Boolean ret = false;
@@ -292,16 +284,14 @@ public class DeviceAbilityService {
                 ret = deviceAbilityMapper.deleteById(abilityId) > 0;
                 //再删除 选项表中 的选项
                 ret = ret && deviceAbilityMapper.deleteOptionByAbilityId(abilityId) > 0;
-                if (!"dev".equals(env)) {
-                    return new ApiResponse<>(RetCode.OK, "删除成功");
-                } else {
-                    return new ApiResponse<>(RetCode.OK, "删除成功-存在类型引用。");
-                }
+
+                return new ApiResponse<>(RetCode.OK, "删除成功");
+
             } else {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "该功能项不存在");
             }
         } catch (Exception e) {
-            log.error("删除能力项失败= {}",e);
+            log.error("删除能力项失败= {}", e);
             throw new RuntimeException(e);
         }
 
