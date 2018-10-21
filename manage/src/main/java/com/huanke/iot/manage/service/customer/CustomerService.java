@@ -463,7 +463,7 @@ public class CustomerService {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
         }
         backendConfigPo.setLogo(backendConfig.getLogo());
-        backendConfigPo.setTitle(backendConfig.getTitle());
+        backendConfigPo.setName(backendConfig.getName());
         this.backendConfigMapper.updateById(backendConfigPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
     }
