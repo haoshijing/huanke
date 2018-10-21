@@ -136,9 +136,7 @@ public class DeviceModelService {
                     }
                     deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
                     //如果不是删除，则设置成 正常状态
-                    if (!CommonConstant.STATUS_DEL.equals(modelRequest.getStatus())) {
-                        deviceModelPo.setStatus(CommonConstant.STATUS_YES);
-                    }
+                    deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
                     deviceModelMapper.updateById(deviceModelPo);
                 } else {
                     //新增的时候 如果存在此productid 则不可保存
@@ -146,7 +144,7 @@ public class DeviceModelService {
                         return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
                     }
                     deviceModelPo.setCreateTime(System.currentTimeMillis());
-                    deviceModelPo.setStatus(CommonConstant.STATUS_YES);
+                    deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
                     deviceModelMapper.insert(deviceModelPo);
 
                     //增加wxdeviceid配额 //todo 默认增加 100
@@ -256,13 +254,10 @@ public class DeviceModelService {
                 if (deviceModelAbilityRequest.getId() != null && deviceModelAbilityRequest.getId() > 0) {
                     deviceModelAbilityPo.setId(deviceModelAbilityRequest.getId());
                     deviceModelAbilityPo.setLastUpdateTime(System.currentTimeMillis());
-                    deviceModelAbilityPo.setStatus(deviceModelAbilityRequest.getStatus());
-                    if (!CommonConstant.STATUS_DEL.equals(deviceModelAbilityRequest.getStatus())) {
-                        deviceModelAbilityPo.setStatus(CommonConstant.STATUS_YES);
-                    }
+                    deviceModelAbilityPo.setStatus(deviceModelAbilityRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityRequest.getStatus());
                     deviceModelAbilityMapper.updateById(deviceModelAbilityPo);
                 } else {
-                    deviceModelAbilityPo.setStatus(CommonConstant.STATUS_YES);
+                    deviceModelAbilityPo.setStatus(deviceModelAbilityRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityRequest.getStatus());
                     deviceModelAbilityPo.setCreateTime(System.currentTimeMillis());
                     deviceModelAbilityMapper.insert(deviceModelAbilityPo);
                 }
@@ -280,16 +275,12 @@ public class DeviceModelService {
 
                         // 如果 有id 是 更新，否则是新增
                         if (deviceModelAbilityOptionRequest.getId() != null && deviceModelAbilityOptionRequest.getId() > 0) {
-                            if (!CommonConstant.STATUS_DEL.equals(deviceModelAbilityOptionRequest.getStatus())) {
-                                deviceModelAbilityOptionPo.setStatus(CommonConstant.STATUS_YES);
-                            } else {
-                                deviceModelAbilityOptionPo.setStatus(CommonConstant.STATUS_DEL);
-                            }
+                            deviceModelAbilityOptionPo.setStatus(deviceModelAbilityOptionRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityOptionRequest.getStatus());
                             deviceModelAbilityOptionPo.setId(deviceModelAbilityOptionRequest.getId());
                             deviceModelAbilityOptionPo.setLastUpdateTime(System.currentTimeMillis());
                             deviceModelAbilityOptionMapper.updateById(deviceModelAbilityOptionPo);
                         } else {
-                            deviceModelAbilityOptionPo.setStatus(CommonConstant.STATUS_YES);
+                            deviceModelAbilityOptionPo.setStatus(deviceModelAbilityOptionRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityOptionRequest.getStatus());
                             deviceModelAbilityOptionPo.setCreateTime(System.currentTimeMillis());
                             deviceModelAbilityOptionMapper.insert(deviceModelAbilityOptionPo);
                         }
