@@ -8,6 +8,7 @@ public class WxConfigPo {
 
     private Integer id;
     private Integer customerId;
+    private String serviceUser;
     private String password;
     private String defaultTeamName;
     private String htmlTypeIds;

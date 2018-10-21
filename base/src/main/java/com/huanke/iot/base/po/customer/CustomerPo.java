@@ -13,7 +13,6 @@ public class CustomerPo {
     private Integer parentCustomerId;
     private String name;
     private String loginName;
-    private String serviceUser;
     private Integer userType;
     private String remark;
     private String publicId;

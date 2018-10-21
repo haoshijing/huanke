@@ -12,6 +12,7 @@
         (
         customerId,
         password,
+        serviceUser,
         defaultTeamName,
         htmlTypeIds,
         backgroundImg,
@@ -24,6 +25,7 @@
         VALUES (
         #{customerId},
         #{password},
+        #{serviceUser},
         #{defaultTeamName},
         #{htmlTypeIds},
         #{backgroundImg},
@@ -44,6 +46,9 @@
             </if>
             <if test="password != null  and password != ''">
                 password = #{password},
+            </if>
+            <if test="serviceUser != null  and serviceUser != ''">
+                serviceUser = #{serviceUser},
             </if>
             <if test="defaultTeamName != null  and defaultTeamName != '' ">
                 defaultTeamName = #{defaultTeamName},

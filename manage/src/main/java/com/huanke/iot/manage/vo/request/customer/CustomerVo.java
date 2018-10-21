@@ -19,7 +19,6 @@ public class CustomerVo {
     private String appsecret;
     private Integer userType;
     private String loginName;
-    private String serviceUser;
     private String SLD;
     private String remark;  //备注
     private String typeIds;  //设备类型id 集合
@@ -51,6 +50,7 @@ public class CustomerVo {
     public static class H5Config {
         //        private  Integer id;
         private String password;
+        private String serviceUser;
         private String defaultTeamName;
         private String backgroundImg;
         private String htmlTypeIds;
