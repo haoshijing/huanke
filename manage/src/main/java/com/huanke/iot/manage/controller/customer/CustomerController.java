@@ -114,7 +114,7 @@ public class CustomerController {
 
 
     @ApiOperation("用户自己修改logo和title")
-    @GetMapping(value = "/updateWebsiteInfo")
+    @PostMapping(value = "/updateWebsiteInfo")
     public ApiResponse<Boolean> updateWebsiteInfo(@RequestBody CustomerVo.BackendConfig backendConfig){
         try {
             return this.customerService.updateWebsiteInfo(backendConfig);
