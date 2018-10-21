@@ -12,7 +12,6 @@ public class BackendConfigPo {
     private Integer id;
     private String name;    //管理后台名称
     private String logo;    //管理后台的logo
-    private String title;   //管理后台的title
     private Integer type;   //类型
     private Integer enableStatus;   //后台是否可用
     private Integer customerId;

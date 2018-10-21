@@ -37,7 +37,6 @@ public class CustomerVo {
         //        private Integer id;
         private Integer enableStatus;
         private String logo;
-        private String title;
         private String name;
         private Integer type;
         private Integer status = CommonConstant.STATUS_YES;
