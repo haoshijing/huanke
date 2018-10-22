@@ -54,7 +54,7 @@
         from
         <include refid="tableName"/>
         <where>
-            <if test="param.customerId != null and param.customerId != 0">
+            <if test="param.masterUserId != null and param.masterUserId != 0">
                 AND masterUserId = #{param.masterUserId}
             </if>
             <if test="param.status != null">

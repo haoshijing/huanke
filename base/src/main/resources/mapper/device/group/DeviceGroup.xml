@@ -75,9 +75,6 @@
         from
         <include refid="tableName"/>
         <where>
-            <if test="param.customerId != null and param.customerId != 0">
-                AND userId = #{param.userId}
-            </if>
             <if test="param.status != null">
                 AND status = #{param.status}
             </if>
