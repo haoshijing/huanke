@@ -261,37 +261,44 @@
 
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1) from
-        <include refid="tableName"/>
+        t_device d
+        <if test="param.customerId != null">
+            ,t_device_customer_relation r
+        </if>
         <where>
             1=1
             <if test="param.mac != null and param.mac != ''">
-                AND mac = #{param.mac}
+                AND d.mac = #{param.mac}
             </if>
             <if test="param.saNo != null and param.saNo != ''">
-                AND saNo = #{param.saNo}
+                AND d.saNo = #{param.saNo}
             </if>
             <if test="param.name != null  and param.name != ''  ">
-                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+                AND d.name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test="param.onlineStatus != null">
-                AND onlineStatus = #{param.onlineStatus}
+                AND d.onlineStatus = #{param.onlineStatus}
             </if>
             <if test="param.assignStatus != null">
-                AND assignStatus = #{param.assignStatus}
+                AND d.assignStatus = #{param.assignStatus}
             </if>
             <if test="param.bindStatus != null">
-                AND bindStatus = #{param.bindStatus}
+                AND d.bindStatus = #{param.bindStatus}
+            </if>
+            <if test="param.customerId != null">
+                AND r.customerId = #{param.customerId}
+                AND d.id = r.deviceId
             </if>
             <if test="param.enableStatus != null">
-                AND enableStatus = #{param.enableStatus}
+                AND d.enableStatus = #{param.enableStatus}
             </if>
             <if test="param.workStatus != null">
-                AND workStatus = #{param.workStatus}
+                AND d.workStatus = #{param.workStatus}
             </if>
             <if test="param.status != null">
-                AND status = #{param.status}
+                AND d.status = #{param.status}
             </if>
-            AND hostDeviceId is null
+            AND d.hostDeviceId is null
         </where>
     </select>
 

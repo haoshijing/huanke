@@ -15,6 +15,7 @@ public class WxFormatItemPo {
     private String name;
     private Integer abilityType;
     private Integer status = CommonConstant.STATUS_YES;
+    private Integer showSelect = CommonConstant.STATUS_IS_YES;
     private Long createTime;
     private Long lastUpdateTime;
 }
