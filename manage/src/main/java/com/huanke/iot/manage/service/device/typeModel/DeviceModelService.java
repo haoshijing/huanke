@@ -623,7 +623,7 @@ public class DeviceModelService {
      */
     public List<DeviceModelAbilityVo.DeviceModelAbilityOptionVo> selectModelAbilityOptionsByModelAbilityId(Integer modelAbilityId, Integer ability) {
 
-        List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = deviceModelAbilityOptionMapper.getOptionsByJoinId(modelAbilityId);
+        List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = deviceModelAbilityOptionMapper.getOptionsByModelAbilityId(modelAbilityId);
 
         List<DeviceAbilityOptionPo> deviceAbilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(ability);
 
