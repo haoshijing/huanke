@@ -532,7 +532,10 @@ public class DeviceTeamService {
      */
     public Integer selectTeamCount(Integer status) {
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+        //获取该二级域名客户的主键
+        Integer customerId = customerService.obtainCustomerId(false);
         deviceTeamPo.setStatus(status);
+        deviceTeamPo.setCustomerId(customerId);
         return this.deviceTeamMapper.selectCount(deviceTeamPo);
     }
 

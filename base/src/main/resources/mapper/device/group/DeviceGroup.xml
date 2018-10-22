@@ -84,6 +84,9 @@
             <if test="param.name != null">
                 and groupName = #{param.name}
             </if>
+            <if test = "param.customerId != null">
+                and customerId = #{param.customerId}
+            </if>
         </where>
     </select>
 
