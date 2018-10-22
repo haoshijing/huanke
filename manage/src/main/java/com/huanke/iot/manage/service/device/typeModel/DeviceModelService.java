@@ -126,23 +126,23 @@ public class DeviceModelService {
             }
             //校验 productId 不可为空
             if (StringUtils.isNotBlank(modelRequest.getProductId())) {
-                DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
-                queryDeviceModelPo = deviceModelMapper.selectByProductId(modelRequest.getProductId());
+//                DeviceModelPo queryDeviceModelPo = new DeviceModelPo();
+//                queryDeviceModelPo = deviceModelMapper.selectByProductId(modelRequest.getProductId());
 
                 if (modelRequest.getId() != null && modelRequest.getId() > 0) {
                     //如果 存在此productid 的型号 且 主键 和 保存的型号 不一致时不允许
-                    if (null != queryDeviceModelPo && !modelRequest.getId().equals(queryDeviceModelPo.getId())) {
-                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
-                    }
+//                    if (null != queryDeviceModelPo && !modelRequest.getId().equals(queryDeviceModelPo.getId())) {
+//                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
+//                    }
                     deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
                     //如果不是删除，则设置成 正常状态
                     deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
                     deviceModelMapper.updateById(deviceModelPo);
                 } else {
                     //新增的时候 如果存在此productid 则不可保存
-                    if (null != queryDeviceModelPo) {
-                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
-                    }
+//                    if (null != queryDeviceModelPo) {
+//                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
+//                    }
                     deviceModelPo.setCreateTime(System.currentTimeMillis());
                     deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
                     deviceModelMapper.insert(deviceModelPo);
