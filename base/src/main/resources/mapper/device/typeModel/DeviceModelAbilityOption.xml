@@ -129,6 +129,17 @@
         </where>
     </select>
 
+    <select id="getOptionsByModelAbilityId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo">
+        select * from <include refid="tableName"/>
+        <where>
+            status != 2
+            <if test = "modelAbilityId != null">
+                and modelAbilityId = #{modelAbilityId}
+            </if>
+
+        </where>
+    </select>
+
     <select id="queryByUnionModelAbility" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo">
         SELECT * FROM <include refid="tableName"/>
         WHERE abilityOptionId = #{abilityOptionId}
