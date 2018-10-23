@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -85,10 +86,14 @@ public class AppController extends BaseController {
         return new ApiResponse<>(deviceAbilityVos);
     }
 
-    @RequestMapping("/getWeather/{deviceId}")
-    public ApiResponse<WeatherVo> queryDeviceWeather(@PathVariable("deviceId") Integer deviceId) {
+    @RequestMapping("/getWeatherAndLocation/{deviceId}")
+    public ApiResponse<List<Object>> queryDeviceWeather(@PathVariable("deviceId") Integer deviceId) {
         WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
-        return new ApiResponse<>(weatherVo);
+        LocationVo locationVo = deviceService.queryDeviceLocation(deviceId);
+        List resp = new ArrayList();
+        resp.add(weatherVo);
+        resp.add(locationVo);
+        return new ApiResponse<>(resp);
     }
 
     @RequestMapping("/getHistoryData")
@@ -97,7 +102,7 @@ public class AppController extends BaseController {
         Integer type = request.getType();
         Integer userId = getCurrentUserIdForApp();
         log.info("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
-        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+        return new ApiResponse<>(appBasicService.getHistoryData(deviceId, type));
     }
 
     @RequestMapping("/editDevice")
@@ -125,5 +130,11 @@ public class AppController extends BaseController {
         String funcId = deviceFuncVo.getFuncId();
         String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),1);
         return new ApiResponse<>(requestId);
+    }
+
+    @RequestMapping("/getAppPassword")
+    public ApiResponse<String> getAppPassword(){
+        String request= appBasicService.getPassword();
+        return new ApiResponse<>(request);
     }
 }

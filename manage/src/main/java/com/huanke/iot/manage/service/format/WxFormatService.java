@@ -13,9 +13,12 @@ import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.format.WxFormatPo;
+import com.huanke.iot.base.util.CommonUtil;
+import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.format.WxFormatQueryRequest;
 import com.huanke.iot.manage.vo.response.format.WxFormatVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,6 +30,9 @@ import java.util.stream.Collectors;
 @Repository
 @Slf4j
 public class WxFormatService {
+
+    @Autowired
+    private CustomerService customerService;
 
     @Autowired
     private WxFormatMapper wxFormatMapper;
@@ -42,6 +48,10 @@ public class WxFormatService {
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private CommonUtil commonUtil;
+
 
 
     /**
@@ -139,6 +149,15 @@ public class WxFormatService {
     public List<WxFormatVo> selectList(WxFormatQueryRequest request) {
 
         WxFormatPo queryWxFormatPo = new WxFormatPo();
+
+        /*查询当前域名的 客户主键*/
+        Integer hostCustomerId = customerService.obtainCustomerId(false);
+        //如果 查询条件有客户，则查询该客户的版式，反之，则查询该二级域名的客户的版式
+        if(StringUtils.isBlank(request.getCustomerIds())){
+            queryWxFormatPo.setCustomerIds(hostCustomerId==null?null:hostCustomerId.toString());
+        }else{
+            queryWxFormatPo.setCustomerIds(request.getCustomerIds());
+        }
 
         if (request != null) {
 //            queryWxFormatPo.setId(request.getId());

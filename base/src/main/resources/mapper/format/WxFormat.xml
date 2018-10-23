@@ -68,6 +68,13 @@
             <if test="param.status != null">
                 AND status = #{param.status}
             </if>
+            <if test="param.customerIds!=null and param.customerIds !='' ">
+                AND  ( customerIds like CONCAT(#{param.customerIds},',%')
+                or  customerIds like CONCAT('%,',#{param.customerIds})
+                or  customerIds like CONCAT('%,',CONCAT(#{param.customerIds},',%'))
+                or customerIds = #{param.customerIds}
+                )
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>

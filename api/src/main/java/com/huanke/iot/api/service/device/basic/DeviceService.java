@@ -164,6 +164,7 @@ public class DeviceService {
                         deviceItemPo.setChildDeviceCount(childDeviceCount);
                         Integer modelId = devicePo.getModelId();
                         DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
+                        deviceItemPo.setDeviceModelName(deviceModelPo.getName());
                         Integer formatId = deviceModelPo.getFormatId();
                         deviceItemPo.setFormatId(formatId.toString());
                         deviceItemPo.setFormatName(wxFormatMapper.selectById(formatId).getName());
