@@ -30,8 +30,8 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
-import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
@@ -577,8 +577,8 @@ public class DeviceDataService {
 
     public String queryServerUser(Integer userId) {
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
-        CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
-        return customerPo.getServiceUser();
+        WxConfigPo wxConfigPo = wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
+        return wxConfigPo.getServiceUser();
     }
 
     public Boolean deleteDeviceItem(Integer userId, Integer deviceId) {
@@ -653,7 +653,6 @@ public class DeviceDataService {
                                 deviceDetailVo.setLocation(deviceDetailVo.getProvince() + "," + deviceDetailVo.getCity());
                             }
                         }
-
                     }
                 }
             }

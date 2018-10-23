@@ -86,7 +86,6 @@
     <select id="selectList" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo">
         select * from <include refid="tableName"/>
         <where>
-
             <if test = "param.modelAbilityId != null">
                 and modelAbilityId = #{param.modelAbilityId}
             </if>
@@ -106,14 +105,13 @@
     <select id="getByJoinId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo">
         select * from <include refid="tableName"/>
         <where>
-
             <if test = "modelAbilityId != null">
                 and modelAbilityId = #{modelAbilityId}
             </if>
             <if test = "abilityOptionId != null">
                 and abilityOptionId = #{abilityOptionId}
             </if>
-
+            and status = 1
         </where>
         limit 1
     </select>
