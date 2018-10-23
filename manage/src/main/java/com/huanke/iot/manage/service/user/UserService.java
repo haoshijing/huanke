@@ -46,9 +46,7 @@ public class UserService {
         if (null != userManagerMapper.selectByUserName(user.getUserName())) {
             throw new BusinessException("用户名已存在");
         }
-        /*获取当前域名*/
-        String userHost = commonUtil.obtainSecondHost();
-        user.setSecondDomain(userHost);
+
         user.setPassword(MD5Util.md5(MD5Util.md5(user.getPassword()) + saltEncrypt));
         userManagerMapper.insert(user);
         return user.getId();
