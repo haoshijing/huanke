@@ -88,23 +88,25 @@
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
-        select * from
-        <include refid="tableName"/>
+        select t_device_group.*
+        from
+        t_device_group g,t_customer c
         <where>
             <if test = "param.name != null and param.name != ''">
-                AND name = #{param.name}
+                AND g.name = #{param.name}
             </if>
             <if test="param.status != null">
-                AND status = #{param.status}
+                AND g.status = #{param.status}
             </if>
             <if test = "param.customerId != null">
-                and customerId = #{param.customerId}
+                AND t_device_group.customerId = t_customer.id
+                AND ( t_customer.parentCustomerId = #{param.customerId} OR t_device_group.customerId = #{param.customerId} )
             </if>
             <if test = "param.introduction != null and param.introduction != ''">
-                and introduction = #{param.introduction}
+                and g.introduction = #{param.introduction}
             </if>
             <if test = "param.remark != null and param.remark != ''">
-                and remark = #{param.remark}
+                and g.remark = #{param.remark}
             </if>
             <if test = "param.createLocation != null and param.createLocation != ''">
                 and createLocation = #{param.createLocation}
