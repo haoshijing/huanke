@@ -1,13 +1,17 @@
 package com.huanke.iot.base.util;
 
+import com.huanke.iot.base.po.customer.CustomerPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author caikun
@@ -23,6 +27,10 @@ public final class CommonUtil {
     @Value("${serverConfigHost}")
     private String serverConfigHost;
 
+    /**
+     * 获取二级域名
+     * @return
+     */
     public  String obtainSecondHost() {
 
         String requestHost =  httpServletRequest.getHeader("Host");
@@ -37,4 +45,5 @@ public final class CommonUtil {
 
         return userHost;
     }
+
 }
