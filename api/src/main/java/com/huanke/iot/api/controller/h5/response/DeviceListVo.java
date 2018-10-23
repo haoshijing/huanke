@@ -69,6 +69,7 @@ public class DeviceListVo {
         private String tvoc;
         private String hcho;
         private String deviceTypeName;
+        private String deviceModelName;
         private Integer typeId;
         private String typeNo;
         private String formatName;
