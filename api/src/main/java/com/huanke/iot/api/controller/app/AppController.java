@@ -97,7 +97,7 @@ public class AppController extends BaseController {
         Integer type = request.getType();
         Integer userId = getCurrentUserIdForApp();
         log.info("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
-        return new ApiResponse<>(deviceDataService.getHistoryData(deviceId, type));
+        return new ApiResponse<>(appBasicService.getHistoryData(deviceId, type));
     }
 
     @RequestMapping("/editDevice")

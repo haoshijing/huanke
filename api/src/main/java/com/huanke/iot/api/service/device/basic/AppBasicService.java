@@ -2,8 +2,10 @@ package com.huanke.iot.api.service.device.basic;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
+import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
+import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
@@ -12,6 +14,7 @@ import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
+import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
@@ -20,12 +23,14 @@ import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatPageMapper;
+import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
+import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
@@ -35,6 +40,8 @@ import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -42,8 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Repository
@@ -69,9 +75,11 @@ public class AppBasicService {
     @Autowired
     private DeviceModelFormatItemMapper deviceModelFormatItemMapper;
     @Autowired
-    private DeviceAbilityMapper deviceabilityMapper;
+    private DeviceAbilityMapper deviceAbilityMapper;
     @Autowired
     private DeviceAbilityOptionMapper deviceabilityOptionMapper;
+    @Autowired
+    private DeviceSensorStatMapper deviceSensorStatMapper;
     @Autowired
     private DeviceModelAbilityMapper deviceModelabilityMapper;
     @Autowired
@@ -193,7 +201,7 @@ public class AppBasicService {
 
             DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
             abilitys.setAbilityId(abilityId);
-            DeviceAbilityPo deviceabilityPo = deviceabilityMapper.selectById(abilityId);
+            DeviceAbilityPo deviceabilityPo = deviceAbilityMapper.selectById(abilityId);
             abilitys.setAbilityName(deviceabilityPo.getAbilityName());
             DeviceModelAbilityPo deviceModelabilityPo = deviceModelabilityMapper.getByJoinId(modelId, abilityId);
             if(deviceModelabilityPo != null){
@@ -226,5 +234,71 @@ public class AppBasicService {
         }
         deviceModelVo.setAbilitysList(abilitysList);
         return deviceModelVo;
+    }
+    public List<SensorDataVo> getHistoryData(Integer deviceId, Integer type) {
+
+        Long startTimestamp = new DateTime().plusDays(-1).getMillis();
+        Long endTimeStamp = System.currentTimeMillis();
+
+        List<SensorDataVo> sensorDataVos = Lists.newArrayList();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        if (devicePo == null) {
+            return null;
+        }
+        Integer deviceTypeId = devicePo.getTypeId();
+        List<String> dirValues = deviceAbilityMapper.getDirValuesByDeviceTypeId(deviceTypeId);
+
+        List<DeviceSensorStatPo> deviceSensorPos = deviceSensorStatMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
+        for (String sensorType : dirValues) {
+            SensorDataVo sensorDataVo = new SensorDataVo();
+            SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
+            if (sensorTypeEnums == null) {
+                continue;
+            }
+            sensorDataVo.setName(sensorTypeEnums.getMark());
+            sensorDataVo.setUnit(sensorTypeEnums.getUnit());
+            sensorDataVo.setType(sensorType);
+            List<String> xdata = Lists.newArrayList();
+            List<String> ydata = Lists.newArrayList();
+            Map<String,String> map = new LinkedHashMap<String,String>();
+            for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
+                if (deviceSensorPo.getPm() == null) {
+                    continue;
+                }
+                String value;
+                if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.CO2_IN.getCode())) {
+                    value = deviceSensorPo.getCo2().toString();
+                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.HUMIDITY_IN.getCode())) {
+                    value = deviceSensorPo.getHum().toString();
+                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.TEMPERATURE_IN.getCode())) {
+                    value = deviceSensorPo.getTem().toString();
+                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.HCHO_IN.getCode())) {
+                    value = FloatDataUtil.getFloat(deviceSensorPo.getHcho());
+                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.PM25_IN.getCode())) {
+                    if (deviceSensorPo.getPm() != null) {
+                        value = deviceSensorPo.getPm().toString();
+                    } else {
+                        value = "";
+                    }
+                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.TVOC_IN.getCode())) {
+
+                    value = FloatDataUtil.getFloat(deviceSensorPo.getTvoc());
+                } else {
+                    continue;
+                }
+                map.put(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:00:00"),value);
+            }
+            for(String key : map.keySet()){
+                xdata.add(key);
+                ydata.add(map.get(key));
+            }
+            sensorDataVo.setXdata(xdata);
+            sensorDataVo.setYdata(ydata);
+            if (!ydata.isEmpty()) {
+                sensorDataVos.add(sensorDataVo);
+            }
+        }
+
+        return sensorDataVos;
     }
 }

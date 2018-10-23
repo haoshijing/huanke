@@ -15,7 +15,7 @@ public class WxFormatQueryRequest {
 //    private String icon;
 //    private String previewImg;
 //    private String typeIds;
-//    private String customerIds;
+    private String customerIds;
 //    private String version;
     private Integer type;
     private Integer owerType;
