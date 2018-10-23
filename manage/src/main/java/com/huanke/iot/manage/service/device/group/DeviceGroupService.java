@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.device.group;
 
+import com.alibaba.fastjson.JSON;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceGroupConstants;
@@ -9,28 +10,44 @@ import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupSceneMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
+import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.group.DeviceGroupScenePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.po.user.UserPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.gateway.MqttSendService;
+import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.request.device.group.FuncListMessage;
+import com.huanke.iot.manage.vo.request.device.group.GroupControlRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceFuncRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupDetailVo;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@Slf4j
 public class DeviceGroupService {
 
     public static final String MEMO = "1、专家诊断，发现楼宇主要污染源和潜在风险； \n" +
@@ -62,13 +79,25 @@ public class DeviceGroupService {
     private CustomerMapper customerMapper;
 
     @Autowired
-    private DeviceModelMapper deviceModelMapper;
+    private DeviceOperLogMapper deviceOperLogMapper;
 
     @Autowired
     private DeviceGroupSceneMapper deviceGroupSceneMapper;
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private MqttSendService mqttSendService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserManagerMapper userManagerMapper;
 
     /**
      * 2018-08-18
@@ -317,6 +346,54 @@ public class DeviceGroupService {
         } else {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "集群不存在", false);
         }
+    }
+
+    public ApiResponse<Boolean> sendGroupFunc(GroupControlRequest groupControlRequest,int operType) throws Exception{
+        //获取当前登录的用户
+        User user = this.userService.getCurrentUser();
+        User currentUser = this.userManagerMapper.selectByUserName(user.getUserName());
+        List<Integer> deviceIdList = groupControlRequest.getDeviceIdList();
+        String funcId = groupControlRequest.getFuncId();
+        String value = groupControlRequest.getValue();
+        for (Integer deviceId : deviceIdList) {
+            DeviceFuncRequest deviceFuncRequest = new DeviceFuncRequest();
+            deviceFuncRequest.setDeviceId(deviceId);
+            deviceFuncRequest.setFuncId(funcId);
+            deviceFuncRequest.setValue(value);
+            String requestId = sendFunc(deviceFuncRequest, currentUser.getId(), operType);
+        }
+        return new ApiResponse<>(RetCode.OK,"群开/群关成功",true);
+    }
+
+
+    public String sendFunc(DeviceFuncRequest deviceFuncRequest, Integer userId, Integer operType) {
+        DevicePo devicePo = deviceMapper.selectById(deviceFuncRequest.getDeviceId());
+        if (devicePo != null) {
+            Integer deviceId = devicePo.getId();
+            String topic = "/down2/control/" + deviceId;
+            String requestId = UUID.randomUUID().toString().replace("-", "");
+            DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
+            deviceOperLogPo.setFuncId(deviceFuncRequest.getFuncId());
+            deviceOperLogPo.setDeviceId(deviceId);
+            deviceOperLogPo.setOperType(operType);
+            deviceOperLogPo.setOperUserId(userId);
+            deviceOperLogPo.setFuncValue(deviceFuncRequest.getValue());
+            deviceOperLogPo.setRequestId(requestId);
+            deviceOperLogPo.setCreateTime(System.currentTimeMillis());
+            deviceOperLogMapper.insert(deviceOperLogPo);
+            FuncListMessage funcListMessage = new FuncListMessage();
+            funcListMessage.setMsg_type("control");
+            funcListMessage.setMsg_id(requestId);
+            FuncListMessage.FuncItemMessage funcItemMessage = new FuncListMessage.FuncItemMessage();
+            funcItemMessage.setType(deviceFuncRequest.getFuncId());
+            funcItemMessage.setValue(deviceFuncRequest.getValue());
+            funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
+            mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
+            stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
+            log.info(requestId);
+            return requestId;
+        }
+        return "";
     }
 
     /**
