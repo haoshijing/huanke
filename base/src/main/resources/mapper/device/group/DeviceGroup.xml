@@ -73,16 +73,31 @@
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1)
         from
-        <include refid="tableName"/>
+        t_device_group,t_customer
         <where>
             <if test="param.status != null">
-                AND status = #{param.status}
+                AND t_device_group.status = #{param.status}
             </if>
             <if test="param.name != null">
-                and groupName = #{param.name}
+                and t_device_group.groupName = #{param.name}
             </if>
             <if test = "param.customerId != null">
-                and customerId = #{param.customerId}
+                AND t_device_group.customerId = t_customer.id
+                AND ( t_customer.parentCustomerId = #{param.customerId} OR t_device_group.customerId = #{param.customerId} )
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAllCount" resultType="java.lang.Integer">
+        select count(1)
+        from
+        t_device_group
+        <where>
+            <if test="param.status != null">
+                AND t_device_group.status = #{param.status}
+            </if>
+            <if test="param.name != null">
+                and t_device_group.groupName = #{param.name}
             </if>
         </where>
     </select>
@@ -92,6 +107,7 @@
         from
         t_device_group,t_customer
         <where>
+            1=1
             <if test = "param.name != null and param.name != ''">
                 AND t_device_group.name = #{param.name}
             </if>
@@ -101,6 +117,31 @@
             <if test = "param.customerId != null">
                 AND t_device_group.customerId = t_customer.id
                 AND ( t_customer.parentCustomerId = #{param.customerId} OR t_device_group.customerId = #{param.customerId} )
+            </if>
+            <if test = "param.introduction != null and param.introduction != ''">
+                and t_device_group.introduction = #{param.introduction}
+            </if>
+            <if test = "param.remark != null and param.remark != ''">
+                and t_device_group.remark = #{param.remark}
+            </if>
+            <if test = "param.createLocation != null and param.createLocation != ''">
+                and t_device_group.createLocation = #{param.createLocation}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectAllList" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
+        select *
+        from
+        t_device_group
+        <where>
+            1=1
+            <if test = "param.name != null and param.name != ''">
+                AND t_device_group.name = #{param.name}
+            </if>
+            <if test="param.status != null">
+                AND t_device_group.status = #{param.status}
             </if>
             <if test = "param.introduction != null and param.introduction != ''">
                 and t_device_group.introduction = #{param.introduction}

@@ -126,4 +126,10 @@ public class AppController extends BaseController {
         String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),1);
         return new ApiResponse<>(requestId);
     }
+
+    @RequestMapping("/getAppPassword")
+    public ApiResponse<String> getAppPassword(){
+        String request= appBasicService.getPassword();
+        return new ApiResponse<>(request);
+    }
 }
