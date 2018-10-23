@@ -180,6 +180,7 @@ public class DeviceGroupService {
         Integer customerId = customerService.obtainCustomerId(false);
 
         List<DeviceGroupListVo> deviceGroupListVoList = new ArrayList<>();
+        List<DeviceGroupPo> deviceGroupPoList = new ArrayList<>();
         Integer offset = (groupQueryRequest.getPage() - 1) * groupQueryRequest.getLimit();
         Integer limit = groupQueryRequest.getLimit();
         DeviceGroupPo queryPo = new DeviceGroupPo();
@@ -189,8 +190,13 @@ public class DeviceGroupService {
         if(queryPo.getCustomerId()==null){
             queryPo.setCustomerId(customerId);
         }
-        //查询直属于该二级客户下或二级客户所属的三级的客户的所有集群
-        List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo, limit, offset);
+        if(null != queryPo.getCustomerId()) {
+            //查询直属于该二级客户下或二级客户所属的三级的客户的所有集群
+            deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo, limit, offset);
+        }else {
+            //否则查询超级管理员下的Group单表，查询所有集群
+            deviceGroupPoList = this.deviceGroupMapper.selectAllList(queryPo,limit,offset);
+        }
         if (null != deviceGroupPoList) {
             deviceGroupPoList.stream().forEach(deviceGroupPo -> {
                 DeviceGroupListVo deviceGroupListVo = new DeviceGroupListVo();
@@ -226,13 +232,17 @@ public class DeviceGroupService {
      * @throws Exception
      */
     public ApiResponse<Integer> queryGroupCount(Integer status) throws Exception {
+        Integer groupCount;
         //获取该二级域名客户的主键
         Integer customerId = customerService.obtainCustomerId(false);
-
         DeviceGroupPo deviceGroupPo = new DeviceGroupPo();
         deviceGroupPo.setStatus(status);
         deviceGroupPo.setCustomerId(customerId);
-        Integer groupCount = this.deviceGroupMapper.selectCount(deviceGroupPo);
+        if(null != deviceGroupPo.getCustomerId()) {
+            groupCount = this.deviceGroupMapper.selectCount(deviceGroupPo);
+        }else {
+            groupCount = this.deviceGroupMapper.selectAllCount(deviceGroupPo);
+        }
         return new ApiResponse<>(RetCode.OK, "查询集群总数成功", groupCount);
     }
 
