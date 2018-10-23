@@ -8,6 +8,7 @@ import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.dao.customer.AndroidConfigMapper;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
@@ -24,6 +25,7 @@ import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatPageMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.po.customer.AndroidConfigPo;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -86,6 +88,8 @@ public class AppBasicService {
     private DeviceModelAbilityOptionMapper deviceModelabilityOptionMapper;
     @Autowired
     private DeviceTypeAbilitysMapper deviceTypeabilitysMapper;
+    @Autowired
+    private AndroidConfigMapper androidConfigMapper;
     @Autowired
     private WxFormatPageMapper wxFormatPageMapper;
 
@@ -300,5 +304,15 @@ public class AppBasicService {
         }
 
         return sensorDataVos;
+    }
+
+    public String getPassword(){
+        UserRequestContext context = UserRequestContextHolder.get();
+        Integer customerId = context.getCustomerVo().getCustomerId();
+        AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerId);
+        if(androidConfig!=null){
+            return androidConfig.getDeviceChangePassword();
+        }
+        return "";
     }
 }
