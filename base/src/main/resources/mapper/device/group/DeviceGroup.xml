@@ -76,10 +76,10 @@
         t_device_group,t_customer
         <where>
             <if test="param.status != null">
-                AND status = #{param.status}
+                AND t_device_group.status = #{param.status}
             </if>
             <if test="param.name != null">
-                and groupName = #{param.name}
+                and t_device_group.groupName = #{param.name}
             </if>
             <if test = "param.customerId != null">
                 AND t_device_group.customerId = t_customer.id
@@ -91,13 +91,13 @@
     <select id="selectAllCount" resultType="java.lang.Integer">
         select count(1)
         from
-        t_device_group,t_customer
+        t_device_group
         <where>
             <if test="param.status != null">
-                AND status = #{param.status}
+                AND t_device_group.status = #{param.status}
             </if>
             <if test="param.name != null">
-                and groupName = #{param.name}
+                and t_device_group.groupName = #{param.name}
             </if>
         </where>
     </select>
