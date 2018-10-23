@@ -189,6 +189,7 @@ public class DeviceGroupService {
         if(queryPo.getCustomerId()==null){
             queryPo.setCustomerId(customerId);
         }
+        //查询直属于该二级客户下或二级客户所属的三级的客户的所有集群
         List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo, limit, offset);
         if (null != deviceGroupPoList) {
             deviceGroupPoList.stream().forEach(deviceGroupPo -> {
