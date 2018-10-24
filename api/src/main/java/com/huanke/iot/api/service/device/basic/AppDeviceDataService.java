@@ -1,9 +1,15 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
+import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
+import com.huanke.iot.api.controller.app.response.AppDeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
+import com.huanke.iot.api.controller.h5.response.DeviceListVo;
 import com.huanke.iot.api.gateway.MqttSendService;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
@@ -17,15 +23,25 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -34,6 +50,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -42,66 +59,167 @@ public class AppDeviceDataService {
 
     @Autowired
     private DeviceMapper deviceMapper;
-
     @Autowired
-    private DeviceOperLogMapper deviceOperLogMapper;
-
+    private DeviceModelMapper deviceModelMapper;
     @Autowired
-    private MqttSendService mqttSendService;
-
+    private WxFormatMapper wxFormatMapper;
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
-
     @Autowired
     private DeviceAbilityMapper deviceAbilityMapper;
-
     @Autowired
     private DeviceAbilityOptionMapper deviceAbilityOptionMapper;
-
     @Autowired
     private CustomerUserMapper customerUserMapper;
-
-    @Autowired
-    private DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
-
-    @Autowired
-    private DeviceTeamItemMapper deviceTeamItemMapper;
-
     @Autowired
     private DeviceTeamMapper deviceTeamMapper;
-
-    @Autowired
-    private DeviceSensorStatMapper deviceSensorStatMapper;
-
-    @Autowired
-    private WxConfigMapper wxConfigMapper;
-
     @Autowired
     private LocationUtils locationUtils;
-
     @Autowired
     private CustomerMapper customerMapper;
-
     @Autowired
     private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
-
     @Autowired
     private DeviceModelAbilityMapper deviceModelAbilityMapper;
-
     @Value("${unit}")
     private Integer unit;
-
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-
-    private static String[] modes = {"云端大数据联动", "神经网络算法", "模糊驱动算法", "深度学习算法"};
-
-    private static final int MASTER = 1;
-    private static final int SLAVE = 2;
     @Value("${speed}")
     private int speed;
+    @Value("${oss.url}")
+    private String ossUrl;
 
-    private static final String TOKEN_PREFIX = "token.";
+
+    public AppDeviceListVo obtainMyDevice(Integer userId) {
+
+        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+        CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
+        AppDeviceListVo deviceListVo = new AppDeviceListVo();
+
+        DeviceTeamPo queryDevicePo = new DeviceTeamPo();
+        queryDevicePo.setMasterUserId(userId);
+        queryDevicePo.setStatus(CommonConstant.STATUS_YES);
+        List<DeviceTeamPo> deviceTeamPos = deviceTeamMapper.selectList(queryDevicePo, 100000, 0);
+
+        List<AppDeviceListVo.DeviceTeamData> teamDatas = deviceTeamPos.stream().map(
+                deviceTeamPo -> {
+                    AppDeviceListVo.DeviceTeamData deviceTeamData = new AppDeviceListVo.DeviceTeamData();
+                    deviceTeamData.setTeamName(deviceTeamPo.getName());
+                    deviceTeamData.setTeamId(deviceTeamPo.getId());
+
+                    String icon = deviceTeamPo.getIcon();
+                    if (StringUtils.isEmpty(icon)) {
+                        icon = Constants.DEFAULT_ICON;
+                    }
+                    String qrcode = deviceTeamPo.getQrcode();
+                    if (StringUtils.isEmpty(qrcode)) {
+                        qrcode = "https://idcfota.oss-cn-hangzhou.aliyuncs.com/group/WechatIMG4213.jpeg";
+                    }
+                    List<String> adImages = Lists.newArrayList();
+                    String adImageStr = deviceTeamPo.getAdImages();
+                    if (StringUtils.isNotEmpty(adImageStr)) {
+                        String adImageStrArr[] = adImageStr.split(",");
+                        for (String adImage : adImageStrArr) {
+                            if (StringUtils.isNotEmpty(adImage) && adImage.startsWith("http")) {
+                                adImages.add(adImage);
+                            } else {
+                                adImages.add(ossUrl + "/" + adImage);
+                            }
+                        }
+                    }
+                    deviceTeamData.setAdImages(adImages);
+                    String videoUrl = deviceTeamPo.getVideoUrl();
+                    if (StringUtils.isEmpty(videoUrl)) {
+                        videoUrl = Constants.DEFAULT_VIDEO_URl;
+                    }
+
+                    String videoCover = deviceTeamPo.getVideoCover();
+                    if (StringUtils.isEmpty(videoCover)) {
+                        videoCover = Constants.DEFAULT_COVER;
+                    }
+
+                    String memo = deviceTeamPo.getSceneDescription();
+                    if (StringUtils.isEmpty(memo)) {
+                        memo = Constants.MEMO;
+                    }
+
+                    deviceTeamData.setMemo(memo);
+                    deviceTeamData.setVideoUrl(videoUrl);
+                    deviceTeamData.setVideoCover(videoCover);
+                    deviceTeamData.setIcon(icon);
+                    deviceTeamData.setQrcode(qrcode);
+                    DeviceTeamItemPo queryDeviceTeamItem = new DeviceTeamItemPo();
+                    queryDeviceTeamItem.setStatus(1);
+                    queryDeviceTeamItem.setTeamId(deviceTeamData.getTeamId());
+                    List<DeviceTeamItemPo> itemPos = deviceTeamMapper.queryTeamItems(queryDeviceTeamItem);
+                    List<AppDeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().map(deviceTeamItemPo -> {
+                        AppDeviceListVo.DeviceItemPo deviceItemPo = new AppDeviceListVo.DeviceItemPo();
+                        DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
+                        deviceItemPo.setDeviceId(devicePo.getId());
+                        deviceItemPo.setMac(devicePo.getMac());
+                        deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
+                        int childDeviceCount = deviceMapper.queryChildDeviceCount(devicePo.getId());
+                        deviceItemPo.setChildDeviceCount(childDeviceCount);
+                        Integer modelId = devicePo.getModelId();
+                        DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
+                        deviceItemPo.setDeviceModelName(deviceModelPo.getName());
+                        Integer androidFormatId = deviceModelPo.getAndroidFormatId();
+                        if(androidFormatId != null) {
+                            deviceItemPo.setAndroidFormatId(androidFormatId.toString());
+                            deviceItemPo.setAndroidFormatName(wxFormatMapper.selectById(androidFormatId).getName());
+                        }
+                        Integer typeId = deviceModelPo.getTypeId();
+                        deviceItemPo.setTypeId(typeId);
+                        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+                        deviceItemPo.setTypeNo(deviceTypePo.getTypeNo());
+                        deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
+
+                        //添加返回客户名称
+                        deviceItemPo.setCustomerName(customerPo.getName());
+                        deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
+                        if (deviceTypePo != null) {
+                            deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
+                            deviceItemPo.setIcon(deviceTypePo.getIcon());
+                        }
+                        if (StringUtils.isEmpty(devicePo.getLocation())) {
+                            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+                            if (locationJson != null) {
+                                if (locationJson.containsKey("content")) {
+                                    JSONObject content = locationJson.getJSONObject("content");
+                                    if (content != null) {
+                                        if (content.containsKey("address_detail")) {
+                                            JSONObject addressDetail = content.getJSONObject("address_detail");
+                                            if (addressDetail != null) {
+                                                deviceItemPo.setLocation(addressDetail.getString("province") + "," + addressDetail.getString("city"));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            String[] locationArray = devicePo.getLocation().split(",");
+                            deviceItemPo.setLocation(Joiner.on(" ").join(locationArray));
+                        }
+                        Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
+                        deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
+                        deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
+                        deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
+                        deviceItemPo.setTem(getData(data, SensorTypeEnums.TEMPERATURE_IN.getCode()));
+                        deviceItemPo.setHcho(getData(data, SensorTypeEnums.HCHO_IN.getCode()));
+                        deviceItemPo.setTvoc(getData(data, SensorTypeEnums.TVOC_IN.getCode()));
+
+                        return deviceItemPo;
+                    }).collect(Collectors.toList());
+                    deviceTeamData.setDeviceItemPos(deviceItemPos);
+                    return deviceTeamData;
+                }
+        ).collect(Collectors.toList());
+
+        deviceListVo.setTeamDataList(teamDatas);
+        return deviceListVo;
+    }
+
 
     public List<AppDeviceDataVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds){
         Integer modelId = deviceMapper.selectById(deviceId).getModelId();

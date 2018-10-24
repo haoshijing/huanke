@@ -2,6 +2,7 @@ package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
+import com.huanke.iot.api.controller.app.response.AppDeviceListVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.*;
@@ -70,10 +71,10 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/queryDeviceList")
-    public ApiResponse<DeviceListVo> queryDeviceList() {
+    public ApiResponse<AppDeviceListVo> queryDeviceList() {
         Integer userId = getCurrentUserIdForApp();
         log.info("查询我的设备列表，userId={}", userId);
-        DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
+        AppDeviceListVo deviceListVo = appDeviceDataService.obtainMyDevice(userId);
         return new ApiResponse<>(deviceListVo);
     }
 
