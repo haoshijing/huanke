@@ -6,6 +6,7 @@ import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
+import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
@@ -62,6 +63,19 @@ public class DeviceDataService {
                     CustomerPo customerPo = this.customerMapper.selectById(deviceOperLogPo.getId());
                     deviceOperLogVo.setOperName(customerPo.getName());
                 }
+            }
+            FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(deviceOperLogVo.getFuncId());
+            //设置操作名称名称
+            deviceOperLogVo.setFuncName(funcTypeEnums.getMark());
+            if(!funcTypeEnums.getRange().equals("")){
+                String[] ranges = funcTypeEnums.getRange().split(",");
+                Integer valueIndex = Integer.parseInt(deviceOperLogPo.getFuncValue());
+                //设置操作的具体值
+                deviceOperLogVo.setFuncValue(ranges[valueIndex]);
+            }
+            else {
+                //设置操作的具体值
+                deviceOperLogVo.setFuncValue("暂未定义");
             }
             return deviceOperLogVo;
         }).collect(Collectors.toList());

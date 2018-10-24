@@ -4,6 +4,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
+import com.huanke.iot.manage.vo.request.device.group.GroupControlRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.service.device.group.DeviceGroupService;
 import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
@@ -90,6 +91,17 @@ public class DeviceGroupController {
         }catch (Exception e){
             log.error("删除集群失败 = {}",e);
             return new ApiResponse<>(RetCode.ERROR,"删除集群异常");
+        }
+    }
+
+    @ApiOperation("群开/群关")
+    @RequestMapping(value = "/groupSendFunc",method = RequestMethod.POST)
+    public ApiResponse<Boolean> groupSendFunc(@RequestBody GroupControlRequest groupControlRequest){
+        try {
+            return this.deviceGroupService.sendGroupFunc(groupControlRequest,3);
+        }catch (Exception e){
+            log.error("集群/群开异常= {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"群开/群关错误");
         }
     }
 
