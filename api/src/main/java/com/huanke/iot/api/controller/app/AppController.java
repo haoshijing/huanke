@@ -1,10 +1,12 @@
 package com.huanke.iot.api.controller.app;
 
 import com.alibaba.fastjson.JSON;
+import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.response.*;
+import com.huanke.iot.api.service.device.basic.AppDeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.service.device.basic.AppBasicService;
@@ -37,6 +39,9 @@ public class AppController extends BaseController {
 
     @Autowired
     private AppBasicService appBasicService;
+
+    @Autowired
+    private AppDeviceDataService appDeviceDataService;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -75,19 +80,16 @@ public class AppController extends BaseController {
     @RequestMapping("/getModelVo")
     public ApiResponse<DeviceModelVo> getModelVo(@RequestBody DeviceFormatRequest request) {
         Integer deviceId = request.getDeviceId();
-        log.info("获取功能项和样式编号，deviceId={}", deviceId);
+        log.info("获取功能项，deviceId={}", deviceId);
         DeviceModelVo deviceModelVo = appBasicService.getModelVo(deviceId);
         return new ApiResponse<>(deviceModelVo);
     }
 
     @RequestMapping("/queryDetailByDeviceId")
-    public ApiResponse<List<DeviceAbilitysVo>> queryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
+    public ApiResponse<List<AppDeviceDataVo>> queryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
         List<Integer> abilityIds = request.getAbilityIds();
-        if(deviceId == null || abilityIds.isEmpty()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
-        }
-        List<DeviceAbilitysVo> deviceAbilityVos = deviceDataService.queryDetailAbilitysValue(deviceId,abilityIds);
+        List<AppDeviceDataVo> deviceAbilityVos = appDeviceDataService.queryDetailAbilitysValue(deviceId,abilityIds);
         return new ApiResponse<>(deviceAbilityVos);
     }
 
