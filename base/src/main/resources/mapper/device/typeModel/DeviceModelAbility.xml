@@ -150,4 +150,12 @@
         </where>
     </select>
 
+    <select id="selectActiveByModelId" resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        select da.* from t_device_model_ability dma, t_device_ability da
+        where
+        dma.modelId = #{modelId}
+        and dma.abilityId = da.id
+        and dma.status = 1
+    </select>
+
 </mapper>

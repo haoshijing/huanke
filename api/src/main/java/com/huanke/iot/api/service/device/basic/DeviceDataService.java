@@ -26,6 +26,7 @@ import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
@@ -106,6 +107,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
+
+    @Autowired
+    private DeviceModelAbilityMapper deviceModelAbilityMapper;
 
     @Value("${unit}")
     private Integer unit;
@@ -259,8 +263,10 @@ public class DeviceDataService {
         if (devicePo == null) {
             return null;
         }
-        Integer deviceTypeId = devicePo.getTypeId();
-        List<String> dirValues = deviceAbilityMapper.getDirValuesByDeviceTypeId(deviceTypeId);
+        Integer modelId = devicePo.getModelId();
+        deviceModelAbilityMapper.selectByModelId(modelId);
+        List<DeviceAbilityPo> deviceAbilityPos = deviceModelAbilityMapper.selectActiveByModelId(modelId);
+        List<String> dirValues = deviceAbilityPos.stream().map(deviceAbilityPo -> deviceAbilityPo.getDirValue()).collect(Collectors.toList());
 
         List<DeviceSensorStatPo> deviceSensorPos = deviceSensorStatMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
         for (String sensorType : dirValues) {
