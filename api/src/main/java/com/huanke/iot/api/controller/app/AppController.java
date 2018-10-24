@@ -71,7 +71,7 @@ public class AppController extends BaseController {
     public ApiResponse<DeviceModelVo> getModelVo(@RequestBody DeviceFormatRequest request) {
         Integer deviceId = request.getDeviceId();
         log.info("获取功能项和样式编号，deviceId={}", deviceId);
-        DeviceModelVo deviceModelVo = appBasicService.getModelVo(deviceId,1);
+        DeviceModelVo deviceModelVo = appBasicService.getModelVo(deviceId);
         return new ApiResponse<>(deviceModelVo);
     }
 

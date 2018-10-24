@@ -59,7 +59,6 @@ import java.util.*;
 public class AppBasicService {
     @Autowired
     private WechartUtil wechartUtil;
-
     @Autowired
     private CustomerUserMapper customerUserMapper;
     @Autowired
@@ -67,15 +66,9 @@ public class AppBasicService {
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
-    private WxFormatItemMapper wxFormatItemMapper;
-    @Autowired
     private DeviceModelMapper deviceModelMapper;
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
-    @Autowired
-    private DeviceModelFormatMapper deviceModelFormatMapper;
-    @Autowired
-    private DeviceModelFormatItemMapper deviceModelFormatItemMapper;
     @Autowired
     private DeviceAbilityMapper deviceAbilityMapper;
     @Autowired
@@ -90,8 +83,6 @@ public class AppBasicService {
     private DeviceTypeAbilitysMapper deviceTypeabilitysMapper;
     @Autowired
     private AndroidConfigMapper androidConfigMapper;
-    @Autowired
-    private WxFormatPageMapper wxFormatPageMapper;
 
     @Transactional
     public ApiResponse<Object> removeIMeiInfo(HttpServletRequest request){
@@ -168,7 +159,7 @@ public class AppBasicService {
         return new ApiResponse<>(true);
     }
 
-    public DeviceModelVo getModelVo(Integer deviceId, Integer pageNo) {
+    public DeviceModelVo getModelVo(Integer deviceId) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         Integer modelId = devicePo.getModelId();
@@ -179,24 +170,6 @@ public class AppBasicService {
         deviceModelVo.setModelId(modelId);
         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(devicePo.getTypeId());
         deviceModelVo.setTypeNo(deviceTypePo.getTypeNo());
-        WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectByJoinId(formatId, pageNo);
-        DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, wxFormatPagePo.getId());
-        Integer modelFormatId = deviceModelFormatPo.getId();
-        deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
-        //查型号版式配置项
-        List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
-        deviceModelVo.setPageName(wxFormatPagePo.getName());
-        List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByJoinId(formatId, wxFormatPagePo.getId());
-        for (WxFormatItemPo wxFormatItemPo : wxFormatItemPos) {
-            DeviceModelVo.FormatItems formatItems = new DeviceModelVo.FormatItems();
-            DeviceModelFormatItemPo deviceModelFormatItemPo = deviceModelFormatItemMapper.selectByJoinId(modelFormatId, wxFormatItemPo.getId());
-            formatItems.setItemId(wxFormatItemPo.getId());
-            formatItems.setShowName(deviceModelFormatItemPo.getShowName());
-            formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
-            formatItems.setAbilityId(deviceModelFormatItemPo.getAbilityId());
-            formatItemsList.add(formatItems);
-        }
-        deviceModelVo.setFormatItemsList(formatItemsList);
         //查型号硬件功能项
         List<DeviceModelVo.Abilitys> abilitysList = new ArrayList<>();
         List<DeviceTypeAbilitysPo> deviceTypeabilitysPos = deviceTypeabilitysMapper.selectByTypeId(typeId);
