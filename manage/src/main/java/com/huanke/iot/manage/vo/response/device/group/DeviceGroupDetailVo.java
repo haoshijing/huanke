@@ -13,6 +13,7 @@ public class DeviceGroupDetailVo {
     private String customerName;
     private String introduction;
     private Integer deviceCount;
+    private String createLocation;
     private Long createTime;
     private List<DeviceInGroup> deviceList;
     private List<Images> imagesList;

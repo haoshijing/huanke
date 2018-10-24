@@ -15,6 +15,7 @@
         id,
         groupId,
         imgVideo,
+        imgVideoMark,
         status
         createTime,
         lastUpdateTime
@@ -23,6 +24,7 @@
         #{id},
         #{teamId},
         #{imgVideo},
+        #{imgVideoMark},
         #{status},
         #{createTime},
         #{lastUpdateTime}
@@ -37,6 +39,7 @@
         id,
         groupId,
         imgVideo,
+        imgVideoMark,
         status,
         createTime,
         lastUpdateTime
@@ -47,6 +50,7 @@
             #{groupScene.id},
             #{groupScene.groupId},
             #{groupScene.imgVideo},
+            #{groupScene.imgVideoMark},
             #{groupScene.status},
             #{groupScene.createTime},
             #{groupScene.lastUpdateTime}
