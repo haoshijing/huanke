@@ -31,6 +31,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
+import com.huanke.iot.base.po.format.WxFormatPo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -159,8 +160,9 @@ public class AppDeviceDataService {
                         deviceItemPo.setDeviceModelName(deviceModelPo.getName());
                         Integer androidFormatId = deviceModelPo.getAndroidFormatId();
                         if(androidFormatId != null) {
-                            deviceItemPo.setAndroidFormatId(androidFormatId.toString());
-                            deviceItemPo.setAndroidFormatName(wxFormatMapper.selectById(androidFormatId).getName());
+                            WxFormatPo wxFormatPo = wxFormatMapper.selectById(androidFormatId);
+                            deviceItemPo.setAndroidFormatId(wxFormatPo.getVersion());
+                            deviceItemPo.setAndroidFormatName(wxFormatPo.getName());
                         }
                         Integer typeId = deviceModelPo.getTypeId();
                         deviceItemPo.setTypeId(typeId);
