@@ -940,31 +940,43 @@ public class DeviceOperateService {
     public ApiResponse<DeviceLocationVo> queryDeviceLocation(Integer deviceId)throws Exception{
         DeviceLocationVo locationVo = new DeviceLocationVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
-        if (StringUtils.isEmpty(devicePo.getLocation())) {
-            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), true);
-            if (locationJson != null) {
-                if (locationJson.containsKey("content")) {
-                    JSONObject content = locationJson.getJSONObject("content");
-                    if (content != null) {
-                        if (content.containsKey("address_detail")) {
-                            JSONObject addressDetail = content.getJSONObject("address_detail");
-                            if (addressDetail != null) {
-                                locationVo.setProvince(addressDetail.getString("province"));
-                                locationVo.setCity(addressDetail.getString("city"));
-                                locationVo.setArea(locationVo.getCity());
-                                locationVo.setLocation(locationVo.getProvince() + "," + locationVo.getCity());
+        if(devicePo!=null){
+            if (StringUtils.isEmpty(devicePo.getLocation())) {
+                JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), true);
+                if (locationJson != null) {
+                    if (locationJson.containsKey("content")) {
+                        JSONObject content = locationJson.getJSONObject("content");
+                        if (content != null) {
+                            if (content.containsKey("address_detail")) {
+                                JSONObject addressDetail = content.getJSONObject("address_detail");
+                                if (addressDetail != null) {
+                                    locationVo.setProvince(addressDetail.getString("province"));
+                                    locationVo.setCity(addressDetail.getString("city"));
+                                    locationVo.setArea(locationVo.getCity());
+                                    locationVo.setLocation(locationVo.getProvince() + "," + locationVo.getCity());
+                                }
                             }
-                        }
+                            if(content.containsKey("point")){
+                                JSONObject point = content.getJSONObject("point");
+                                if(point!=null){
+                                    locationVo.setPointX(point.getString("x"));
+                                    locationVo.setPointY(point.getString("y"));
+                                }
+                            }
 
+                        }
                     }
                 }
+            }else {
+                String[] locationArray = devicePo.getLocation().split(",");
+                locationVo.setArea(Joiner.on(" ").join(locationArray));
+                locationVo.setLocation(devicePo.getLocation());
             }
-        }else {
-            String[] locationArray = devicePo.getLocation().split(",");
-            locationVo.setArea(Joiner.on(" ").join(locationArray));
-            locationVo.setLocation(devicePo.getLocation());
+            return new ApiResponse<>(RetCode.OK,"设备位置查询成功",locationVo);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"该设备不存在",null);
         }
-        return new ApiResponse<>(RetCode.OK,"设备位置查询成功",locationVo);
+
     }
 
     public ApiResponse<DeviceWeatherVo> queryDeviceWeather(Integer deviceId){
