@@ -11,8 +11,6 @@ public class DeviceOperLogVo {
 
     private String funcName;
 
-    private String funcRemark;
-
     /**
      * 设置的值
      */
