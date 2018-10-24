@@ -34,6 +34,7 @@ import com.huanke.iot.manage.vo.request.device.operate.DeviceFuncRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupDetailVo;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -239,11 +240,20 @@ public class DeviceGroupService {
                 CustomerPo customerPo = this.customerMapper.selectById(deviceGroupPo.getCustomerId());
                 deviceGroupListVo.setCustomerId(customerPo.getId());
                 deviceGroupListVo.setCustomerName(customerPo.getName());
-                //查询当前集群中的设备总量
-                DeviceGroupItemPo groupItemPo = new DeviceGroupItemPo();
-                groupItemPo.setGroupId(deviceGroupPo.getId());
-                Integer deviceCount = this.deviceGroupItemMapper.selectCount(groupItemPo);
-                deviceGroupListVo.setDeviceCount(deviceCount);
+                //查询集群下设备
+                List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(deviceGroupPo.getId());
+                if (null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
+                    List<DeviceGroupListVo.DeviceInGroup> deviceInGroupList = new ArrayList<>();
+                    deviceGroupItemPoList.stream().forEach(deviceGroupItemPo -> {
+                        DeviceGroupListVo.DeviceInGroup device = new DeviceGroupListVo.DeviceInGroup();
+                        DevicePo devicePo = this.deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
+                        BeanUtils.copyProperties(devicePo, device);
+                        deviceInGroupList.add(device);
+                    });
+                    deviceGroupListVo.setDeviceList(deviceInGroupList);
+                }
+                //获取当前集群中的设备总量
+                deviceGroupListVo.setDeviceCount(deviceGroupItemPoList.size());
                 deviceGroupListVo.setCreateTime(deviceGroupPo.getCreateTime());
                 deviceGroupListVoList.add(deviceGroupListVo);
             });
