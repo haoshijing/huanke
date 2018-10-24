@@ -475,9 +475,9 @@ public class DeviceDataService {
                     DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(abilityId);
                     if (deviceAbilityPo.getDirValue().equals("-1")) {//滤网临时妥协办法，后期再想更优方式
                         List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
-                        String optionValue5 = getData(controlDatas, dirValue);
                         List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
                         for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
+                            String optionValue5 = getData(controlDatas, deviceabilityOptionPo.getOptionValue());
                             DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                             abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                             abilityOption.setCurrValue(optionValue5);

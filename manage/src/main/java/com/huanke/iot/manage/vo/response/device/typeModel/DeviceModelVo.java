@@ -23,6 +23,7 @@ public class DeviceModelVo {
     private String productQrCode;
     private String productId;
     private Integer formatId;
+    private Integer androidFormatId;
     private String icon;
     private String version;
     private String childModelIds;

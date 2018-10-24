@@ -55,7 +55,7 @@ public class DeviceRemoteJob {
                 locationUtils.getLocation(ip,true);
                 JSONObject jsonObject = locationUtils.getWeather(ip,true);
                 if(jsonObject != null){
-                    String topic = "/down/cfg/"+devicePo.getId();
+                    String topic = "/down2/cfg/"+devicePo.getId();
                     if(jsonObject.containsKey("result")) {
                         JSONObject result = jsonObject.getJSONObject("result");
                         String humidity = result.getString("humidity");
