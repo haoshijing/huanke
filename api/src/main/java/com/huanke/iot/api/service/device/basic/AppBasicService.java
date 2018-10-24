@@ -1,6 +1,7 @@
 package com.huanke.iot.api.service.device.basic;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.app.response.AppSceneVo;
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
@@ -8,9 +9,7 @@ import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
-import com.huanke.iot.base.dao.customer.AndroidConfigMapper;
-import com.huanke.iot.base.dao.customer.CustomerMapper;
-import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.customer.*;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
@@ -20,14 +19,8 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
-import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
-import com.huanke.iot.base.dao.format.WxFormatItemMapper;
-import com.huanke.iot.base.dao.format.WxFormatPageMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
-import com.huanke.iot.base.po.customer.AndroidConfigPo;
-import com.huanke.iot.base.po.customer.CustomerPo;
-import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.customer.*;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
@@ -37,10 +30,6 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
-import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
-import com.huanke.iot.base.po.format.DeviceModelFormatPo;
-import com.huanke.iot.base.po.format.WxFormatItemPo;
-import com.huanke.iot.base.po.format.WxFormatPagePo;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.joda.time.DateTime;
@@ -83,6 +72,10 @@ public class AppBasicService {
     private DeviceTypeAbilitysMapper deviceTypeabilitysMapper;
     @Autowired
     private AndroidConfigMapper androidConfigMapper;
+    @Autowired
+    private AndroidSceneMapper androidSceneMapper;
+    @Autowired
+    private AndroidSceneImgMapper androidSceneImgMapper;
 
     @Transactional
     public ApiResponse<Object> removeIMeiInfo(HttpServletRequest request){
@@ -110,8 +103,6 @@ public class AppBasicService {
         respFlag=true;
         return new ApiResponse<>(respFlag);
     }
-
-
 
     @Transactional
     public ApiResponse<Object> addUserAppInfo(HttpServletRequest request){
@@ -159,6 +150,16 @@ public class AppBasicService {
         return new ApiResponse<>(true);
     }
 
+    public Object getQRCode(String appId){
+        CustomerPo customerPo = customerMapper.selectByAppId(appId);
+        if(customerPo != null){
+            AndroidConfigPo androidConfigPo = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
+            if(androidConfigPo != null){
+                return androidConfigPo.getQrcode();
+            }
+        }
+        return "";
+    }
     public DeviceModelVo getModelVo(Integer deviceId) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
@@ -287,5 +288,55 @@ public class AppBasicService {
             return androidConfig.getDeviceChangePassword();
         }
         return "";
+    }
+
+    public List getCustomerSceneInfo(){
+        UserRequestContext context = UserRequestContextHolder.get();
+        Integer customerId = context.getCustomerVo().getCustomerId();
+        AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerId);
+        if(androidConfig != null){
+            AndroidScenePo androidScenePo = new AndroidScenePo();
+            androidScenePo.setConfigId(androidConfig.getId());
+            List<AndroidScenePo> androidScenePos = androidSceneMapper.selectListByConfigId(androidScenePo);
+            if(androidScenePos != null && androidScenePos.size()>0){
+                List appSceneVos = new ArrayList<AppSceneVo>();
+                for(AndroidScenePo sceneTemp : androidScenePos){
+                    AppSceneVo appSceneVo = new AppSceneVo();
+                    appSceneVo.setId(sceneTemp.getId());
+                    appSceneVo.setCustomerId(sceneTemp.getConfigId());
+                    appSceneVo.setName(sceneTemp.getName());
+                    appSceneVo.setImgsCover(sceneTemp.getImgsCover());
+                    appSceneVo.setDescription(sceneTemp.getDescription());
+                    appSceneVo.setStatus(sceneTemp.getStatus());
+                    appSceneVo.setCreateTime(sceneTemp.getCreateTime());
+                    appSceneVo.setLastUpdateTime(sceneTemp.getLastUpdateTime());
+
+                    AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                    androidSceneImgPo.setAndroidSceneId(sceneTemp.getId());
+                    List<AndroidSceneImgPo> androidSceneImgPos = androidSceneImgMapper.selectListBySceneId(androidSceneImgPo);
+                    if(androidSceneImgPos != null && androidSceneImgPos.size()>0){
+                        List androidSceneImgs = new ArrayList<AppSceneVo.AndroidSceneImgVo>();
+                        for(AndroidSceneImgPo androidSceneImgPoTemp : androidSceneImgPos) {
+                            AppSceneVo.AndroidSceneImgVo androidSceneImgVo = new AppSceneVo.AndroidSceneImgVo();
+                            androidSceneImgVo.setId(androidSceneImgPoTemp.getId());
+                            androidSceneImgVo.setAndroidSceneId(androidSceneImgPoTemp.getAndroidSceneId());
+                            androidSceneImgVo.setCreateTime(androidSceneImgPoTemp.getCreateTime());
+                            androidSceneImgVo.setCustomerId(androidSceneImgPoTemp.getCustomerId());
+                            androidSceneImgVo.setDescription(androidSceneImgPoTemp.getDescription());
+                            androidSceneImgVo.setImgVideo(androidSceneImgPoTemp.getImgVideo());
+                            androidSceneImgVo.setLastUpdateTime(androidSceneImgPoTemp.getLastUpdateTime());
+                            androidSceneImgVo.setName(androidSceneImgPoTemp.getName());
+                            androidSceneImgVo.setStatus(androidSceneImgPoTemp.getStatus());
+
+                            androidSceneImgs.add(androidSceneImgVo);
+                        }
+                        appSceneVo.setAndroidSceneImgs(androidSceneImgs);
+                    };
+                    appSceneVos.add(appSceneVo);
+                }
+                return appSceneVos;
+            }
+        }
+        return null;
     }
 }

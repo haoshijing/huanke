@@ -58,6 +58,11 @@ public class AppController extends BaseController {
         return appBasicService.addUserAppInfo(request);
     }
 
+    @RequestMapping("/getQRCode")
+    public ApiResponse<Object> getQRCode(HttpServletRequest request) {
+        String appId = request.getParameter("appId");
+        return new ApiResponse<>(appBasicService.getQRCode(appId));
+    }
 
     @RequestMapping("/queryDeviceList")
     public ApiResponse<DeviceListVo> queryDeviceList() {
@@ -135,6 +140,12 @@ public class AppController extends BaseController {
     @RequestMapping("/getAppPassword")
     public ApiResponse<String> getAppPassword(){
         String request= appBasicService.getPassword();
+        return new ApiResponse<>(request);
+    }
+
+    @RequestMapping("/getCustomerScene")
+    public ApiResponse<List> getCustomerScene(){
+        List request= appBasicService.getCustomerSceneInfo();
         return new ApiResponse<>(request);
     }
 }
