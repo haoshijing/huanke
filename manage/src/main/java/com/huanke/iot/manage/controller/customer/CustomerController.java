@@ -85,7 +85,7 @@ public class CustomerController {
     }
 
     /**
-     * 查询客户列表-没有分页
+     * 查询客户列表-没有分页 下拉框用
      *
      * @param
      * @return 返回客户列表
