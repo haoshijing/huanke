@@ -20,6 +20,7 @@ public class DeviceModelPo {
     private String productQrCode;
     private String productId;
     private Integer formatId;
+    private Integer androidFormatId;
     private String icon;
     private String version;
     private Integer status = CommonConstant.STATUS_YES; //默认正常状态
