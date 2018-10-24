@@ -127,6 +127,7 @@ public class DeviceTeamService {
                 deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
                 deviceTeamImgScenePoList.add(deviceTeamScenePo);
             });
+            this.deviceTeamSceneMapper.insertBatch(deviceTeamImgScenePoList);
         }
         //插入视频相关数据
         if (teamCreateOrUpdateRequest.getVideosList() != null && teamCreateOrUpdateRequest.getVideosList().size() > 0) {
@@ -140,10 +141,8 @@ public class DeviceTeamService {
                 deviceTeamScenePo.setLastUpdateTime(System.currentTimeMillis());
                 deviceTeamVideoScenePoList.add(deviceTeamScenePo);
             });
+            this.deviceTeamSceneMapper.insertBatch(deviceTeamVideoScenePoList);
         }
-        deviceTeamImgScenePoList.addAll(deviceTeamVideoScenePoList);
-        //进行场景图册和视频册的批量更新
-        this.deviceTeamSceneMapper.insertBatch(deviceTeamImgScenePoList);
         if(null == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList() || 0 == teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList().size()){
             return new ApiResponse<>(RetCode.OK,"新建或更新组成功",deviceTeamPo.getId());
         }
