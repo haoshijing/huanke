@@ -240,6 +240,11 @@ public class WxFormatService {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该类型不存在");
         }
         if(customerPo!=null){
+            //如果 该客户的父级客户不为空。则放入其中。
+//            String customerIds = customerId.toString();
+//            if(customerPo.getParentCustomerId()!=null) {
+//                customerIds += "," + customerPo.getParentCustomerId();
+//            }
             //查询 版式列表
             queryWxFormatPo.setStatus(CommonConstant.STATUS_YES);
             queryWxFormatPo.setCustomerIds(customerId.toString());
@@ -261,8 +266,6 @@ public class WxFormatService {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该客户不存在");
 
         }
-
-
     }
 
     /**

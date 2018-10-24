@@ -57,7 +57,7 @@
         <where>
             1 = 1
             <if test="param.name != null and param.name != '' ">
-                AND  name like CONCAT('%',CONCAT(#{param.name},'%'))
+                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test="param.type != null ">
                 AND type = #{param.type}
@@ -69,9 +69,9 @@
                 AND status = #{param.status}
             </if>
             <if test="param.customerIds!=null and param.customerIds !='' ">
-                AND  ( customerIds like CONCAT(#{param.customerIds},',%')
-                or  customerIds like CONCAT('%,',#{param.customerIds})
-                or  customerIds like CONCAT('%,',CONCAT(#{param.customerIds},',%'))
+                AND ( customerIds like CONCAT(#{param.customerIds},',%')
+                or customerIds like CONCAT('%,',#{param.customerIds})
+                or customerIds like CONCAT('%,',CONCAT(#{param.customerIds},',%'))
                 or customerIds = #{param.customerIds}
                 )
             </if>
@@ -82,31 +82,43 @@
     <select id="selectFormatsByCustomerId" resultType="com.huanke.iot.base.po.format.WxFormatPo">
         select * from
         <include refid="tableName"/>
+        f,
+        wx_config c
         <where>
             1 = 1
-                AND  ( customerIds like CONCAT(#{customerIds},',%')
-                or  customerIds like CONCAT('%,',#{customerIds})
-                or  customerIds like CONCAT('%,',CONCAT(#{customerIds},',%'))
-                or customerIds = #{customerIds}
-                or customerIds is null
-                )
+            AND ( c.htmlTypeIds LIKE CONCAT( f.id, ',%' )
+            OR c.htmlTypeIds LIKE CONCAT( '%,', f.id )
+            OR c.htmlTypeIds LIKE CONCAT( '%,', CONCAT( f.id, ',%' ) )
+            OR c.htmlTypeIds = f.id
+            )
+
+--             AND ( f.customerIds like CONCAT(c.customerId,',%')
+--             or f.customerIds like CONCAT('%,',c.customerId)
+--             or f.customerIds like CONCAT('%,',CONCAT(c.customerId,',%'))
+--             or f.customerIds = c.customerId
+--             or f.customerIds is null
+--             )
 
             <if test="typeIds != null and typeIds !='' ">
-                AND  ( typeIds like CONCAT(#{typeIds},',%')
-                or  typeIds like CONCAT('%,',#{typeIds})
-                or  typeIds like CONCAT('%,',CONCAT(#{typeIds},',%'))
-                or typeIds = #{typeIds}
+                AND ( f.typeIds like CONCAT(#{typeIds},',%')
+                or f.typeIds like CONCAT('%,',#{typeIds})
+                or f.typeIds like CONCAT('%,',CONCAT(#{typeIds},',%'))
+                or f.typeIds = #{typeIds}
                 )
+            </if>
+
+            <if test="customerIds != null ">
+                AND c.customerId = #{customerIds}
             </if>
 
             <if test="type != null ">
-                AND type = #{type}
+                AND f.type = #{type}
             </if>
             <if test="owerType != null">
-                AND owerType = #{owerType}
+                AND f.owerType = #{owerType}
             </if>
             <if test="status != null">
-                AND status = 1
+                AND f.status = 1
             </if>
         </where>
     </select>
