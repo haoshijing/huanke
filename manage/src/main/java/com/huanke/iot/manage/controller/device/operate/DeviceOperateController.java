@@ -174,7 +174,7 @@ public class DeviceOperateController {
      * @param deviceVo
      * @return
      */
-    @ApiOperation("删除选中设备")
+    @ApiOperation("彻底删除设备")
     @DeleteMapping(value = "/deleteDevice")
     public ApiResponse<Boolean> deleteDevice(@RequestBody DeviceUnbindRequest.deviceVo deviceVo) {
         try {
