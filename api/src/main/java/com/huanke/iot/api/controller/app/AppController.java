@@ -133,7 +133,7 @@ public class AppController extends BaseController {
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFuc(@RequestBody DeviceFuncVo deviceFuncVo){
         String funcId = deviceFuncVo.getFuncId();
-        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),1);
+        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),2);
         return new ApiResponse<>(requestId);
     }
 
