@@ -86,6 +86,7 @@ public class AppController extends BaseController {
     @RequestMapping("/queryDetailByDeviceId")
     public ApiResponse<List<AppDeviceDataVo>> queryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
+        log.info("查询设备详情，设备ID={}",deviceId);
         List<Integer> abilityIds = request.getAbilityIds();
         List<AppDeviceDataVo> deviceAbilityVos = appDeviceDataService.queryDetailAbilitysValue(deviceId,abilityIds);
         return new ApiResponse<>(deviceAbilityVos);
@@ -93,6 +94,7 @@ public class AppController extends BaseController {
 
     @RequestMapping("/getWeatherAndLocation/{deviceId}")
     public ApiResponse<List<Object>> queryDeviceWeather(@PathVariable("deviceId") Integer deviceId) {
+        log.info("查询设备天气，设备ID={}",deviceId);
         WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
         LocationVo locationVo = deviceService.queryDeviceLocation(deviceId);
         List resp = new ArrayList();
@@ -132,6 +134,7 @@ public class AppController extends BaseController {
 
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFuc(@RequestBody DeviceFuncVo deviceFuncVo){
+        log.info("发送指令："+deviceFuncVo.toString());
         String funcId = deviceFuncVo.getFuncId();
         String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),2);
         return new ApiResponse<>(requestId);
@@ -140,6 +143,7 @@ public class AppController extends BaseController {
     @RequestMapping("/getAppPassword")
     public ApiResponse<String> getAppPassword(HttpServletRequest request){
         String appId = request.getParameter("appId");
+        log.info("获取设备选择密码，appId={}",appId);
         String response= appBasicService.getPassword(appId);
         return new ApiResponse<>(response);
     }
