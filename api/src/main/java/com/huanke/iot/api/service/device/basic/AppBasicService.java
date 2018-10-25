@@ -280,14 +280,15 @@ public class AppBasicService {
         return sensorDataVos;
     }
 
-    public String getPassword(){
-        UserRequestContext context = UserRequestContextHolder.get();
-        Integer customerId = context.getCustomerVo().getCustomerId();
-        AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerId);
-        if(androidConfig!=null){
-            return androidConfig.getDeviceChangePassword();
+    public String getPassword(String appId){
+        CustomerPo customerPo = customerMapper.selectByAppId(appId);
+        if(customerPo != null){
+            AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
+            if(androidConfig!=null){
+                return androidConfig.getDeviceChangePassword();
+            }
         }
-        return "";
+        return "1188";
     }
 
     public List getCustomerSceneInfo(){
