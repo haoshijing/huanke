@@ -226,7 +226,9 @@ public class AppDeviceDataService {
             List<DeviceModelAbilityPo> deviceModelAbilityPos = deviceModelAbilityMapper.selectByModelId(modelId);
             if(deviceModelAbilityPos != null && deviceModelAbilityPos.size()>0){
                 for(DeviceModelAbilityPo temp : deviceModelAbilityPos){
-                    abilityIds.add(temp.getAbilityId());
+                    if(temp.getStatus()!=null && temp.getStatus()==1) {
+                        abilityIds.add(temp.getAbilityId());
+                    }
                 }
             }else{
                 return null;
