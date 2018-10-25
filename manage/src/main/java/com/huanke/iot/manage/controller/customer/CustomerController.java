@@ -6,6 +6,7 @@ import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
+import com.huanke.iot.manage.vo.response.device.customer.CustomerListVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 客户
@@ -79,9 +80,9 @@ public class CustomerController {
      */
     @ApiOperation("查询客户列表")
     @PostMapping(value = "/select")
-    public ApiResponse<List<CustomerVo>> selectList(@RequestBody CustomerQueryRequest customerQueryRequest) throws Exception {
-        List<CustomerVo> customerVos = customerService.selectList(customerQueryRequest);
-        return new ApiResponse<>(customerVos);
+    public ApiResponse<CustomerListVo> selectList(@RequestBody CustomerQueryRequest customerQueryRequest) throws Exception {
+        CustomerListVo customerListVo = customerService.selectList(customerQueryRequest);
+        return new ApiResponse<>(customerListVo);
     }
 
     /**

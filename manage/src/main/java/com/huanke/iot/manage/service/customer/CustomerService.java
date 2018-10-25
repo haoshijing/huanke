@@ -10,6 +10,7 @@ import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
+import com.huanke.iot.manage.vo.response.device.customer.CustomerListVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -19,7 +20,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -295,8 +298,8 @@ public class CustomerService {
      * @param request
      * @return
      */
-    public List<CustomerVo> selectList(CustomerQueryRequest request) {
-
+    public CustomerListVo selectList(CustomerQueryRequest request) {
+        CustomerListVo customerListVo = new CustomerListVo();
         //获取当前二级域名的客户主键
         Integer curCustomerId = obtainCustomerId(false);
 
@@ -314,13 +317,18 @@ public class CustomerService {
             queryCustomerPo.setStatus(CommonConstant.STATUS_YES);
         }
         List<CustomerPo> customerPos = customerMapper.selectList(queryCustomerPo, limit, offset);
+
         List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
             CustomerVo customerVo = new CustomerVo();
             BeanUtils.copyProperties(customerPo, customerVo);
             return customerVo;
         }).collect(Collectors.toList());
+        Integer totalCount = customerMapper.selectCount(queryCustomerPo);
 
-        return customerVos;
+        customerListVo.setCustomerVos(customerVos);
+        customerListVo.setTotalCount(totalCount);
+
+        return customerListVo;
     }
 
     /**

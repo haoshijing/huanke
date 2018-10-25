@@ -129,6 +129,35 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <if test="param.name != null and param.name != ''">
+                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.publicName != null and param.publicName != ''">
+                AND publicName = #{param.publicName}
+            </if>
+            <if test="param.userType != null">
+                AND userType = #{param.userType}
+            </if>
+            <if test="param.loginName != null and param.loginName != '' ">
+                AND loginName = #{param.loginName}
+            </if>
+            <if test="param.SLD != null and param.SLD != '' ">
+                AND SLD = #{param.SLD}
+            </if>
+            <if test="param.status != null  ">
+                AND status = #{param.status}
+            </if>
+            <if test="param.parentCustomerId != null  ">
+                AND parentCustomerId = #{param.parentCustomerId}
+            </if>
+        </where>
+    </select>
+
     <select id="selectCustomerList">
         select tc.name,
         tc.userType,
