@@ -138,9 +138,10 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/getAppPassword")
-    public ApiResponse<String> getAppPassword(){
-        String request= appBasicService.getPassword();
-        return new ApiResponse<>(request);
+    public ApiResponse<String> getAppPassword(HttpServletRequest request){
+        String appId = request.getParameter("appId");
+        String response= appBasicService.getPassword(appId);
+        return new ApiResponse<>(response);
     }
 
     @RequestMapping("/getCustomerScene")
