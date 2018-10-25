@@ -8,4 +8,6 @@ public class DeviceLocationVo {
     private String city;
     private String area;
     private String location;
+    private String pointX;
+    private String pointY;
 }
