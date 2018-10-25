@@ -417,7 +417,7 @@ public class DeviceOperateController {
     }
 
     @ApiOperation("查询设备位置")
-    @RequestMapping(value = "/queryDevicePosition{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/queryDevicePosition/{id}", method = RequestMethod.POST)
     public ApiResponse<DeviceLocationVo> queryDevicePosition(@PathVariable("id") Integer id){
         try {
             return this.deviceService.queryDeviceLocation(id);
@@ -428,7 +428,7 @@ public class DeviceOperateController {
     }
 
     @ApiOperation("查询设备天气")
-    @GetMapping(value = "/queryDeviceWeather{id}")
+    @GetMapping(value = "/queryDeviceWeather/{id}")
     public ApiResponse<DeviceWeatherVo> queryDeviceWeather(@PathVariable("id") Integer id){
         try {
             return this.deviceService.queryDeviceWeather(id);
