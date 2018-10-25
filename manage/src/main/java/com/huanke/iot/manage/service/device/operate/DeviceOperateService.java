@@ -160,6 +160,7 @@ public class DeviceOperateService {
             insertPo.setBirthTime(device.getBirthTime());
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setLastUpdateTime(System.currentTimeMillis());
+            insertPo.setCreateUserId(device.getCreateUserId());
 
             return insertPo;
         }).collect(Collectors.toList());
@@ -381,6 +382,8 @@ public class DeviceOperateService {
 
                     queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
 
+                    queryDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+
                     deviceMapper.updateById(queryDevicePo);
                 }
 
@@ -424,6 +427,7 @@ public class DeviceOperateService {
             queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
             queryDevicePo.setCreateTime(System.currentTimeMillis());
             queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
+            queryDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
 
             deviceMapper.updateById(queryDevicePo);
             return new ApiResponse<>(RetCode.OK, "设备恢复成功");
@@ -772,6 +776,7 @@ public class DeviceOperateService {
             unbindDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
             unbindDevicePo.setBindTime(null);
             unbindDevicePo.setLastUpdateTime(System.currentTimeMillis());
+            unbindDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
 
             deviceMapper.updateById(unbindDevicePo);
 
@@ -824,6 +829,7 @@ public class DeviceOperateService {
                     unbindDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
                     unbindDevicePo.setBindTime(null);
                     unbindDevicePo.setLastUpdateTime(System.currentTimeMillis());
+                    unbindDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
 
                     deviceMapper.updateById(unbindDevicePo);
 
@@ -859,6 +865,7 @@ public class DeviceOperateService {
                     updateDevicePo.setId(deviceId);
                     updateDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
                     updateDevicePo.setLastUpdateTime(System.currentTimeMillis());
+                    updateDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
 
                     deviceMapper.updateById(updateDevicePo);
 
@@ -892,6 +899,7 @@ public class DeviceOperateService {
                     updateDevicePo.setId(deviceId);
                     updateDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_YES);
                     updateDevicePo.setLastUpdateTime(System.currentTimeMillis());
+                    updateDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
 
                     deviceMapper.updateById(updateDevicePo);
 

@@ -29,6 +29,14 @@ public class DeviceCreateOrUpdateRequest {
         private Long birthTime;
 
         private  String hardVersion;
+        /**
+         * 创建用户id
+         */
+        private Integer createUserId;
+        /**
+         * 修改用户id
+         */
+        private Integer updateUserId;
 
     }
 }

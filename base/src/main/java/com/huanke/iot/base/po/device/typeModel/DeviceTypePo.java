@@ -21,5 +21,7 @@ public class DeviceTypePo {
     private String remark;
     private Long createTime;
     private Long lastUpdateTime;
+    private Integer createUserId;
+    private Integer updateUserId;
 
 }

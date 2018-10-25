@@ -21,7 +21,9 @@
         maxVal,
         status,
         remark,
-        createTime
+        createTime,
+        createUserId,
+        updateUserId
         )
         VALUES (
         #{abilityName},
@@ -35,7 +37,9 @@
         #{maxVal},
         #{status},
         #{remark},
-        #{createTime}
+        #{createTime},
+        #{createUserId},
+        #{updateUserId}
         )
     </insert>
 
@@ -125,7 +129,8 @@
             <if test="remark != null and remark != ''">
                 remark = #{remark},
             </if>
-            lastUpdateTime = #{lastUpdateTime}
+            lastUpdateTime = #{lastUpdateTime},
+            updateUserId = #{updateUserId}
         </set>
         where
         id = #{id}

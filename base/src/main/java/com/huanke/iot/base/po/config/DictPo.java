@@ -25,6 +25,8 @@ public class DictPo {
 
     private Date createTime;
     private Date updateTime;
+    private Integer createUserId;
+    private Integer updateUserId;
     private Integer isDelete;
 
 }

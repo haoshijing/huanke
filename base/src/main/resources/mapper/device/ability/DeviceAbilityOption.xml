@@ -18,7 +18,9 @@
         status,
         minVal,
         maxVal,
-        createTime
+        createTime,
+        createUserId,
+        updateUserId
         )
         VALUES (
         #{abilityId},
@@ -27,7 +29,9 @@
         #{status},
         #{minVal},
         #{maxVal},
-        #{createTime}
+        #{createTime},
+        #{createUserId},
+        #{updateUserId}
         )
     </insert>
 
@@ -84,7 +88,8 @@
             <if test="maxVal != null ">
                 maxVal = #{maxVal},
             </if>
-            lastUpdateTime = #{lastUpdateTime}
+            lastUpdateTime = #{lastUpdateTime},
+            updateUserId = #{updateUserId}
         </set>
         where
         id = #{id}

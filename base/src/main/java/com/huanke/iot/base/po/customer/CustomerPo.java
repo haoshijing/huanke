@@ -25,6 +25,8 @@ public class CustomerPo {
     private String creatUser;
     private Long createTime;
     private Long lastUpdateTime;
+    private Integer createUserId;
+    private Integer updateUserId;
     private Integer status = CommonConstant.STATUS_YES;
 
 }

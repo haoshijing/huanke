@@ -27,6 +27,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private String description;
     private Integer status = CommonConstant.STATUS_YES;
     private String remark;
+    private Integer updateUserId;
 //    private List<DeviceModelFormatConfigCreateRequest> deviceModelFormatConfigs;
 
     private List<DeviceModelAbilityRequest> deviceModelAbilitys;

@@ -84,7 +84,6 @@ public class DeviceOperateController {
         List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList = deviceCreateOrUpdateRequests.getDeviceList();
         DevicePo devicePo;
         try {
-
             if (null == deviceList || 0 == deviceList.size()) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "设备不可为空");
             }

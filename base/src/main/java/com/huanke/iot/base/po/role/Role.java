@@ -22,4 +22,7 @@ public class Role {
     private Date createTime;
 
     private Date lastUpdateTime;
+
+    private Integer createUserId;
+    private Integer updateUserId;
 }

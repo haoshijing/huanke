@@ -24,4 +24,6 @@ public class DeviceAbilityPo {
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;
+    private Integer createUserId;
+    private Integer updateUserId;
 }

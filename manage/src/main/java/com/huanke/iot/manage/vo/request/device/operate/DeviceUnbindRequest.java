@@ -13,9 +13,11 @@ public class DeviceUnbindRequest {
 
     public List<deviceVo> deviceVos;
 
+
     @Data
     public static class deviceVo{
         public Integer deviceId;
         public String mac;
+        private Integer updateUesrId;
     }
 }

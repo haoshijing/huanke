@@ -28,5 +28,7 @@ public class DeviceModelPo {
     private String childModelIds;
     private Long createTime;
     private Long lastUpdateTime;
+    private Integer createUserId;
+    private Integer updateUserId;
 
 }

@@ -19,7 +19,9 @@
         typeNo,
         remark,
         status,
-        createTime
+        createTime,
+        createUserId,
+        updateUserId
         )
         VALUES (
         #{name},
@@ -29,7 +31,9 @@
         #{typeNo},
         #{remark},
         #{status},
-        #{createTime}
+        #{createTime},
+        #{createUserId},
+        #{updateUserId}
         )
     </insert>
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceTypePo">
@@ -57,7 +61,8 @@
             <if test="status != null ">
                 status = #{status},
             </if>
-            lastUpdateTime = #{lastUpdateTime}
+            lastUpdateTime = #{lastUpdateTime},
+            updateUserId = #{updateUserId}
         </set>
         where id = #{id}
     </update>
@@ -66,7 +71,8 @@
         update
         <include refid="tableName"/>
         <set>
-            status = #{status}
+            status = #{status},
+            updateUserId = #{updateUserId}
         </set>
         where id = #{id}
     </update>

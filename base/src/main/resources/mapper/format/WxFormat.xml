@@ -24,7 +24,9 @@
         description,
         status,
         createTime,
-        lastUpdateTime
+        lastUpdateTime,
+        createUserId,
+        updateUserId
         )
         VALUES (
         #{name},
@@ -39,7 +41,9 @@
         #{description},
         #{status},
         #{createTime},
-        #{lastUpdateTime}
+        #{lastUpdateTime},
+        #{createUserId},
+        #{updateUserId}
         )
     </insert>
 
@@ -159,6 +163,9 @@
             </if>
             <if test="status != null">
                 status = #{status},
+            </if>
+            <if test="updateUserId != null">
+                updateUserId = #{updateUserId},
             </if>
             lastUpdateTime = #{lastUpdateTime}
         </set>

@@ -27,6 +27,8 @@
         status,
         createTime,
         creatUser
+        createUserId,
+        updateUserId
         )
         VALUES (
         #{parentCustomerId},
@@ -43,7 +45,9 @@
         #{modelIds},
         #{status},
         #{createTime},
-        #{creatUser}
+        #{creatUser},
+        #{createUserId},
+        #{updateUserId}
         )
     </insert>
 
@@ -88,6 +92,7 @@
             <if test="status != null ">
                 status = #{status},
             </if>
+            updateUserId = #{updateUserId},
             lastUpdateTime = #{lastUpdateTime}
         </set>
         where

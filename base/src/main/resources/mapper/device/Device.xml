@@ -42,7 +42,9 @@
         hostDeviceId,
         childId,
         createTime,
-        lastUpdateTime
+        lastUpdateTime,
+        createUserId,
+        updateUserId
         )
         VALUES
         (
@@ -77,7 +79,9 @@
         #{hostDeviceId},
         #{childId},
         #{createTime},
-        #{lastUpdateTime}
+        #{lastUpdateTime},
+        #{createUserId},
+        #{updateUserId}
         )
     </insert>
 
@@ -117,7 +121,9 @@
         hostDeviceId,
         childId,
         createTime,
-        lastUpdateTime
+        lastUpdateTime,
+        createUserId,
+        updateUserId
         )
         VALUES
         <foreach collection="list" item="device" separator=",">
@@ -153,7 +159,9 @@
             #{device.hostDeviceId},
             #{device.childId},
             #{device.createTime},
-            #{device.lastUpdateTime}
+            #{device.lastUpdateTime},
+            #{device.createUserId},
+            #{device.updateUserId}
             )
         </foreach>
     </insert>
@@ -382,6 +390,7 @@
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>
+            updateUserId = #{updateUserId},
         </set>
         where
         1= 1
@@ -458,6 +467,7 @@
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime}
             </if>
+            updateUserId = #{updateUserId},
         </set>
         where
         1= 1
@@ -528,6 +538,13 @@
                     </if>
                 </foreach>
             </trim>
+            <trim prefix="updateUserId =case" suffix="end,">
+                <foreach collection="list" item="device" index="index">
+                    <if test="device.updateUserId !=null">
+                        when id=#{device.id} then #{device.updateUserId}
+                    </if>
+                </foreach>
+            </trim>
         </trim>
         where
         id in
@@ -557,7 +574,8 @@
             <if test="workStatus != null">
                 workStatus = #{workStatus},
             </if>
-            lastUpdateTime = #{lastUpdateTime}
+            lastUpdateTime = #{lastUpdateTime},
+            updateUserId = #{updateUserId}
         </set>
         where
         deviceId = #{deviceId}
@@ -567,9 +585,10 @@
         update
         <include refid="tableName"/>
         <set>
-            bindStatus = #{bindStatus}
-            bindTime = #{bindTime}
-            lastUpdateTime = #{lastUpdateTime}
+            bindStatus = #{bindStatus},
+            bindTime = #{bindTime},
+            lastUpdateTime = #{lastUpdateTime},
+            updateUserId = #{updateUserId}
         </set>
         WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
@@ -581,9 +600,10 @@
         update
         <include refid="tableName"/>
         <set>
-            assignStatus = #{assignStatus}
-            assignTime = #{assignTime}
-            lastUpdateTime = #{lastUpdateTime}
+            assignStatus = #{assignStatus},
+            assignTime = #{assignTime},
+            lastUpdateTime = #{lastUpdateTime},
+            updateUserId = #{updateUserId}
         </set>
         WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->

@@ -19,4 +19,6 @@ public class DeviceAbilityOptionPo {
     private Integer maxVal;
     private Long createTime;
     private Long lastUpdateTime;
+    private Integer createUserId;
+    private Integer updateUserId;
 }
