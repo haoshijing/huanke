@@ -34,6 +34,7 @@ import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
+import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
@@ -198,7 +199,6 @@ public class DeviceOperateService {
         //todo 显示从设备
 //        Subject subject = SecurityUtils.getSubject();
 //        UserPo user = (UserPo) subject.getSession().getAttribute("user");
-
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         Integer customerId = customerService.obtainCustomerId(false);
@@ -272,9 +272,56 @@ public class DeviceOperateService {
             deviceQueryVo.setLocation(devicePo.getLocation());
             return deviceQueryVo;
         }).collect(Collectors.toList());
+
         return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
     }
 
+    /**
+     * 2018-08-15
+     * sixiaojun
+     * 根据前台请求按页查询设备数据
+     *
+     * @param deviceListQueryRequest
+     * @return list
+     */
+    public ApiResponse<BaseListVo> queryDeviceList(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
+
+        BaseListVo baseListVo = new BaseListVo();
+
+        Integer customerId = customerService.obtainCustomerId(false);
+
+        //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
+        //此处仅仅查询主设备
+        DevicePo queryPo = new DevicePo();
+        if(deviceListQueryRequest!=null){
+            BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
+        }
+        queryPo.setCustomerId(customerId);
+
+        ApiResponse<List<DeviceListVo>> deviceQueryRtn = queryDeviceByPage(deviceListQueryRequest);
+        if(deviceQueryRtn!=null&&deviceQueryRtn.getCode()!= RetCode.OK){
+            return new ApiResponse<>(RetCode.ERROR,deviceQueryRtn.getMsg());
+        }
+        Integer totalCount = selectCount(queryPo);
+
+        baseListVo.setDataList(deviceQueryRtn.getData());
+        baseListVo.setTotalCount(totalCount);
+
+        return new ApiResponse<>(RetCode.OK,"查询成功",baseListVo);
+    }
+
+    /**
+     * 2018-08-18
+     * sixiaojun
+     * 获取设备总数
+     *
+     * @param
+     * @return
+     */
+    public Integer selectCount(DevicePo devicePo) throws Exception{
+
+        return deviceMapper.selectCount(devicePo);
+    }
 
     /**
      * 导出设备列表
@@ -965,21 +1012,7 @@ public class DeviceOperateService {
         return customerUserPoList;
     }
 
-    /**
-     * 2018-08-18
-     * sixiaojun
-     * 获取设备总数
-     *
-     * @param
-     * @return
-     */
-    public ApiResponse<Integer> selectCount(Integer status) throws Exception{
-        DevicePo queryDevicePo = new DevicePo();
-        Integer customerId = customerService.obtainCustomerId(false);
-        queryDevicePo.setStatus(status);
-        queryDevicePo.setCustomerId(customerId);
-        return new ApiResponse<>(RetCode.OK,"查询总数成功",deviceMapper.selectCount(queryDevicePo));
-    }
+
 
     public ApiResponse<DeviceLocationVo> queryDeviceLocation(Integer deviceId)throws Exception{
         DeviceLocationVo locationVo = new DeviceLocationVo();

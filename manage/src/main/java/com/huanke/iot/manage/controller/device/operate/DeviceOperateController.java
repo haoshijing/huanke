@@ -12,6 +12,7 @@ import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.*;
+import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
@@ -100,7 +101,7 @@ public class DeviceOperateController {
             } else {
                 return this.deviceService.createDevice(deviceCreateOrUpdateRequests.getDeviceList());
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("设备添加异常 = {}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备新增异常");
         }
@@ -116,32 +117,33 @@ public class DeviceOperateController {
      */
     @ApiOperation("分页查询设备")
     @RequestMapping(value = "/queryDevice", method = RequestMethod.POST)
-    public ApiResponse<List<DeviceListVo>> queryAllDevice(@RequestBody DeviceListQueryRequest deviceListQueryRequest) throws Exception {
+    public ApiResponse<BaseListVo> queryAllDevice(@RequestBody DeviceListQueryRequest deviceListQueryRequest) throws Exception {
         try {
-            return this.deviceService.queryDeviceByPage(deviceListQueryRequest);
+            ApiResponse<BaseListVo> deviceVos = deviceService.queryDeviceList(deviceListQueryRequest);
+            return deviceVos;
         } catch (Exception e) {
             log.error("设备查询错误 = {}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备查询异常");
         }
     }
 
-    /**
-     * 查询当前设备列表中的设备总数
-     * sixiaojun
-     * 2018-08-20
-     *
-     * @return
-     */
-    @ApiOperation("获取设备总数")
-    @RequestMapping(value = "/queryCount/{status}", method = RequestMethod.POST)
-    public ApiResponse<Integer> queryCount(@PathVariable("status") Integer status) {
-        try {
-            return this.deviceService.selectCount(status);
-        } catch (Exception e) {
-            log.error("设备总数查询异常 = {}", e);
-            return new ApiResponse<>(RetCode.ERROR, "设备总数查询异常");
-        }
-    }
+//    /**
+//     * 查询当前设备列表中的设备总数
+//     * sixiaojun
+//     * 2018-08-20
+//     *
+//     * @return
+//     */
+//    @ApiOperation("获取设备总数")
+//    @RequestMapping(value = "/queryCount/{status}", method = RequestMethod.POST)
+//    public ApiResponse<Integer> queryCount(@PathVariable("status") Integer status) {
+//        try {
+//            return this.deviceService.selectCount(status);
+//        } catch (Exception e) {
+//            log.error("设备总数查询异常 = {}", e);
+//            return new ApiResponse<>(RetCode.ERROR, "设备总数查询异常");
+//        }
+//    }
 
 //    /**
 //     * 删除设备
@@ -187,6 +189,7 @@ public class DeviceOperateController {
             return new ApiResponse<>(RetCode.ERROR, "彻底删除设备异常:" + e.getMessage());
         }
     }
+
     /**
      * 删除设备
      * sixiaojun
@@ -281,7 +284,7 @@ public class DeviceOperateController {
                 DevicePo devicePo = deviceService.isDeviceHasCustomer(deviceList);
                 if (null != devicePo) {
                     return this.deviceService.callBackDeviceFromCustomer(deviceList);
-                }else{
+                } else {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, "当前列表设备中存在未分配设备，无法召回", false);
                 }
 
@@ -331,12 +334,12 @@ public class DeviceOperateController {
 
     @ApiOperation("查询主设备下的从设备")
     @RequestMapping(value = "/queryChildDevice/{id}", method = RequestMethod.POST)
-    public ApiResponse<List<DevicePo>> queryChildDevice(@PathVariable("id") Integer hostDeviceId){
+    public ApiResponse<List<DevicePo>> queryChildDevice(@PathVariable("id") Integer hostDeviceId) {
         try {
             return this.deviceService.queryChildDevice(hostDeviceId);
-        }catch (Exception e){
-            log.error("从设备查询错误 = {}",e);
-            return new ApiResponse<>(RetCode.ERROR,"从设备查询失败");
+        } catch (Exception e) {
+            log.error("从设备查询错误 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "从设备查询失败");
         }
     }
 
@@ -405,41 +408,42 @@ public class DeviceOperateController {
 
     @ApiOperation("导出设备列表")
     @RequestMapping(value = "/exportDeviceData", method = RequestMethod.GET)
-    public ApiResponse<String> exportDeviceData(@RequestBody DeviceListExportRequest deviceListExportRequest,HttpServletResponse response){
+    public ApiResponse<String> exportDeviceData(@RequestBody DeviceListExportRequest deviceListExportRequest, HttpServletResponse response) {
         try {
-            this.deviceService.exportDeviceList(response,deviceListExportRequest);
-        }catch (Exception e){
-            log.error("设备列表导出错误 = {}",e);
-            return new ApiResponse<>(RetCode.ERROR,"设备列表导出异常");
+            this.deviceService.exportDeviceList(response, deviceListExportRequest);
+        } catch (Exception e) {
+            log.error("设备列表导出错误 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备列表导出异常");
         }
 
-        return new ApiResponse<>(RetCode.OK,"导出excel成功");
+        return new ApiResponse<>(RetCode.OK, "导出excel成功");
     }
 
     @ApiOperation("查询设备位置")
     @RequestMapping(value = "/queryDevicePosition/{id}", method = RequestMethod.POST)
-    public ApiResponse<DeviceLocationVo> queryDevicePosition(@PathVariable("id") Integer id){
+    public ApiResponse<DeviceLocationVo> queryDevicePosition(@PathVariable("id") Integer id) {
         try {
             return this.deviceService.queryDeviceLocation(id);
-        }catch (Exception e){
-            log.error("设备位置查询异常 = {}",e);
-            return new ApiResponse<>(RetCode.ERROR,"设备位置查询错误");
+        } catch (Exception e) {
+            log.error("设备位置查询异常 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备位置查询错误");
         }
     }
 
     @ApiOperation("查询设备天气")
     @GetMapping(value = "/queryDeviceWeather/{id}")
-    public ApiResponse<DeviceWeatherVo> queryDeviceWeather(@PathVariable("id") Integer id){
+    public ApiResponse<DeviceWeatherVo> queryDeviceWeather(@PathVariable("id") Integer id) {
         try {
             return this.deviceService.queryDeviceWeather(id);
-        }catch (Exception e){
-            log.error("设备天气查询异常 = {}",e);
-            return new ApiResponse<>(RetCode.ERROR,"设备天气查询错误");
+        } catch (Exception e) {
+            log.error("设备天气查询异常 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "设备天气查询错误");
         }
     }
 
     /**
      * 新版首页查询我的设备
+     *
      * @return
      */
     @ApiOperation("新版首页查询我的设备")
@@ -447,7 +451,7 @@ public class DeviceOperateController {
     public ApiResponse<List<DeviceAbilityVo.DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilityQueryRequest.DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
         List<Integer> abilityIds = request.getAbilityIds();
-        if(deviceId == null || abilityIds.isEmpty()){
+        if (deviceId == null || abilityIds.isEmpty()) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
         }
         List<DeviceAbilityVo.DeviceAbilitysVo> deviceAbilityVos = deviceService.queryDetailAbilitysValue(deviceId, abilityIds);

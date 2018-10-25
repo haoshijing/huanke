@@ -284,18 +284,18 @@
             <if test="param.name != null  and param.name != ''  ">
                 AND d.name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
+            <if test="param.customerId != null">
+                AND r.customerId = #{param.customerId}
+                and d.id = r.deviceId
+            </if>
             <if test="param.onlineStatus != null">
                 AND d.onlineStatus = #{param.onlineStatus}
-            </if>
-            <if test="param.assignStatus != null">
-                AND d.assignStatus = #{param.assignStatus}
             </if>
             <if test="param.bindStatus != null">
                 AND d.bindStatus = #{param.bindStatus}
             </if>
-            <if test="param.customerId != null">
-                AND r.customerId = #{param.customerId}
-                AND d.id = r.deviceId
+            <if test="param.assignStatus != null">
+                AND d.assignStatus = #{param.assignStatus}
             </if>
             <if test="param.enableStatus != null">
                 AND d.enableStatus = #{param.enableStatus}
