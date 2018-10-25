@@ -27,23 +27,23 @@ import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
-import com.huanke.iot.manage.vo.response.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceWeatherVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-//import org.apache.shiro.SecurityUtils;
-//import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -55,9 +55,14 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+//import org.apache.shiro.SecurityUtils;
+//import org.apache.shiro.subject.Subject;
 
 //import com.huanke.iot.user.model.user.User;
 
@@ -119,6 +124,9 @@ public class DeviceOperateService {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private LocationUtils locationUtils;
@@ -315,33 +323,61 @@ public class DeviceOperateService {
         return new ApiResponse<>(RetCode.OK,"ss");
     }
 
+//    /**
+//     * 删除设备及与设备相关的信息
+//     * 删除设备需 先解除 绑定关系、组关系、群关系、解除客户分配关系（召回）、最后删除
+//     * 2018-08-21
+//     * sixiaojun
+//     *
+//     * @param deviceLists
+//     * @return
+//     */
+//    public ApiResponse<Integer> deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) throws Exception{
+//        deviceLists.stream().forEach(device -> {
+//            //先从设备表中删除该mac地址的设备
+//            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
+//            if (deviceMapper.deleteDevice(devicePo) > 0) {
+//                deviceGroupItemMapper.deleteDeviceById(devicePo.getId());
+//                //如果当前设备已被分配给客户
+//                if (null != deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId())) {
+//                    //从客户关系表中删除记录
+//                    deviceCustomerRelationMapper.deleteDeviceById(devicePo.getId());
+//                }
+//            }
+//        });
+//        //返回本次删除的设备总数
+//        return new ApiResponse<>(RetCode.OK,"删除成功",deviceLists.size());
+//    }
+
+
     /**
      * 删除设备及与设备相关的信息
      * 删除设备需 先解除 绑定关系、组关系、群关系、解除客户分配关系（召回）、最后删除
      * 2018-08-21
      * sixiaojun
      *
-     * @param deviceLists
+     * @param deviceVo
      * @return
      */
-    public ApiResponse<Integer> deleteDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) throws Exception{
-        deviceLists.stream().forEach(device -> {
-            //先从设备表中删除该mac地址的设备
-            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
-            if (deviceMapper.deleteDevice(devicePo) > 0) {
-                deviceGroupItemMapper.deleteDeviceById(devicePo.getId());
-                //如果当前设备已被分配给客户
-                if (null != deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId())) {
-                    //从客户关系表中删除记录
-                    deviceCustomerRelationMapper.deleteDeviceById(devicePo.getId());
-                }
-            }
-        });
-        //返回本次删除的设备总数
-        return new ApiResponse<>(RetCode.OK,"删除成功",deviceLists.size());
+    public ApiResponse<Boolean> deleteDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception{
+        Integer deviceId = deviceVo.deviceId;
+        String mac = deviceVo.mac;
+        //解除 用户绑定关系、组关系
+        ApiResponse<Boolean> result = untieOneDeviceToUser(deviceVo);
+        //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
+        if(RetCode.OK==result.getCode()){
+            //删除 该设备的群绑定关系
+            this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
+            //解除客户分配关系
+            deviceCustomerRelationMapper.deleteDeviceById(deviceId);
+
+            deviceMapper.deleteDeviceById(deviceId);
+
+        }else{
+            return result;
+        }
+        return new ApiResponse<>(RetCode.OK, "删除成功");
     }
-
-
     /**
      * 删除设备及与设备相关的信息
      * 删除设备需 先解除 绑定关系、组关系、群关系、解除客户分配关系（召回）、最后删除
@@ -746,8 +782,8 @@ public class DeviceOperateService {
      */
     public ApiResponse<Boolean> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
 
-
         try {
+//            User user = userService.getCurrentUser();
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
             if(null==deviceId||deviceId<=0||StringUtils.isBlank(mac)){
@@ -776,7 +812,7 @@ public class DeviceOperateService {
             unbindDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
             unbindDevicePo.setBindTime(null);
             unbindDevicePo.setLastUpdateTime(System.currentTimeMillis());
-            unbindDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+//            unbindDevicePo.setUpdateUserId(user.getId());
 
             deviceMapper.updateById(unbindDevicePo);
 

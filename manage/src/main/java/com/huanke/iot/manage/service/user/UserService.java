@@ -7,6 +7,7 @@ import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.base.util.MD5Util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class UserService {
     private CommonUtil commonUtil;
 
     public User getCurrentUser() {
-
+        Subject subject = SecurityUtils.getSubject();
         User user = (User) SecurityUtils.getSubject().getSession().getAttribute("user");
         user.setPassword(null);
         return user;

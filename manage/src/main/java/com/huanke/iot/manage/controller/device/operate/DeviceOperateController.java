@@ -7,15 +7,11 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
-import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest;
-import com.huanke.iot.manage.vo.request.device.operate.*;
-//2018-08-15
-//import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
-import com.huanke.iot.manage.service.gateway.MqttSendService;
-//2018-08-15
-//import com.huanke.iot.manage.response.DeviceVo;
 import com.huanke.iot.manage.service.device.operate.DeviceDataService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
+import com.huanke.iot.manage.service.gateway.MqttSendService;
+import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest;
+import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
@@ -30,7 +26,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.List;
+
+//2018-08-15
+//import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
+//2018-08-15
+//import com.huanke.iot.manage.response.DeviceVo;
 
 /**
  * @author haoshijing
@@ -142,29 +143,50 @@ public class DeviceOperateController {
         }
     }
 
+//    /**
+//     * 删除设备
+//     * sixiaojun
+//     * 2018-08-20
+//     *
+//     * @param deviceCreateOrUpdateRequest
+//     * @return
+//     */
+//    @ApiOperation("删除选中设备")
+//    @RequestMapping(value = "/deleteDevice", method = RequestMethod.POST)
+//    public ApiResponse<Integer> deleteDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest) {
+//        List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList = deviceCreateOrUpdateRequest.getDeviceList();
+//        if (null == deviceList || 0 == deviceList.size()) {
+//            return new ApiResponse<>(RetCode.PARAM_ERROR, "请先选中设备再删除", null);
+//        }
+//        try {
+//            return this.deviceService.deleteDevice(deviceCreateOrUpdateRequest.getDeviceList());
+//        } catch (Exception e) {
+//            log.error("设备删除异常 = {}", e);
+//            return new ApiResponse<>(RetCode.ERROR, "设备删除异常:" + e.getMessage());
+//        }
+//    }
+
     /**
      * 删除设备
      * sixiaojun
      * 2018-08-20
      *
-     * @param deviceCreateOrUpdateRequest
+     * @param deviceVo
      * @return
      */
     @ApiOperation("删除选中设备")
-    @RequestMapping(value = "/deleteDevice", method = RequestMethod.POST)
-    public ApiResponse<Integer> deleteDevice(@RequestBody DeviceCreateOrUpdateRequest deviceCreateOrUpdateRequest) {
-        List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceList = deviceCreateOrUpdateRequest.getDeviceList();
-        if (null == deviceList || 0 == deviceList.size()) {
-            return new ApiResponse<>(RetCode.PARAM_ERROR, "请先选中设备再删除", null);
-        }
+    @DeleteMapping(value = "/deleteDevice")
+    public ApiResponse<Boolean> deleteDevice(@RequestBody DeviceUnbindRequest.deviceVo deviceVo) {
         try {
-            return this.deviceService.deleteDevice(deviceCreateOrUpdateRequest.getDeviceList());
+            if (null == deviceVo.deviceId || deviceVo.deviceId <= 0 || StringUtils.isBlank(deviceVo.mac)) {
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "参数不可为空");
+            }
+            return deviceService.deleteDevice(deviceVo);
         } catch (Exception e) {
-            log.error("设备删除异常 = {}", e);
-            return new ApiResponse<>(RetCode.ERROR, "设备删除异常:" + e.getMessage());
+            log.error("彻底删除设备异常 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "彻底删除设备异常:" + e.getMessage());
         }
     }
-
     /**
      * 删除设备
      * sixiaojun

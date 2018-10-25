@@ -465,9 +465,9 @@
             </if>
             bindTime = #{bindTime},
             <if test="lastUpdateTime != null">
-                lastUpdateTime = #{lastUpdateTime}
+                lastUpdateTime = #{lastUpdateTime},
             </if>
-            updateUserId = #{updateUserId},
+            updateUserId = #{updateUserId}
         </set>
         where
         1= 1
@@ -630,6 +630,14 @@
         </where>
     </delete>
 
+    <!--单条删除-->
+    <delete id="deleteDeviceById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tableName"/>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
     <!--批量删除-->
     <delete id="deleteDeviceBatch" parameterType="java.util.List">
         delete from
