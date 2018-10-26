@@ -37,15 +37,28 @@ public class DeviceTeamController {
         if(null == teamCreateOrUpdateRequest.getCreateUserOpenId()||StringUtils.isEmpty(teamCreateOrUpdateRequest.getCreateUserOpenId())){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"用户openid不可为空");
         }
-        //查询客户是否存在
+        //查询用户是否存在
         CustomerUserPo customerUserPo = this.deviceTeamService.queryCustomerUser(teamCreateOrUpdateRequest.getCreateUserOpenId());
         if (customerUserPo==null){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当前用户 "+teamCreateOrUpdateRequest.getCreateUserOpenId()+" 不存在");
         }
-        //首先查询设备列表中是否已有设备在其他组中
-        TeamCreateOrUpdateRequest.TeamDeviceCreateRequest devicePo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest);
-        if(null != devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+devicePo.getMac()+" 地址已存在其他组中");
+        //设备列表不为空时进行mac校验
+        if(null != teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList() && 0 < teamCreateOrUpdateRequest.getTeamDeviceCreateRequestList().size()){
+            //查询设备的MAC是否存在
+            TeamCreateOrUpdateRequest.TeamDeviceCreateRequest queryMacPo = this.deviceTeamService.queryDeviceByMac(teamCreateOrUpdateRequest);
+            if(null != queryMacPo){
+                return new ApiResponse<>(RetCode.OK,"所选设备中mac地址 "+queryMacPo.getMac()+" 不存在或已被删除");
+            }
+            //查询当前设备是否属于当前登录的客户
+            TeamCreateOrUpdateRequest.TeamDeviceCreateRequest queryCustomerPo = this.deviceTeamService.queryDeviceCustomer(teamCreateOrUpdateRequest);
+            if(null != queryCustomerPo){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+queryCustomerPo.getMac()+" 尚未被分配或您无权绑定");
+            }
+            //查询设备列表中是否已有设备在其他组中
+            TeamCreateOrUpdateRequest.TeamDeviceCreateRequest queryTeamPo=this.deviceTeamService.isDeviceHasTeam(teamCreateOrUpdateRequest);
+            if(null != queryTeamPo){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"设备列表中 "+queryTeamPo.getMac()+" 地址已存在其他组中");
+            }
         }
         try {
             return this.deviceTeamService.createNewOrUpdateTeam(teamCreateOrUpdateRequest);
