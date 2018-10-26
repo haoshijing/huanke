@@ -2,6 +2,7 @@ package com.huanke.iot.manage.service.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
@@ -11,7 +12,6 @@ import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAbilitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilitySetPo;
@@ -19,8 +19,7 @@ import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAbilitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
-import com.huanke.iot.manage.service.customer.CustomerService;
-import com.huanke.iot.manage.vo.request.customer.CustomerVo;
+import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.vo.request.device.ability.DeviceTypeAbilitysCreateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAbilitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
@@ -34,11 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 //import com.huanke.iot.base.dao.device.ability.DeviceAbilitySetMapper;
@@ -111,6 +107,7 @@ public class DeviceTypeService {
             deviceTypeMapper.updateById(deviceTypePo);
         } else {
             deviceTypePo.setStatus(CommonConstant.STATUS_YES);
+            deviceTypePo.setTypeNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_TYPE));
             deviceTypePo.setCreateTime(System.currentTimeMillis());
             deviceTypeMapper.insert(deviceTypePo);
         }

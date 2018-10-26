@@ -13,6 +13,7 @@
         (
         name,
         mac,
+        DEVID,
         wxDeviceId,
         wxDevicelicence,
         wxQrticket,
@@ -50,6 +51,7 @@
         (
         #{name},
         #{mac},
+        #{DEVID},
         #{wxDeviceId},
         #{wxDevicelicence},
         #{wxQrticket},
