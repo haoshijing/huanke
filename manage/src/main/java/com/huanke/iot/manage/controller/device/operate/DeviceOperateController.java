@@ -109,6 +109,23 @@ public class DeviceOperateController {
     }
 
     /**
+     * 修改设备
+     * @param deviceUpdateRequest
+     * @return
+     */
+    @ApiOperation("设备详情-修改设备")
+    @PutMapping(value = "/updateDevice")
+    public ApiResponse<Boolean> updateDevice(@RequestBody DeviceUpdateRequest deviceUpdateRequest) {
+        try {
+            return deviceService.updateDevice(deviceUpdateRequest);
+        } catch (Exception e) {
+            log.error("修改设备异常 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "修改设备异常");
+        }
+
+    }
+
+    /**
      * sixiaojun
      * 设备列表
      *
