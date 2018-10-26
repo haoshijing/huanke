@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
@@ -35,6 +36,9 @@ public class StatisticService {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     /**
      * 首页面板-统计用户
@@ -136,13 +140,16 @@ public class StatisticService {
     public List<DeviceTypeVo.DeviceTypePercent> selectTypePercentPerMonth() {
 
         List<DeviceTypeVo.DeviceTypePercent> deviceTypePercents = new ArrayList<DeviceTypeVo.DeviceTypePercent>();
+
+        Integer customerId = customerService.obtainCustomerId(false);
         /*查询设备总量*/
         DevicePo queryDevicePo = new DevicePo();
         queryDevicePo.setStatus(CommonConstant.STATUS_YES);
+        queryDevicePo.setCustomerId(customerId);
         Integer deviceTotal = deviceMapper.selectCount(queryDevicePo);
 
         if(deviceTotal!=null&&deviceTotal!=0){
-            List deviceTypePercentList = deviceTypeMapper.selectTypePercent();
+            List deviceTypePercentList = deviceTypeMapper.selectTypePercent(customerId);
 
             if (deviceTypePercentList != null && deviceTypePercentList.size() > 0) {
                 for(int i=0;i<deviceTypePercentList.size();i++){

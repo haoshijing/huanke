@@ -91,12 +91,11 @@ public class DeviceTypeController {
 
         Boolean ret = null;
         try {
-            ret = deviceTypeService.deleteDeviceType(typeId);
+            return deviceTypeService.deleteDeviceType(typeId);
         } catch (Exception e) {
             log.error("删除类型失败={}", e);
             return new ApiResponse<>(RetCode.ERROR, "删除类型失败");
         }
-        return new ApiResponse<>(ret);
     }
 
 

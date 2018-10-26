@@ -162,22 +162,29 @@
     </select>
 
     <select id="selectTypePercent" resultType="java.util.HashMap">
-       SELECT
+        SELECT
         t.id typeId,
         t.`name` typeName,
         count( 1 ) deviceCount
         FROM
-            t_device_type t,
-            t_device d
+        t_device_type t,
+        t_device d
+        <if test="customerId != null">
+            ,t_device_customer_relation r
+        </if>
         WHERE
-            t.id = d.typeId
-            AND d.`status` = 1
-            AND t.`status` = 1
+        t.id = d.typeId
+        <if test="customerId != null">
+            and d.id = r.deviceId
+            and r.customerId =  #{customerId}
+        </if>
+        AND d.`status` = 1
+        AND t.`status` = 1
         GROUP BY
-            t.id
+        t.id
     </select>
 
-    <update id="updateStopWatch" >
+    <update id="updateStopWatch">
         update
         <include refid="tableName"/>
         <set>

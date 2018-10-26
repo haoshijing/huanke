@@ -59,5 +59,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List selectDeviceCountByCustomer(@Param("nowYear")int nowYear,@Param("status")int status , @Param("customerId")int customerId);
 
     List<DevicePo> selectByModelId(Integer modelId);
+    List<DevicePo> selectByTypeId(Integer typeId);
 
 }

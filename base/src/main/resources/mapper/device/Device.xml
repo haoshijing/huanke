@@ -220,8 +220,17 @@
         FROM
         <include refid="tableName"/>
         WHERE modelId = #{modelId}
+        and status = 1
     </select>
 
+    <select id="selectByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE typeId = #{typeId}
+        and status = 1
+    </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
         select * from

@@ -125,6 +125,17 @@
         WHERE id = #{id} limit 1
     </select>
 
+
+    <select id="selectByTypeId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE typeId = #{typeId}
+        and status = 1
+    </select>
+
     <select id="selectByProductId" parameterType="java.lang.String"
             resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
         select

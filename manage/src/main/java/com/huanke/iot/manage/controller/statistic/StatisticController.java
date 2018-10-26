@@ -29,6 +29,7 @@ public class StatisticController {
 
     @Autowired
     private StatisticService statisticService;
+    
     @ApiOperation("每月新增用户统计")
     @GetMapping(value = "/customerUserCountPerMonth")
     public ApiResponse<List<CustomerUserVo>> customerUserCountPerMonth() {

@@ -8,6 +8,7 @@ import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilitySetMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAbilitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
@@ -15,6 +16,7 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilitySetPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAbilitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.manage.service.customer.CustomerService;
@@ -65,6 +67,12 @@ public class DeviceTypeService {
 
     @Autowired
     private DeviceAbilitySetMapper deviceAbilitySetMapper;
+
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
 
 
     @Value("${accessKeyId}")
@@ -151,11 +159,26 @@ public class DeviceTypeService {
      * @param typeId
      * @return
      */
-    public Boolean deleteDeviceType(Integer typeId) {
+    public ApiResponse<Boolean> deleteDeviceType(Integer typeId) {
 
         Boolean ret = false;
+
+        List<DevicePo> devicePos = deviceMapper.selectByTypeId(typeId);
+        if(devicePos!=null&&devicePos.size()>0){
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该类型已有设备，无法删除！");
+        }
+
+        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectByTypeId(typeId);
+        if(deviceModelPos!=null&&deviceModelPos.size()>0){
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "已有型号使用该类型，无法删除！");
+        }
+
         ret = deviceTypeMapper.updateStatusById(typeId, CommonConstant.STATUS_DEL) > 0;
-        return ret;
+        if(ret){
+            return new ApiResponse<>(RetCode.OK, "删除成功",ret);
+        }else {
+            return new ApiResponse<>(RetCode.ERROR, "删除失败",ret);
+        }
     }
 
     /**
