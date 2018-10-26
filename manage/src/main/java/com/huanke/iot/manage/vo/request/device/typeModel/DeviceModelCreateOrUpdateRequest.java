@@ -21,6 +21,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private String productQrCode;
     private String productId;
     private Integer formatId;
+    private Integer androidFormatId;
     private String icon; //缩略图
     private String version;
     private String childModelIds;

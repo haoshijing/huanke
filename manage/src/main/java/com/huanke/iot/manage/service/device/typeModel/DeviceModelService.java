@@ -329,6 +329,8 @@ public class DeviceModelService {
             deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
             deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
+            deviceModelVo.setFormatId(deviceModelPo.getFormatId());
+            deviceModelVo.setAndroidFormatId(deviceModelPo.getAndroidFormatId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
             deviceModelVo.setTypeName(deviceModelPo.getTypeName());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
@@ -380,13 +382,19 @@ public class DeviceModelService {
             DeviceModelVo deviceModelVo = new DeviceModelVo();
             deviceModelVo.setName(deviceModelPo.getName());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
+            deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
             deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
+            deviceModelVo.setFormatId(deviceModelPo.getFormatId());
+            deviceModelVo.setAndroidFormatId(deviceModelPo.getAndroidFormatId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
+            deviceModelVo.setTypeName(deviceModelPo.getTypeName());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon(deviceModelVo.getIcon());
+            deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
+            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
             List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());
@@ -408,17 +416,23 @@ public class DeviceModelService {
 
         List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectModelsByTypeIds(typeIdList);
         return deviceModelPos.stream().map(deviceModelPo -> {
+
             DeviceModelVo deviceModelVo = new DeviceModelVo();
             deviceModelVo.setName(deviceModelPo.getName());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
+            deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
             deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
+            deviceModelVo.setFormatId(deviceModelPo.getFormatId());
+            deviceModelVo.setAndroidFormatId(deviceModelPo.getAndroidFormatId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
+            deviceModelVo.setTypeName(deviceModelPo.getTypeName());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
-            deviceModelVo.setIcon(deviceModelVo.getIcon());
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
+            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
             List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());
@@ -442,13 +456,14 @@ public class DeviceModelService {
 
         DeviceModelVo deviceModelVo = new DeviceModelVo();
         if (null != deviceModelPo) {
+
             deviceModelVo.setName(deviceModelPo.getName());
-            deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setCustomerId(deviceModelPo.getCustomerId());
             deviceModelVo.setCustomerName(deviceModelPo.getCustomerName());
             deviceModelVo.setProductId(deviceModelPo.getProductId());
             deviceModelVo.setProductQrCode(deviceModelPo.getProductQrCode());
             deviceModelVo.setFormatId(deviceModelPo.getFormatId());
+            deviceModelVo.setAndroidFormatId(deviceModelPo.getAndroidFormatId());
             deviceModelVo.setTypeId(deviceModelPo.getTypeId());
             deviceModelVo.setTypeName(deviceModelPo.getTypeName());
             deviceModelVo.setRemark(deviceModelPo.getRemark());
@@ -456,6 +471,7 @@ public class DeviceModelService {
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
             deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
             //型号的功能集
