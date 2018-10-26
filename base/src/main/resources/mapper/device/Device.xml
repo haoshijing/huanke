@@ -417,6 +417,9 @@
             <if test="name != null  and name!='' ">
                 name = #{name},
             </if>
+            <if test="mac != null  and mac!='' ">
+                mac = #{mac},
+            </if>
             <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
             </if>
@@ -742,8 +745,9 @@
         FROM_UNIXTIME( d.createTime / 1000, '%m月' )
     </select>
 
-    <select id = "selectData" resultType="java.lang.Integer">
-        select count(*) from  <include refid="tableName"/>
+    <select id="selectData" resultType="java.lang.Integer">
+        select count(*) from
+        <include refid="tableName"/>
         where
         createTime >= #{startTime}
         <![CDATA[
