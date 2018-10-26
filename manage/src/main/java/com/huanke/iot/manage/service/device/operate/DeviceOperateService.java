@@ -515,6 +515,9 @@ public class DeviceOperateService {
             }else if(!mac.equals(queryDevicePo.getMac())){
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
             }
+            if(CommonConstant.STATUS_YES == queryDevicePo.getStatus()){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"非已删除设备不可恢复");
+            }
 
             //设定绑定状态为未绑定
             queryDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);

@@ -1,5 +1,6 @@
 package com.huanke.iot.gateway.onlinecheck;
 
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -57,7 +58,7 @@ public class OnlineCheckService {
             }
             if(!data.isOnline()){
                 DevicePo updatePo = new DevicePo();
-                updatePo.setOnlineStatus(2);
+                updatePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
                 updatePo.setId(data.getId());
                 deviceMapper.updateById(updatePo);
                 it.remove();
@@ -80,14 +81,14 @@ public class OnlineCheckService {
        if(needUpdateDd){
            DevicePo updatePo = new DevicePo();
            updatePo.setId(id);
-           updatePo.setOnlineStatus(1);
+           updatePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES);
            deviceMapper.updateById(updatePo);
        }
     }
 
     private void loadOnlineFromDb(){
         DevicePo queryPo = new DevicePo();
-        queryPo.setOnlineStatus(1);
+        queryPo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES);
         List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,0,100000);
         devicePoList.forEach(devicePo -> {
             resetOnline(devicePo.getId());

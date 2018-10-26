@@ -122,14 +122,15 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/obtainApk")
-    public ApiResponse<AppInfoVo> obtainApk() {
-
-        String apkInfo = stringRedisTemplate.opsForValue().get(apkKey);
-        if (StringUtils.isNotEmpty(apkInfo)) {
-            AppInfoVo appInfoVo = JSON.parseObject(apkInfo, AppInfoVo.class);
-            return new ApiResponse<>(appInfoVo);
-        }
-        return new ApiResponse<>();
+    public ApiResponse<AppInfoVo> obtainApk(HttpServletRequest request) {
+//        String apkInfo = stringRedisTemplate.opsForValue().get(apkKey);
+//        if (StringUtils.isNotEmpty(apkInfo)) {
+//            AppInfoVo appInfoVo = JSON.parseObject(apkInfo, AppInfoVo.class);
+//            return new ApiResponse<>(appInfoVo);
+//        }
+//        return new ApiResponse<>();
+        String appId = request.getParameter("appId");
+        return new ApiResponse<>(appBasicService.getApkInfo(appId));
     }
 
     @RequestMapping("/sendFunc")
