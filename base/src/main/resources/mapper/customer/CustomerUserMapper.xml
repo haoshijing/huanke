@@ -190,4 +190,43 @@
         </where>
         limit #{limit} offset #{offset}
     </select>
+
+
+    <select id="selectUserCountByTime" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/> u
+        where
+        createTime >= #{startTime}
+        <![CDATA[
+        and createTime <= #{endTime}
+            ]]>
+        <if test="customerId != null">
+            and u.customerId = #{customerId}
+        </if>
+        and status = 1
+    </select>
+
+    <select id="selectUserCount" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where 1=1
+        <if test="customerId != null">
+            and u.customerId = #{customerId}
+        </if>
+        and status = 1
+    </select>
+
+    <select id="selectLiveUserCountByTime" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where 1=1
+        and lastVisitTime >= #{startTime}
+        <![CDATA[
+        and lastVisitTime <= #{endTime}
+            ]]>
+        <if test="customerId != null">
+            and u.customerId = #{customerId}
+        </if>
+        and status = 1
+    </select>
 </mapper>

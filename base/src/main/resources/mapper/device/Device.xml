@@ -754,8 +754,7 @@
         <![CDATA[
         and createTime <= #{endTime}
             ]]>
-        and
-        status = 1
+        and status = 1
     </select>
 
     <select id="selectCustomerDataByTime" resultType="java.lang.Integer">
