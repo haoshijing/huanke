@@ -1,6 +1,7 @@
 package com.huanke.iot.api.service.device.basic;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.controller.app.response.AppInfoVo;
 import com.huanke.iot.api.controller.app.response.AppSceneVo;
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
@@ -280,6 +281,19 @@ public class AppBasicService {
         return sensorDataVos;
     }
 
+    public AppInfoVo getApkInfo(String appId){
+        CustomerPo customerPo = customerMapper.selectByAppId(appId);
+        if(customerPo != null){
+            AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
+            if(androidConfig!=null){
+                AppInfoVo appInfoVo = new AppInfoVo();
+                appInfoVo.setVersionName(androidConfig.getName());
+                appInfoVo.setVersionCode(androidConfig.getVersion());
+                return appInfoVo;
+            }
+        }
+        return new AppInfoVo();
+    }
     public String getPassword(String appId){
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
         if(customerPo != null){
