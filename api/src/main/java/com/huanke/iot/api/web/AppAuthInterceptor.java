@@ -20,14 +20,16 @@ import javax.servlet.http.HttpServletResponse;
 @Repository
 public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
     private static final String TICKET = "Ticket";
+    private static final String APPID = "AppId";
     @Autowired
     private UserService userService;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String imei = request.getHeader(TICKET);
+        String appId = request.getHeader(APPID);
         if(StringUtils.isNotEmpty(imei)){
-            CustomerUserPo customerUserPo = userService.getUserByIMei(imei);
+            CustomerUserPo customerUserPo = userService.getUserByIMeiAndAppId(imei,appId);
             //判断是否注册
             if(customerUserPo != null){
                 CustomerPo customerByOpenId = userService.getCustomerByOpenId(customerUserPo.getOpenId());

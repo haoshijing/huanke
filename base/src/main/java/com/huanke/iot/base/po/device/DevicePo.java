@@ -21,6 +21,7 @@ public class DevicePo {
      * 设备mac地址
      */
     private String mac;
+    private String DEVID;
 
 
 

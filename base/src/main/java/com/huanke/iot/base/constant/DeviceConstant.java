@@ -53,4 +53,8 @@ public class DeviceConstant {
     public static final Integer DEVICE_MODEL_ABILITY_UPDATE_NORMAL = 0;//正常
     public static final Integer DEVICE_MODEL_ABILITY_UPDATE_ADD = 1;//增加
     public static final Integer DEVICE_MODEL_ABILITY_UPDATE_DISABIE = 3;//禁用
+
+    public static final int DEVICE_UNI_NO_TYPE = 1;//type
+    public static final int DEVICE_UNI_NO_MODEl = 2;//model
+    public static final int DEVICE_UNI_NO_DEVICE = 3;//device
 }

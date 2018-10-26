@@ -127,7 +127,7 @@
                 teamType = #{teamType},
             </if>
             <if test="createUserId != null">
-                teamType = #{createUserId},
+                createUserId = #{createUserId},
             </if>
             lastUpdateTime = #{lastUpdateTime}
             where id = #{id}
