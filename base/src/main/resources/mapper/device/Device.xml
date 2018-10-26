@@ -390,7 +390,9 @@
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>
-            updateUserId = #{updateUserId},
+            <if test="updateUserId != null">
+                updateUserId = #{updateUserId},
+            </if>
         </set>
         where
         1= 1
@@ -463,11 +465,15 @@
             <if test="location != null and location != '' ">
                 location = #{location},
             </if>
-            bindTime = #{bindTime},
+            <if test="bindTime != null">
+                bindTime = #{bindTime},
+            </if>
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>
-            updateUserId = #{updateUserId}
+            <if test="updateUserId != null">
+                updateUserId = #{updateUserId}
+            </if>
         </set>
         where
         1= 1
@@ -579,21 +585,6 @@
         </set>
         where
         deviceId = #{deviceId}
-    </update>
-
-    <update id="updateBindStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
-        update
-        <include refid="tableName"/>
-        <set>
-            bindStatus = #{bindStatus},
-            bindTime = #{bindTime},
-            lastUpdateTime = #{lastUpdateTime},
-            updateUserId = #{updateUserId}
-        </set>
-        WHERE id = #{id}
-        <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
-        <!--#{item}-->
-        <!--</foreach>-->
     </update>
 
     <update id="updateAssignStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
