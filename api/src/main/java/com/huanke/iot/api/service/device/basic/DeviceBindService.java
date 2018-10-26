@@ -1,6 +1,7 @@
 package com.huanke.iot.api.service.device.basic;
 
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
@@ -172,5 +173,20 @@ public class DeviceBindService {
             //删除对应的设备
             deviceDataService.deleteDevice(userId, devicePo.getId());
         }
+        updateDeviceBindStatus(deviceId);
+    }
+
+    private void updateDeviceBindStatus(Integer deviceId) {
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        if(deviceCustomerUserRelationPos.size() == 0){
+            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+            devicePo.setBindTime(null);
+        }else{
+            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
+            devicePo.setBindTime(System.currentTimeMillis());
+        }
+        devicePo.setLastUpdateTime(System.currentTimeMillis());
+        deviceMapper.updateById(devicePo);
     }
 }
