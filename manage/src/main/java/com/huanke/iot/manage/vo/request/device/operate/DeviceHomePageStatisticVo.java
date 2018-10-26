@@ -6,6 +6,7 @@ import lombok.Data;
 /**
  * @author Caik
  * @date 2018/10/26 13:53
+ * 首页统计返回对象
  */
 @Data
 public class DeviceHomePageStatisticVo {
