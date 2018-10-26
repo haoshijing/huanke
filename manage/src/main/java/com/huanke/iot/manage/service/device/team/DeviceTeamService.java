@@ -10,6 +10,7 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.customer.CustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -164,7 +165,7 @@ public class DeviceTeamService {
                 this.deviceTeamItemMapper.deleteBatch(deviceTeamItemPoList);
             }
             List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = this.deviceCustomerUserRelationMapper.selectByOpenId(teamCreateOrUpdateRequest.getCreateUserOpenId());
-            //存在设备客户关系时进行删除
+            //存在设备用户关系时进行删除
             if(null != deviceCustomerUserRelationPoList && 0 < deviceCustomerUserRelationPoList.size()){
                 this.deviceCustomerUserRelationMapper.deleteBatch(deviceCustomerUserRelationPoList);
             }
@@ -536,6 +537,57 @@ public class DeviceTeamService {
         deviceTeamPo.setStatus(status);
         deviceTeamPo.setCustomerId(customerId);
         return this.deviceTeamMapper.selectCount(deviceTeamPo);
+    }
+
+    /**
+     * 2018-08-20
+     * sixiaojun
+     * 根据设备列表中的设备mac查询某个设备是否已被分配
+     *
+     * @param deviceList
+     * @return
+     */
+    public TeamCreateOrUpdateRequest.TeamDeviceCreateRequest queryDeviceCustomer(TeamCreateOrUpdateRequest deviceList){
+        Integer customerId = this.customerService.obtainCustomerId(false);
+        //二、三级客户
+        if(null != customerId) {
+            for (TeamCreateOrUpdateRequest.TeamDeviceCreateRequest device : deviceList.getTeamDeviceCreateRequestList()) {
+                DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
+                //如果当前设备已被分配或未被分配则返回错误
+                if (null == deviceCustomerRelationPo || (null != deviceCustomerRelationPo && customerId != deviceCustomerRelationPo.getCustomerId())) {
+                    return device;
+                }
+            }
+        }else {
+            //超管
+            for (TeamCreateOrUpdateRequest.TeamDeviceCreateRequest device : deviceList.getTeamDeviceCreateRequestList()) {
+                DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
+                //如果当前设备已被分配或未被分配则返回错误
+                if (null != deviceCustomerRelationPo) {
+                    return device;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * 2018-08-20
+     * sixiaojun
+     * 根据mac地址查询设备表中是否存在相同mac地址的设备，如存在，返回DevicePo，新增失败
+     *
+     * @param deviceList
+     * @return devicePo
+     */
+    public TeamCreateOrUpdateRequest.TeamDeviceCreateRequest queryDeviceByMac(TeamCreateOrUpdateRequest deviceList) {
+        for (TeamCreateOrUpdateRequest.TeamDeviceCreateRequest device : deviceList.getTeamDeviceCreateRequestList()) {
+            DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
+            if (null == devicePo) {
+                return device;
+            }
+        }
+        return null;
     }
 
     /**

@@ -193,6 +193,7 @@
         <include refid="tableName"/>
         WHERE name = #{name} limit 1
     </select>
+
     <select id="selectDeviceCustomerRelationByMac" parameterType="java.lang.String"
             resultType="com.huanke.iot.base.po.device.DevicePo">
         select
@@ -200,7 +201,7 @@
         FROM
         t_device,t_device_customer_relation
         WHERE t_device.mac = #{mac}
-         AND t_device.id = t_device_customer_relation.deviceId
+            AND t_device.id = t_device_customer_relation.deviceId
          limit 1
     </select>
 
