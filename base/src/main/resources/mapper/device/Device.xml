@@ -418,6 +418,9 @@
             <if test="name != null  and name!='' ">
                 name = #{name},
             </if>
+            <if test="mac != null  and mac!='' ">
+                mac = #{mac},
+            </if>
             <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
             </if>
@@ -475,9 +478,7 @@
             <if test="location != null and location != '' ">
                 location = #{location},
             </if>
-            <if test="bindTime != null">
-                bindTime = #{bindTime},
-            </if>
+            bindTime = #{bindTime},
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>
@@ -745,8 +746,9 @@
         FROM_UNIXTIME( d.createTime / 1000, '%m月' )
     </select>
 
-    <select id = "selectData" resultType="java.lang.Integer">
-        select count(*) from  <include refid="tableName"/>
+    <select id="selectDataByTime" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
         where
         createTime >= #{startTime}
         <![CDATA[
@@ -754,5 +756,21 @@
             ]]>
         and
         status = 1
+    </select>
+
+    <select id="selectCustomerDataByTime" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/> d,
+        t_device_customer_relation r
+        where
+        1=1
+        and d.id= r.deviceId
+        and r.customerId = #{customerId}
+        and assignTime >= #{startTime}
+        <![CDATA[
+        and assignTime <= #{endTime}
+            ]]>
+        and status = 1
+        and assignStatus = 1
     </select>
 </mapper>

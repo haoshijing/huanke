@@ -9,6 +9,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
@@ -39,6 +40,7 @@ public class StatisticService {
 
     @Autowired
     private CommonUtil commonUtil;
+
 
     /**
      * 首页面板-统计用户
@@ -282,7 +284,11 @@ public class StatisticService {
         return rtnList;
     }
 
-    public ApiResponse<Integer> selectDeviceByDay(){
+    /**
+     * 设备今日增长数
+     * @return
+     */
+    public ApiResponse<Integer> selectDeviceByDay(Integer customerId){
         //获取当前系统时间戳
         Long endTime = System.currentTimeMillis();
         //获取当前日期的0点时间戳
@@ -294,9 +300,41 @@ public class StatisticService {
         calendar.set(Calendar.MINUTE,0);
         calendar.set(Calendar.SECOND,0);
         Long startTime = calendar.getTimeInMillis();
+
         //查询当日0点时间戳至当前时间戳中的设备数据
-        Integer newDeviceOfToday = this.deviceMapper.selectData(startTime,endTime);
+        Integer newDeviceOfToday = null;
+        if(null!=customerId){
+            newDeviceOfToday = this.deviceMapper.selectCustomerDataByTime(startTime,endTime,customerId);
+        }else{
+            newDeviceOfToday = this.deviceMapper.selectDataByTime(startTime,endTime);
+        }
         return new ApiResponse<>(RetCode.OK,"查询今日新增成功",newDeviceOfToday);
+    }
+
+    /**
+     * 首页统计分析
+     * @return
+     */
+    public ApiResponse<DeviceHomePageStatisticVo> queryHomePageStatistic(){
+
+        DeviceHomePageStatisticVo deviceHomePageStatisticVo = new DeviceHomePageStatisticVo();
+        /*当前域名*/
+        String userHost = commonUtil.obtainSecondHost();
+        /*当前域名的 客户主键*/
+        Integer customerId = customerService.obtainCustomerId(false);
+        /*统计设备数量*/
+        DevicePo queryDevicePo = new DevicePo();
+        queryDevicePo.setStatus(CommonConstant.STATUS_YES);
+        queryDevicePo.setCustomerId(customerId);
+        int totalDeviceCount = deviceMapper.selectCount(queryDevicePo);
+        deviceHomePageStatisticVo.setDeviceTotalCount(totalDeviceCount);
+
+        /*统计设备今日增长数量*/
+        ApiResponse<Integer> todayDeviceAddCountRtn = selectDeviceByDay(customerId);
+        deviceHomePageStatisticVo.setTodayDeviceAddCount(todayDeviceAddCountRtn.getData());
+
+
+        return new ApiResponse<>(RetCode.OK,"首页统计成功",deviceHomePageStatisticVo);
     }
 
 

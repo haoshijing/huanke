@@ -188,6 +188,23 @@ public class DeviceOperateService {
     }
 
     /**
+     * 修改设备
+     * @param deviceUpdateRequest
+     * @return
+     */
+    public ApiResponse<Boolean> updateDevice(DeviceUpdateRequest deviceUpdateRequest){
+        boolean ret = true;
+         DevicePo devicePo = deviceMapper.selectById(deviceUpdateRequest.getId());
+         if(devicePo!=null){
+             BeanUtils.copyProperties(deviceUpdateRequest,devicePo);
+             ret = deviceMapper.updateById(devicePo)>0;
+         }else{
+             return new ApiResponse<>(RetCode.OK,"该设备不存在！",false);
+         }
+
+        return new ApiResponse<>(RetCode.OK,"修改成功",ret);
+    }
+    /**
      * 2018-08-15
      * sixiaojun
      * 根据前台请求按页查询设备数据

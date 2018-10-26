@@ -97,7 +97,7 @@ public class DeviceBindService {
             DevicePo updateDevicePo = new DevicePo();
             updateDevicePo.setBindTime(System.currentTimeMillis());
             updateDevicePo.setId(devicePo.getId());
-            updateDevicePo.setBindStatus(2);
+            updateDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
             deviceMapper.updateById(updateDevicePo);
 
             List<DeviceTeamPo> deviceTeamPoList = deviceTeamMapper.selectByMasterUserId(userId);
@@ -166,27 +166,17 @@ public class DeviceBindService {
                 return;
             }
             DevicePo updatePo = new DevicePo();
-            updatePo.setBindStatus(3);
             updatePo.setId(devicePo.getId());
+            List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
+            if(deviceCustomerUserRelationPos.size() == 0) {
+                updatePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+                updatePo.setBindTime(null);
+            }
             deviceMapper.updateById(updatePo);
             userId = customerUserPo.getId();
             //删除对应的设备
             deviceDataService.deleteDevice(userId, devicePo.getId());
         }
-        updateDeviceBindStatus(deviceId);
-    }
 
-    private void updateDeviceBindStatus(Integer deviceId) {
-        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
-        DevicePo devicePo = deviceMapper.selectById(deviceId);
-        if(deviceCustomerUserRelationPos.size() == 0){
-            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
-            devicePo.setBindTime(null);
-        }else{
-            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
-            devicePo.setBindTime(System.currentTimeMillis());
-        }
-        devicePo.setLastUpdateTime(System.currentTimeMillis());
-        deviceMapper.updateById(devicePo);
     }
 }
