@@ -1,6 +1,5 @@
 package com.huanke.iot.manage.service.device.typeModel;
 
-import com.fasterxml.jackson.databind.cfg.MutableConfigOverride;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
@@ -28,13 +27,13 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
+import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelFormatCreateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
-import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityOptionVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.format.ModelFormatVo;
@@ -47,7 +46,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -143,6 +141,7 @@ public class DeviceModelService {
 //                    if (null != queryDeviceModelPo) {
 //                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
 //                    }
+                    deviceModelPo.setModelNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_MODEl));
                     deviceModelPo.setCreateTime(System.currentTimeMillis());
                     deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
                     deviceModelMapper.insert(deviceModelPo);

@@ -29,6 +29,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.LocationUtils;
+import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
@@ -170,7 +171,7 @@ public class DeviceOperateService {
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setLastUpdateTime(System.currentTimeMillis());
             insertPo.setCreateUserId(device.getCreateUserId());
-
+            insertPo.setDEVID(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
             return insertPo;
         }).collect(Collectors.toList());
         //批量插入
