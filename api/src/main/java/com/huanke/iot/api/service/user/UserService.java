@@ -127,12 +127,16 @@ public class UserService {
 //        }
 //        return deviceMacPo.getAppUserId();
         CustomerPo customerPo = customerMapper.selectByAppId(appid);
+        if(customerPo == null){
+            log.info("APP, appid = {},imei = {} , Customer is null" ,appid,imei);
+            return null;
+        }
         CustomerUserPo customerUserPo = new CustomerUserPo();
         customerUserPo.setCustomerId(customerPo.getId());
         customerUserPo.setMac(imei);
         List<CustomerUserPo> customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
         if(customerUserPos == null || customerUserPos.size()<1){
-            log.info(" imei = {} , data is null" ,imei);
+            log.info("APP, appid = {},imei = {} , User is null" ,appid,imei);
             return null;
         }
         return customerUserPos.get(0);
