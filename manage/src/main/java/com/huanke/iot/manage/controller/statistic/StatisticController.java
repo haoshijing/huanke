@@ -5,6 +5,7 @@ import com.huanke.iot.manage.service.customer.CustomerUserService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
@@ -57,7 +58,15 @@ public class StatisticController {
     @ApiOperation("今日新增设备统计")
     @GetMapping(value = "/newDeviceCountOfToday")
     public ApiResponse<Integer> newDeviceCountOfToday(){
-        return this.statisticService.selectDeviceByDay();
+        return this.statisticService.selectDeviceByDay(null);
     }
+
+
+    @ApiOperation("首页统计")
+    @GetMapping(value = "/queryHomePageStatistic")
+    public ApiResponse<DeviceHomePageStatisticVo> queryHomePageStatistic(){
+        return this.statisticService.queryHomePageStatistic();
+    }
+
 
 }
