@@ -288,10 +288,29 @@ public class DeviceTeamService {
             //获取组的类型，用户组或是联动组
             deviceTeamVo.setTeamType(deviceTeamPo.getTeamType());
             deviceTeamVo.setRemark(deviceTeamPo.getRemark());
-            DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
-            deviceTeamItemPo.setTeamId(deviceTeamPo.getId());
-            Integer deviceCount = this.deviceTeamItemMapper.selectCount(deviceTeamItemPo);
-            deviceTeamVo.setDeviceCount(deviceCount);
+            List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(deviceTeamPo.getId());
+            if(deviceTeamItemPos !=null && deviceTeamItemPos.size() > 0){
+                List<DeviceTeamVo.DeviceTeamItemVo> deviceTeamItemVos = deviceTeamItemPos.stream().map(deviceTeamItemPo ->{
+                    DeviceTeamVo.DeviceTeamItemVo deviceTeamItemVo = new DeviceTeamVo.DeviceTeamItemVo();
+                    deviceTeamItemVo.setId(deviceTeamItemPo.getId());
+                    deviceTeamItemVo.setDeviceId(deviceTeamItemPo.getDeviceId());
+                    //根据deviceId查询deviceName和mac
+                    DevicePo devicePo=this.deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
+                    deviceTeamItemVo.setDeviceName(devicePo.getName());
+                    deviceTeamItemVo.setDeviceMac(devicePo.getMac());
+                    deviceTeamItemPo.setManageName(deviceTeamItemPo.getManageName());
+                    deviceTeamItemVo.setLinkAgeStatus(deviceTeamItemPo.getLinkAgeStatus());
+                    deviceTeamItemVo.setStatus(deviceTeamItemPo.getStatus());
+                    deviceTeamItemVo.setTeamId(deviceTeamItemPo.getTeamId());
+                    deviceTeamItemVo.setUserId(deviceTeamItemPo.getUserId());
+                    return  deviceTeamItemVo;
+                }).collect(Collectors.toList());
+                deviceTeamVo.setTeamDeviceCreateRequestList(deviceTeamItemVos);
+                deviceTeamVo.setDeviceCount(deviceTeamItemVos.size());
+            }else {
+                deviceTeamVo.setTeamDeviceCreateRequestList(null);
+                deviceTeamVo.setDeviceCount(0);
+            }
             //查询图册
             List<DeviceTeamScenePo> deviceTeamImgScenePoList = this.deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId(),DeviceTeamConstants.IMAGE_VIDEO_MARK_IMAGE);
             List<DeviceTeamVo.Images> imagesList = deviceTeamImgScenePoList.stream().map(eachPo -> {
