@@ -38,7 +38,7 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     Integer updateBatch(List<DevicePo> devicePoList);
 
     Integer selectDataByTime(@Param("startTime")Long startTime,@Param("endTime") Long endTime);
-    Integer selectCustomerDataByTime(@Param("startTime")Long startTime,@Param("endTime") Long endTime,@Param("customerId") int customerId);
+    Integer selectCustomerDataByTime(@Param("startTime")Long startTime,@Param("endTime") Long endTime,@Param("customerId") Integer customerId);
 
     Integer deleteDeviceBatch(List<DevicePo> devicePoList);
 
@@ -57,7 +57,7 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     DevicePo getChildDevice(@Param("hostDeviceId")Integer hostDeviceId, @Param("address")String address);
 
     List selectDeviceCount(@Param("nowYear")int nowYear,@Param("status")int status);
-    List selectDeviceCountByCustomer(@Param("nowYear")int nowYear,@Param("status")int status , @Param("customerId")int customerId);
+    List selectDeviceCountByCustomer(@Param("nowYear")int nowYear,@Param("status")int status , @Param("customerId")Integer customerId);
 
     List<DevicePo> selectByModelId(Integer modelId);
     List<DevicePo> selectByTypeId(Integer typeId);

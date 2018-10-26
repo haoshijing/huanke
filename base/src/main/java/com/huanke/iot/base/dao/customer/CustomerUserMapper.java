@@ -19,4 +19,10 @@ public interface CustomerUserMapper extends BaseMapper<CustomerUserPo>{
      CustomerUserPo selectCustomerByMasterUserId(Integer masterUserId);
      int updatevisitTimeByOpenId(String openId);
      List selectCustomerUserCount(@Param("userYear") int userYear,@Param("customerId") Integer customerId);
+
+     int selectUserCountByTime(@Param("startTime")Long startTime,@Param("endTime") Long endTime,@Param("customerId") Integer customerId);
+     int selectLiveUserCountByTime(@Param("startTime")Long startTime,@Param("endTime") Long endTime,@Param("customerId") Integer customerId);
+     int selectUserCount(Integer customerId);
+
+
 }

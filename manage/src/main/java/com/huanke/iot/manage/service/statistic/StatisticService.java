@@ -333,10 +333,67 @@ public class StatisticService {
         ApiResponse<Integer> todayDeviceAddCountRtn = selectDeviceByDay(customerId);
         deviceHomePageStatisticVo.setTodayDeviceAddCount(todayDeviceAddCountRtn.getData());
 
+        /*统计当前用户总人数*/
+        int totalUserCount = customerUserMapper.selectUserCount(customerId);
+        /*统计昨日用户增长数*/
+        int preDayUserAddCount = selectUserCountByTime(customerId);
+        /*统计今日活跃用户数*/
+        int liveUserCount = selectLiveUserCountByTime(customerId);
+
+        deviceHomePageStatisticVo.setTotalUserCount(totalUserCount);
+        deviceHomePageStatisticVo.setPreDayUserAddCount(preDayUserAddCount);
+        deviceHomePageStatisticVo.setTodayUserLiveCount(liveUserCount);
+
 
         return new ApiResponse<>(RetCode.OK,"首页统计成功",deviceHomePageStatisticVo);
     }
 
 
+    /**
+     * 获取 昨日用户增长数
+     * @return
+     */
+    public Integer selectUserCountByTime(Integer customerId){
 
+        //获取昨天的0点时间戳
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.YEAR,calendar.get(Calendar.YEAR));
+        calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH));
+        calendar.set(Calendar.DATE,calendar.get(Calendar.DATE)-1);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        Long startTime = calendar.getTimeInMillis();
+
+        //获取昨日 23:59:59的时间戳
+        calendar.set(Calendar.HOUR_OF_DAY,23);
+        calendar.set(Calendar.MINUTE,59);
+        calendar.set(Calendar.SECOND,59);
+        Long endTime = calendar.getTimeInMillis();
+
+        int preDayUserAddCount = customerUserMapper.selectUserCountByTime(startTime,endTime,customerId);
+        return preDayUserAddCount;
+    }
+
+    /**
+     * 获取 今日活跃用户增长数
+     * @return
+     */
+    public Integer selectLiveUserCountByTime(Integer customerId){
+
+        //获取当前系统时间戳
+        Long endTime = System.currentTimeMillis();
+        //获取当前日期的0点时间戳
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.YEAR,calendar.get(Calendar.YEAR));
+        calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH));
+        calendar.set(Calendar.DATE,calendar.get(Calendar.DATE));
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        Long startTime = calendar.getTimeInMillis();
+
+        int nowLiveUserCount = customerUserMapper.selectLiveUserCountByTime(startTime,endTime,customerId);
+        return nowLiveUserCount;
+    }
 }
