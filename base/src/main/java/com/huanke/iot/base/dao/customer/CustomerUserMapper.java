@@ -22,7 +22,7 @@ public interface CustomerUserMapper extends BaseMapper<CustomerUserPo>{
 
      int selectUserCountByTime(@Param("startTime")Long startTime,@Param("endTime") Long endTime,@Param("customerId") Integer customerId);
      int selectLiveUserCountByTime(@Param("startTime")Long startTime,@Param("endTime") Long endTime,@Param("customerId") Integer customerId);
-     int selectUserCount(Integer customerId);
+     int selectUserCount(@Param("customerId") Integer customerId);
 
 
 }
