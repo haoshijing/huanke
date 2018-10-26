@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -118,19 +119,23 @@ public class UserService {
         return customerUserPo;
     }
 
-    public CustomerUserPo getUserByIMei(String imei) {
+    public CustomerUserPo getUserByIMeiAndAppId(String imei,String appid) {
 //        DeviceMacPo deviceMacPo = deviceMacMapper.selectByMac(imei);
 //        if(deviceMacPo == null){
 //            log.error(" imei = {} , data is null" ,imei);
 //            return 0;
 //        }
 //        return deviceMacPo.getAppUserId();
-        CustomerUserPo customerUserPo = customerUserMapper.selectByMac(imei);
-        if(customerUserPo == null){
+        CustomerPo customerPo = customerMapper.selectByAppId(appid);
+        CustomerUserPo customerUserPo = new CustomerUserPo();
+        customerUserPo.setCustomerId(customerPo.getId());
+        customerUserPo.setMac(imei);
+        List<CustomerUserPo> customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
+        if(customerUserPos == null || customerUserPos.size()<1){
             log.info(" imei = {} , data is null" ,imei);
             return null;
         }
-        return customerUserPo;
+        return customerUserPos.get(0);
     }
     public CustomerPo getCustomerByOpenId(String openId){
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
