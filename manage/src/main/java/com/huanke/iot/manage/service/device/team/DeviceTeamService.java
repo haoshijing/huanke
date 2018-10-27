@@ -296,8 +296,8 @@ public class DeviceTeamService {
                     deviceTeamItemVo.setDeviceId(deviceTeamItemPo.getDeviceId());
                     //根据deviceId查询deviceName和mac
                     DevicePo devicePo=this.deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
-                    deviceTeamItemVo.setDeviceName(devicePo.getName());
-                    deviceTeamItemVo.setDeviceMac(devicePo.getMac());
+                    deviceTeamItemVo.setName(devicePo.getName());
+                    deviceTeamItemVo.setMac(devicePo.getMac());
                     deviceTeamItemPo.setManageName(deviceTeamItemPo.getManageName());
                     deviceTeamItemVo.setLinkAgeStatus(deviceTeamItemPo.getLinkAgeStatus());
                     deviceTeamItemVo.setStatus(deviceTeamItemPo.getStatus());
@@ -406,8 +406,8 @@ public class DeviceTeamService {
                     deviceTeamItemVo.setDeviceId(deviceTeamItemPo.getDeviceId());
                     //根据deviceId查询deviceName和mac
                     DevicePo devicePo=this.deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
-                    deviceTeamItemVo.setDeviceName(devicePo.getName());
-                    deviceTeamItemVo.setDeviceMac(devicePo.getMac());
+                    deviceTeamItemVo.setName(devicePo.getName());
+                    deviceTeamItemVo.setMac(devicePo.getMac());
                     deviceTeamItemPo.setManageName(deviceTeamItemPo.getManageName());
                     deviceTeamItemVo.setLinkAgeStatus(deviceTeamItemPo.getLinkAgeStatus());
                     deviceTeamItemVo.setStatus(deviceTeamItemPo.getStatus());
