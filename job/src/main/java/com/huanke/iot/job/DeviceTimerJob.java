@@ -53,6 +53,10 @@ public class DeviceTimerJob {
                     sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 1);
                 } else {
                     sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
+                    /**
+                     * 硬件缺陷问题，垃圾代码
+                     */
+                    sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
                 }
                 DeviceTimerPo updatePo = new DeviceTimerPo();
                 updatePo.setId(deviceTimerPo.getId());
@@ -83,6 +87,10 @@ public class DeviceTimerJob {
                     if (deviceTimerPo.getTimerType() == 1) {
                         sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 1);
                     } else {
+                        sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
+                        /**
+                         * 硬件缺陷问题，垃圾代码
+                         */
                         sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
                     }
                 }
