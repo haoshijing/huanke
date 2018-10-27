@@ -18,7 +18,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 //@EnableSwagger2
 @MapperScan("com.huanke.iot.user.dao")
-@ComponentScan
+//@ComponentScan
 @SpringBootApplication
 @ImportResource({"classpath:application-context.xml"})
 public class UserApplication {
