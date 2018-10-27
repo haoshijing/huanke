@@ -54,9 +54,9 @@ public class DeviceTeamVo {
          */
         private Integer deviceId;
 
-        private String deviceName;
+        private String name;
 
-        private String deviceMac;
+        private String mac;
 
         private String manageName;
 
