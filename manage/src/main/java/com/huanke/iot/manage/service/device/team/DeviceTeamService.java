@@ -111,7 +111,7 @@ public class DeviceTeamService {
         }
         List<DeviceTeamScenePo> deviceTeamVideoScenePoList = this.deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId(),DeviceTeamConstants.IMAGE_VIDEO_MARK_VIDEO);
         //若存在则删除重新插入
-        if(null !=deviceTeamImgScenePoList && 0 < deviceTeamImgScenePoList.size()){
+        if(null !=deviceTeamVideoScenePoList && 0 < deviceTeamVideoScenePoList.size()){
             this.deviceTeamSceneMapper.deleteBatch(deviceTeamVideoScenePoList);
         }
         deviceTeamImgScenePoList.clear();
