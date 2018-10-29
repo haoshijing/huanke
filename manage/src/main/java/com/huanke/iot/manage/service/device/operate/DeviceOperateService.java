@@ -300,6 +300,7 @@ public class DeviceOperateService {
         if (deviceListQueryRequest != null) {
             BeanUtils.copyProperties(deviceListQueryRequest, queryPo);
         }
+        queryPo.setCustomerId(customerId);
 
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
         if (null == devicePos || 0 == devicePos.size()) {

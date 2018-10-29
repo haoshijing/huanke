@@ -243,12 +243,15 @@
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select *
-        <if test="param.customerId != null">
-            ,c.name customerName
-        </if>
+        select d.*
+        ,c.name customerName
         from
         t_device d
+        <if test="param.customerId == null">
+            from
+            t_device d
+            LEFT JOIN ( SELECT r.*, cc.name FROM t_device_customer_relation r, t_customer cc WHERE r.customerId = cc.id ) c ON d.id = c.deviceId
+        </if>
         <if test="param.customerId != null">
             ,t_device_customer_relation r,t_customer c
         </if>
