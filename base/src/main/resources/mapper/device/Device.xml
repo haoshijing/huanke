@@ -248,8 +248,6 @@
         from
         t_device d
         <if test="param.customerId == null">
-            from
-            t_device d
             LEFT JOIN ( SELECT r.*, cc.name FROM t_device_customer_relation r, t_customer cc WHERE r.customerId = cc.id ) c ON d.id = c.deviceId
         </if>
         <if test="param.customerId != null">
