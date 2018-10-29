@@ -11,6 +11,9 @@ import lombok.Data;
 public class DevicePo {
 
     private Integer customerId;
+    private String customerName;
+    private String typeName;
+    private String modelName;
     /**
      * 设备id
      */
@@ -21,7 +24,7 @@ public class DevicePo {
      * 设备mac地址
      */
     private String mac;
-    private String DEVID;
+    private String deviceNo;
 
 
 

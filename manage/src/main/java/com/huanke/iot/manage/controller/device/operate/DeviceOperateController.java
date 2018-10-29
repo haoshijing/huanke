@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
@@ -125,6 +127,28 @@ public class DeviceOperateController {
 
     }
 
+    /**
+     * 根据主键查询设备详情
+     * @param id
+     * @return
+     */
+    @ApiOperation("根据主键查询设备详情")
+    @GetMapping(value = "/queryDeviceById/{id}")
+    public ApiResponse<DeviceListVo> queryDeviceById(@PathVariable("id") Integer id) {
+        try {
+            DeviceListVo deviceVo = deviceService.queryDeviceById(id);
+            if(deviceVo!=null){
+                return new ApiResponse<>(RetCode.OK, "查询设备详情成功",deviceVo);
+            }else {
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "设备不存在",deviceVo);
+            }
+
+        } catch (Exception e) {
+            log.error("查询设备详情异常 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "查询设备详情异常");
+        }
+
+    }
     /**
      * sixiaojun
      * 设备列表
@@ -473,6 +497,22 @@ public class DeviceOperateController {
         }
         List<DeviceAbilityVo.DeviceAbilitysVo> deviceAbilityVos = deviceService.queryDetailAbilitysValue(deviceId, abilityIds);
         return new ApiResponse<>(deviceAbilityVos);
+    }
+
+    @ApiOperation("分享设备的token")
+    @RequestMapping(value = "/shareDeviceToken/{wxDeviceId}", method = RequestMethod.POST)
+    public ApiResponse<String> shareDeviceToken(@PathVariable String wxDeviceId){
+        if(null == wxDeviceId || wxDeviceId.equals("")){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"wxDeviceId不可为空");
+        }
+        String lastToken = stringRedisTemplate.opsForValue().get("token." + wxDeviceId);
+        if (StringUtils.isNotEmpty(lastToken)) {
+            return new ApiResponse<>(lastToken);
+        }
+        String token = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        stringRedisTemplate.opsForValue().set("token." + wxDeviceId, token);
+        stringRedisTemplate.expire("token." + wxDeviceId, 10, TimeUnit.HOURS);
+        return new ApiResponse<>(token);
     }
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){

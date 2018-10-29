@@ -34,6 +34,8 @@ public class User implements Serializable {
 
     private String secondDomain;
 
+    private String customerName;
+
     //启用enable,禁用:disable,限制：limited
     private String status;
 

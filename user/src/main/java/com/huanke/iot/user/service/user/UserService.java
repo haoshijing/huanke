@@ -13,12 +13,10 @@ import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +63,8 @@ public class UserService {
         User user = (User) subject.getSession().getAttribute("user");
 
         /*当是开发环境的时候，过滤 特殊域名*/
-        if(!"dev".equals(env)||!StringUtils.contains(skipRemoteHost,userHost)){
-            if(!StringUtils.equals(userHost,user.getSecondDomain())){
+        if (!"dev".equals(env) || !StringUtils.contains(skipRemoteHost, userHost)) {
+            if (!StringUtils.equals(userHost, user.getSecondDomain())) {
                 throw new AccountException("用户名与当前域名不匹配");
             }
         }
@@ -127,22 +125,30 @@ public class UserService {
 
         /*过滤特殊域名 pro*/
         List<User> users = new ArrayList<>();
-        if(StringUtils.contains(skipRemoteHost,userHost)){
+        if (StringUtils.contains(skipRemoteHost, userHost)) {
             log.info("查询全部用户:{}");
             users = userManagerMapper.selectAll();
-        }else{
-            log.info("查询域名："+userHost+"的用户");
+        } else {
+            log.info("查询域名：" + userHost + "的用户");
             users = userManagerMapper.selectAllBySLD(userHost);
         }
-        users.forEach(user -> user.setPassword(null));
+        users.forEach(
+                user -> {
+                    user.setPassword(null);
+                    if (StringUtils.isBlank(user.getSecondDomain())||"pro".equals(user.getSecondDomain())) {
+                        user.setSecondDomain("pro");
+                        user.setCustomerName("环可科技");
+                    }
+                }
+        );
         return users;
     }
 
-    public boolean hasSameUser(String userName){
+    public boolean hasSameUser(String userName) {
         boolean hasUser = false;
         if (null != userManagerMapper.selectByUserName(userName)) {
             hasUser = true;
         }
-        return  hasUser;
+        return hasUser;
     }
 }

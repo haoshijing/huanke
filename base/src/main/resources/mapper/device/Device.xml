@@ -13,7 +13,7 @@
         (
         name,
         mac,
-        DEVID,
+        deviceNo,
         wxDeviceId,
         wxDevicelicence,
         wxQrticket,
@@ -51,7 +51,7 @@
         (
         #{name},
         #{mac},
-        #{DEVID},
+        #{deviceNo},
         #{wxDeviceId},
         #{wxDevicelicence},
         #{wxQrticket},
@@ -94,6 +94,7 @@
         (
         name,
         mac,
+        deviceNo,
         wxDeviceId,
         wxDevicelicence,
         wxQrticket,
@@ -132,6 +133,7 @@
             (
             #{device.name},
             #{device.mac},
+            #{device.deviceNo},
             #{device.wxDeviceId},
             #{device.wxDevicelicence},
             #{device.wxQrticket},
@@ -169,11 +171,16 @@
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select
-        *
+       SELECT
+        d.*,t.`name` typeName ,m.`name` modelName
         FROM
-        <include refid="tableName"/>
-        WHERE id = #{id} limit 1
+        <include refid="tableName"/> d
+        LEFT JOIN t_device_type t ON d.typeId = t.id
+        LEFT JOIN t_device_model m ON d.modelId = m.id
+        WHERE
+        1=1
+        and d.id = #{id}
+        LIMIT 1
     </select>
 
     <select id="selectByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
@@ -236,10 +243,14 @@
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select * from
+        select *
+        <if test="param.customerId != null">
+            ,c.name customerName
+        </if>
+        from
         t_device d
         <if test="param.customerId != null">
-            ,t_device_customer_relation r
+            ,t_device_customer_relation r,t_customer c
         </if>
         <where>
             1=1
@@ -253,6 +264,7 @@
                 AND d.name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test="param.customerId != null">
+                and r.customerId = c.id
                 AND r.customerId = #{param.customerId}
                 and d.id = r.deviceId
             </if>

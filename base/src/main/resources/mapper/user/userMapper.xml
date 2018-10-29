@@ -120,17 +120,20 @@
         WHERE id = #{id}
     </select>
     <select id="selectAll" resultType="com.huanke.iot.base.po.user.User">
-        select
-        *
+       SELECT
+        u.* ,c.`name`  customerName
         FROM
-        <include refid="tableName"/>
+        <include refid="tableName"/> u
+        LEFT JOIN t_customer c ON u.secondDomain = c.SLD
     </select>
 
     <select id="selectAllBySLD" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.user.User">
-        select
-        *
+        SELECT
+        u.*,
+        c.`name` customerName
         FROM
-        <include refid="tableName"/>
+        <include refid="tableName"/> u
+        LEFT JOIN t_customer c ON u.secondDomain = c.SLD
         where secondDomain = #{secondDomain}
     </select>
 </mapper>
