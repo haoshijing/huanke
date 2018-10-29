@@ -71,6 +71,8 @@
         deviceId = #{deviceId}
         AND
         funcId = '210'
+        AND
+        funcValue is not null
         ORDER BY createTime DESC
         limit 1
     </select>
