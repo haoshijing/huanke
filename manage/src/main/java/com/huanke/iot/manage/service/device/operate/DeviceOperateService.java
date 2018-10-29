@@ -313,7 +313,7 @@ public class DeviceOperateService {
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
-            deviceQueryVo.setCustomerId(customerId);
+            deviceQueryVo.setCustomerId(devicePo.getCustomerId());
             deviceQueryVo.setCustomerName(devicePo.getCustomerName());
 
             deviceQueryVo.setLocation(devicePo.getLocation());
@@ -492,13 +492,21 @@ public class DeviceOperateService {
      * @param deviceVo
      * @return
      */
-    public ApiResponse<Boolean> deleteDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception {
+    public ApiResponse<DevicePo> deleteDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception {
         Integer deviceId = deviceVo.deviceId;
         String mac = deviceVo.mac;
         //解除 用户绑定关系、组关系
-        ApiResponse<Boolean> result = untieOneDeviceToUser(deviceVo);
+        ApiResponse<DevicePo> result = untieOneDeviceToUser(deviceVo);
         //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
         if (RetCode.OK == result.getCode()) {
+            DevicePo devicePo = result.getData();
+            //记录要更新的设备池信息
+            DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(devicePo.getWxDeviceId());
+
+            deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+            deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceIdPoolMapper.updateById(deviceIdPoolPo);
+
             //删除 该设备的群绑定关系
             this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
             //解除客户分配关系
@@ -521,11 +529,11 @@ public class DeviceOperateService {
      * @param deviceVo
      * @return
      */
-    public ApiResponse<Boolean> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception {
+    public ApiResponse<DevicePo> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception {
         Integer deviceId = deviceVo.deviceId;
         String mac = deviceVo.mac;
         //解除 用户绑定关系、组关系
-        ApiResponse<Boolean> result = untieOneDeviceToUser(deviceVo);
+        ApiResponse<DevicePo> result = untieOneDeviceToUser(deviceVo);
         //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
         if (RetCode.OK == result.getCode()) {
             //删除 该设备的群绑定关系
@@ -537,6 +545,12 @@ public class DeviceOperateService {
             DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
             if (queryDevicePo != null) {
 
+                //记录要更新的设备池信息
+                DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(queryDevicePo.getWxDeviceId());
+
+                deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+                deviceIdPoolMapper.updateById(deviceIdPoolPo);
                 // 删除该设备的 微信deviceid
                 queryDevicePo.setWxDeviceId(null);
                 queryDevicePo.setWxDevicelicence(null);
@@ -547,6 +561,10 @@ public class DeviceOperateService {
                 queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
                 //设定启用状态为禁用
                 queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
+
+                queryDevicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
+
+                queryDevicePo.setAssignTime(null);
 
                 queryDevicePo.setStatus(CommonConstant.STATUS_DEL);
 
@@ -920,7 +938,7 @@ public class DeviceOperateService {
      *
      * @return
      */
-    public ApiResponse<Boolean> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
+    public ApiResponse<DevicePo> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
 
         try {
 //            User user = userService.getCurrentUser();
@@ -956,7 +974,7 @@ public class DeviceOperateService {
 
             deviceMapper.updateById(unbindDevicePo);
 
-            return new ApiResponse<>(RetCode.OK, "解绑成功");
+            return new ApiResponse<>(RetCode.OK, "解绑成功",queryDevicePo);
         } catch (Exception e) {
             log.error("设备解绑失败-{}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备解绑失败");
