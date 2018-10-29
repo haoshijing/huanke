@@ -24,6 +24,7 @@ CREATE TABLE `android_config`  (
   `customerId` int(11) NOT NULL COMMENT '客户id，可关联客户表查到公众号等信息',
   `name` varchar(100)  COMMENT 'app名称',
   `logo` varchar(200)  COMMENT 'logo图标',
+  `appUrl` varchar(200)  COMMENT 'app更新下载地址',
   `qrcode` varchar(200)  COMMENT '二维码图标',
   `deviceChangePassword` varchar(100)  COMMENT '设备切换时的密码',
   `version` varchar(50)  COMMENT '版本号',

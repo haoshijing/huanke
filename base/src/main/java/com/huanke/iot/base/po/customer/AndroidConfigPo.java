@@ -13,6 +13,7 @@ public class AndroidConfigPo {
     private Integer customerId; //客户ID
     private String name;    //app名称
     private String logo;    //logo图标
+    private String appUrl;  //app更新下载地址
     private String qrcode;  //二维码图标
     private String version; //版本
     private Integer status = CommonConstant.STATUS_YES;   //
