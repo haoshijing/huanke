@@ -46,10 +46,12 @@
 
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerRelationPo">
         select
-        *
+        r.*,c.name customerName
         FROM
-        <include refid="tableName"/>
-        WHERE deviceId = #{deviceId} limit 1
+        <include refid="tableName"/> r,t_customer c
+        WHERE deviceId = #{deviceId}
+        and r.customerId = c.id
+        limit 1
     </select>
 
     <select id="selectByDeviceMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DeviceCustomerRelationPo">

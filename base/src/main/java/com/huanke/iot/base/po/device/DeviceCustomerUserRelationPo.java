@@ -12,6 +12,7 @@ public class DeviceCustomerUserRelationPo {
     private Integer id;
     private Integer customerId;
     private String openId;
+    private String nickname;
     private String parentOpenId;
     private Integer deviceId;
     private String defineName;

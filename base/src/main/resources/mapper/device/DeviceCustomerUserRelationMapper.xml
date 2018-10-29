@@ -75,12 +75,12 @@
 
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo">
         select
-        *
+        r.*, u.nickname
         FROM
-        <include refid="tableName"/>
+        <include refid="tableName"/> r,t_customer_user u
         WHERE deviceId = #{deviceId}
-        AND
-        parentOpenId is null
+        AND r.openId = u.openId
+        AND parentOpenId is null
         limit 1
     </select>
 

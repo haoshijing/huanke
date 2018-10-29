@@ -128,6 +128,28 @@ public class DeviceOperateController {
     }
 
     /**
+     * 根据主键查询设备详情
+     * @param id
+     * @return
+     */
+    @ApiOperation("根据主键查询设备详情")
+    @GetMapping(value = "/queryDeviceById/{id}")
+    public ApiResponse<DeviceListVo> queryDeviceById(@PathVariable("id") Integer id) {
+        try {
+            DeviceListVo deviceVo = deviceService.queryDeviceById(id);
+            if(deviceVo!=null){
+                return new ApiResponse<>(RetCode.OK, "查询设备详情成功",deviceVo);
+            }else {
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "设备不存在",deviceVo);
+            }
+
+        } catch (Exception e) {
+            log.error("查询设备详情异常 = {}", e);
+            return new ApiResponse<>(RetCode.ERROR, "查询设备详情异常");
+        }
+
+    }
+    /**
      * sixiaojun
      * 设备列表
      *
