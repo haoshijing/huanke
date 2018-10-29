@@ -94,6 +94,7 @@
         (
         name,
         mac,
+        deviceNo,
         wxDeviceId,
         wxDevicelicence,
         wxQrticket,
@@ -132,6 +133,7 @@
             (
             #{device.name},
             #{device.mac},
+            #{device.deviceNo},
             #{device.wxDeviceId},
             #{device.wxDevicelicence},
             #{device.wxQrticket},
