@@ -135,7 +135,7 @@ public class UserService {
         users.forEach(
                 user -> {
                     user.setPassword(null);
-                    if (StringUtils.isBlank(user.getSecondDomain())) {
+                    if (StringUtils.isBlank(user.getSecondDomain())||"pro".equals(user.getSecondDomain())) {
                         user.setSecondDomain("pro");
                         user.setCustomerName("环可科技");
                     }
