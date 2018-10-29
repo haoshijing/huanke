@@ -5,6 +5,13 @@ import lombok.Data;
 
 @Data
 public class DeviceListVo {
+
+    /* 归属 */
+    private Integer customerId;
+    private String customerName;
+    private String deviceType;
+    private String modelName;
+
     /**
      *设备名
      */
@@ -15,15 +22,9 @@ public class DeviceListVo {
     private String mac;
     private String deviceNo;
 
-    private Integer customerId;
-
-    /**
-     * 归属
-     */
-    private String customerName;
+    private String wxDeviceId;
 
     private Integer typeId;
-    private String deviceType;
     /**
      * 分配状态
      */
@@ -74,7 +75,6 @@ public class DeviceListVo {
     /**
      * 设备型号
      */
-    private String modelName;
 
     private Long birthTime;
 
