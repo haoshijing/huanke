@@ -225,6 +225,7 @@ public class DeviceOperateService {
         deviceQueryVo.setName(devicePo.getName());
         deviceQueryVo.setMac(devicePo.getMac());
         deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
+        deviceQueryVo.setWxDeviceId(devicePo.getWxDeviceId());
 
         deviceQueryVo.setTypeId(devicePo.getTypeId());
         deviceQueryVo.setDeviceType(devicePo.getTypeName());
