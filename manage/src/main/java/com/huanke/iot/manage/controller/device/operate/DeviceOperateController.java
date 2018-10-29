@@ -327,7 +327,7 @@ public class DeviceOperateController {
                     return this.deviceService.callBackDeviceFromCustomer(deviceList);
                 } else {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, "当前列表设备中存在未分配设备，无法召回", false);
-                }
+            }
 
             } catch (Exception e) {
                 log.error("设备召回异常 = {}", e);

@@ -30,7 +30,8 @@ public enum  FuncTypeEnums {
     TIMER_SCREEN1("331","滤网2","",3,2),
     TIMER_SCREEN2("332","滤网3","",3,2),
     TIMER_CARBON("340","活性碳租赁时间","",3,2),
-    TIMER_REMAIN("350","可用时间","",3,2);
+    TIMER_REMAIN("350","可用时间","",3,2),
+    DEVICE_ONLINE("410","在离线","0:离线,1:在线",2,3);
     FuncTypeEnums(String code,String mark,String range,int funcType,int operType){
         this.code = code;
         this.mark = mark;
