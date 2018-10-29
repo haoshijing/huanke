@@ -289,6 +289,7 @@ public class AppBasicService {
             if(androidConfig!=null){
                 AppInfoVo appInfoVo = new AppInfoVo();
                 appInfoVo.setVersionName(androidConfig.getName());
+                appInfoVo.setApkUrl(androidConfig.getAppUrl());
                 appInfoVo.setVersionCode(androidConfig.getVersion());
                 return appInfoVo;
             }
