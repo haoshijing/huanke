@@ -60,7 +60,7 @@ public class DeviceDataService {
                     CustomerUserPo customerUserPo=this.customerUserMapper.selectByUserId(deviceOperLogPo.getOperUserId());
                     deviceOperLogVo.setOperName(customerUserPo.getNickname());
                 }else {
-                    CustomerPo customerPo = this.customerMapper.selectById(deviceOperLogPo.getId());
+                    CustomerPo customerPo = this.customerMapper.selectById(deviceOperLogPo.getOperUserId());
                     deviceOperLogVo.setOperName(customerPo.getName());
                 }
             }
