@@ -15,5 +15,7 @@ public interface DeviceOperLogMapper extends BaseMapper<DeviceOperLogPo> {
 
     Integer updateByRequestId(DeviceOperLogPo deviceOperLogPo);
 
+    DeviceOperLogPo queryPowerByCreateTime(@Param("deviceId") Integer deviceId);
+
     DeviceOperLogPo queryByRequestId(String requestId);
 }
