@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 //2018-08-15
 //import com.huanke.iot.manage.controller.request.OtaDeviceRequest;
@@ -473,6 +475,22 @@ public class DeviceOperateController {
         }
         List<DeviceAbilityVo.DeviceAbilitysVo> deviceAbilityVos = deviceService.queryDetailAbilitysValue(deviceId, abilityIds);
         return new ApiResponse<>(deviceAbilityVos);
+    }
+
+    @ApiOperation("分享设备的token")
+    @RequestMapping(value = "/shareDeviceToken/{wxDeviceId}", method = RequestMethod.POST)
+    public ApiResponse<String> shareDeviceToken(@PathVariable String wxDeviceId){
+        if(null == wxDeviceId || wxDeviceId.equals("")){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"wxDeviceId不可为空");
+        }
+        String lastToken = stringRedisTemplate.opsForValue().get("token." + wxDeviceId);
+        if (StringUtils.isNotEmpty(lastToken)) {
+            return new ApiResponse<>(lastToken);
+        }
+        String token = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        stringRedisTemplate.opsForValue().set("token." + wxDeviceId, token);
+        stringRedisTemplate.expire("token." + wxDeviceId, 10, TimeUnit.HOURS);
+        return new ApiResponse<>(token);
     }
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){

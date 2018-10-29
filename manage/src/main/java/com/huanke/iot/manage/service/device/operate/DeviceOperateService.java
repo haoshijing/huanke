@@ -37,10 +37,7 @@ import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceWeatherVo;
+import com.huanke.iot.manage.vo.response.device.operate.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -1017,6 +1014,16 @@ public class DeviceOperateService {
 
     }
 
+    public ApiResponse<List<DeviceShareListVo>> queryShareList(Integer deviceId){
+        return new ApiResponse<>(RetCode.OK,"查询授权列表成功");
+    }
+
+    /**
+     * 查询主设备下的从设备
+     * @param deviceId
+     * @return
+     * @throws Exception
+     */
     public ApiResponse<List<DevicePo>> queryChildDevice(Integer deviceId)throws Exception{
         List<DevicePo> devicePoList = this.deviceMapper.selectChildDeviceListByHostDeviceId(deviceId);
         if(null != devicePoList && 0 < devicePoList.size()){
@@ -1027,14 +1034,23 @@ public class DeviceOperateService {
         }
     }
 
-
+    /**
+     * 查询用户
+     * @param customerId
+     * @return
+     */
     public List<CustomerUserPo> queryUser(Integer customerId) {
         List<CustomerUserPo> customerUserPoList = this.customerUserMapper.selectByCustomerId(customerId);
         return customerUserPoList;
     }
 
 
-
+    /**
+     * 查询设备位置
+     * @param deviceId
+     * @return
+     * @throws Exception
+     */
     public ApiResponse<DeviceLocationVo> queryDeviceLocation(Integer deviceId)throws Exception{
         DeviceLocationVo locationVo = new DeviceLocationVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
@@ -1077,6 +1093,11 @@ public class DeviceOperateService {
 
     }
 
+    /**
+     * 查询天气
+     * @param deviceId
+     * @return
+     */
     public ApiResponse<DeviceWeatherVo> queryDeviceWeather(Integer deviceId){
         DeviceWeatherVo deviceWeatherVo=new DeviceWeatherVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
