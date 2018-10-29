@@ -42,6 +42,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -224,9 +225,9 @@ public class AppBasicService {
         if (devicePo == null) {
             return null;
         }
-        Integer deviceTypeId = devicePo.getTypeId();
-        List<String> dirValues = deviceAbilityMapper.getDirValuesByDeviceTypeId(deviceTypeId);
-
+        Integer deviceModelId = devicePo.getModelId();
+        List<DeviceAbilityPo> deviceAbilityPos = deviceModelabilityMapper.selectActiveByModelId(deviceModelId);
+        List<String> dirValues = deviceAbilityPos.stream().map(deviceAbilityPo -> deviceAbilityPo.getDirValue()).collect(Collectors.toList());
         List<DeviceSensorStatPo> deviceSensorPos = deviceSensorStatMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
         for (String sensorType : dirValues) {
             SensorDataVo sensorDataVo = new SensorDataVo();
