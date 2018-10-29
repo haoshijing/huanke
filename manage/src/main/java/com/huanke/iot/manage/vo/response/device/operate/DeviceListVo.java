@@ -49,6 +49,11 @@ public class DeviceListVo {
      * 工作状态
      */
     private Integer workStatus;
+
+    /**
+     * 开关机状态
+     */
+    private Integer powerStatus;
     /**
      * 在线状态
      */

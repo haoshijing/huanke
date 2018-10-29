@@ -11,6 +11,7 @@ import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
@@ -23,6 +24,7 @@ import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
+import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
@@ -125,6 +127,9 @@ public class DeviceOperateService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DeviceOperLogMapper deviceOperLogMapper;
 
     @Autowired
     private LocationUtils locationUtils;
@@ -318,6 +323,14 @@ public class DeviceOperateService {
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
+            //查询开关机状态
+            DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
+            if(null != deviceOperLogPo){
+                //0-关机 1-开机
+                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0")?0:1);
+            }else {
+                deviceQueryVo.setPowerStatus(0);
+            }
             //获取主从相关的信息
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
             Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getId());
