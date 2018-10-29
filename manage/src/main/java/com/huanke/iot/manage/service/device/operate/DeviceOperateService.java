@@ -324,13 +324,13 @@ public class DeviceOperateService {
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
             //查询开关机状态
-            DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
-            if(null != deviceOperLogPo){
-                //0-关机 1-开机
-                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0")?0:1);
-            }else {
-                deviceQueryVo.setPowerStatus(0);
-            }
+//            DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
+//            if(null != deviceOperLogPo){
+//                //0-关机 1-开机
+//                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0")?0:1);
+//            }else {
+//                deviceQueryVo.setPowerStatus(0);
+//            }
             //获取主从相关的信息
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
             Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getId());
