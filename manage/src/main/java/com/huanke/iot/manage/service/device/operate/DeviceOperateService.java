@@ -238,6 +238,7 @@ public class DeviceOperateService {
             deviceQueryVo.setCustomerName(deviceCustomerRelationPo.getCustomerName());
         }
 
+        deviceQueryVo.setLocation(devicePo.getLocation());
         deviceQueryVo.setAssignStatus(devicePo.getAssignStatus());
         deviceQueryVo.setBindStatus(devicePo.getBindStatus());
         deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
@@ -309,6 +310,7 @@ public class DeviceOperateService {
             deviceQueryVo.setCustomerId(customerId);
             deviceQueryVo.setCustomerName(devicePo.getCustomerName());
 
+            deviceQueryVo.setLocation(devicePo.getLocation());
             deviceQueryVo.setAssignStatus(devicePo.getAssignStatus());
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
