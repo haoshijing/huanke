@@ -12,6 +12,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
+import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceOperLogVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceSensorStatVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceWorkLogVo;
@@ -44,7 +45,7 @@ public class DeviceDataService {
     @Autowired
     private CustomerMapper customerMapper;
 
-    public ApiResponse<List<DeviceOperLogVo>> queryOperLogList(DeviceDataQueryRequest request) throws Exception{
+    public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceDataQueryRequest request) throws Exception{
         DeviceOperLogPo queryPo = new DeviceOperLogPo();
         queryPo.setDeviceId(request.getDeviceId());
         Integer offset = (request.getPage() - 1)*request.getLimit();
@@ -85,6 +86,20 @@ public class DeviceDataService {
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"设备日志查询成功",deviceOperLogVoList);
     }
+
+    public ApiResponse<BaseListVo> queryOperLogList(DeviceDataQueryRequest request) throws Exception{
+        BaseListVo baseListVo = new BaseListVo();
+        DeviceOperLogPo queryPo = new DeviceOperLogPo();
+        queryPo.setDeviceId(request.getDeviceId());
+        ApiResponse<List<DeviceOperLogVo>> operLogRtn = queryOperLog(request);
+        if (operLogRtn != null && operLogRtn.getCode() != RetCode.OK) {
+            return new ApiResponse<>(RetCode.ERROR, operLogRtn.getMsg());
+        }
+        Integer totalCount = this.deviceOperLogMapper.selectCount(queryPo);
+        baseListVo.setDataList(operLogRtn.getData());
+        baseListVo.setTotalCount(totalCount);
+        return new ApiResponse<>(RetCode.OK,"查询设备操作日志与总数成功",baseListVo);
+    }
     //按页和开始结束时间查询设备数据
     public ApiResponse<List<DeviceSensorStatVo>> queryDeivceSensorData(DeviceDataQueryRequest deviceDataQueryRequest)throws Exception{
         DeviceSensorStatPo deviceSensorStatPo =new DeviceSensorStatPo();
@@ -101,6 +116,20 @@ public class DeviceDataService {
             return deviceSensorStatVo;
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"查询成功",deviceSensorStatVoList);
+    }
+
+    public ApiResponse<BaseListVo> queryDeivceSensorDataList(DeviceDataQueryRequest request)throws Exception{
+        BaseListVo baseListVo = new BaseListVo();
+        DeviceSensorStatPo queryPo = new DeviceSensorStatPo();
+        queryPo.setDeviceId(request.getDeviceId());
+        ApiResponse<List<DeviceSensorStatVo>> sensorDataRtn = queryDeivceSensorData(request);
+        if (sensorDataRtn != null && sensorDataRtn.getCode() != RetCode.OK) {
+            return new ApiResponse<>(RetCode.ERROR, sensorDataRtn.getMsg());
+        }
+        Integer totalCount = this.deviceSensorStatMapper.selectCount(queryPo);
+        baseListVo.setDataList(sensorDataRtn.getData());
+        baseListVo.setTotalCount(totalCount);
+        return new ApiResponse<>(RetCode.OK,"查询设备操作日志与总数成功",baseListVo);
     }
     //按页查询设备工作日志（开关机时间、上离线时间）
     public ApiResponse<List<DeviceWorkLogVo>> queryDeviceWorkData(DeviceDataQueryRequest request){
@@ -134,5 +163,22 @@ public class DeviceDataService {
             });
         }
         return new ApiResponse<>(RetCode.OK,"查询工作日志成功",deviceWorkLogVoList);
+    }
+
+    public ApiResponse<BaseListVo> queryDeviceWorkDataList(DeviceDataQueryRequest request){
+        BaseListVo baseListVo = new BaseListVo();
+        DeviceOperLogPo queryPo = new DeviceOperLogPo();
+        queryPo.setDeviceId(request.getDeviceId());
+        queryPo.setFuncId("210");
+        ApiResponse<List<DeviceWorkLogVo>> workLogRtn = queryDeviceWorkData(request);
+        if (workLogRtn != null && workLogRtn.getCode() != RetCode.OK) {
+            return new ApiResponse<>(RetCode.ERROR, workLogRtn.getMsg());
+        }
+        Integer powerCount = this.deviceOperLogMapper.selectCount(queryPo);
+        queryPo.setFuncId("410");
+        Integer onLineOffLineCount = this.deviceOperLogMapper.selectCount(queryPo);
+        baseListVo.setDataList(workLogRtn.getData());
+        baseListVo.setTotalCount(powerCount+onLineOffLineCount);
+        return new ApiResponse<>(RetCode.OK,"查询设备操作日志与总数成功",baseListVo);
     }
 }
