@@ -12,10 +12,7 @@ import com.huanke.iot.manage.vo.response.device.data.DeviceWorkLogVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +24,7 @@ public class DeviceDataController {
     private DeviceDataService deviceDataService;
 
     @ApiOperation("查看操作日志")
-    @RequestMapping(value = "/queryOperLog", method = RequestMethod.POST)
+    @GetMapping(value = "/queryOperLog")
     public ApiResponse<BaseListVo> queryOperLog(@RequestBody DeviceDataQueryRequest deviceDataQueryRequest){
         try {
             return this.deviceDataService.queryOperLogList(deviceDataQueryRequest);
@@ -37,7 +34,7 @@ public class DeviceDataController {
         }
     }
     @ApiOperation("查看设备数据")
-    @RequestMapping(value = "/queryDeviceSensorStat", method = RequestMethod.POST)
+    @GetMapping(value = "/queryDeviceSensorStat")
     public ApiResponse<BaseListVo> queryDeviceSensorStat(@RequestBody DeviceDataQueryRequest deviceDataQueryRequest){
         try {
             return this.deviceDataService.queryDeivceSensorDataList(deviceDataQueryRequest);
@@ -48,7 +45,7 @@ public class DeviceDataController {
     }
 
     @ApiOperation("查看工作日志")
-    @RequestMapping(value = "/queryDeviceWorkLog", method = RequestMethod.POST)
+    @GetMapping(value = "/queryDeviceWorkLog")
     public ApiResponse<BaseListVo> queryDeviceWorkLog(@RequestBody DeviceDataQueryRequest deviceDataQueryRequest){
         try {
             return this.deviceDataService.queryDeviceWorkDataList(deviceDataQueryRequest);
