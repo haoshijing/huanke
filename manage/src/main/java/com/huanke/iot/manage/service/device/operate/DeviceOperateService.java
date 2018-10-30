@@ -1120,11 +1120,23 @@ public class DeviceOperateService {
     }
 
     public ApiResponse<List<DeviceShareListVo>> queryShareList(Integer deviceId){
+        List<DeviceShareListVo> deviceShareListVoList = new ArrayList<>();
         //查询设备的绑定情况
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList =this.deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
         //
         if(null != deviceCustomerUserRelationPoList && 0 <deviceCustomerUserRelationPoList.size()){
             //查询主绑人
+            DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationPoList.get(0);
+            CustomerUserPo masterUserPo = this.customerUserMapper.selectByOpenId(deviceCustomerUserRelationPo.getOpenId());
+            DeviceShareListVo masterPo = new DeviceShareListVo();
+            //主绑定人信息
+            masterPo.setUserId(masterUserPo.getId());
+            masterPo.setOpenId(masterUserPo.getOpenId());
+            masterPo.setHeadImg(masterUserPo.getHeadimgurl());
+            masterPo.setNickname(masterUserPo.getNickname());
+            DeviceTeamItemPo masterTeamItemPo = this.deviceTeamItemMapper.selectByJoinId(deviceId,masterUserPo.getId());
+            masterPo.setJoinTime(masterTeamItemPo.getCreateTime());
+            //查询设备的共享人信息
             return new ApiResponse<>(RetCode.OK,"查询授权列表成功");
         }else {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");

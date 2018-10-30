@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class DeviceSensorStatVo {
     private Integer deviceId;
+    private String name;
     private Integer co2;
     private Integer hcho;
     private Integer pm;
