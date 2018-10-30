@@ -7,6 +7,7 @@ import com.huanke.iot.manage.service.device.operate.DeviceDataService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
 import com.huanke.iot.manage.vo.response.device.data.DeviceOperLogVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceSensorStatVo;
+import com.huanke.iot.manage.vo.response.device.data.DeviceWorkLogVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,17 @@ public class DeviceDataController {
         }catch (Exception e){
             log.error("设备传感器数据查询异常 = {}",e);
             return new ApiResponse<>(RetCode.ERROR,"设备传感器数据查询失败");
+        }
+    }
+
+    @ApiOperation("查看工作日志")
+    @RequestMapping(value = "/queryDeviceWorkLog", method = RequestMethod.POST)
+    public ApiResponse<List<DeviceWorkLogVo>> queryDeviceWorkLog(@RequestBody DeviceDataQueryRequest deviceDataQueryRequest){
+        try {
+            return this.deviceDataService.queryDeviceWorkData(deviceDataQueryRequest);
+        }catch (Exception e){
+            log.error("设备工作日志查询异常= {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备工作日志查询失败");
         }
     }
 }

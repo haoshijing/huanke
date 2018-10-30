@@ -15,6 +15,7 @@ import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
 import com.huanke.iot.manage.vo.response.device.data.DeviceOperLogVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceSensorStatVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceWorkLogVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * @version 2018年05月30日 13:25
  **/
 @Service
+@Slf4j
 public class DeviceDataService {
 
     @Autowired
@@ -115,6 +117,7 @@ public class DeviceDataService {
                 DeviceWorkLogVo deviceWorkLogVo = new DeviceWorkLogVo();
                 deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0")?"离线":"上线");
                 deviceWorkLogVo.setCreateTime(eachPo.getCreateTime());
+                log.info("当前设备上/离线信息：{}",deviceWorkLogVo.getDeviceStatus());
                 deviceWorkLogVoList.add(deviceWorkLogVo);
             });
         }
@@ -126,6 +129,7 @@ public class DeviceDataService {
                 DeviceWorkLogVo deviceWorkLogVo = new DeviceWorkLogVo();
                 deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0")?"关机":"开机");
                 deviceWorkLogVo.setCreateTime(eachPo.getCreateTime());
+                log.info("当前设备开关机信息：{}",deviceWorkLogVo.getDeviceStatus());
                 deviceWorkLogVoList.add(deviceWorkLogVo);
             });
         }
