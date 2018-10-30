@@ -299,6 +299,15 @@ public class CustomerService {
      * @return
      */
     public CustomerListVo selectList(CustomerQueryRequest request) {
+
+        try{
+            User user = userService.getCurrentUser();
+            System.out.println(user);
+        }catch (Exception e){
+            log.error("获取用户信息报错。");
+        }
+
+
         CustomerListVo customerListVo = new CustomerListVo();
         //获取当前二级域名的客户主键
         Integer curCustomerId = obtainCustomerId(false);
