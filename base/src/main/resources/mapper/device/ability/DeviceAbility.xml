@@ -15,6 +15,7 @@
         writeStatus,
         readStatus,
         runStatus,
+        paramName,
         configType,
         abilityType,
         minVal,
@@ -31,6 +32,7 @@
         #{writeStatus},
         #{readStatus},
         #{runStatus},
+        #{paramName},
         #{configType},
         #{abilityType},
         #{minVal},
@@ -113,6 +115,9 @@
             </if>
             <if test="runStatus != null">
                 runStatus = #{runStatus},
+            </if>
+            <if test="paramName != null and remark != ''">
+                paramName = #{paramName},
             </if>
             <if test="configType != null">
                 configType = #{configType},

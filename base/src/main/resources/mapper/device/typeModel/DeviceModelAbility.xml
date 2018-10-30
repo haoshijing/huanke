@@ -158,4 +158,10 @@
         and dma.status = 1
     </select>
 
+    <select id="queryParamsAbility" resultType="com.huanke.iot.base.dto.DeviceParamsDto">
+        select dma.definedName modelAbilityName, da.id abilityId, da.paramName abilityParamsName from t_device_model_ability dma
+        LEFT JOIN t_device_ability da ON dma.abilityId = da.id
+        WHERE dma.modelId = #{modelId} AND dma.status = 1
+    </select>
+
 </mapper>
