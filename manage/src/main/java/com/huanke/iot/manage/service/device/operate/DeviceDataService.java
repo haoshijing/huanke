@@ -4,11 +4,13 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
@@ -44,6 +46,9 @@ public class DeviceDataService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
 
     public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceDataQueryRequest request) throws Exception{
         DeviceOperLogPo queryPo = new DeviceOperLogPo();
@@ -113,6 +118,10 @@ public class DeviceDataService {
         List<DeviceSensorStatVo> deviceSensorStatVoList = deviceSensorStatPoList.stream().map(eachPo ->{
             DeviceSensorStatVo deviceSensorStatVo = new DeviceSensorStatVo();
             BeanUtils.copyProperties(eachPo,deviceSensorStatVo);
+            DevicePo devicePo = this.deviceMapper.selectById(eachPo.getDeviceId());
+            if(null != devicePo){
+                deviceSensorStatVo.setName(devicePo.getName());
+            }
             return deviceSensorStatVo;
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"查询成功",deviceSensorStatVoList);
