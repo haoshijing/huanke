@@ -125,7 +125,9 @@ public class DeviceParamsService {
             configFuncMessage.setValue(values);
             configFuncMessages.add(configFuncMessage);
         }
-        mqttSendService.sendMessage(topic, JSON.toJSONString(configFuncMessages));
+        Map<String,List> req = new HashMap<String,List>();
+        req.put("datas",configFuncMessages);
+        mqttSendService.sendMessage(topic, JSON.toJSONString(req));
         return requestId;
     }
 
