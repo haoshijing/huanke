@@ -25,7 +25,7 @@ public class CfgHandler extends AbstractHandler {
 
     @Data
     public static class CfgMessage {
-        private List<CfgConfig> cfgConfigs;
+        private List<CfgConfig> datas;
     }
 
     @Data
@@ -44,7 +44,7 @@ public class CfgHandler extends AbstractHandler {
         Integer deviceId = getDeviceIdFromTopic(topic);
         try {
             CfgMessage cfgMessage = JSON.parseObject(new String(payloads), CfgMessage.class);
-            List<CfgConfig> cfgConfigs = cfgMessage.getCfgConfigs();
+            List<CfgConfig> cfgConfigs = cfgMessage.getDatas();
             deviceParamService.updateParam(deviceId, cfgConfigs);
         } catch (Exception e) {
             log.error("", e);
