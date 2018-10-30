@@ -84,6 +84,8 @@ public class CustomerService {
      */
     public ApiResponse<Integer> saveDetail(CustomerVo customerVo) {
 
+        User user = userService.getCurrentUser();
+
         //获取当前二级域名的客户主键
         Integer curCustomerId = obtainCustomerId(false);
         //客户信息
@@ -114,8 +116,32 @@ public class CustomerService {
         // 先保存 客户信息
         //如果有客户主键信息 为更新，否则为新增
         if (customerVo.getId() != null && customerVo.getId() > 0) {
+            //更新客户的超级管理员
+            String loginName = customerPo.getLoginName();
+            if(StringUtils.isNotEmpty(loginName)){
+                CustomerPo queryCustomer = customerMapper.selectById(customerVo.getId());
+                //如果 准备修改的用户名和 库里的用户名一致，则表明不需要新增,反之新增该用户
+                if(!customerPo.getId().equals(queryCustomer.getId())){
+                    boolean hasSameUser = userService.hasSameUser(loginName);
+                    if(!hasSameUser){
+                        User newuser = new User();
+                        newuser.setNickName(customerPo.getName());
+                        newuser.setSecondDomain(customerPo.getSLD());
+                        newuser.setUserName(loginName);
+                        newuser.setPassword(defaultPassWord);
+                        userService.createUser(newuser);
+                    }else {
+                        return new ApiResponse<>(RetCode.PARAM_ERROR, "用户名已存在！");
+                    }
+                }
+
+            }else{
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名称不可为空！");
+            }
+
             customerPo.setId(customerVo.getId());
             customerPo.setLastUpdateTime(System.currentTimeMillis());
+            customerPo.setUpdateUserId(user.getId());
             this.customerMapper.updateById(customerPo);
 
         } else {
@@ -127,12 +153,12 @@ public class CustomerService {
             if(StringUtils.isNotEmpty(loginName)){
                 boolean hasSameUser = userService.hasSameUser(loginName);
                 if(!hasSameUser){
-                    User user = new User();
-                    user.setNickName(customerPo.getName());
-                    user.setSecondDomain(customerPo.getSLD());
-                    user.setUserName(loginName);
-                    user.setPassword(defaultPassWord);
-                    userService.createUser(user);
+                    User newuser = new User();
+                    newuser.setNickName(customerPo.getName());
+                    newuser.setSecondDomain(customerPo.getSLD());
+                    newuser.setUserName(loginName);
+                    newuser.setPassword(defaultPassWord);
+                    userService.createUser(newuser);
                 }else {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, "用户名已存在！");
                 }
@@ -299,14 +325,6 @@ public class CustomerService {
      * @return
      */
     public CustomerListVo selectList(CustomerQueryRequest request) {
-
-        try{
-            User user = userService.getCurrentUser();
-            System.out.println(user);
-        }catch (Exception e){
-            log.error("获取用户信息报错。");
-        }
-
 
         CustomerListVo customerListVo = new CustomerListVo();
         //获取当前二级域名的客户主键
