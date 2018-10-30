@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.service.device.ability;
 
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceParamConstants;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceParamsMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 描述:
@@ -117,7 +117,7 @@ public class DeviceParamsService {
         }else{
             //更新
             deviceParamsPo.setId(exitDeviceParamsPo.getId());
-            deviceParamsPo.setUpdateWay(2);//更改途径 2-后台
+            deviceParamsPo.setUpdateWay(DeviceParamConstants.MANAGE);//更改途径 2-后台
             deviceParamsPo.setLastUpdateTime(System.currentTimeMillis());
             deviceParamsMapper.updateById(deviceParamsPo);
             //添加更新人

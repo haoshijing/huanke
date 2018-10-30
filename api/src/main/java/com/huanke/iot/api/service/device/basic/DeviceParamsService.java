@@ -5,6 +5,7 @@ import com.huanke.iot.api.controller.h5.req.DeviceParamConfigRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceParamsVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceParamConstants;
 import com.huanke.iot.base.dao.device.DeviceParamsMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.device.DeviceParamsPo;
@@ -93,7 +94,7 @@ public class DeviceParamsService {
             deviceParamsPo.setSort(sort);
             DeviceParamsPo oldDeviceParamsPo = deviceParamsMapper.selectList(deviceParamsPo);
             oldDeviceParamsPo.setValue(values);
-            oldDeviceParamsPo.setUpdateWay(1);//更新渠道：1-H5
+            oldDeviceParamsPo.setUpdateWay(DeviceParamConstants.H5);//更新渠道：1-H5
             deviceParamsMapper.updateById(oldDeviceParamsPo);
             configMap.put(sort, valuesList);
         }
@@ -127,6 +128,23 @@ public class DeviceParamsService {
         }
         mqttSendService.sendMessage(topic, JSON.toJSONString(configFuncMessages));
         return requestId;
+    }
+
+    /**
+     * 查询设备返回传参状态
+     *
+     * @param deviceId
+     * @param typeName
+     * @return
+     */
+    public Boolean queryDeviceBack(Integer deviceId, String typeName) {
+        Boolean result = true;
+        List<DeviceParamsPo> existByDeviceIdAndTypeName = deviceParamsMapper.findExistByDeviceIdAndTypeName(deviceId, typeName);
+        long l = System.currentTimeMillis();
+        for (DeviceParamsPo deviceParamsPo : existByDeviceIdAndTypeName) {
+            result = result && deviceParamsPo.getUpdateWay() == DeviceParamConstants.UPLOAD && l - deviceParamsPo.getLastUpdateTime() < 60*1000;
+        }
+        return result;
     }
 
     @Data

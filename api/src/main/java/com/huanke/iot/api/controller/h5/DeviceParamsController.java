@@ -76,4 +76,20 @@ public class DeviceParamsController extends BaseController{
         String requestId = deviceParamsService.sendParamFunc(currentUserId, deviceId, abilityTypeName, paramConfigList);
         return new ApiResponse<>(requestId);
     }
+
+    /**
+     * 轮询查状态接口
+     */
+    @RequestMapping("/queryDeviceBack")
+    public ApiResponse<Boolean> queryDeviceBack(@RequestBody DeviceParamRequest deviceParamRequest){
+        Integer deviceId = deviceParamRequest.getDeviceId();
+        Integer abilityNo = deviceParamRequest.getAbilityNo();
+        if(deviceId == null || abilityNo == null){
+            log.error("参数异常：deviceId={}, abilityNo={}", deviceId, abilityNo);
+            return new ApiResponse<>(RetCode.ERROR, "参数异常");
+        }
+        String typeName = AbilityEnums.getTypeNameByAbilityNo(abilityNo);
+        Boolean result = deviceParamsService.queryDeviceBack(deviceId, typeName);
+        return new ApiResponse<>(result);
+    }
 }
