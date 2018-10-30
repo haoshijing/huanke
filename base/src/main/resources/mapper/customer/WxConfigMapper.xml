@@ -56,7 +56,7 @@
             <if test="htmlTypeIds != null and htmlTypeIds != ''   ">
                 htmlTypeIds = #{htmlTypeIds},
             </if>
-            <if test="backgroundImg != null  and backgroundImg != '' ">
+            <if test="backgroundImg != null">
                 backgroundImg = #{backgroundImg},
             </if>
             <if test="themeName != null and themeName != '' ">

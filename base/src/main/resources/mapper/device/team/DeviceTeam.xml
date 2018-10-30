@@ -102,10 +102,10 @@
             <if test="name != null and name !='' ">
                 name = #{name},
             </if>
-            <if test="icon != null and icon !='' ">
+            <if test="icon != null">
                 icon = #{icon},
             </if>
-            <if test="videoUrl != null and videoUrl !='' ">
+            <if test="videoUrl != null">
                 videoUrl = #{videoUrl},
             </if>
             <if test="remark != null and remark !='' ">
@@ -114,7 +114,7 @@
             <if test="sceneDescription != null and sceneDescription !='' ">
                 sceneDescription = #{sceneDescription},
             </if>
-            <if test="videoCover != null and videoCover !='' ">
+            <if test="videoCover != null">
                 videoCover = #{videoCover},
             </if>
             <if test="status != null">

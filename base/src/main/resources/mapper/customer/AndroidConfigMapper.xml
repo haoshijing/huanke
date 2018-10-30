@@ -48,7 +48,7 @@
             <if test="appUrl != null  and appUrl != '' ">
                 appUrl = #{appUrl},
             </if>
-            <if test="qrcode != null  and qrcode != '' ">
+            <if test="qrcode != null">
                 qrcode = #{qrcode},
             </if>
             <if test="version != null  and version != '' ">

@@ -37,7 +37,7 @@
             <if test="name != null  and name != ''">
                 name = #{name},
             </if>
-            <if test="bgImg != null  and bgImg != '' ">
+            <if test="bgImg != null">
                 bgImg = #{bgImg},
             </if>
             <if test="description != null  and description != '' ">

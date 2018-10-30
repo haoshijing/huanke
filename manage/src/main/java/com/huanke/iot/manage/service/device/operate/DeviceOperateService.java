@@ -365,7 +365,7 @@ public class DeviceOperateService {
                 deviceQueryVo.setUserName(deviceCustomerUserRelationPo.getNickname());
             }
             deviceQueryVo.setLocation(devicePo.getLocation());
-            //开关机筛选
+            //todo 开关机筛选
             return deviceQueryVo;
         }).collect(Collectors.toList());
 
