@@ -55,10 +55,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //import org.apache.shiro.SecurityUtils;
@@ -366,6 +363,7 @@ public class DeviceOperateService {
                 deviceQueryVo.setUserName(deviceCustomerUserRelationPo.getNickname());
             }
             deviceQueryVo.setLocation(devicePo.getLocation());
+            //开关机筛选
             return deviceQueryVo;
         }).collect(Collectors.toList());
 
@@ -1116,8 +1114,16 @@ public class DeviceOperateService {
 
     }
 
-    public ApiResponse<List<DeviceShareListVo>> queryShareList(Integer deviceId) {
-        return new ApiResponse<>(RetCode.OK, "查询授权列表成功");
+    public ApiResponse<List<DeviceShareListVo>> queryShareList(Integer deviceId){
+        //查询设备的绑定情况
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList =this.deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
+        //
+        if(null != deviceCustomerUserRelationPoList && 0 <deviceCustomerUserRelationPoList.size()){
+            //查询主绑人
+            return new ApiResponse<>(RetCode.OK,"查询授权列表成功");
+        }else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+        }
     }
 
     /**

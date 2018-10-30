@@ -41,6 +41,8 @@ public class DeviceListQueryRequest {
     //工作状态 或 租赁状态
     private Integer workStatus;
 
+    private Integer powerStatus;
+
     private Integer status;
 
     private Integer page = 1;
