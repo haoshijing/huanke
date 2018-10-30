@@ -100,19 +100,19 @@
         SELECT * FROM <include refid="tableName"/>
         <where>
             1=1
-            <if test="deviceId= null">
+            <if test="deviceId != null">
                 AND deviceId = #{deviceId}
             </if>
-            <if test="abilityId= null">
+            <if test="abilityId != null">
                 AND abilityId = #{abilityId}
             </if>
-            <if test="typeName= null and typeName != ''">
+            <if test="typeName != null and typeName != ''">
                 AND typeName = #{typeName}
             </if>
-            <if test="sort= null">
+            <if test="sort != null">
                 AND sort = #{sort}
             </if>
-            <if test="status= null">
+            <if test="status != null">
                 AND status = #{status}
             </if>
         </where>
