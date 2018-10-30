@@ -74,14 +74,24 @@ public class DeviceParamsService {
         List<DeviceParamsConfigVo> deviceParamsConfigVoList = deviceParamsConfigVoRequest.getDeviceParamsConfigVoList();
         //删除逻辑
         List<DeviceParamsPo> deviceParamsPoList = deviceParamsMapper.findExistByDeviceId(deviceId);
-        List<DeviceParamsPo> toDeleteList = deviceParamsPoList.stream().filter(e -> {
-            List<Integer> abilityList = deviceParamsConfigVoList.stream().map(deviceParamsConfigVo -> deviceParamsConfigVo.getAbilityId()).collect(Collectors.toList());
-            if (abilityList.contains(e.getAbilityId())) {
-                return true;
+        List<DeviceParamsPo> toDeleteList = new ArrayList<DeviceParamsPo>();
+        for(DeviceParamsPo deviceParamsPo:deviceParamsPoList) {
+            boolean flag = false;
+            for(DeviceParamsConfigVo deviceParamsConfigVo:deviceParamsConfigVoList){
+                if(!(deviceParamsPo.getAbilityId().equals(deviceParamsConfigVo.getAbilityId())&&deviceParamsPo.getSort().equals(deviceParamsConfigVo.getSort()))){
+                    flag = true;
+                }else{
+                    flag = false;
+                    break;
+                }
             }
-            return false;
-        }).collect(Collectors.toList());
-        deviceParamsMapper.deleteBatch(toDeleteList);
+            if(flag){
+                toDeleteList.add(deviceParamsPo);
+            }
+        }
+        if(toDeleteList.size()>0) {
+            deviceParamsMapper.deleteBatch(toDeleteList);
+        }
         //添加更新逻辑
         for (DeviceParamsConfigVo deviceParamsConfigVo : deviceParamsConfigVoList) {
             DeviceParamsPo deviceParamsPo = new DeviceParamsPo();
@@ -98,7 +108,7 @@ public class DeviceParamsService {
     }
 
     private void addOrUpdateDeviceParams(DeviceParamsPo deviceParamsPo) {
-        DeviceParamsPo exitDeviceParamsPo = deviceParamsMapper.findByDeviceIdAndAbilityId(deviceParamsPo.getDeviceId(), deviceParamsPo.getAbilityId());
+        DeviceParamsPo exitDeviceParamsPo = deviceParamsMapper.findByDeviceIdAndAbilityId(deviceParamsPo.getDeviceId(), deviceParamsPo.getAbilityId(),deviceParamsPo.getSort());
         if(exitDeviceParamsPo == null){
             //新增
             deviceParamsPo.setCreateTime(System.currentTimeMillis());

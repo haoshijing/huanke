@@ -10,7 +10,7 @@ import java.util.List;
 public interface DeviceParamsMapper extends BaseMapper<DeviceParamsPo> {
     List<DeviceParamsConfigDto> queryParamsConfig(@Param("deviceId")Integer deviceId, @Param("modelId")Integer modelId);
 
-    DeviceParamsPo findByDeviceIdAndAbilityId(@Param("deviceId")Integer deviceId, @Param("abilityId")Integer abilityId);
+    DeviceParamsPo findByDeviceIdAndAbilityId(@Param("deviceId")Integer deviceId, @Param("abilityId")Integer abilityId,@Param("sort")Integer sort);
 
     List<DeviceParamsPo> findExistByDeviceId(@Param("deviceId")Integer deviceId);
 

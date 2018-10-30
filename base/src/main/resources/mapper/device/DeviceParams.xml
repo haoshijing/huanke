@@ -36,13 +36,14 @@
         LEFT JOIN t_device_model_ability dma
         ON dp.abilityId = dma.abilityId AND dma.modelId = #{modelId}
         WHERE dp.deviceId = #{deviceId}
-        AND dp.status = 1
+        AND dp.status = 1 AND dma.status = 1
     </select>
 
     <select id="findByDeviceIdAndAbilityId" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
         SELECT * FROM t_device_params
         WHERE deviceId = #{deviceId}
         AND abilityId = #{abilityId}
+        AND sort = #{sort}
     </select>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceParamsPo">
