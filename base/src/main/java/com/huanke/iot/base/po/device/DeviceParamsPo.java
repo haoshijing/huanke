@@ -16,8 +16,11 @@ public class DeviceParamsPo {
     private Integer abilityId;
     private String typeName;
     private String value;
+    private Integer sort;
+    private Integer status;
     private Long createTime;
     private Long lastUpdateTime;
     private Integer createUserId;
     private Integer updateUserId;
+    private Integer updateWay;
 }

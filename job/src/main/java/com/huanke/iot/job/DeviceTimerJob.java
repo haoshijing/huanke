@@ -139,6 +139,7 @@ public class DeviceTimerJob {
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId(funcId);
+        deviceOperLogPo.setFuncValue(String.valueOf(funcValue));
         deviceOperLogPo.setDeviceId(deviceId);
         deviceOperLogPo.setRequestId(requestId);
         deviceOperLogPo.setOperType(4);

@@ -1,12 +1,10 @@
 package com.huanke.iot.api.service.device.timer;
 
-import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.constants.DictConstants;
 import com.huanke.iot.api.controller.h5.req.DeviceTimerRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceTimerVo;
 import com.huanke.iot.api.controller.h5.response.DictVo;
 import com.huanke.iot.api.gateway.MqttSendService;
-import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.TimerConstants;
 import com.huanke.iot.base.dao.DictMapper;
@@ -14,24 +12,17 @@ import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTimerDayMapper;
 import com.huanke.iot.base.dao.device.DeviceTimerMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
-import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.po.config.DictPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTimerDayPo;
 import com.huanke.iot.base.po.device.DeviceTimerPo;
-import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Repository
@@ -95,57 +86,11 @@ public class DeviceTimerService {
                 deviceTimerDayPo.setStatus(CommonConstant.STATUS_YES);
                 deviceTimerDayMapper.insert(deviceTimerDayPo);
             }
-            addTodayTimeWork(deviceTimerPo, daysOfWeek);
         }
         return deviceTimerPo.getId();
     }
 
-    public void addTodayTimeWork(DeviceTimerPo deviceTimerPo, List<Integer> daysOfWeek) {
-        int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR, deviceTimerPo.getHour());
-        calendar.set(Calendar.MINUTE, deviceTimerPo.getMinute());
-        if (!daysOfWeek.contains(dayOfWeek) || calendar.getTimeInMillis() < System.currentTimeMillis()) {
-            return;
-        }
 
-        long delay = calendar.getTimeInMillis() - System.currentTimeMillis();
-        ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
-        executor.schedule(new Runnable() {
-            @Override
-            public void run() {
-                Integer deviceId = deviceTimerPo.getDeviceId();
-                if (deviceTimerPo.getTimerType() == 1) {
-                    sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 1);
-                } else {
-                    sendFunc(deviceId, FuncTypeEnums.MODE.getCode(), 0);
-                }
-            }
-        }, delay, TimeUnit.MILLISECONDS);
-    }
-
-    public String sendFunc(Integer deviceId, String funcId, Integer funcValue) {
-        String topic = "/down/control/" + deviceId;
-        String requestId = UUID.randomUUID().toString().replace("-", "");
-        DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
-        deviceOperLogPo.setFuncId(funcId);
-        deviceOperLogPo.setDeviceId(deviceId);
-        deviceOperLogPo.setRequestId(requestId);
-        deviceOperLogPo.setOperType(4);
-        deviceOperLogPo.setOperUserId(0);
-        deviceOperLogPo.setCreateTime(System.currentTimeMillis());
-        deviceOperLogMapper.insert(deviceOperLogPo);
-        DeviceDataService.FuncListMessage funcListMessage = new DeviceDataService.FuncListMessage();
-        funcListMessage.setMsg_type("control");
-        funcListMessage.setMsg_id(requestId);
-        DeviceDataService.FuncItemMessage funcItemMessage = new DeviceDataService.FuncItemMessage();
-        funcItemMessage.setType(funcId);
-        funcItemMessage.setValue(String.valueOf(funcValue));
-        funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
-        mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
-        return requestId;
-
-    }
 
 
     public List<DeviceTimerVo> queryTimerList(Integer userId, String wxDeviceId, Integer type) {

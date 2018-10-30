@@ -14,6 +14,8 @@
         abilityId,
         typeName,
         value,
+        sort,
+        status,
         createTime,
         createUserId
         )
@@ -22,9 +24,88 @@
         #{abilityId},
         #{typeName},
         #{value},
+        #{sort},
+        #{status},
         #{createTime},
         #{createUserId}
         )
     </insert>
 
+    <select id="queryParamsConfig" resultType="com.huanke.iot.base.dto.DeviceParamsConfigDto">
+        SELECT dp.abilityId, dma.definedName modelAbilityName, dp.typeName abilityParamsName, dp.sort, dp.value FROM t_device_params dp
+        LEFT JOIN t_device_model_ability dma
+        ON dp.abilityId = dma.abilityId AND dma.modelId = #{modelId}
+        WHERE dp.deviceId = #{deviceId}
+        AND dp.status = 1
+    </select>
+
+    <select id="findByDeviceIdAndAbilityId" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
+        SELECT * FROM t_device_params
+        WHERE deviceId = #{deviceId}
+        AND abilityId = #{abilityId}
+    </select>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceParamsPo">
+        update <include refid="tableName"/>
+        <set>
+            <if test = "typeName != null and typeName != ''">
+                typeName = #{typeName},
+            </if>
+            <if test = " value != null and value != ''">
+                value = #{value},
+            </if>
+            <if test = " sort != null and sort != ''">
+                sort = #{sort},
+            </if>
+            updateWay = #{updateWay},
+            status = 1
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findExistByDeviceId" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
+        SELECT * FROM <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        AND status = 1
+    </select>
+
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from
+        <include refid="tableName"/>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </delete>
+
+    <select id="findExistByDeviceIdAndTypeName" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
+        SELECT * FROM <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        AND typeName = #{typeName}
+        AND status = 1
+        ORDER BY sort ASC
+    </select>
+
+    <select id="selectList" parameterType="com.huanke.iot.base.po.device.DeviceParamsPo" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
+        SELECT * FROM <include refid="tableName"/>
+        <where>
+            1=1
+            <if test="deviceId= null">
+                AND deviceId = #{deviceId}
+            </if>
+            <if test="abilityId= null">
+                AND abilityId = #{abilityId}
+            </if>
+            <if test="typeName= null and typeName != ''">
+                AND typeName = #{typeName}
+            </if>
+            <if test="sort= null">
+                AND sort = #{sort}
+            </if>
+            <if test="status= null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
 </mapper>

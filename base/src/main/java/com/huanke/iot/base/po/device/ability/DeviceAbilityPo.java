@@ -16,6 +16,7 @@ public class DeviceAbilityPo {
     private Integer writeStatus; //可写状态
     private Integer readStatus; //可读状态
     private Integer runStatus; //可执行状态
+    private String paramName; //给设备传参数名称
     private Integer configType;//配置方式
     private Integer abilityType;//能力类型
     private Integer minVal;
