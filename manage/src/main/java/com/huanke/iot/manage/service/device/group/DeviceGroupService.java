@@ -361,7 +361,7 @@ public class DeviceGroupService {
     public ApiResponse<Boolean> sendGroupFunc(GroupControlRequest groupControlRequest,int operType) throws Exception{
         //获取当前登录的用户
         User user = this.userService.getCurrentUser();
-        User currentUser = this.userManagerMapper.selectByUserName(user.getUserName());
+//        User currentUser = this.userManagerMapper.selectByUserName(user.getUserName());
         List<Integer> deviceIdList = groupControlRequest.getDeviceIdList();
         String funcId = groupControlRequest.getFuncId();
         String value = groupControlRequest.getValue();
@@ -370,7 +370,7 @@ public class DeviceGroupService {
             deviceFuncRequest.setDeviceId(deviceId);
             deviceFuncRequest.setFuncId(funcId);
             deviceFuncRequest.setValue(value);
-            String requestId = sendFunc(deviceFuncRequest, currentUser.getId(), operType);
+            String requestId = sendFunc(deviceFuncRequest, user.getId(), operType);
         }
         return new ApiResponse<>(RetCode.OK,"群开/群关成功",true);
     }
