@@ -32,13 +32,13 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.assertj.core.util.Lists;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -122,7 +122,7 @@ public class AppBasicService {
         context.getCustomerVo().setAppId(appId);
         context.getCustomerVo().setCustomerId(customerPo.getId());
         JSONObject resp = wechartUtil.obtainAuthAccessToken(request.getParameter("code"));
-        if(resp == null || StringUtils.isEmpty(resp.get("openid"))){
+        if(resp == null || StringUtils.isEmpty(resp.get("openid").toString())){
             log.error("appAddUser,获取openId异常，code={}，resp={}",request.getParameter("code"),resp);
             return  new ApiResponse<>(false);
         }
@@ -289,6 +289,7 @@ public class AppBasicService {
             if(androidConfig!=null){
                 AppInfoVo appInfoVo = new AppInfoVo();
                 appInfoVo.setVersionName(androidConfig.getName());
+                appInfoVo.setApkUrl(androidConfig.getAppUrl());
                 appInfoVo.setVersionCode(androidConfig.getVersion());
                 return appInfoVo;
             }
@@ -299,7 +300,7 @@ public class AppBasicService {
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
         if(customerPo != null){
             AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
-            if(androidConfig!=null){
+            if(androidConfig!=null && StringUtils.isNotEmpty(androidConfig.getDeviceChangePassword())){
                 return androidConfig.getDeviceChangePassword();
             }
         }

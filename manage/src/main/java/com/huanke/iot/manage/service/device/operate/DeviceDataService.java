@@ -14,10 +14,13 @@ import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
 import com.huanke.iot.manage.vo.response.device.data.DeviceOperLogVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceSensorStatVo;
+import com.huanke.iot.manage.vo.response.device.data.DeviceWorkLogVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
  * @version 2018年05月30日 13:25
  **/
 @Service
+@Slf4j
 public class DeviceDataService {
 
     @Autowired
@@ -60,7 +64,7 @@ public class DeviceDataService {
                     CustomerUserPo customerUserPo=this.customerUserMapper.selectByUserId(deviceOperLogPo.getOperUserId());
                     deviceOperLogVo.setOperName(customerUserPo.getNickname());
                 }else {
-                    CustomerPo customerPo = this.customerMapper.selectById(deviceOperLogPo.getId());
+                    CustomerPo customerPo = this.customerMapper.selectById(deviceOperLogPo.getOperUserId());
                     deviceOperLogVo.setOperName(customerPo.getName());
                 }
             }
@@ -97,5 +101,38 @@ public class DeviceDataService {
             return deviceSensorStatVo;
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"查询成功",deviceSensorStatVoList);
+    }
+    //按页查询设备工作日志（开关机时间、上离线时间）
+    public ApiResponse<List<DeviceWorkLogVo>> queryDeviceWorkData(DeviceDataQueryRequest request){
+        DeviceOperLogPo queryPo = new DeviceOperLogPo();
+        queryPo.setDeviceId(request.getDeviceId());
+        Integer offset = (request.getPage() - 1)*request.getLimit();
+        Integer limit = request.getLimit();
+        List<DeviceWorkLogVo> deviceWorkLogVoList =new ArrayList<>();
+        //查询上离线日志
+        queryPo.setFuncId("410");
+        List<DeviceOperLogPo> onLineStatusList = this.deviceOperLogMapper.selectList(queryPo,limit,offset);
+        if(null != onLineStatusList && 0 < onLineStatusList.size()){
+            onLineStatusList.stream().forEach(eachPo ->{
+                DeviceWorkLogVo deviceWorkLogVo = new DeviceWorkLogVo();
+                deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0")?"离线":"上线");
+                deviceWorkLogVo.setCreateTime(eachPo.getCreateTime());
+                log.info("当前设备上/离线信息：{}",deviceWorkLogVo.getDeviceStatus());
+                deviceWorkLogVoList.add(deviceWorkLogVo);
+            });
+        }
+        //查询开机机状态
+        queryPo.setFuncId("210");
+        List<DeviceOperLogPo> powerStatusList = this.deviceOperLogMapper.selectList(queryPo,limit,offset);
+        if(null != powerStatusList && 0 < powerStatusList.size()){
+            powerStatusList.stream().forEach(eachPo ->{
+                DeviceWorkLogVo deviceWorkLogVo = new DeviceWorkLogVo();
+                deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0")?"关机":"开机");
+                deviceWorkLogVo.setCreateTime(eachPo.getCreateTime());
+                log.info("当前设备开关机信息：{}",deviceWorkLogVo.getDeviceStatus());
+                deviceWorkLogVoList.add(deviceWorkLogVo);
+            });
+        }
+        return new ApiResponse<>(RetCode.OK,"查询工作日志成功",deviceWorkLogVoList);
     }
 }

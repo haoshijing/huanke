@@ -854,6 +854,7 @@ public class DeviceModelService {
                         deviceModelFormatItemVo.setShowName(wxFormatItemPo.getName());
                         deviceModelFormatItemVo.setShowStatus(DeviceConstant.DEVICE_MODEL_FORMAT_ITEM_SHOW_NO);
                         deviceModelFormatItemVo.setStatus(CommonConstant.STATUS_YES);
+                        deviceModelFormatItemVo.setAbilityType(wxFormatItemPo.getAbilityType());
 
                         //遍历 对比 型号的版式的配置项
                         if (deviceModelFormatItempos != null && deviceModelFormatItempos.size() > 0) {
@@ -885,6 +886,8 @@ public class DeviceModelService {
             }).collect(Collectors.toList());
 
             modelFormatVo.setModelFormatPages(deviceModelFormatPageVos);
+        }else{
+            modelFormatVo = null;
         }
         return modelFormatVo;
     }

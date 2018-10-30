@@ -34,7 +34,7 @@ public class UniNoCreateUtils {
                 default:
                     break;
         }
-        return "";
+        return sb.toString();
     }
 
     private static String randomStr(Integer length) {

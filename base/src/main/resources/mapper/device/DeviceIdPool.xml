@@ -127,6 +127,20 @@
         </foreach>
     </update>
 
+    <update id="updateById" parameterType="com.huanke.iot.base.po.device.DeviceIdPoolPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status!=null">
+                status = #{status}
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        1= 1
+        and id = #{id}
+    </update>
+
 
     <select id="selectByWxDeviceId" parameterType="java.lang.String"
             resultType="com.huanke.iot.base.po.device.DeviceIdPoolPo">

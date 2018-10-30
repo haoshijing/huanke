@@ -63,4 +63,17 @@
         from <include refid="tableName"/>
         WHERE requestId = #{requestId}
     </select>
+
+    <select id="queryPowerByCreateTime"  parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" >
+        select *
+        from <include refid="tableName"/>
+        WHERE
+        deviceId = #{deviceId}
+        AND
+        funcId = '210'
+        AND
+        funcValue is not null
+        ORDER BY createTime DESC
+        limit 1
+    </select>
 </mapper>

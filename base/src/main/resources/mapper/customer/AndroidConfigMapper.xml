@@ -13,6 +13,7 @@
         customerId,
         name,
         logo,
+        appUrl,
         qrcode,
         version,
         createTime,
@@ -22,6 +23,7 @@
         #{customerId},
         #{name},
         #{logo},
+        #{appUrl},
         #{qrcode},
         #{version},
         #{createTime},
@@ -42,6 +44,9 @@
             </if>
             <if test="logo != null  and logo != '' ">
                 logo = #{logo},
+            </if>
+            <if test="appUrl != null  and appUrl != '' ">
+                appUrl = #{appUrl},
             </if>
             <if test="qrcode != null  and qrcode != '' ">
                 qrcode = #{qrcode},

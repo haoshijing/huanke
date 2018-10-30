@@ -11,6 +11,7 @@ import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
@@ -23,11 +24,11 @@ import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
+import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
-import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
@@ -37,10 +38,7 @@ import com.huanke.iot.manage.service.wechart.WechartUtil;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceWeatherVo;
+import com.huanke.iot.manage.vo.response.device.operate.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -131,14 +129,16 @@ public class DeviceOperateService {
     private UserService userService;
 
     @Autowired
+    private DeviceOperLogMapper deviceOperLogMapper;
+
+    @Autowired
     private LocationUtils locationUtils;
 
 
+    private static String[] keys = {"name", "mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
+            "workStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastUpdateTime", "location"};
 
-    private static String[] keys = {"name","mac","customerName","deviceType","bindStatus","enableStatus","groupName",
-                                    "workStatus","onlineStatus","modelId","modelName","birthTime","lastUpdateTime","location"};
-
-    private static String[] texts = {"名称","MAC","归属","类型","绑定状态","启用状态","集群名","工作状态","在线状态","设备型号ID","设备型号名称","注册时间","最后上上线时间","地理位置"};
+    private static String[] texts = {"名称", "MAC", "归属", "类型", "绑定状态", "启用状态", "集群名", "工作状态", "在线状态", "设备型号ID", "设备型号名称", "注册时间", "最后上上线时间", "地理位置"};
 
     /**
      * 2018-08-15
@@ -148,8 +148,8 @@ public class DeviceOperateService {
      * @param deviceLists
      * @return
      */
-    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) throws Exception{
-        List<DeviceAddSuccessVo> deviceAddSuccessVoList=new ArrayList<>();
+    public ApiResponse<List<DeviceAddSuccessVo>> createDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) throws Exception {
+        List<DeviceAddSuccessVo> deviceAddSuccessVoList = new ArrayList<>();
         List<DevicePo> devicePoList = deviceLists.stream().map(device -> {
             DevicePo insertPo = new DevicePo();
             insertPo.setName(device.getName());
@@ -171,40 +171,114 @@ public class DeviceOperateService {
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setLastUpdateTime(System.currentTimeMillis());
             insertPo.setCreateUserId(device.getCreateUserId());
-            insertPo.setDEVID(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
+            insertPo.setDeviceNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
             return insertPo;
         }).collect(Collectors.toList());
         //批量插入
         Boolean ret = deviceMapper.insertBatch(devicePoList) > 0;
         if (ret) {
             devicePoList.stream().forEach(devicePo -> {
-                DeviceAddSuccessVo deviceAddSuccessVo=new DeviceAddSuccessVo();
+                DeviceAddSuccessVo deviceAddSuccessVo = new DeviceAddSuccessVo();
                 deviceAddSuccessVo.setDeviceId(devicePo.getId());
                 deviceAddSuccessVoList.add(deviceAddSuccessVo);
             });
-            return new ApiResponse<>(RetCode.OK,"添加成功",deviceAddSuccessVoList);
+            return new ApiResponse<>(RetCode.OK, "添加成功", deviceAddSuccessVoList);
         } else {
-            return new ApiResponse<>(RetCode.OK,"添加失败",null);
+            return new ApiResponse<>(RetCode.OK, "添加失败", null);
         }
     }
 
     /**
      * 修改设备
+     *
      * @param deviceUpdateRequest
      * @return
      */
-    public ApiResponse<Boolean> updateDevice(DeviceUpdateRequest deviceUpdateRequest){
+    public ApiResponse<Boolean> updateDevice(DeviceUpdateRequest deviceUpdateRequest) {
         boolean ret = true;
-         DevicePo devicePo = deviceMapper.selectById(deviceUpdateRequest.getId());
-         if(devicePo!=null){
-             BeanUtils.copyProperties(deviceUpdateRequest,devicePo);
-             ret = deviceMapper.updateById(devicePo)>0;
-         }else{
-             return new ApiResponse<>(RetCode.OK,"该设备不存在！",false);
-         }
+        DevicePo devicePo = deviceMapper.selectById(deviceUpdateRequest.getId());
+        if (devicePo != null) {
+            BeanUtils.copyProperties(deviceUpdateRequest, devicePo);
+            ret = deviceMapper.updateById(devicePo) > 0;
+        } else {
+            return new ApiResponse<>(RetCode.OK, "该设备不存在！", false);
+        }
 
-        return new ApiResponse<>(RetCode.OK,"修改成功",ret);
+        return new ApiResponse<>(RetCode.OK, "修改成功", ret);
     }
+
+    /**
+     * 2018-08-15
+     * sixiaojun
+     * 根据前台请求按页查询设备数据
+     *
+     * @param deviceId
+     * @return DeviceListVo
+     */
+    public DeviceListVo queryDeviceById(Integer deviceId) throws Exception {
+
+        //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
+        //此处仅仅查询主设备
+
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        if (devicePo == null) {
+            return null;
+        }
+
+        DeviceCustomerRelationPo deviceCustomerRelationPo;
+        DeviceListVo deviceQueryVo = new DeviceListVo();
+        deviceQueryVo.setName(devicePo.getName());
+        deviceQueryVo.setMac(devicePo.getMac());
+        deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
+        deviceQueryVo.setWxDeviceId(devicePo.getWxDeviceId());
+
+        deviceQueryVo.setTypeId(devicePo.getTypeId());
+        deviceQueryVo.setDeviceType(devicePo.getTypeName());
+        deviceQueryVo.setModelId(devicePo.getModelId());
+        deviceQueryVo.setModelName(devicePo.getModelName());
+
+        /*设置设备客户从属关系*/
+        deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
+        if (null != deviceCustomerRelationPo) {
+            deviceQueryVo.setCustomerId(deviceCustomerRelationPo.getCustomerId());
+            deviceQueryVo.setCustomerName(deviceCustomerRelationPo.getCustomerName());
+        }
+
+        deviceQueryVo.setLocation(devicePo.getLocation());
+        deviceQueryVo.setAssignStatus(devicePo.getAssignStatus());
+        deviceQueryVo.setBindStatus(devicePo.getBindStatus());
+        deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
+        deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
+        deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
+        deviceQueryVo.setStatus(devicePo.getStatus());
+        //获取主从相关的信息
+        deviceQueryVo.setHostStatus(devicePo.getHostStatus());
+        Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getId());
+        deviceQueryVo.setChildCount(childCount);
+        //查询集群信息
+        DeviceGroupPo queryDeviceGroup = this.deviceGroupMapper.selectByDeviceId(devicePo.getId());
+        if (null != queryDeviceGroup) {
+            deviceQueryVo.setGroupId(queryDeviceGroup.getId());
+            deviceQueryVo.setGroupName(queryDeviceGroup.getName());
+        } else {
+            deviceQueryVo.setGroupId(-1);
+            deviceQueryVo.setGroupName("无集群");
+        }
+        deviceQueryVo.setId(devicePo.getId());
+        deviceQueryVo.setBirthTime(devicePo.getBirthTime());
+        deviceQueryVo.setLastUpdateTime(devicePo.getLastUpdateTime());
+        //查询绑定信息
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+        if (null != deviceCustomerUserRelationPo) {
+            deviceQueryVo.setUserOpenId(deviceCustomerUserRelationPo.getOpenId());
+            deviceQueryVo.setUserName(deviceCustomerUserRelationPo.getNickname());
+        }
+        deviceQueryVo.setLocation(devicePo.getLocation());
+
+        return deviceQueryVo;
+    }
+
+
     /**
      * 2018-08-15
      * sixiaojun
@@ -213,56 +287,63 @@ public class DeviceOperateService {
      * @param deviceListQueryRequest
      * @return list
      */
-    public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
+    public ApiResponse<List<DeviceListVo>> queryDeviceByPage(DeviceListQueryRequest deviceListQueryRequest) throws Exception {
         //todo 显示从设备
 //        Subject subject = SecurityUtils.getSubject();
 //        UserPo user = (UserPo) subject.getSession().getAttribute("user");
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         Integer customerId = customerService.obtainCustomerId(false);
-
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
-        if(deviceListQueryRequest!=null){
-            BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
+        if (deviceListQueryRequest != null) {
+            BeanUtils.copyProperties(deviceListQueryRequest, queryPo);
         }
-        queryPo.setCustomerId(customerId);
-
+        if(deviceListQueryRequest.getCustomerId()==null){
+            queryPo.setCustomerId(customerId);
+        }
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
-        if(0 == devicePos.size() || null == devicePos){
-            return new ApiResponse<>(RetCode.OK,"暂无设备",null);
+        if (null == devicePos || 0 == devicePos.size()) {
+            return new ApiResponse<>(RetCode.OK, "暂无设备", null);
         }
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
-            DeviceCustomerRelationPo deviceCustomerRelationPo;
             DeviceListVo deviceQueryVo = new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setMac(devicePo.getMac());
-            //查询类型
-            if (null != deviceTypeMapper.selectById(devicePo.getTypeId())) {
-                deviceQueryVo.setTypeId(devicePo.getTypeId());
-                deviceQueryVo.setDeviceType(deviceTypeMapper.selectById(devicePo.getTypeId()).getName());
-            } else {
-                deviceQueryVo.setDeviceType("未查询到该类型");
-            }
-            deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
-            if (null != deviceCustomerRelationPo) {
-                Integer tempCustomerId = deviceCustomerRelationPo.getCustomerId();
-                deviceQueryVo.setCustomerId(customerId);
-                deviceQueryVo.setCustomerName(customerMapper.selectById(tempCustomerId).getName());
-            }
-            //查询设备信息
+            deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
+
+            deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
-            DeviceModelPo queryDeviceModel = deviceModelMapper.selectById(devicePo.getModelId());
-            if(queryDeviceModel!=null){
-                deviceQueryVo.setModelName(queryDeviceModel.getName());
-            }
+            deviceQueryVo.setCustomerId(devicePo.getCustomerId());
+            deviceQueryVo.setCustomerName(devicePo.getCustomerName());
+
+            deviceQueryVo.setLocation(devicePo.getLocation());
             deviceQueryVo.setAssignStatus(devicePo.getAssignStatus());
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
+            //查询开关机状态
+            DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
+            if(null != deviceOperLogPo){
+                //0-关机 1-开机
+                log.info("设备的开机关机状态:{}",deviceOperLogPo.getFuncValue());
+                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0") ? 0:1);
+                log.info("vo的设备开关机状态：{}",deviceQueryVo.getPowerStatus());
+            }else {
+                deviceQueryVo.setPowerStatus(0);
+            }
+            //查询开关机状态  todo
+//            DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
+//            if(null != deviceOperLogPo){
+//                //0-关机 1-开机
+//                log.info("设备的开机关机状态:",deviceOperLogPo);
+//                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0")?0:1);
+//            }else {
+//                deviceQueryVo.setPowerStatus(0);
+//            }
             //获取主从相关的信息
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
             Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getId());
@@ -283,16 +364,16 @@ public class DeviceOperateService {
             //查询绑定信息
             DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
             if (null != deviceCustomerUserRelationPo) {
-                CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(deviceCustomerUserRelationPo.getOpenId());
-                deviceQueryVo.setUserOpenId(customerUserPo.getOpenId());
-                deviceQueryVo.setUserName(customerUserPo.getNickname());
+                deviceQueryVo.setUserOpenId(deviceCustomerUserRelationPo.getOpenId());
+                deviceQueryVo.setUserName(deviceCustomerUserRelationPo.getNickname());
             }
             deviceQueryVo.setLocation(devicePo.getLocation());
             return deviceQueryVo;
         }).collect(Collectors.toList());
 
-        return new ApiResponse<>(RetCode.OK,"查询成功",deviceQueryVos);
+        return new ApiResponse<>(RetCode.OK, "查询成功", deviceQueryVos);
     }
+
 
     /**
      * 2018-08-15
@@ -302,30 +383,31 @@ public class DeviceOperateService {
      * @param deviceListQueryRequest
      * @return list
      */
-    public ApiResponse<BaseListVo> queryDeviceList(DeviceListQueryRequest deviceListQueryRequest) throws Exception{
+    public ApiResponse<BaseListVo> queryDeviceList(DeviceListQueryRequest deviceListQueryRequest) throws Exception {
 
         BaseListVo baseListVo = new BaseListVo();
 
         Integer customerId = customerService.obtainCustomerId(false);
-
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
-        if(deviceListQueryRequest!=null){
-            BeanUtils.copyProperties(deviceListQueryRequest,queryPo);
+        if (deviceListQueryRequest != null) {
+            BeanUtils.copyProperties(deviceListQueryRequest, queryPo);
         }
-        queryPo.setCustomerId(customerId);
 
+        if(deviceListQueryRequest.getCustomerId()==null){
+            queryPo.setCustomerId(customerId);
+        }
         ApiResponse<List<DeviceListVo>> deviceQueryRtn = queryDeviceByPage(deviceListQueryRequest);
-        if(deviceQueryRtn!=null&&deviceQueryRtn.getCode()!= RetCode.OK){
-            return new ApiResponse<>(RetCode.ERROR,deviceQueryRtn.getMsg());
+        if (deviceQueryRtn != null && deviceQueryRtn.getCode() != RetCode.OK) {
+            return new ApiResponse<>(RetCode.ERROR, deviceQueryRtn.getMsg());
         }
         Integer totalCount = selectCount(queryPo);
 
         baseListVo.setDataList(deviceQueryRtn.getData());
         baseListVo.setTotalCount(totalCount);
 
-        return new ApiResponse<>(RetCode.OK,"查询成功",baseListVo);
+        return new ApiResponse<>(RetCode.OK, "查询成功", baseListVo);
     }
 
     /**
@@ -336,37 +418,38 @@ public class DeviceOperateService {
      * @param
      * @return
      */
-    public Integer selectCount(DevicePo devicePo) throws Exception{
+    public Integer selectCount(DevicePo devicePo) throws Exception {
 
         return deviceMapper.selectCount(devicePo);
     }
 
     /**
      * 导出设备列表
+     *
      * @param response
      * @param deviceListExportRequest
      * @return
      * @throws Exception
      */
-    public ApiResponse<Boolean> exportDeviceList(HttpServletResponse response, DeviceListExportRequest deviceListExportRequest) throws Exception{
+    public ApiResponse<Boolean> exportDeviceList(HttpServletResponse response, DeviceListExportRequest deviceListExportRequest) throws Exception {
         //生成列名map
-        Map<String,String> titleMap = new HashMap<>();
-        for(int i = 0; i< keys.length; i++){
-            titleMap.put(keys[i],texts[i]);
+        Map<String, String> titleMap = new HashMap<>();
+        for (int i = 0; i < keys.length; i++) {
+            titleMap.put(keys[i], texts[i]);
         }
         //根据条件筛选excel列名
-        Class cls =deviceListExportRequest.getClass();
+        Class cls = deviceListExportRequest.getClass();
         Field[] fields = cls.getDeclaredFields();
         List<String> titleKeys = new ArrayList<>();
         List<String> titleNames = new ArrayList<>();
-        Map<String,String> filterMap = new HashMap<>();
-        for (Field field : fields){
+        Map<String, String> filterMap = new HashMap<>();
+        for (Field field : fields) {
             field.setAccessible(true);
             String getMethodName = "get" + field.getName().substring(0, 1).toUpperCase()
                     + field.getName().substring(1);
             Method getMethod = cls.getMethod(getMethodName, new Class[]{});
             Object value = getMethod.invoke(deviceListExportRequest, new Object[]{});
-            if(value instanceof Boolean) {
+            if (value instanceof Boolean) {
                 Boolean result = (Boolean) field.get(deviceListExportRequest);
                 if (result) {
                     titleKeys.add(field.getName());
@@ -377,15 +460,14 @@ public class DeviceOperateService {
         }
         //生成列后按列条件筛选device数据
         ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListExportRequest.getDeviceListQueryRequest());
-        if(RetCode.OK == result.getCode())
-        {
+        if (RetCode.OK == result.getCode()) {
             List<DeviceListVo> deviceListVoList = result.getData();
             String[] titles = new String[titleNames.size()];
             titleNames.toArray(titles);
             ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();
-            deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(),response,deviceListExportRequest.getSheetTitle(),titles,deviceListVoList,filterMap,deviceListVoExcelUtil.EXCEl_FILE_2007);
+            deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(), response, deviceListExportRequest.getSheetTitle(), titles, deviceListVoList, filterMap, deviceListVoExcelUtil.EXCEl_FILE_2007);
         }
-        return new ApiResponse<>(RetCode.OK,"ss");
+        return new ApiResponse<>(RetCode.OK, "ss");
     }
 
 //    /**
@@ -424,13 +506,21 @@ public class DeviceOperateService {
      * @param deviceVo
      * @return
      */
-    public ApiResponse<Boolean> deleteDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception{
+    public ApiResponse<DevicePo> deleteDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception {
         Integer deviceId = deviceVo.deviceId;
         String mac = deviceVo.mac;
         //解除 用户绑定关系、组关系
-        ApiResponse<Boolean> result = untieOneDeviceToUser(deviceVo);
+        ApiResponse<DevicePo> result = untieOneDeviceToUser(deviceVo);
         //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
-        if(RetCode.OK==result.getCode()){
+        if (RetCode.OK == result.getCode()) {
+            DevicePo devicePo = result.getData();
+            //记录要更新的设备池信息
+            DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(devicePo.getWxDeviceId());
+
+            deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+            deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+            deviceIdPoolMapper.updateById(deviceIdPoolPo);
+
             //删除 该设备的群绑定关系
             this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
             //解除客户分配关系
@@ -438,11 +528,12 @@ public class DeviceOperateService {
 
             deviceMapper.deleteDeviceById(deviceId);
 
-        }else{
+        } else {
             return result;
         }
         return new ApiResponse<>(RetCode.OK, "删除成功");
     }
+
     /**
      * 删除设备及与设备相关的信息
      * 删除设备需 先解除 绑定关系、组关系、群关系、解除客户分配关系（召回）、最后删除
@@ -452,50 +543,61 @@ public class DeviceOperateService {
      * @param deviceVo
      * @return
      */
-    public ApiResponse<Boolean> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception{
-            Integer deviceId = deviceVo.deviceId;
-            String mac = deviceVo.mac;
-            //解除 用户绑定关系、组关系
-            ApiResponse<Boolean> result = untieOneDeviceToUser(deviceVo);
-            //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
-            if(RetCode.OK==result.getCode()){
-                //删除 该设备的群绑定关系
-                this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
-                //解除客户分配关系
-                deviceCustomerRelationMapper.deleteDeviceById(deviceId);
+    public ApiResponse<DevicePo> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception {
+        Integer deviceId = deviceVo.deviceId;
+        String mac = deviceVo.mac;
+        //解除 用户绑定关系、组关系
+        ApiResponse<DevicePo> result = untieOneDeviceToUser(deviceVo);
+        //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
+        if (RetCode.OK == result.getCode()) {
+            //删除 该设备的群绑定关系
+            this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
+            //解除客户分配关系
+            deviceCustomerRelationMapper.deleteDeviceById(deviceId);
 
-                //更改 设备信息
-                DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
-                if(queryDevicePo!=null){
+            //更改 设备信息
+            DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
+            if (queryDevicePo != null) {
 
-                    // 删除该设备的 微信deviceid
-                    queryDevicePo.setWxDeviceId(null);
-                    queryDevicePo.setWxDevicelicence(null);
-                    queryDevicePo.setWxQrticket(null);
-                    //设定工作状态为空闲
-                    queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
-                    //设定在线状态为离线
-                    queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
-                    //设定启用状态为禁用
-                    queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
+                //记录要更新的设备池信息
+                DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(queryDevicePo.getWxDeviceId());
 
-                    queryDevicePo.setStatus(CommonConstant.STATUS_DEL);
+                deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+                deviceIdPoolMapper.updateById(deviceIdPoolPo);
+                // 删除该设备的 微信deviceid
+                queryDevicePo.setWxDeviceId(null);
+                queryDevicePo.setWxDevicelicence(null);
+                queryDevicePo.setWxQrticket(null);
+                //设定工作状态为空闲
+                queryDevicePo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
+                //设定在线状态为离线
+                queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
+                //设定启用状态为禁用
+                queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
 
-                    queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
+                queryDevicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
 
-                    queryDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+                queryDevicePo.setAssignTime(null);
 
-                    deviceMapper.updateById(queryDevicePo);
-                }
+                queryDevicePo.setStatus(CommonConstant.STATUS_DEL);
 
-            }else{
-                return result;
+                queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
+
+                queryDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+
+                deviceMapper.updateById(queryDevicePo);
             }
-            return new ApiResponse<>(RetCode.OK, "删除成功");
+
+        } else {
+            return result;
+        }
+        return new ApiResponse<>(RetCode.OK, "删除成功");
     }
 
     /**
      * 设备恢复（单个）
+     *
      * @param deviceVo
      * @return
      */
@@ -504,20 +606,20 @@ public class DeviceOperateService {
 
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
-            if(null==deviceId||deviceId<=0||StringUtils.isBlank(mac)){
+            if (null == deviceId || deviceId <= 0 || StringUtils.isBlank(mac)) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "参数不可为空");
             }
 
             //查询该设备详情 进行验证
             DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
 
-            if(null==queryDevicePo){
+            if (null == queryDevicePo) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "当前设备不存在");
-            }else if(!mac.equals(queryDevicePo.getMac())){
+            } else if (!mac.equals(queryDevicePo.getMac())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
             }
-            if(CommonConstant.STATUS_YES == queryDevicePo.getStatus()){
-                return new ApiResponse<>(RetCode.PARAM_ERROR,"非已删除设备不可恢复");
+            if (CommonConstant.STATUS_YES == queryDevicePo.getStatus()) {
+                return new ApiResponse<>(RetCode.PARAM_ERROR, "非已删除设备不可恢复");
             }
 
             //设定绑定状态为未绑定
@@ -536,11 +638,12 @@ public class DeviceOperateService {
             deviceMapper.updateById(queryDevicePo);
             return new ApiResponse<>(RetCode.OK, "设备恢复成功");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("设备恢复失败-{}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备恢复失败");
         }
     }
+
     /**
      * 将设备列表中的设备分配给设备型号，并与当前客户关联
      * 2018-08-21
@@ -549,7 +652,7 @@ public class DeviceOperateService {
      * @param deviceAssignToCustomerRequest
      * @return
      */
-    public ApiResponse<Boolean> assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest) throws Exception{
+    public ApiResponse<Boolean> assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest) throws Exception {
         Boolean ret = true;
         //获取设备列表
         List<DeviceQueryRequest.DeviceQueryList> deviceList = deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
@@ -560,7 +663,7 @@ public class DeviceOperateService {
             deviceIdPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
             deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
             Integer devicePoolCount = deviceIdPoolMapper.selectCount(deviceIdPoolPo);
-            log.info("devicePoolCount = {}",devicePoolCount);
+            log.info("devicePoolCount = {}", devicePoolCount);
             //若当前设备池中当前产品的配额的数量不够，则向微信公众号请求所需要的新的设备证书
             if (deviceList.size() > devicePoolCount) {
                 Integer addCount = deviceList.size() - devicePoolCount;
@@ -590,7 +693,7 @@ public class DeviceOperateService {
                 queryPoolPo.setProductId(deviceAssignToCustomerRequest.getProductId());
                 //每次查找当前池中未使用第一条license
                 List<DeviceIdPoolPo> poolPoList = deviceIdPoolMapper.selectList(queryPoolPo, 1, offset);
-                if(poolPoList!=null&&poolPoList.size()>0) {
+                if (poolPoList != null && poolPoList.size() > 0) {
                     DeviceIdPoolPo resultPo = poolPoList.get(0);
 
                     //记录本次使用的pool状态为已占用
@@ -633,12 +736,12 @@ public class DeviceOperateService {
      * @param deviceQueryRequests
      * @return
      */
-    public ApiResponse<Boolean> callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests) throws Exception{
+    public ApiResponse<Boolean> callBackDeviceFromCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceQueryRequests) throws Exception {
         List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
 
-        if(deviceQueryRequests!=null&&deviceQueryRequests.size()>0){
+        if (deviceQueryRequests != null && deviceQueryRequests.size() > 0) {
             deviceQueryRequests.stream().forEach(device -> {
                         DevicePo devicePo = this.deviceMapper.selectByMac(device.getMac());
                         DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
@@ -649,10 +752,10 @@ public class DeviceOperateService {
                         deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
                         deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
                         deviceIdPoolPoList.add(deviceIdPoolPo);
-                        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+                        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
 
                         //若存在绑定设备则先进行解绑
-                        if(null != deviceCustomerUserRelationPo){
+                        if (null != deviceCustomerUserRelationPo) {
                             this.deviceCustomerUserRelationMapper.deleteRelationByDeviceId(devicePo.getId());
                             this.deviceTeamItemMapper.deleteItemsByDeviceId(devicePo.getId());
                             devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
@@ -678,20 +781,21 @@ public class DeviceOperateService {
         this.deviceIdPoolMapper.updateBatch(deviceIdPoolPoList);
         Boolean ret = this.deviceCustomerRelationMapper.deleteBatch(deviceCustomerRelationPoList) > 0;
         if (ret) {
-            return new ApiResponse<>(RetCode.OK,"设备召回成功",true);
+            return new ApiResponse<>(RetCode.OK, "设备召回成功", true);
         } else {
-            return new ApiResponse<>(RetCode.OK,"设备召回失败",false);
+            return new ApiResponse<>(RetCode.OK, "设备召回失败", false);
         }
     }
 
 
     /**
      * 召回 每一台设备的操作。
+     *
      * @param devicePos
      * @return
      * @throws Exception
      */
-    public ApiResponse<Boolean> callBackDeviceList(List<DevicePo> devicePos) throws Exception{
+    public ApiResponse<Boolean> callBackDeviceList(List<DevicePo> devicePos) throws Exception {
 
         //客户设备关系集合
         List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
@@ -700,7 +804,7 @@ public class DeviceOperateService {
         // wxDeviceId集合
         List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
 
-        if(devicePos!=null&&devicePos.size()>0){
+        if (devicePos != null && devicePos.size() > 0) {
 
             devicePos.stream().forEach(devicePo -> {
 
@@ -712,10 +816,10 @@ public class DeviceOperateService {
                 deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
                 deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
                 deviceIdPoolPoList.add(deviceIdPoolPo);
-                DeviceCustomerUserRelationPo deviceCustomerUserRelationPo=this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
+                DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
 
                 //若存在绑定设备则先进行解绑
-                if(null != deviceCustomerUserRelationPo){
+                if (null != deviceCustomerUserRelationPo) {
                     this.deviceCustomerUserRelationMapper.deleteRelationByDeviceId(devicePo.getId());
                     this.deviceTeamItemMapper.deleteItemsByDeviceId(devicePo.getId());
                     devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
@@ -739,13 +843,13 @@ public class DeviceOperateService {
             this.deviceIdPoolMapper.updateBatch(deviceIdPoolPoList);
             Boolean ret = this.deviceCustomerRelationMapper.deleteBatch(deviceCustomerRelationPoList) > 0;
             if (ret) {
-                return new ApiResponse<>(RetCode.OK,"设备召回成功",true);
+                return new ApiResponse<>(RetCode.OK, "设备召回成功", true);
             } else {
-                return new ApiResponse<>(RetCode.ERROR,"设备召回失败",false);
+                return new ApiResponse<>(RetCode.ERROR, "设备召回失败", false);
             }
 
-        }else {
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"不存在可召回的设备",false);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "不存在可召回的设备", false);
         }
     }
 
@@ -755,17 +859,17 @@ public class DeviceOperateService {
      * @param deviceBindToUserRequest
      * @return
      */
-    public ApiResponse<Boolean> bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest) throws Exception{
+    public ApiResponse<Boolean> bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest) throws Exception {
         List<DeviceTeamItemPo> deviceTeamItemPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = new ArrayList<>();
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
-        if(null==customerUserPo){
-            return  new ApiResponse<>(RetCode.PARAM_ERROR,"该用户openid不正确");
+        if (null == customerUserPo) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该用户openid不正确");
         }
         //如果该设备组的id为-1 ，认定为 没有该组。则新增组
-        if(DeviceConstant.HAS_TEAM_NO.equals(deviceBindToUserRequest.getTeamId())){
+        if (DeviceConstant.HAS_TEAM_NO.equals(deviceBindToUserRequest.getTeamId())) {
 
             deviceTeamPo.setName(deviceBindToUserRequest.getTeamName());
             deviceTeamPo.setMasterUserId(customerUserPo.getId());
@@ -779,15 +883,15 @@ public class DeviceOperateService {
             deviceTeamPo.setCreateUserId(customerUserPo.getId());
             deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
             deviceTeamMapper.insert(deviceTeamPo);
-        }else{
+        } else {
             deviceTeamPo = this.deviceTeamMapper.selectById(deviceBindToUserRequest.getTeamId());
         }
 
         Integer deviceTeamId = deviceTeamPo.getId();
         List<DeviceQueryRequest.DeviceQueryList> bindDeviceList = deviceBindToUserRequest.getDeviceQueryRequest().getDeviceList();
 
-        if(bindDeviceList!=null&&bindDeviceList.size()>0){
-            for(int m=0;m<bindDeviceList.size();m++){
+        if (bindDeviceList != null && bindDeviceList.size() > 0) {
+            for (int m = 0; m < bindDeviceList.size(); m++) {
                 DeviceQueryRequest.DeviceQueryList bindDevice = bindDeviceList.get(m);
 
                 DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
@@ -795,10 +899,10 @@ public class DeviceOperateService {
 
                 //查询 设备是否存在
                 DevicePo devicePo = this.deviceMapper.selectByMac(bindDevice.getMac());
-                if(devicePo!=null){
+                if (devicePo != null) {
                     //查询 该设备是否有客户关系，即 该设备是否被分配。
                     DeviceCustomerRelationPo queryDeviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
-                    if(queryDeviceCustomerRelationPo!=null){
+                    if (queryDeviceCustomerRelationPo != null) {
                         //该设备被添加进入组的同时也被绑定给了当前的终端用户，因此设定此处的绑定状态为已绑定
                         devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
                         //设定绑定时间
@@ -819,12 +923,12 @@ public class DeviceOperateService {
                         devicePoList.add(devicePo);
                         deviceTeamItemPoList.add(deviceTeamItemPo);
                         deviceCustomerUserRelationPoList.add(deviceCustomerUserRelationPo);
-                    }else{
-                        return new ApiResponse<>(RetCode.PARAM_ERROR,"MAC："+bindDevice.getMac()+" 未被分配，绑定失败！",true);
+                    } else {
+                        return new ApiResponse<>(RetCode.PARAM_ERROR, "MAC：" + bindDevice.getMac() + " 未被分配，绑定失败！", true);
                     }
 
-                }else{
-                    return new ApiResponse<>(RetCode.PARAM_ERROR,"MAC："+bindDevice.getMac()+" 不存在，绑定失败！",true);
+                } else {
+                    return new ApiResponse<>(RetCode.PARAM_ERROR, "MAC：" + bindDevice.getMac() + " 不存在，绑定失败！", true);
                 }
 
             }
@@ -837,9 +941,9 @@ public class DeviceOperateService {
         //进行设备的批量绑定
         Boolean ret = this.deviceTeamItemMapper.insertBatch(deviceTeamItemPoList) > 0;
         if (ret) {
-            return new ApiResponse<>(RetCode.OK,"绑定成功",true);
+            return new ApiResponse<>(RetCode.OK, "绑定成功", true);
         } else {
-            return new ApiResponse<>(RetCode.ERROR,"绑定失败",false);
+            return new ApiResponse<>(RetCode.ERROR, "绑定失败", false);
         }
     }
 
@@ -848,22 +952,22 @@ public class DeviceOperateService {
      *
      * @return
      */
-    public ApiResponse<Boolean> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
+    public ApiResponse<DevicePo> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
 
         try {
 //            User user = userService.getCurrentUser();
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
-            if(null==deviceId||deviceId<=0||StringUtils.isBlank(mac)){
+            if (null == deviceId || deviceId <= 0 || StringUtils.isBlank(mac)) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "参数不可为空");
             }
 
             //查询该设备详情 进行验证
             DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
 
-            if(null==queryDevicePo){
+            if (null == queryDevicePo) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "当前设备不存在");
-            }else if(!mac.equals(queryDevicePo.getMac())){
+            } else if (!mac.equals(queryDevicePo.getMac())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
             }
 
@@ -884,7 +988,7 @@ public class DeviceOperateService {
 
             deviceMapper.updateById(unbindDevicePo);
 
-            return new ApiResponse<>(RetCode.OK, "解绑成功");
+            return new ApiResponse<>(RetCode.OK, "解绑成功",queryDevicePo);
         } catch (Exception e) {
             log.error("设备解绑失败-{}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备解绑失败");
@@ -1017,28 +1121,49 @@ public class DeviceOperateService {
 
     }
 
-    public ApiResponse<List<DevicePo>> queryChildDevice(Integer deviceId)throws Exception{
+    public ApiResponse<List<DeviceShareListVo>> queryShareList(Integer deviceId) {
+        return new ApiResponse<>(RetCode.OK, "查询授权列表成功");
+    }
+
+    /**
+     * 查询主设备下的从设备
+     *
+     * @param deviceId
+     * @return
+     * @throws Exception
+     */
+    public ApiResponse<List<DevicePo>> queryChildDevice(Integer deviceId) throws Exception {
         List<DevicePo> devicePoList = this.deviceMapper.selectChildDeviceListByHostDeviceId(deviceId);
-        if(null != devicePoList && 0 < devicePoList.size()){
-            return new ApiResponse<>(RetCode.OK,"查询从设备成功",devicePoList);
-        }
-        else {
-            return new ApiResponse<>(RetCode.OK,"当前设备无从设备",null);
+        if (null != devicePoList && 0 < devicePoList.size()) {
+            return new ApiResponse<>(RetCode.OK, "查询从设备成功", devicePoList);
+        } else {
+            return new ApiResponse<>(RetCode.OK, "当前设备无从设备", null);
         }
     }
 
-
+    /**
+     * 查询用户
+     *
+     * @param customerId
+     * @return
+     */
     public List<CustomerUserPo> queryUser(Integer customerId) {
         List<CustomerUserPo> customerUserPoList = this.customerUserMapper.selectByCustomerId(customerId);
         return customerUserPoList;
     }
 
 
-
-    public ApiResponse<DeviceLocationVo> queryDeviceLocation(Integer deviceId)throws Exception{
+    /**
+     * 查询设备位置
+     *
+     * @param deviceId
+     * @return
+     * @throws Exception
+     */
+    public ApiResponse<DeviceLocationVo> queryDeviceLocation(Integer deviceId) throws Exception {
         DeviceLocationVo locationVo = new DeviceLocationVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
-        if(devicePo!=null){
+        if (devicePo != null) {
             if (StringUtils.isEmpty(devicePo.getLocation())) {
                 JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), true);
                 if (locationJson != null) {
@@ -1054,9 +1179,9 @@ public class DeviceOperateService {
                                     locationVo.setLocation(locationVo.getProvince() + "," + locationVo.getCity());
                                 }
                             }
-                            if(content.containsKey("point")){
+                            if (content.containsKey("point")) {
                                 JSONObject point = content.getJSONObject("point");
-                                if(point!=null){
+                                if (point != null) {
                                     locationVo.setPointX(point.getString("x"));
                                     locationVo.setPointY(point.getString("y"));
                                 }
@@ -1065,20 +1190,26 @@ public class DeviceOperateService {
                         }
                     }
                 }
-            }else {
+            } else {
                 String[] locationArray = devicePo.getLocation().split(",");
                 locationVo.setArea(Joiner.on(" ").join(locationArray));
                 locationVo.setLocation(devicePo.getLocation());
             }
-            return new ApiResponse<>(RetCode.OK,"设备位置查询成功",locationVo);
-        }else{
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"该设备不存在",null);
+            return new ApiResponse<>(RetCode.OK, "设备位置查询成功", locationVo);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该设备不存在", null);
         }
 
     }
 
-    public ApiResponse<DeviceWeatherVo> queryDeviceWeather(Integer deviceId){
-        DeviceWeatherVo deviceWeatherVo=new DeviceWeatherVo();
+    /**
+     * 查询天气
+     *
+     * @param deviceId
+     * @return
+     */
+    public ApiResponse<DeviceWeatherVo> queryDeviceWeather(Integer deviceId) {
+        DeviceWeatherVo deviceWeatherVo = new DeviceWeatherVo();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         JSONObject weatherJson = locationUtils.getWeather(devicePo.getIp(), true);
         if (weatherJson != null) {
@@ -1092,7 +1223,7 @@ public class DeviceOperateService {
                 }
             }
         }
-        return new ApiResponse<>(RetCode.OK,"设备天气查询成功",deviceWeatherVo);
+        return new ApiResponse<>(RetCode.OK, "设备天气查询成功", deviceWeatherVo);
     }
 
 
@@ -1110,8 +1241,7 @@ public class DeviceOperateService {
             devicePo = deviceMapper.selectByMac(device.getMac());
             if (null != devicePo && CommonConstant.STATUS_DEL != devicePo.getStatus()) {
                 return devicePo;
-            }
-            else {
+            } else {
                 devicePo = null;
             }
         }
@@ -1124,8 +1254,7 @@ public class DeviceOperateService {
             devicePo = deviceMapper.selectByName(device.getName());
             if (null != devicePo && CommonConstant.STATUS_DEL != devicePo.getStatus()) {
                 return devicePo;
-            }
-            else {
+            } else {
                 devicePo = null;
             }
         }
@@ -1140,7 +1269,7 @@ public class DeviceOperateService {
      * @param deviceList
      * @return
      */
-    public DevicePo isDeviceHasCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceList) throws Exception{
+    public DevicePo isDeviceHasCustomer(List<DeviceQueryRequest.DeviceQueryList> deviceList) throws Exception {
         for (DeviceQueryRequest.DeviceQueryList device : deviceList) {
             DevicePo devicePo = deviceMapper.selectDeviceCustomerRelationByMac(device.getMac());
             //如果当前设备已被分配则返回错误
@@ -1153,11 +1282,12 @@ public class DeviceOperateService {
 
     /**
      * 查询当前用户下租的信息，若无组则加载自定义组
+     *
      * @param openId
      * @return
      * @throws Exception
      */
-    public ApiResponse<List<DeviceTeamPo>> queryTeamInfoByUser(String openId) throws Exception{
+    public ApiResponse<List<DeviceTeamPo>> queryTeamInfoByUser(String openId) throws Exception {
         //加载该用户名下未删除的自定义组
         List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectByUserOpenId(openId);
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
@@ -1166,14 +1296,14 @@ public class DeviceOperateService {
             deviceTeamPoList.clear();
             //若没有自定义组则加载默认组
             WxConfigPo wxConfigPo = this.wxConfigMapper.selectConfigByCustomerId(customerUserPo.getCustomerId());
-            if(wxConfigPo!=null){
+            if (wxConfigPo != null) {
                 deviceTeamPo.setName(wxConfigPo.getDefaultTeamName());
                 deviceTeamPo.setId(DeviceConstant.DEFAULT_TEAM_ID);
                 deviceTeamPoList.add(deviceTeamPo);
             }
 
         }
-        return new ApiResponse<>(RetCode.OK,"查询用户组成功",deviceTeamPoList);
+        return new ApiResponse<>(RetCode.OK, "查询用户组成功", deviceTeamPoList);
     }
 
     public CustomerUserPo isUserExist(String openId) {
@@ -1328,7 +1458,7 @@ public class DeviceOperateService {
             if (jsonObject != null) {
                 //如果 因为 access_token过期，则重新获取access_token，并回调自己。
                 if (jsonObject.containsKey("errcode") && CommonConstant.ZERO != jsonObject.get("errcode")) {
-                    if (RetCode.WX_RROR_40001.equals(jsonObject.get("errcode"))||RetCode.WX_RROR_40001==jsonObject.get("errcode")) {
+                    if (RetCode.WX_RROR_40001.equals(jsonObject.get("errcode")) || RetCode.WX_RROR_40001 == jsonObject.get("errcode")) {
                         accessToken = wechartUtil.getAccessToken(appId, appSecret, customerId, true);
                         obtainDeviceInfo(appId, appSecret, customerId, productId);
                     }
@@ -1350,8 +1480,6 @@ public class DeviceOperateService {
         }
         return new ApiResponse<>(RetCode.PARAM_ERROR, "获取设备配额失败", null);
     }
-
-
 
 
     /**

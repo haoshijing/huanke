@@ -81,6 +81,7 @@ public class CustomerVo {
         private String qrcode;   //二维码
         private String name;
         private String logo;
+        private String appUrl;
         private String version;
         private String deviceChangePassword;    //设备切换密码
         private Integer status = CommonConstant.STATUS_YES;
