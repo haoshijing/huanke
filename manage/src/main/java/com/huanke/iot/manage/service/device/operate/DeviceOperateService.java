@@ -328,8 +328,9 @@ public class DeviceOperateService {
             DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
             if(null != deviceOperLogPo){
                 //0-关机 1-开机
-                log.info("设备的开机关机状态:",deviceOperLogPo.getFuncValue());
+                log.info("设备的开机关机状态:{}",deviceOperLogPo.getFuncValue());
                 deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0") ? 0:1);
+                log.info("vo的设备开关机状态：{}",deviceQueryVo.getPowerStatus());
             }else {
                 deviceQueryVo.setPowerStatus(0);
             }
