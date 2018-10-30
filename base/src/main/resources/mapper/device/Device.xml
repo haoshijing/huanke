@@ -243,7 +243,16 @@
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select d.*
+        select d.`id`, d.`name`, d.`mac`,d.`deviceNo`,
+        d.`wxDeviceId`,d.`wxDevicelicence`,d.`wxQrticket`,
+        d.`imei`,d.`imsi`,d.`saNo`,d.`typeId`,d.`modelId`,
+        d.`productId`,c.`customerId` ,
+        d.`onlineStatus`,d.`bindStatus`,d.`bindTime`,d.`assignStatus`,
+        d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,
+        d.`speedConfig`,d.`version`,d.`location`,d.`status`,
+        d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
+        d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
+        d.`createTime`,d.`lastUpdateTime`,d.`createUserId`,d.`updateUserId`
         ,c.name customerName
         from
         t_device d
