@@ -87,6 +87,14 @@
         ORDER BY sort ASC
     </select>
 
+    <select id="findExistByDeviceIdAndTypeNameAndSort" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
+        SELECT * FROM <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        AND typeName = #{typeName}
+        AND sort = #{sort}
+        AND status = 1
+    </select>
+
     <select id="selectList" parameterType="com.huanke.iot.base.po.device.DeviceParamsPo" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
         SELECT * FROM <include refid="tableName"/>
         <where>

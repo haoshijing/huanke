@@ -19,4 +19,6 @@ public interface DeviceParamsMapper extends BaseMapper<DeviceParamsPo> {
     List<DeviceParamsPo> findExistByDeviceIdAndTypeName(@Param("deviceId")Integer deviceId, @Param("typeName")String typeName);
 
     DeviceParamsPo selectList(DeviceParamsPo deviceParamsPo);
+
+    DeviceParamsPo findExistByDeviceIdAndTypeNameAndSort(@Param("deviceId")Integer deviceId, @Param("typeName")String typeName, @Param("sort")Integer sort);
 }
