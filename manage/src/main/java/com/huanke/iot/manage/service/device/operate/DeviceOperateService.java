@@ -297,9 +297,11 @@ public class DeviceOperateService {
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
-        queryPo.setCustomerId(customerId);
         if (deviceListQueryRequest != null) {
             BeanUtils.copyProperties(deviceListQueryRequest, queryPo);
+        }
+        if(deviceListQueryRequest.getCustomerId()==null){
+            queryPo.setCustomerId(customerId);
         }
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
         if (null == devicePos || 0 == devicePos.size()) {
@@ -389,9 +391,12 @@ public class DeviceOperateService {
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
-        queryPo.setCustomerId(customerId);
         if (deviceListQueryRequest != null) {
             BeanUtils.copyProperties(deviceListQueryRequest, queryPo);
+        }
+
+        if(deviceListQueryRequest.getCustomerId()==null){
+            queryPo.setCustomerId(customerId);
         }
         ApiResponse<List<DeviceListVo>> deviceQueryRtn = queryDeviceByPage(deviceListQueryRequest);
         if (deviceQueryRtn != null && deviceQueryRtn.getCode() != RetCode.OK) {
