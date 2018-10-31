@@ -46,7 +46,7 @@
 
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DeviceCustomerRelationPo">
         select
-        r.*,c.name customerName
+        r.*,c.name customerName,c.SLD
         FROM
         <include refid="tableName"/> r,t_customer c
         WHERE deviceId = #{deviceId}
