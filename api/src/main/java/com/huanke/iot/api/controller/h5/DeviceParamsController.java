@@ -6,7 +6,6 @@ import com.huanke.iot.api.controller.h5.response.DeviceParamsVo;
 import com.huanke.iot.api.service.device.basic.DeviceParamsService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.enums.AbilityEnums;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,12 +33,11 @@ public class DeviceParamsController extends BaseController{
     @RequestMapping("/exist")
     public ApiResponse<Boolean> ifExist(@RequestBody DeviceParamRequest deviceParamRequest){
         Integer deviceId = deviceParamRequest.getDeviceId();
-        Integer abilityNo = deviceParamRequest.getAbilityNo();
-        if(deviceId == null || abilityNo == null){
-            log.error("参数异常：deviceId={}, abilityNo={}", deviceId, abilityNo);
+        String typeName = deviceParamRequest.getTypeName();
+        if(deviceId == null || typeName == null){
+            log.error("参数异常：deviceId={}, typeName={}", deviceId, typeName);
             return new ApiResponse<>(RetCode.ERROR, "参数异常");
         }
-        String typeName = AbilityEnums.getTypeNameByAbilityNo(abilityNo);
         Boolean result = deviceParamsService.ifExist(deviceId, typeName);
         return new ApiResponse<>(result);
     }
@@ -50,12 +48,11 @@ public class DeviceParamsController extends BaseController{
     @RequestMapping("/paramList")
     public ApiResponse<List<DeviceParamsVo>> paramList(@RequestBody DeviceParamRequest deviceParamRequest){
         Integer deviceId = deviceParamRequest.getDeviceId();
-        Integer abilityNo = deviceParamRequest.getAbilityNo();
-        if(deviceId == null || abilityNo == null){
-            log.error("参数异常：deviceId={}, abilityNo={}", deviceId, abilityNo);
+        String typeName = deviceParamRequest.getTypeName();
+        if(deviceId == null || typeName == null){
+            log.error("参数异常：deviceId={}, typeName={}", deviceId, typeName);
             return new ApiResponse<>(RetCode.ERROR, "参数异常");
         }
-        String typeName = AbilityEnums.getTypeNameByAbilityNo(abilityNo);
         List<DeviceParamsVo> deviceParamsVoList = deviceParamsService.paramList(deviceId, typeName);
         return new ApiResponse<>(deviceParamsVoList);
     }
@@ -77,18 +74,18 @@ public class DeviceParamsController extends BaseController{
         return new ApiResponse<>(requestId);
     }
 
+
     /**
      * 轮询查状态接口
      */
     @RequestMapping("/queryDeviceBack")
     public ApiResponse<Boolean> queryDeviceBack(@RequestBody DeviceParamRequest deviceParamRequest){
         Integer deviceId = deviceParamRequest.getDeviceId();
-        Integer abilityNo = deviceParamRequest.getAbilityNo();
-        if(deviceId == null || abilityNo == null){
-            log.error("参数异常：deviceId={}, abilityNo={}", deviceId, abilityNo);
+        String typeName = deviceParamRequest.getTypeName();
+        if(deviceId == null || typeName == null){
+            log.error("参数异常：deviceId={}, typeName={}", deviceId, typeName);
             return new ApiResponse<>(RetCode.ERROR, "参数异常");
         }
-        String typeName = AbilityEnums.getTypeNameByAbilityNo(abilityNo);
         Boolean result = deviceParamsService.queryDeviceBack(deviceId, typeName);
         return new ApiResponse<>(result);
     }
