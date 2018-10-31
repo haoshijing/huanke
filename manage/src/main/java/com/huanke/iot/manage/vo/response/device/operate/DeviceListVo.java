@@ -11,12 +11,12 @@ public class DeviceListVo {
     private String customerName;
     private String SLD;
     private String deviceType;
-    private String modelName;
 
     /**
      *设备名
      */
     private String name;
+    private String manageName;
     /**
      * mac地址
      */
@@ -64,6 +64,7 @@ public class DeviceListVo {
     private Integer id;
 
     private Integer modelId;
+    private String modelName;
 
     private Integer hostStatus;
 

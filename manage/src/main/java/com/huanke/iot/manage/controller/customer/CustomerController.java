@@ -116,9 +116,9 @@ public class CustomerController {
 
     @ApiOperation("用户自己修改logo和title")
     @PostMapping(value = "/updateWebsiteInfo")
-    public ApiResponse<Boolean> updateWebsiteInfo(@RequestBody CustomerVo.BackendConfig backendConfig){
+    public ApiResponse<Boolean> updateWebsiteInfo(@RequestBody CustomerVo.BackendLogo backendLogo){
         try {
-            return this.customerService.updateWebsiteInfo(backendConfig);
+            return this.customerService.updateWebsiteInfo(backendLogo);
         }catch (Exception e){
             log.error("更改用户logo和title异常 = {}",e);
             return new ApiResponse<>(RetCode.ERROR,"客户logo和title更改错误");
