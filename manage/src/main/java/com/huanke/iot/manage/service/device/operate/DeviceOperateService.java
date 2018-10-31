@@ -316,12 +316,14 @@ public class DeviceOperateService {
             DeviceModelPo deviceModelPo =this.deviceModelMapper.selectById(devicePo.getId());
             if(null !=deviceModelPo){
                 deviceQueryVo.setModelName(deviceModelPo.getName());
+                log.info("当前的设备型号名：={}",deviceQueryVo.getModelName());
             }
             //查询管理名称
-            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
-            if(null != deviceTeamItemPo){
-                deviceQueryVo.setManageName(deviceTeamItemPo.getManageName());
-            }
+//            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
+//            if(null != deviceTeamItemPo){
+//                deviceQueryVo.setManageName(deviceTeamItemPo.getManageName());
+//                log.info("当前设备的管理名称：={}",deviceQueryVo.getModelName());
+//            }
             deviceQueryVo.setCustomerId(devicePo.getCustomerId());
             deviceQueryVo.setCustomerName(devicePo.getCustomerName());
 
