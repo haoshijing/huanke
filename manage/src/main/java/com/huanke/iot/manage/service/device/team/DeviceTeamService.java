@@ -276,6 +276,10 @@ public class DeviceTeamService {
             customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
             deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
             deviceTeamVo.setMasterNickName(customerUserPo.getNickname());
+            //获取管理员所归属的客户
+            deviceTeamVo.setCustomerId(customerUserPo.getCustomerId());
+            CustomerPo customerPo =this.customerMapper.selectById(customerUserPo.getCustomerId());
+            deviceTeamVo.setCustomerName(customerPo.getName());
             deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
             deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
 
@@ -369,6 +373,10 @@ public class DeviceTeamService {
             customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
             deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
             deviceTeamVo.setMasterNickName(customerUserPo.getNickname());
+            //获取管理员所归属的客户
+            deviceTeamVo.setCustomerId(customerUserPo.getCustomerId());
+            CustomerPo customerPo =this.customerMapper.selectById(customerUserPo.getCustomerId());
+            deviceTeamVo.setCustomerName(customerPo.getName());
             deviceTeamVo.setCover(deviceTeamPo.getVideoCover());
             deviceTeamVo.setSceneDescription(deviceTeamPo.getSceneDescription());
 
