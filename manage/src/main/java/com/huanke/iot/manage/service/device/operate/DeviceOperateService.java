@@ -313,6 +313,15 @@ public class DeviceOperateService {
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
+            DeviceModelPo deviceModelPo =this.deviceModelMapper.selectById(devicePo.getId());
+            if(null !=deviceModelPo){
+                deviceQueryVo.setModelName(deviceModelPo.getName());
+            }
+            //查询管理名称
+            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
+            if(null != deviceTeamItemPo){
+                deviceQueryVo.setManageName(deviceTeamItemPo.getManageName());
+            }
             deviceQueryVo.setCustomerId(devicePo.getCustomerId());
             deviceQueryVo.setCustomerName(devicePo.getCustomerName());
 
