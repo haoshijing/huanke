@@ -497,7 +497,7 @@ public class DeviceOperateController {
     }
 
     @ApiOperation("分享设备的token")
-    @RequestMapping(value = "/shareDeviceToken/{wxDeviceId}", method = RequestMethod.POST)
+    @GetMapping(value = "/shareDeviceToken/{wxDeviceId}")
     public ApiResponse<String> shareDeviceToken(@PathVariable String wxDeviceId){
         if(null == wxDeviceId || wxDeviceId.equals("")){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"wxDeviceId不可为空");
@@ -519,6 +519,49 @@ public class DeviceOperateController {
         }catch (Exception e){
             log.error("设备分享列表异常 = {}",e);
             return new ApiResponse<>(RetCode.ERROR,"设备分享列表查询失败");
+        }
+    }
+
+    @ApiOperation("设备授权（单个）")
+    @RequestMapping(value = "/updateRelation", method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateRelation(@RequestBody UpdateShareRequest updateShareRequest){
+        try {
+            return this.deviceService.updateRelation(updateShareRequest);
+        }catch (Exception e){
+            log.error("设备授权（单个）异常 ={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备授权（单个）失败");
+        }
+    }
+
+    @ApiOperation("设备授权（全部）")
+    @RequestMapping(value = "/updateAllRelation", method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateAllRelation(@RequestBody UpdateShareRequest updateShareRequest){
+        try {
+            return this.deviceService.updateAllRelation(updateShareRequest);
+        }catch (Exception e){
+            log.error("设备授权（全部）异常 ={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备授权（全部）失败");
+        }
+    }
+    @ApiOperation("删除分享（单个）")
+    @RequestMapping("/clearRelation")
+    public ApiResponse<Boolean> clearRelation(@RequestBody UpdateShareRequest updateShareRequest) {
+        try {
+            return this.deviceService.clearRelation(updateShareRequest);
+        }catch (Exception e){
+            log.error("删除分享（单个）异常 ={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"删除分享（单个）失败");
+        }
+    }
+
+    @ApiOperation("删除分享（全部）")
+    @RequestMapping("/clearAllRelation")
+    public ApiResponse<Boolean> clearAllRelation(@RequestBody UpdateShareRequest updateShareRequest) {
+        try {
+            return this.deviceService.clearAllRelation(updateShareRequest);
+        }catch (Exception e){
+            log.error("删除分享（全部）异常 ={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"删除分享（全部）失败");
         }
     }
 //    @RequestMapping("/queryOperLogList")

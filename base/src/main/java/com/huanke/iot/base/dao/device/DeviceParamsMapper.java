@@ -1,14 +1,13 @@
 package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.dto.DeviceParamsConfigDto;
 import com.huanke.iot.base.po.device.DeviceParamsPo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface DeviceParamsMapper extends BaseMapper<DeviceParamsPo> {
-    List<DeviceParamsConfigDto> queryParamsConfig(@Param("deviceId")Integer deviceId, @Param("modelId")Integer modelId);
+    List<DeviceParamsPo> queryParamsConfig(@Param("deviceId")Integer deviceId);
 
     DeviceParamsPo findByDeviceIdAndAbilityId(@Param("deviceId")Integer deviceId, @Param("abilityId")Integer abilityId,@Param("sort")Integer sort);
 

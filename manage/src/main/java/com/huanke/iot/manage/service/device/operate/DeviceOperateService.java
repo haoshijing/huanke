@@ -1179,6 +1179,105 @@ public class DeviceOperateService {
         }
     }
 
+    public ApiResponse<Boolean> updateRelation(UpdateShareRequest updateShareRequest) throws Exception{
+        //查询设备状态
+        DevicePo devicePo = this.deviceMapper.selectById(updateShareRequest.getDeviceId());
+        if(null == devicePo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不存在或已被删除");
+        }
+        //查询设备的绑定状态
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(updateShareRequest.getDeviceId());
+        if(null == deviceCustomerUserRelationPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+        }
+        //查询授权用户信息
+        CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(updateShareRequest.getOpenId());
+        if(null == customerUserPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"授权用户不存在");
+        }
+        DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
+        queryItemPo.setUserId(customerUserPo.getId());
+        queryItemPo.setDeviceId(updateShareRequest.getDeviceId());
+        queryItemPo.setStatus(null);
+        List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(queryItemPo);
+        if(null == deviceTeamItemPoList || 0 == deviceTeamItemPoList.size()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"授权用户尚未拥有此设备");
+        }
+        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPoList.get(0);
+        this.deviceTeamItemMapper.updateStatus(deviceTeamItemPo.getDeviceId(),deviceTeamItemPo.getUserId(),updateShareRequest.getStatus());
+        return new ApiResponse<>(RetCode.OK,"授权成功",true);
+    }
+
+    public ApiResponse<Boolean> updateAllRelation(UpdateShareRequest updateShareRequest) throws Exception{
+        List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamItemMapper.selectItemsByDeviceId(updateShareRequest.getDeviceId());
+        if(null == deviceTeamItemPoList || 0 == deviceTeamItemPoList.size()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"授权用户尚未拥有此设备");
+        }
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = deviceCustomerUserRelationMapper.queryByDeviceId(updateShareRequest.getDeviceId());
+        if(null == deviceCustomerUserRelationPoList || 0 == deviceCustomerUserRelationPoList.size()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+        }
+        List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo ->{
+            List<String> openIdsList = deviceCustomerUserRelationPoList.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
+            Integer userId = eachPo.getUserId();
+            CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+            if (!openIdsList.contains(customerUserPo.getOpenId())) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        //从设备组关系表中筛选除主绑定人之外的用户
+        subUserTeamItemPoList.stream().forEach(eachPo ->{
+            eachPo.setStatus(updateShareRequest.getStatus());
+        });
+        this.deviceTeamItemMapper.updateBatch(subUserTeamItemPoList);
+        return new ApiResponse<>(RetCode.OK,"全部授权成功",true);
+    }
+
+    public ApiResponse<Boolean> clearRelation(UpdateShareRequest updateShareRequest) throws Exception{
+        DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
+        CustomerUserPo beClearCustomerUserPo = customerUserMapper.selectByOpenId(updateShareRequest.getOpenId());
+        queryItemPo.setUserId(beClearCustomerUserPo.getId());
+        queryItemPo.setDeviceId(updateShareRequest.getDeviceId());
+        queryItemPo.setStatus(null);
+        List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(queryItemPo);
+        if (deviceTeamItemPoList.size() == 0 || null == deviceTeamItemPoList) {
+            log.info("被删除用户无此设备，deviceId={}", updateShareRequest.getDeviceId());
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"被删除用户无此设备");
+        }
+        DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPoList.get(0);
+        this.deviceTeamItemMapper.deleteByJoinId(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId());
+        return new ApiResponse<>(RetCode.OK,"清除分享成功",true);
+    }
+
+    public ApiResponse<Boolean> clearAllRelation(UpdateShareRequest updateShareRequest) throws Exception{
+        DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
+        //查询设备的绑定状态
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = deviceCustomerUserRelationMapper.queryByDeviceId(updateShareRequest.getDeviceId());
+        if(null == deviceCustomerUserRelationPoList || 0 == deviceCustomerUserRelationPoList.size()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+        }
+        queryItemPo.setDeviceId(updateShareRequest.getDeviceId());
+        queryItemPo.setStatus(null);
+        List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(queryItemPo);
+        if(null != deviceTeamItemPoList && 0 < deviceTeamItemPoList.size()){
+            //筛选除主绑人之外的用户
+            List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo ->{
+                List<String> openIdsList = deviceCustomerUserRelationPoList.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
+                Integer userId = eachPo.getUserId();
+                CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+                if (!openIdsList.contains(customerUserPo.getOpenId())) {
+                    return true;
+                }
+                return false;
+            }).collect(Collectors.toList());
+            this.deviceTeamItemMapper.deleteBatch(subUserTeamItemPoList);
+        }else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设备下无已分享设备");
+        }
+        return new ApiResponse<>(RetCode.OK,"删除分享（全部）成功",true);
+    }
+
     /**
      * 查询主设备下的从设备
      *
