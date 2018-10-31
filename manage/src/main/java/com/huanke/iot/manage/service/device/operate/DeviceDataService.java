@@ -68,7 +68,11 @@ public class DeviceDataService {
                 //根据操作来源读取不同的客户名称，1-1-h5,2-安卓,3-管理端，1、2读取用户表，3读取客户表
                 if(1 == deviceOperLogPo.getOperType() || 2 == deviceOperLogPo.getOperType()){
                     CustomerUserPo customerUserPo=this.customerUserMapper.selectByUserId(deviceOperLogPo.getOperUserId());
-                    deviceOperLogVo.setOperName(customerUserPo.getNickname());
+                    if(null != customerUserPo) {
+                        deviceOperLogVo.setOperName(customerUserPo.getNickname());
+                    }else {
+                        deviceOperLogVo.setOperName("未知用户");
+                    }
                 }else {
                     CustomerPo customerPo = this.customerMapper.selectById(deviceOperLogPo.getOperUserId());
                     deviceOperLogVo.setOperName(customerPo.getName());
