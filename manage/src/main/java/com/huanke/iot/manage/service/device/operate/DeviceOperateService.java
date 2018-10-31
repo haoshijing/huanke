@@ -298,7 +298,7 @@ public class DeviceOperateService {
         if (deviceListQueryRequest != null) {
             BeanUtils.copyProperties(deviceListQueryRequest, queryPo);
         }
-        if(deviceListQueryRequest.getCustomerId()==null){
+        if (deviceListQueryRequest.getCustomerId() == null) {
             queryPo.setCustomerId(customerId);
         }
         List<DevicePo> devicePos = deviceMapper.selectList(queryPo, limit, offset);
@@ -313,10 +313,10 @@ public class DeviceOperateService {
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
-            DeviceModelPo deviceModelPo =this.deviceModelMapper.selectById(devicePo.getId());
-            if(null !=deviceModelPo){
+            DeviceModelPo deviceModelPo = this.deviceModelMapper.selectById(devicePo.getId());
+            if (null != deviceModelPo) {
                 deviceQueryVo.setModelName(deviceModelPo.getName());
-                log.info("当前的设备型号名：={}",deviceQueryVo.getModelName());
+                log.info("当前的设备型号名：={}", deviceQueryVo.getModelName());
             }
             //查询管理名称
 //            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
@@ -336,12 +336,12 @@ public class DeviceOperateService {
             deviceQueryVo.setStatus(devicePo.getStatus());
             //查询开关机状态
             DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
-            if(null != deviceOperLogPo){
+            if (null != deviceOperLogPo) {
                 //0-关机 1-开机
-                log.info("设备的开机关机状态:{}",deviceOperLogPo.getFuncValue());
-                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0") ? 0:1);
-                log.info("vo的设备开关机状态：{}",deviceQueryVo.getPowerStatus());
-            }else {
+                log.info("设备的开机关机状态:{}", deviceOperLogPo.getFuncValue());
+                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0") ? 0 : 1);
+                log.info("vo的设备开关机状态：{}", deviceQueryVo.getPowerStatus());
+            } else {
                 deviceQueryVo.setPowerStatus(0);
             }
             //查询开关机状态  todo
@@ -405,7 +405,7 @@ public class DeviceOperateService {
             BeanUtils.copyProperties(deviceListQueryRequest, queryPo);
         }
 
-        if(deviceListQueryRequest.getCustomerId()==null){
+        if (deviceListQueryRequest.getCustomerId() == null) {
             queryPo.setCustomerId(customerId);
         }
         ApiResponse<List<DeviceListVo>> deviceQueryRtn = queryDeviceByPage(deviceListQueryRequest);
@@ -524,12 +524,18 @@ public class DeviceOperateService {
         //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
         if (RetCode.OK == result.getCode()) {
             DevicePo devicePo = result.getData();
-            //记录要更新的设备池信息
-            DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(devicePo.getWxDeviceId());
+            //当设备已被分配，则进行召回
+            if (DeviceConstant.ASSIGN_STATUS_YES.equals(devicePo.getAssignStatus())) {
+                DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(devicePo.getWxDeviceId());
 
-            deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-            deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
-            deviceIdPoolMapper.updateById(deviceIdPoolPo);
+                if (deviceIdPoolPo != null) {
+                    deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                    deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+                    deviceIdPoolMapper.updateById(deviceIdPoolPo);
+                }
+
+            }
+
 
             //删除 该设备的群绑定关系
             this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
@@ -560,21 +566,30 @@ public class DeviceOperateService {
         ApiResponse<DevicePo> result = untieOneDeviceToUser(deviceVo);
         //解绑成功之后，开始 解除群关系 并 进行解除 客户关系。
         if (RetCode.OK == result.getCode()) {
-            //删除 该设备的群绑定关系
-            this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
-            //解除客户分配关系
-            deviceCustomerRelationMapper.deleteDeviceById(deviceId);
+
 
             //更改 设备信息
             DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
             if (queryDevicePo != null) {
 
-                //记录要更新的设备池信息
-                DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(queryDevicePo.getWxDeviceId());
+                //当设备已被分配，则进行召回
+                if (DeviceConstant.ASSIGN_STATUS_YES.equals(queryDevicePo.getAssignStatus())) {
+                    //记录要更新的设备池信息
+                    DeviceIdPoolPo deviceIdPoolPo = this.deviceIdPoolMapper.selectByWxDeviceId(queryDevicePo.getWxDeviceId());
 
-                deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
-                deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
-                deviceIdPoolMapper.updateById(deviceIdPoolPo);
+                    if (deviceIdPoolPo != null) {
+                        deviceIdPoolPo.setStatus(DeviceConstant.WXDEVICEID_STATUS_NO);
+                        deviceIdPoolPo.setLastUpdateTime(System.currentTimeMillis());
+                        deviceIdPoolMapper.updateById(deviceIdPoolPo);
+                    }
+                    //解除客户分配关系
+                    deviceCustomerRelationMapper.deleteDeviceById(deviceId);
+
+                }
+                //删除 该设备的群绑定关系
+                this.deviceGroupItemMapper.deleteItemsByDeviceId(deviceId);
+
+
                 // 删除该设备的 微信deviceid
                 queryDevicePo.setWxDeviceId(null);
                 queryDevicePo.setWxDevicelicence(null);
@@ -998,7 +1013,7 @@ public class DeviceOperateService {
 
             deviceMapper.updateById(unbindDevicePo);
 
-            return new ApiResponse<>(RetCode.OK, "解绑成功",queryDevicePo);
+            return new ApiResponse<>(RetCode.OK, "解绑成功", queryDevicePo);
         } catch (Exception e) {
             log.error("设备解绑失败-{}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备解绑失败");
@@ -1131,12 +1146,12 @@ public class DeviceOperateService {
 
     }
 
-    public ApiResponse<List<DeviceShareListVo>> queryShareList(Integer deviceId){
+    public ApiResponse<List<DeviceShareListVo>> queryShareList(Integer deviceId) {
         List<DeviceShareListVo> deviceShareListVoList = new ArrayList<>();
         //查询设备的绑定情况
-        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList =this.deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = this.deviceCustomerUserRelationMapper.queryByDeviceId(deviceId);
         //
-        if(null != deviceCustomerUserRelationPoList && 0 <deviceCustomerUserRelationPoList.size()){
+        if (null != deviceCustomerUserRelationPoList && 0 < deviceCustomerUserRelationPoList.size()) {
             //查询主绑人
             DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationPoList.get(0);
             CustomerUserPo masterUserPo = this.customerUserMapper.selectByOpenId(deviceCustomerUserRelationPo.getOpenId());
@@ -1146,22 +1161,22 @@ public class DeviceOperateService {
             masterPo.setOpenId(masterUserPo.getOpenId());
             masterPo.setHeadImg(masterUserPo.getHeadimgurl());
             masterPo.setNickname(masterUserPo.getNickname());
-            DeviceTeamItemPo masterTeamItemPo = this.deviceTeamItemMapper.selectByJoinId(deviceId,masterUserPo.getId());
+            DeviceTeamItemPo masterTeamItemPo = this.deviceTeamItemMapper.selectByJoinId(deviceId, masterUserPo.getId());
             masterPo.setJoinTime(masterTeamItemPo.getCreateTime());
             deviceShareListVoList.add(masterPo);
             //查询设备的共享人信息,筛选主绑定人
             List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
-            List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo ->{
+            List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo -> {
                 List<String> openIdsList = deviceCustomerUserRelationPoList.stream().map(userEachPo -> userEachPo.getOpenId()).collect(Collectors.toList());
                 Integer subUserId = eachPo.getUserId();
                 CustomerUserPo customerUserPo = this.customerUserMapper.selectById(subUserId);
-                if(!openIdsList.contains(customerUserPo.getOpenId())){
+                if (!openIdsList.contains(customerUserPo.getOpenId())) {
                     return true;
                 }
                 return false;
             }).sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
             //返回最终结果
-            List<DeviceShareListVo> subUserVo = subUserTeamItemPoList.stream().map(eachPo ->{
+            List<DeviceShareListVo> subUserVo = subUserTeamItemPoList.stream().map(eachPo -> {
                 Integer subUserId = eachPo.getUserId();
                 CustomerUserPo customerUserPo = this.customerUserMapper.selectByUserId(subUserId);
                 DeviceShareListVo deviceShareVo = new DeviceShareListVo();
@@ -1173,51 +1188,51 @@ public class DeviceOperateService {
                 deviceShareVo.setStatus(eachPo.getStatus() == 1 ? true : false);
                 return deviceShareVo;
             }).collect(Collectors.toList());
-            return new ApiResponse<>(RetCode.OK,"查询授权列表成功",subUserVo);
-        }else {
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+            return new ApiResponse<>(RetCode.OK, "查询授权列表成功", subUserVo);
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备尚未被绑定");
         }
     }
 
-    public ApiResponse<Boolean> updateRelation(UpdateShareRequest updateShareRequest) throws Exception{
+    public ApiResponse<Boolean> updateRelation(UpdateShareRequest updateShareRequest) throws Exception {
         //查询设备状态
         DevicePo devicePo = this.deviceMapper.selectById(updateShareRequest.getDeviceId());
-        if(null == devicePo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备不存在或已被删除");
+        if (null == devicePo) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备不存在或已被删除");
         }
         //查询设备的绑定状态
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(updateShareRequest.getDeviceId());
-        if(null == deviceCustomerUserRelationPo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+        if (null == deviceCustomerUserRelationPo) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备尚未被绑定");
         }
         //查询授权用户信息
         CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(updateShareRequest.getOpenId());
-        if(null == customerUserPo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"授权用户不存在");
+        if (null == customerUserPo) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "授权用户不存在");
         }
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         queryItemPo.setUserId(customerUserPo.getId());
         queryItemPo.setDeviceId(updateShareRequest.getDeviceId());
         queryItemPo.setStatus(null);
         List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(queryItemPo);
-        if(null == deviceTeamItemPoList || 0 == deviceTeamItemPoList.size()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"授权用户尚未拥有此设备");
+        if (null == deviceTeamItemPoList || 0 == deviceTeamItemPoList.size()) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "授权用户尚未拥有此设备");
         }
         DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPoList.get(0);
-        this.deviceTeamItemMapper.updateStatus(deviceTeamItemPo.getDeviceId(),deviceTeamItemPo.getUserId(),updateShareRequest.getStatus());
-        return new ApiResponse<>(RetCode.OK,"授权成功",true);
+        this.deviceTeamItemMapper.updateStatus(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId(), updateShareRequest.getStatus());
+        return new ApiResponse<>(RetCode.OK, "授权成功", true);
     }
 
-    public ApiResponse<Boolean> updateAllRelation(UpdateShareRequest updateShareRequest) throws Exception{
+    public ApiResponse<Boolean> updateAllRelation(UpdateShareRequest updateShareRequest) throws Exception {
         List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamItemMapper.selectItemsByDeviceId(updateShareRequest.getDeviceId());
-        if(null == deviceTeamItemPoList || 0 == deviceTeamItemPoList.size()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"授权用户尚未拥有此设备");
+        if (null == deviceTeamItemPoList || 0 == deviceTeamItemPoList.size()) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "授权用户尚未拥有此设备");
         }
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = deviceCustomerUserRelationMapper.queryByDeviceId(updateShareRequest.getDeviceId());
-        if(null == deviceCustomerUserRelationPoList || 0 == deviceCustomerUserRelationPoList.size()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+        if (null == deviceCustomerUserRelationPoList || 0 == deviceCustomerUserRelationPoList.size()) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备尚未被绑定");
         }
-        List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo ->{
+        List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo -> {
             List<String> openIdsList = deviceCustomerUserRelationPoList.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
             Integer userId = eachPo.getUserId();
             CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
@@ -1227,14 +1242,14 @@ public class DeviceOperateService {
             return false;
         }).collect(Collectors.toList());
         //从设备组关系表中筛选除主绑定人之外的用户
-        subUserTeamItemPoList.stream().forEach(eachPo ->{
+        subUserTeamItemPoList.stream().forEach(eachPo -> {
             eachPo.setStatus(updateShareRequest.getStatus());
         });
         this.deviceTeamItemMapper.updateBatch(subUserTeamItemPoList);
-        return new ApiResponse<>(RetCode.OK,"全部授权成功",true);
+        return new ApiResponse<>(RetCode.OK, "全部授权成功", true);
     }
 
-    public ApiResponse<Boolean> clearRelation(UpdateShareRequest updateShareRequest) throws Exception{
+    public ApiResponse<Boolean> clearRelation(UpdateShareRequest updateShareRequest) throws Exception {
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         CustomerUserPo beClearCustomerUserPo = customerUserMapper.selectByOpenId(updateShareRequest.getOpenId());
         queryItemPo.setUserId(beClearCustomerUserPo.getId());
@@ -1243,26 +1258,26 @@ public class DeviceOperateService {
         List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(queryItemPo);
         if (deviceTeamItemPoList.size() == 0 || null == deviceTeamItemPoList) {
             log.info("被删除用户无此设备，deviceId={}", updateShareRequest.getDeviceId());
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"被删除用户无此设备");
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "被删除用户无此设备");
         }
         DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPoList.get(0);
         this.deviceTeamItemMapper.deleteByJoinId(deviceTeamItemPo.getDeviceId(), deviceTeamItemPo.getUserId());
-        return new ApiResponse<>(RetCode.OK,"清除分享成功",true);
+        return new ApiResponse<>(RetCode.OK, "清除分享成功", true);
     }
 
-    public ApiResponse<Boolean> clearAllRelation(UpdateShareRequest updateShareRequest) throws Exception{
+    public ApiResponse<Boolean> clearAllRelation(UpdateShareRequest updateShareRequest) throws Exception {
         DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
         //查询设备的绑定状态
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = deviceCustomerUserRelationMapper.queryByDeviceId(updateShareRequest.getDeviceId());
-        if(null == deviceCustomerUserRelationPoList || 0 == deviceCustomerUserRelationPoList.size()){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
+        if (null == deviceCustomerUserRelationPoList || 0 == deviceCustomerUserRelationPoList.size()) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "设备尚未被绑定");
         }
         queryItemPo.setDeviceId(updateShareRequest.getDeviceId());
         queryItemPo.setStatus(null);
         List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(queryItemPo);
-        if(null != deviceTeamItemPoList && 0 < deviceTeamItemPoList.size()){
+        if (null != deviceTeamItemPoList && 0 < deviceTeamItemPoList.size()) {
             //筛选除主绑人之外的用户
-            List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo ->{
+            List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo -> {
                 List<String> openIdsList = deviceCustomerUserRelationPoList.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getOpenId()).collect(Collectors.toList());
                 Integer userId = eachPo.getUserId();
                 CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
@@ -1272,10 +1287,10 @@ public class DeviceOperateService {
                 return false;
             }).collect(Collectors.toList());
             this.deviceTeamItemMapper.deleteBatch(subUserTeamItemPoList);
-        }else {
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"当前设备下无已分享设备");
+        } else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "当前设备下无已分享设备");
         }
-        return new ApiResponse<>(RetCode.OK,"删除分享（全部）成功",true);
+        return new ApiResponse<>(RetCode.OK, "删除分享（全部）成功", true);
     }
 
     /**

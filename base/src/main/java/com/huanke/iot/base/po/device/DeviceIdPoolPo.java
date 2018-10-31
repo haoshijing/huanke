@@ -14,4 +14,7 @@ public class DeviceIdPoolPo {
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;
+    private Integer createUser;
+    private Integer lastUpdateUser;
+
 }
