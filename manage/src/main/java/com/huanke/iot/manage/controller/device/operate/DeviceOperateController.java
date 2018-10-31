@@ -14,10 +14,7 @@ import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceAddSuccessVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceWeatherVo;
+import com.huanke.iot.manage.vo.response.device.operate.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -513,6 +510,16 @@ public class DeviceOperateController {
         stringRedisTemplate.opsForValue().set("token." + wxDeviceId, token);
         stringRedisTemplate.expire("token." + wxDeviceId, 10, TimeUnit.HOURS);
         return new ApiResponse<>(token);
+    }
+    @ApiOperation("设备分享列表")
+    @RequestMapping(value = "/deviceShareList/{deviceId}", method = RequestMethod.POST)
+    public ApiResponse<List<DeviceShareListVo>> deviceShareList(@PathVariable Integer deviceId){
+        try {
+            return this.deviceService.queryShareList(deviceId);
+        }catch (Exception e){
+            log.error("设备分享列表异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"设备分享列表查询失败");
+        }
     }
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){

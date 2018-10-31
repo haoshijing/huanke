@@ -24,7 +24,7 @@ public class DeviceDataController {
     private DeviceDataService deviceDataService;
 
     @ApiOperation("查看操作日志")
-    @GetMapping(value = "/queryOperLog")
+    @RequestMapping(value = "/queryOperLog",method = RequestMethod.POST)
     public ApiResponse<BaseListVo> queryOperLog(@RequestBody DeviceDataQueryRequest deviceDataQueryRequest){
         try {
             return this.deviceDataService.queryOperLogList(deviceDataQueryRequest);
@@ -34,7 +34,7 @@ public class DeviceDataController {
         }
     }
     @ApiOperation("查看设备数据")
-    @GetMapping(value = "/queryDeviceSensorStat")
+    @RequestMapping(value = "/queryDeviceSensorStat",method = RequestMethod.POST)
     public ApiResponse<BaseListVo> queryDeviceSensorStat(@RequestBody DeviceDataQueryRequest deviceDataQueryRequest){
         try {
             return this.deviceDataService.queryDeivceSensorDataList(deviceDataQueryRequest);
@@ -45,7 +45,7 @@ public class DeviceDataController {
     }
 
     @ApiOperation("查看工作日志")
-    @GetMapping(value = "/queryDeviceWorkLog")
+    @RequestMapping(value = "/queryDeviceWorkLog",method = RequestMethod.POST)
     public ApiResponse<BaseListVo> queryDeviceWorkLog(@RequestBody DeviceDataQueryRequest deviceDataQueryRequest){
         try {
             return this.deviceDataService.queryDeviceWorkDataList(deviceDataQueryRequest);

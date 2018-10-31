@@ -9,4 +9,5 @@ public class DeviceShareListVo {
     private String nickname;
     private String headImg;
     private Long joinTime;
+    private Boolean status;
 }

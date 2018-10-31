@@ -1136,8 +1136,32 @@ public class DeviceOperateService {
             masterPo.setNickname(masterUserPo.getNickname());
             DeviceTeamItemPo masterTeamItemPo = this.deviceTeamItemMapper.selectByJoinId(deviceId,masterUserPo.getId());
             masterPo.setJoinTime(masterTeamItemPo.getCreateTime());
-            //查询设备的共享人信息
-            return new ApiResponse<>(RetCode.OK,"查询授权列表成功");
+            deviceShareListVoList.add(masterPo);
+            //查询设备的共享人信息,筛选主绑定人
+            List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectItemsByDeviceId(deviceId);
+            List<DeviceTeamItemPo> subUserTeamItemPoList = deviceTeamItemPoList.stream().filter(eachPo ->{
+                List<String> openIdsList = deviceCustomerUserRelationPoList.stream().map(userEachPo -> userEachPo.getOpenId()).collect(Collectors.toList());
+                Integer subUserId = eachPo.getUserId();
+                CustomerUserPo customerUserPo = this.customerUserMapper.selectById(subUserId);
+                if(!openIdsList.contains(customerUserPo.getOpenId())){
+                    return true;
+                }
+                return false;
+            }).sorted(Comparator.comparing(DeviceTeamItemPo::getCreateTime)).collect(Collectors.toList());
+            //返回最终结果
+            List<DeviceShareListVo> subUserVo = subUserTeamItemPoList.stream().map(eachPo ->{
+                Integer subUserId = eachPo.getUserId();
+                CustomerUserPo customerUserPo = this.customerUserMapper.selectByUserId(subUserId);
+                DeviceShareListVo deviceShareVo = new DeviceShareListVo();
+                deviceShareVo.setUserId(customerUserPo.getId());
+                deviceShareVo.setNickname(customerUserPo.getNickname());
+                deviceShareVo.setJoinTime(eachPo.getCreateTime());
+                deviceShareVo.setOpenId(customerUserPo.getOpenId());
+                deviceShareVo.setHeadImg(customerUserPo.getHeadimgurl());
+                deviceShareVo.setStatus(eachPo.getStatus() == 1 ? true : false);
+                return deviceShareVo;
+            }).collect(Collectors.toList());
+            return new ApiResponse<>(RetCode.OK,"查询授权列表成功",subUserVo);
         }else {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"设备尚未被绑定");
         }
