@@ -85,7 +85,7 @@
             <if test="param.deviceId != null">
                 AND deviceId = #{param.deviceId}
             </if>
-            <if test="param.funcId != null and funcId != '' ">
+            <if test="param.funcId != null and param.funcId != '' ">
                 AND funcId = #{param.funcId}
             </if>
         </where>
