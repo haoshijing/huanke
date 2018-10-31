@@ -162,7 +162,11 @@ public class DeviceDataService {
                 if(eachPo.getFuncId().equals("410")) {
                     deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0") ? "离线" : "上线");
                 }else {
-                    deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0") ? "关机" : "开机");
+                    if(null != eachPo.getFuncValue()) {
+                        deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0") ? "关机" : "开机");
+                    }else {
+                        deviceWorkLogVo.setDeviceStatus("未知定时操作");
+                    }
                 }
                 deviceWorkLogVo.setCreateTime(eachPo.getCreateTime());
                 log.info("当前设备信息：{}", deviceWorkLogVo.getDeviceStatus());
