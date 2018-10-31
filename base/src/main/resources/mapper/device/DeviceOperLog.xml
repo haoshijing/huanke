@@ -49,6 +49,19 @@
         limit #{offset},#{limit}
     </select>
 
+    <select id="selectWorkDataList" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1=1
+            <if test="param.deviceId != null">
+                AND deviceId = #{param.deviceId}
+            </if>
+            AND (funcId = '210' OR funcId = '410')
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
     <!-- 根据信息筛选返回数据 -->
     <select id="updateByRequestId"  parameterType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" resultType="java.lang.Integer" >
         update
