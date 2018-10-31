@@ -151,27 +151,17 @@ public class DeviceDataService {
         Integer offset = (request.getPage() - 1)*request.getLimit();
         Integer limit = request.getLimit();
         List<DeviceWorkLogVo> deviceWorkLogVoList =new ArrayList<>();
-        //查询上离线日志
-        queryPo.setFuncId("410");
-        List<DeviceOperLogPo> onLineStatusList = this.deviceOperLogMapper.selectList(queryPo,limit,offset);
-        if(null != onLineStatusList && 0 < onLineStatusList.size()){
-            onLineStatusList.stream().forEach(eachPo ->{
+        List<DeviceOperLogPo> workDataListList = this.deviceOperLogMapper.selectWorkDataList(queryPo,limit,offset);
+        if(null != workDataListList && 0 < workDataListList.size()) {
+            workDataListList.stream().forEach(eachPo -> {
                 DeviceWorkLogVo deviceWorkLogVo = new DeviceWorkLogVo();
-                deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0")?"离线":"上线");
+                if(eachPo.getFuncId().equals("410")) {
+                    deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0") ? "离线" : "上线");
+                }else {
+                    deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0") ? "关机" : "开机");
+                }
                 deviceWorkLogVo.setCreateTime(eachPo.getCreateTime());
-                log.info("当前设备上/离线信息：{}",deviceWorkLogVo.getDeviceStatus());
-                deviceWorkLogVoList.add(deviceWorkLogVo);
-            });
-        }
-        //查询开机机状态
-        queryPo.setFuncId("210");
-        List<DeviceOperLogPo> powerStatusList = this.deviceOperLogMapper.selectList(queryPo,limit,offset);
-        if(null != powerStatusList && 0 < powerStatusList.size()){
-            powerStatusList.stream().forEach(eachPo ->{
-                DeviceWorkLogVo deviceWorkLogVo = new DeviceWorkLogVo();
-                deviceWorkLogVo.setDeviceStatus(eachPo.getFuncValue().equals("0")?"关机":"开机");
-                deviceWorkLogVo.setCreateTime(eachPo.getCreateTime());
-                log.info("当前设备开关机信息：{}",deviceWorkLogVo.getDeviceStatus());
+                log.info("当前设备信息：{}", deviceWorkLogVo.getDeviceStatus());
                 deviceWorkLogVoList.add(deviceWorkLogVo);
             });
         }
