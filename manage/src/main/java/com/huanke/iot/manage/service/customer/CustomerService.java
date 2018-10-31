@@ -489,16 +489,16 @@ public class CustomerService {
         return customerVo;
     }
 
-    public ApiResponse<Boolean> updateWebsiteInfo(CustomerVo.BackendConfig backendConfig)throws Exception{
+    public ApiResponse<Boolean> updateWebsiteInfo(CustomerVo.BackendLogo backendLogo)throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
         BackendConfigPo backendConfigPo = this.backendConfigMapper.selectConfigByCustomerId(customerId);
         //如果为非客户，返回错误信息，超级管理员不修改logo和tile
         if(null == backendConfigPo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"不存在当前客户后台配置");
         }
-        backendConfigPo.setLogo(backendConfig.getLogo());
-        backendConfigPo.setName(backendConfig.getName());
+        backendConfigPo.setLogo(backendLogo.getLogo());
+        backendConfigPo.setName(backendLogo.getName());
         this.backendConfigMapper.updateById(backendConfigPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
     }
