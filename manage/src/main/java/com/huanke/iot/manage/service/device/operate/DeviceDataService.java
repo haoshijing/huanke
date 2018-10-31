@@ -83,9 +83,13 @@ public class DeviceDataService {
             deviceOperLogVo.setFuncName(funcTypeEnums.getMark());
             if(!funcTypeEnums.getRange().equals("")){
                 String[] ranges = funcTypeEnums.getRange().split(",");
-                Integer valueIndex = Integer.parseInt(deviceOperLogPo.getFuncValue());
-                //设置操作的具体值
-                deviceOperLogVo.setFuncValue(ranges[valueIndex]);
+                if(null != deviceOperLogPo.getFuncValue()) {
+                    Integer valueIndex = Integer.parseInt(deviceOperLogPo.getFuncValue());
+                    //设置操作的具体值
+                    deviceOperLogVo.setFuncValue(ranges[valueIndex]);
+                }else {
+                    deviceOperLogVo.setFuncValue("无操作值记录");
+                }
             }
             else {
                 //设置操作的具体值
