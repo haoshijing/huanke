@@ -9,6 +9,7 @@ public class DeviceListVo {
     /* 归属 */
     private Integer customerId;
     private String customerName;
+    private String SLD;
     private String deviceType;
     private String modelName;
 

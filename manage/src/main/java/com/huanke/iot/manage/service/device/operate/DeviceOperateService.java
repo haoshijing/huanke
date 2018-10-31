@@ -207,7 +207,7 @@ public class DeviceOperateService {
     /**
      * 2018-08-15
      * sixiaojun
-     * 根据前台请求按页查询设备数据
+     * 根据主键查询设备详情
      *
      * @param deviceId
      * @return DeviceListVo
@@ -239,6 +239,7 @@ public class DeviceOperateService {
         if (null != deviceCustomerRelationPo) {
             deviceQueryVo.setCustomerId(deviceCustomerRelationPo.getCustomerId());
             deviceQueryVo.setCustomerName(deviceCustomerRelationPo.getCustomerName());
+            deviceQueryVo.setSLD(deviceCustomerRelationPo.getSLD());
         }
 
         deviceQueryVo.setLocation(devicePo.getLocation());
