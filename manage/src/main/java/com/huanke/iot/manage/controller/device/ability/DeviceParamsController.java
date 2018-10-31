@@ -56,6 +56,6 @@ public class DeviceParamsController {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "添加参数个数不能为空 ");
         }
         Boolean result = deviceParamsService.addParamConfig(deviceParamsConfigVoRequest);
-        return new ApiResponse<>();
+        return new ApiResponse<>(result);
     }
 }

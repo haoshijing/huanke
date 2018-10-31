@@ -11,5 +11,5 @@ import lombok.Data;
 @Data
 public class DeviceParamRequest {
     private Integer deviceId;
-    private Integer abilityNo;
+    private String typeName;
 }

@@ -1,11 +1,11 @@
 package com.huanke.iot.manage.service.device.ability;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.constant.CommonConstant;
-import com.huanke.iot.base.constant.DeviceParamConstants;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceParamsMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
-import com.huanke.iot.base.dto.DeviceParamsConfigDto;
 import com.huanke.iot.base.dto.DeviceParamsDto;
 import com.huanke.iot.base.po.device.DeviceParamsPo;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -54,14 +54,15 @@ public class DeviceParamsService {
 
     public List<DeviceParamsConfigVo> queryParamConfig(Integer deviceId) {
         List<DeviceParamsConfigVo> deviceParamsConfigVoList = new ArrayList<>();
-        DevicePo devicePo = deviceMapper.selectById(deviceId);
-        Integer modelId = devicePo.getModelId();
-        List<DeviceParamsConfigDto> deviceParamsConfigDtoList = deviceParamsMapper.queryParamsConfig(deviceId, modelId);
-        for (DeviceParamsConfigDto deviceParamsConfigDto : deviceParamsConfigDtoList) {
+
+        List<DeviceParamsPo> deviceParamsPoList = deviceParamsMapper.queryParamsConfig(deviceId);
+        for (DeviceParamsPo deviceParamsPo : deviceParamsPoList) {
             DeviceParamsConfigVo deviceParamsConfigVo = new DeviceParamsConfigVo();
-            BeanUtils.copyProperties(deviceParamsConfigDto, deviceParamsConfigVo);
-            List<String> valueList = Arrays.asList(deviceParamsConfigDto.getValue().split(","));
+            BeanUtils.copyProperties(deviceParamsPo, deviceParamsConfigVo);
+            List<String> valueList = Arrays.asList(deviceParamsPo.getValue().split(","));
             deviceParamsConfigVo.setValuesList(valueList);
+            List defaultValues = JSONObject.parseObject(deviceParamsPo.getConfigValues(),List.class);
+            deviceParamsConfigVo.setDefaultConfig(defaultValues);
             deviceParamsConfigVoList.add(deviceParamsConfigVo);
         }
         return deviceParamsConfigVoList;
@@ -97,7 +98,9 @@ public class DeviceParamsService {
             DeviceParamsPo deviceParamsPo = new DeviceParamsPo();
             deviceParamsPo.setAbilityId(deviceParamsConfigVo.getAbilityId());
             deviceParamsPo.setDeviceId(deviceId);
-            deviceParamsPo.setTypeName(deviceParamsConfigVo.getAbilityParamsName());
+            deviceParamsPo.setTypeName(deviceParamsConfigVo.getTypeName());
+            deviceParamsPo.setParamDefineName(deviceParamsConfigVo.getParamDefineName());
+            deviceParamsPo.setConfigValues(JSON.toJSONString(deviceParamsConfigVo.getDefaultConfig()));
             String value = String.join(",", deviceParamsConfigVo.getValuesList());
             deviceParamsPo.setValue(value);
             deviceParamsPo.setSort(deviceParamsConfigVo.getSort());
@@ -117,7 +120,7 @@ public class DeviceParamsService {
         }else{
             //更新
             deviceParamsPo.setId(exitDeviceParamsPo.getId());
-            deviceParamsPo.setUpdateWay(DeviceParamConstants.MANAGE);//更改途径 2-后台
+            deviceParamsPo.setUpdateWay(2);//更改途径 2-后台
             deviceParamsPo.setLastUpdateTime(System.currentTimeMillis());
             deviceParamsMapper.updateById(deviceParamsPo);
             //添加更新人

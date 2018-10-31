@@ -15,7 +15,9 @@ public class DeviceParamsPo {
     private Integer deviceId;
     private Integer abilityId;
     private String typeName;
+    private String paramDefineName;
     private String value;
+    private String configValues;
     private Integer sort;
     private Integer status;
     private Long createTime;

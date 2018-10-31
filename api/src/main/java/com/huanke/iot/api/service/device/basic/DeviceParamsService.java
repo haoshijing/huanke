@@ -95,13 +95,15 @@ public class DeviceParamsService {
             DeviceParamsPo oldDeviceParamsPo = deviceParamsMapper.selectList(deviceParamsPo);
             oldDeviceParamsPo.setValue(values);
             oldDeviceParamsPo.setUpdateWay(DeviceParamConstants.H5);//更新渠道：1-H5
-            deviceParamsMapper.updateById(oldDeviceParamsPo);
+            deviceParamsMapper.insert(oldDeviceParamsPo);
             configMap.put(sort, valuesList);
         }
         //发送指令给设备
         String requestId = sendFuncToDevice(userId, deviceId, abilityTypeName, configMap, 1);
         return requestId;
     }
+
+
 
     private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, Map<Integer, List<String>> configMap, int operType) {
         List<ConfigFuncMessage> configFuncMessages = new ArrayList<>();
@@ -112,7 +114,6 @@ public class DeviceParamsService {
         deviceOperLogPo.setDeviceId(deviceId);
         deviceOperLogPo.setOperType(operType);
         deviceOperLogPo.setOperUserId(userId);
-        System.out.println(configMap.toString());
         deviceOperLogPo.setFuncValue(configMap.toString());
         deviceOperLogPo.setRequestId(requestId);
         deviceOperLogPo.setCreateTime(System.currentTimeMillis());
@@ -126,8 +127,8 @@ public class DeviceParamsService {
             configFuncMessage.setValue(values);
             configFuncMessages.add(configFuncMessage);
         }
-        Map<String,List> req = new HashMap<String,List>();
-        req.put("datas",configFuncMessages);
+        Map<String, List> req = new HashMap<String, List>();
+        req.put("datas", configFuncMessages);
         mqttSendService.sendMessage(topic, JSON.toJSONString(req));
         return requestId;
     }
@@ -144,10 +145,11 @@ public class DeviceParamsService {
         List<DeviceParamsPo> existByDeviceIdAndTypeName = deviceParamsMapper.findExistByDeviceIdAndTypeName(deviceId, typeName);
         long l = System.currentTimeMillis();
         for (DeviceParamsPo deviceParamsPo : existByDeviceIdAndTypeName) {
-            result = result && deviceParamsPo.getUpdateWay() == DeviceParamConstants.UPLOAD && l - deviceParamsPo.getLastUpdateTime() < 60*1000;
+            result = result && deviceParamsPo.getUpdateWay() == DeviceParamConstants.UPLOAD && l - deviceParamsPo.getLastUpdateTime() < 60 * 1000;
         }
         return result;
     }
+
 
     @Data
     public static class ConfigFuncMessage {

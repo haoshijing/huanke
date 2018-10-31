@@ -13,7 +13,9 @@
         deviceId,
         abilityId,
         typeName,
+        paramDefineName,
         value,
+        configValues,
         sort,
         status,
         createTime,
@@ -23,7 +25,9 @@
         #{deviceId},
         #{abilityId},
         #{typeName},
+        #{paramDefineName},
         #{value},
+        #{configValues},
         #{sort},
         #{status},
         #{createTime},
@@ -31,16 +35,14 @@
         )
     </insert>
 
-    <select id="queryParamsConfig" resultType="com.huanke.iot.base.dto.DeviceParamsConfigDto">
-        SELECT dp.abilityId, dma.definedName modelAbilityName, dp.typeName abilityParamsName, dp.sort, dp.value FROM t_device_params dp
-        LEFT JOIN t_device_model_ability dma
-        ON dp.abilityId = dma.abilityId AND dma.modelId = #{modelId}
-        WHERE dp.deviceId = #{deviceId}
-        AND dp.status = 1 AND dma.status = 1
+    <select id="queryParamsConfig" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
+        SELECT * FROM <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        AND status = 1
     </select>
 
     <select id="findByDeviceIdAndAbilityId" resultType="com.huanke.iot.base.po.device.DeviceParamsPo">
-        SELECT * FROM t_device_params
+        SELECT * FROM <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
         AND abilityId = #{abilityId}
         AND sort = #{sort}
@@ -52,8 +54,14 @@
             <if test = "typeName != null and typeName != ''">
                 typeName = #{typeName},
             </if>
+            <if test = "paramDefineName != null and paramDefineName != ''">
+                paramDefineName = #{paramDefineName},
+            </if>
             <if test = " value != null and value != ''">
                 value = #{value},
+            </if>
+            <if test = " configValues != null and configValues != ''">
+                configValues = #{configValues},
             </if>
             <if test = " sort != null and sort != ''">
                 sort = #{sort},
