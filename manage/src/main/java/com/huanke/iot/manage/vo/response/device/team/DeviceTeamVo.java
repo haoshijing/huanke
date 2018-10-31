@@ -18,6 +18,8 @@ public class DeviceTeamVo {
     private Long createTime;
     private String masterOpenId;
     private Integer masterUserId;
+    private Integer customerId;
+    private String customerName;
     private String masterNickName;
     private String cover;
     private List<Images> imagesList;
