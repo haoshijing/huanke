@@ -58,6 +58,9 @@
             <if test = " sort != null and sort != ''">
                 sort = #{sort},
             </if>
+            <if test = " lastUpdateTime != null">
+                lastUpdateTime = #{lastUpdateTime},
+            </if>
             updateWay = #{updateWay},
             status = 1
         </set>

@@ -29,7 +29,7 @@ public class DeviceParamsController extends BaseController{
     @Autowired
     private DeviceParamsService deviceParamsService;
     /**
-     * 判断是否有风速传参设置项
+     * 判断是否有功能传参设置项
      */
     @RequestMapping("/exist")
     public ApiResponse<Boolean> ifExist(@RequestBody DeviceParamRequest deviceParamRequest){
