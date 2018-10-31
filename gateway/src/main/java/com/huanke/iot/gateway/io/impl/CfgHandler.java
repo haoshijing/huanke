@@ -31,7 +31,7 @@ public class CfgHandler extends AbstractHandler {
     @Data
     public static class CfgConfig {
         private String type;
-        private List<String> values;
+        private List<String> value;
     }
 
     @Override

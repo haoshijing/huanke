@@ -29,8 +29,8 @@ public class DeviceParamService {
     public void updateParam(Integer deviceId, List<CfgHandler.CfgConfig> cfgConfigs) {
         for (CfgHandler.CfgConfig cfgConfig : cfgConfigs) {
             String type = cfgConfig.getType();
-            String[] split = type.split(".");
-            List<String> valueList = cfgConfig.getValues();
+            String[] split = type.split("\\.");
+            List<String> valueList = cfgConfig.getValue();
             DeviceParamsPo deviceParamsPo = deviceParamsMapper.findExistByDeviceIdAndTypeNameAndSort(deviceId, split[0], Integer.valueOf(split[1]));
             deviceParamsPo.setValue(String.join(",", valueList));
             deviceParamsPo.setLastUpdateTime(System.currentTimeMillis());
