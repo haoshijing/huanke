@@ -19,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -517,7 +519,179 @@ public class CustomerService {
         return customerVo;
     }
 
-    public ApiResponse<Boolean> updateWebsiteInfo(CustomerVo.BackendLogo backendLogo) throws Exception {
+    public ApiResponse<CustomerVo> selectByUserId(Integer userId) {
+        Integer customerId = obtainCustomerId(false);
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        if(null == customerPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
+        }
+        if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
+            return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
+        }
+        return new ApiResponse<>(this.selectById(userId));
+    }
+
+    public ApiResponse<Boolean> updateOwnerBaseInfo(CustomerVo customerVo)throws Exception{
+        //根据当前的customerId查询与客户相关的信息
+        Integer customerId = obtainCustomerId(false);
+        CustomerPo customerPo = this.customerMapper.selectById(customerId);
+        //如果为非客户，返回错误信息
+        if(null == customerPo || !customerPo.getAppid().equals(customerVo.getAppid())){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
+        }
+        if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
+            return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
+        }
+        customerPo.setName(customerVo.getName());
+        customerPo.setAppsecret(customerVo.getAppsecret());
+
+        customerMapper.updateById(customerPo);
+        return new ApiResponse<>(RetCode.OK,"更新成功",true);
+    }
+
+
+    public ApiResponse<Boolean> updateOwnerH5Info(CustomerVo.H5Config h5Config)throws Exception{
+        //根据当前的customerId查询与客户相关的信息
+        Integer customerId = obtainCustomerId(false);
+        WxConfigPo wxConfigPo = this.wxConfigMapper.selectById(customerId);
+        //如果为非客户，返回错误信息
+        if(null == wxConfigPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
+        }
+        CustomerPo customerPo = this.customerMapper.selectById(customerId);
+        if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
+            return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
+        }
+        wxConfigPo.setDefaultTeamName(h5Config.getDefaultTeamName());
+        wxConfigPo.setPassword(h5Config.getPassword());
+        wxConfigPo.setServiceUser(h5Config.getServiceUser());
+        wxConfigPo.setBackgroundImg(h5Config.getBackgroundImg());
+        wxConfigPo.setThemeName(h5Config.getThemeName());
+        wxConfigPo.setLogo(h5Config.getLogo());
+        wxConfigMapper.updateById(wxConfigPo);
+        return new ApiResponse<>(RetCode.OK,"更新成功",true);
+    }
+
+    @Transactional
+    public ApiResponse<Boolean> updateOwnerAndroidInfo(CustomerVo.AndroidConfig androidConfig)throws Exception{
+        //根据当前的customerId查询与客户相关的信息
+        Integer customerId = obtainCustomerId(false);
+        AndroidConfigPo androidConfigPo = this.androidConfigMapper.selectConfigByCustomerId(customerId);
+        //如果为非客户，返回错误信息
+        if(null == androidConfigPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
+        }
+        CustomerPo customerPo = this.customerMapper.selectById(customerId);
+        if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
+            return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
+        }
+        androidConfigPo.setName(androidConfig.getName());
+        androidConfigPo.setLogo(androidConfig.getLogo());
+        androidConfigPo.setDeviceChangePassword(androidConfig.getDeviceChangePassword());
+        androidConfigPo.setLastUpdateTime(System.currentTimeMillis());
+        androidConfigMapper.updateById(androidConfigPo);
+        AndroidScenePo androidScenePo = new AndroidScenePo();
+        androidScenePo.setConfigId(androidConfigPo.getId());
+        List<AndroidScenePo> androidScenePos = this.androidSceneMapper.selectListByConfigId(androidScenePo);
+        if(androidScenePos == null){
+            //初始化
+            androidScenePos = new ArrayList<AndroidScenePo>();
+        }
+        int dbSceneSize = androidScenePos.size();
+        int newSceneSize = androidConfig.getAndroidSceneList().size();
+        for(int i = 0 ; i<Math.max(dbSceneSize,newSceneSize) ; i++){
+            if(i>=newSceneSize){
+                //上送比数据库少，删除多余的Scene和其下SceneImg
+                AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+                List<AndroidSceneImgPo> androidSceneImgPos = androidSceneImgMapper.selectListBySceneId(androidSceneImgPo);
+                for(AndroidSceneImgPo temp : androidSceneImgPos){
+                    androidSceneImgMapper.deleteById(temp.getId());
+                }
+                androidSceneMapper.deleteById(androidScenePos.get(i).getId());
+                continue;
+            }
+            if(i>=dbSceneSize) {
+                //上送比数据库多，新增
+                androidScenePo = new AndroidScenePo();
+                BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePo);
+                androidScenePo.setCreateTime(System.currentTimeMillis());
+                androidScenePo.setStatus(CommonConstant.STATUS_YES);
+                androidScenePo.setCustomerId(customerId);
+                androidScenePo.setConfigId(androidConfigPo.getId());
+                androidSceneMapper.insert(androidScenePo);
+                List<CustomerVo.AndroidSceneImg> androidSceneImgs = androidConfig.getAndroidSceneList().get(i).getAndroidSceneImgList();
+                for(CustomerVo.AndroidSceneImg temp : androidSceneImgs){
+                    AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                    BeanUtils.copyProperties(temp, androidSceneImgPo);
+                    androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+                    androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                    androidSceneImgPo.setCustomerId(customerId);
+                    androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
+                    androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                    androidSceneImgMapper.insert(androidSceneImgPo);
+                }
+                continue;
+            }
+            //其余修改
+            BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePos.get(i));
+            androidScenePos.get(i).setLastUpdateTime(System.currentTimeMillis());
+            androidSceneMapper.updateById(androidScenePos.get(i));
+            AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+            androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+            List<AndroidSceneImgPo> androidSceneImgPos = androidSceneImgMapper.selectListBySceneId(androidSceneImgPo);
+            List<CustomerVo.AndroidSceneImg> androidSceneImgs = androidConfig.getAndroidSceneList().get(i).getAndroidSceneImgList();
+            if (androidSceneImgPos == null) {
+                //初始化
+                androidSceneImgPos = new ArrayList<AndroidSceneImgPo>();
+            }
+            int dbImgSize = androidSceneImgPos.size();
+            int newImgSize = androidSceneImgs.size();
+            for (int j = 0;j<Math.max(dbImgSize,newImgSize);j++) {
+                if(j>=newImgSize){
+                    androidSceneImgMapper.deleteById(androidSceneImgPos.get(j).getId());
+                    continue;
+                }
+                if(j>=dbImgSize){
+                    androidSceneImgPo = new AndroidSceneImgPo();
+                    BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPo);
+                    androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+                    androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                    androidSceneImgPo.setCustomerId(customerId);
+                    androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
+                    androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                    androidSceneImgMapper.insert(androidSceneImgPo);
+                    continue;
+                }
+                BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPos.get(j));
+                androidSceneImgPos.get(j).setLastUpdateTime(System.currentTimeMillis());
+                androidSceneImgMapper.updateById(androidSceneImgPos.get(j));
+            }
+        }
+        return new ApiResponse<>(RetCode.OK,"更新成功",true);
+    }
+
+
+    public ApiResponse<Boolean> updateOwnerBackendInfo(CustomerVo.BackendConfig backendConfig)throws Exception{
+        //根据当前的customerId查询与客户相关的信息
+        Integer customerId = obtainCustomerId(false);
+        BackendConfigPo backendConfigPo = this.backendConfigMapper.selectConfigByCustomerId(customerId);
+        //如果为非客户，返回错误信息
+        if(null == backendConfigPo){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
+        }
+        CustomerPo customerPo = this.customerMapper.selectById(customerId);
+        if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
+            return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
+        }
+        backendConfigPo.setLogo(backendConfig.getLogo());
+        backendConfigPo.setName(backendConfig.getName());
+
+        this.backendConfigMapper.updateById(backendConfigPo);
+        return new ApiResponse<>(RetCode.OK,"更新成功",true);
+    }
+
+    public ApiResponse<Boolean> updateWebsiteInfo(CustomerVo.BackendLogo backendLogo) throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
         BackendConfigPo backendConfigPo = this.backendConfigMapper.selectConfigByCustomerId(customerId);
