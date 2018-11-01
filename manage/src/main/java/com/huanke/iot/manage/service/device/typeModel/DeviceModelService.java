@@ -495,15 +495,8 @@ public class DeviceModelService {
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
-            if(deviceModelPo.getCreateUser()!=null){
-                User createUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
-                deviceModelVo.setCreateUserName(createUser.getUserName());
-            }
-
-            if(deviceModelPo.getLastUpdateUser()!=null){
-                User lastUpdateUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
-                deviceModelVo.setCreateUserName(lastUpdateUser.getUserName());
-            }
+            deviceModelVo.setCreateUserName(userService.getUserName(deviceModelPo.getCreateUser()));
+            deviceModelVo.setLastUpdateUserName(userService.getUserName(deviceModelPo.getLastUpdateUser()));
 
             //型号的功能集
             List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());

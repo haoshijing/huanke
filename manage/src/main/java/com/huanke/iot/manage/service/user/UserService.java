@@ -64,7 +64,13 @@ public class UserService {
     public String getUserName(Integer userId){
         if(userId!=null){
             User user = userManagerMapper.selectById(userId);
-            return user.getUserName();
+            if(user!=null){
+                return user.getUserName();
+
+            }else{
+                return null;
+            }
+
         }else{
             return null;
         }

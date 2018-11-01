@@ -408,15 +408,8 @@ public class CustomerService {
             BeanUtils.copyProperties(customerPo, customerVo);
 
             /*创建人、最后更新人。*/
-            if(customerPo.getCreateUser()!=null){
-                User createUser = userManagerMapper.selectById(customerPo.getCreateUser());
-                customerVo.setCreateUserName(createUser.getUserName());
-            }
-
-            if(customerPo.getLastUpdateUser()!=null){
-                User lastUpdateUser = userManagerMapper.selectById(customerPo.getCreateUser());
-                customerVo.setCreateUserName(lastUpdateUser.getUserName());
-            }
+            customerVo.setCreateUserName(userService.getUserName(customerPo.getCreateUser()));
+            customerVo.setLastUpdateUserName(userService.getUserName(customerPo.getLastUpdateUser()));
             /*H5配置信息*/
             CustomerVo.H5Config h5ConfigVo = new CustomerVo.H5Config();
             WxConfigPo resultWxConfigPo = wxConfigMapper.selectConfigByCustomerId(customerVo.getId());
