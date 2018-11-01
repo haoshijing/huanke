@@ -90,7 +90,7 @@ public class DeviceParamsService {
             }
             List<DeviceParamsVo.ConfigValue> configValuesList = new ArrayList<>();
             for(int i=0; i<deviceModelAbilityOptionPoList.size(); i++){
-                DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPoList.get(0);
+                DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPoList.get(i);
                 DeviceParamsVo.ConfigValue configValue = new DeviceParamsVo.ConfigValue();
                 configValue.setDefaultValue(deviceModelAbilityOptionPo.getDefaultValue());
                 configValue.setMinValue(deviceModelAbilityOptionPo.getMinVal());
