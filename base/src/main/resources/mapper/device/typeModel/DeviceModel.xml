@@ -14,6 +14,7 @@
         (
         name,
         modelNo,
+        modelCode,
         typeId,
         customerId,
         productId,
@@ -26,12 +27,14 @@
         status,
         remark,
         createTime,
-        createUserId,
-        updateUserId
+        createUser,
+        lastUpdateTime,
+        lastUpdateUser
         )
         VALUES (
         #{name},
         #{modelNo},
+        #{modelCode},
         #{typeId},
         #{customerId},
         #{productId},
@@ -44,8 +47,9 @@
         #{status},
         #{remark},
         #{createTime},
-        #{createUserId},
-        #{updateUserId}
+        #{createUser},
+        #{lastUpdateTime},
+        #{lastUpdateUser}
         )
     </insert>
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
@@ -57,6 +61,9 @@
             </if>
             <if test="modelNo != null and modelNo != ''">
                 modelNo = #{modelNo},
+            </if>
+            <if test="modelCode != null and modelCode != ''">
+                modelCode = #{modelCode},
             </if>
             <if test="typeId != null ">
                 typeId = #{typeId},
@@ -92,7 +99,7 @@
                 remark = #{remark},
             </if>
             lastUpdateTime = #{lastUpdateTime},
-            updateUserId = #{updateUserId}
+            lastUpdateUser = #{lastUpdateUser}
         </set>
         where id = #{id}
     </update>
@@ -111,7 +118,7 @@
                 status = #{status},
             </if>
             lastUpdateTime = #{lastUpdateTime},
-            updateUserId = #{updateUserId}
+            lastUpdateUser = #{lastUpdateUser}
         </set>
         where id = #{id}
     </update>

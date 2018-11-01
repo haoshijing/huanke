@@ -22,11 +22,11 @@ public class CustomerPo {
     private String SLD;
     private String typeIds;
     private String modelIds;
-    private String creatUser;
+    private String busDirection;
+    private Integer createUser;
     private Long createTime;
+    private Integer lastUpdateUser;
     private Long lastUpdateTime;
-    private Integer createUserId;
-    private Integer updateUserId;
     private Integer status = CommonConstant.STATUS_YES;
 
 }

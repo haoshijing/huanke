@@ -4,6 +4,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.*;
+import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.po.customer.*;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.CommonUtil;
@@ -66,7 +67,11 @@ public class CustomerService {
     @Autowired
     private UserService userService;
 
-@Autowired
+
+    @Autowired
+    private UserManagerMapper userManagerMapper;
+
+    @Autowired
     private CommonUtil commonUtil;
 
     private static final String CUSTOMERID_PREIX = "customerId.";
@@ -108,7 +113,7 @@ public class CustomerService {
         if (StringUtils.isNotBlank(customerVo.getSLD())) {
             CustomerPo queryCustomer = customerMapper.selectBySLD(customerVo.getSLD());
             //当库中存在 该二级域名的客户，且id 和 保存的不一致时。不允许添加
-            if (queryCustomer != null&&!queryCustomer.getId().equals(customerVo.getId())) {
+            if (queryCustomer != null && !queryCustomer.getId().equals(customerVo.getId())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在该二级域名");
             }
         }
@@ -118,52 +123,53 @@ public class CustomerService {
         if (customerVo.getId() != null && customerVo.getId() > 0) {
             //更新客户的超级管理员
             String loginName = customerPo.getLoginName();
-            if(StringUtils.isNotEmpty(loginName)){
+            if (StringUtils.isNotEmpty(loginName)) {
                 CustomerPo queryCustomer = customerMapper.selectById(customerVo.getId());
                 //如果 准备修改的用户名和 库里的用户名不一致，则表明需要新增,反之不作处理
-                if(!customerVo.getId().equals(queryCustomer.getId())){
+                if (!customerVo.getId().equals(queryCustomer.getId())) {
                     boolean hasSameUser = userService.hasSameUser(loginName);
-                    if(!hasSameUser){
+                    if (!hasSameUser) {
                         User newuser = new User();
                         newuser.setNickName(customerPo.getName());
                         newuser.setSecondDomain(customerPo.getSLD());
                         newuser.setUserName(loginName);
                         newuser.setPassword(defaultPassWord);
                         userService.createUser(newuser);
-                    }else {
+                    } else {
                         return new ApiResponse<>(RetCode.PARAM_ERROR, "用户名已存在！");
                     }
                 }
 
-            }else{
+            } else {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名称不可为空！");
             }
 
             customerPo.setId(customerVo.getId());
             customerPo.setLastUpdateTime(System.currentTimeMillis());
-            customerPo.setUpdateUserId(user.getId());
+            customerPo.setLastUpdateUser(user.getId());
             this.customerMapper.updateById(customerPo);
 
         } else {
             customerPo.setStatus(CommonConstant.STATUS_YES);
             customerPo.setCreateTime(System.currentTimeMillis());
+            customerPo.setCreateUser(user.getId());
             customerPo.setParentCustomerId(curCustomerId); //如果是通过二级域名访问 并新增客户，则需要保存其父级 客户的主键
 
             String loginName = customerPo.getLoginName();
-            if(StringUtils.isNotEmpty(loginName)){
+            if (StringUtils.isNotEmpty(loginName)) {
                 boolean hasSameUser = userService.hasSameUser(loginName);
-                if(!hasSameUser){
+                if (!hasSameUser) {
                     User newuser = new User();
                     newuser.setNickName(customerPo.getName());
                     newuser.setSecondDomain(customerPo.getSLD());
                     newuser.setUserName(loginName);
                     newuser.setPassword(defaultPassWord);
                     userService.createUser(newuser);
-                }else {
+                } else {
                     return new ApiResponse<>(RetCode.PARAM_ERROR, "用户名已存在！");
                 }
 
-            }else{
+            } else {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "登录名称不可为空！");
             }
 
@@ -178,7 +184,7 @@ public class CustomerService {
 
         //若 存在 该h5配置 则进行更新，否则为新增。
         if (wxConfigPo != null) {
-            if(null!=h5Config){
+            if (null != h5Config) {
                 BeanUtils.copyProperties(h5Config, wxConfigPo);
             }
 
@@ -195,18 +201,18 @@ public class CustomerService {
 
         /*H5背景图片*/
         List<CustomerVo.H5BgImg> h5BgImgList = h5Config.getH5BgImgList();
-        if(h5BgImgList!=null&&h5BgImgList.size()>0){
+        if (h5BgImgList != null && h5BgImgList.size() > 0) {
             for (CustomerVo.H5BgImg h5BgImg : h5BgImgList) {
 
                 WxBgImgPo h5BgImgPo = new WxBgImgPo();
                 //如果场景不为空,且主键不为空 则是更新，否则新增
-                if(h5BgImg!=null&&h5BgImg.getId()!=null&&h5BgImg.getId()>0){
-                    BeanUtils.copyProperties(h5BgImg,h5BgImgPo);
+                if (h5BgImg != null && h5BgImg.getId() != null && h5BgImg.getId() > 0) {
+                    BeanUtils.copyProperties(h5BgImg, h5BgImgPo);
                     h5BgImgPo.setLastUpdateTime(System.currentTimeMillis());
                     wxBgImgMapper.updateById(h5BgImgPo);
-                }else{
+                } else {
                     h5BgImgPo = new WxBgImgPo();
-                    BeanUtils.copyProperties(h5BgImg,h5BgImgPo);
+                    BeanUtils.copyProperties(h5BgImg, h5BgImgPo);
                     h5BgImgPo.setCustomerId(customerPo.getId());
                     h5BgImgPo.setConfigId(wxConfigPo.getId());
                     h5BgImgPo.setCreateTime(System.currentTimeMillis());
@@ -336,7 +342,7 @@ public class CustomerService {
         Integer limit = request.getLimit();
 
         //如果 当前二级域名客户存在，则 只查询 该客户的客户。
-        if(curCustomerId!=null){
+        if (curCustomerId != null) {
             queryCustomerPo.setParentCustomerId(curCustomerId);
         }
         //如果 没有指定状态，则默认查出 非删除的数据
@@ -348,6 +354,16 @@ public class CustomerService {
         List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
             CustomerVo customerVo = new CustomerVo();
             BeanUtils.copyProperties(customerPo, customerVo);
+            if(customerPo.getCreateUser()!=null){
+                User createUser = userManagerMapper.selectById(customerPo.getCreateUser());
+                customerVo.setCreateUserName(createUser.getUserName());
+            }
+
+            if(customerPo.getLastUpdateUser()!=null){
+                User lastUpdateUser = userManagerMapper.selectById(customerPo.getCreateUser());
+                customerVo.setCreateUserName(lastUpdateUser.getUserName());
+            }
+
             return customerVo;
         }).collect(Collectors.toList());
         Integer totalCount = customerMapper.selectCount(queryCustomerPo);
@@ -367,21 +383,22 @@ public class CustomerService {
     public List<CustomerVo> selectAllCustomers() {
         //获取当前二级域名的客户主键
         Integer curCustomerId = obtainCustomerId(false);
-        log.info("selectAllCustomers--> curCustomerId = "+curCustomerId);
+        log.info("selectAllCustomers--> curCustomerId = " + curCustomerId);
         List<CustomerPo> customerPos = customerMapper.selectAllCustomers(curCustomerId);
-        if(customerPos!=null&&customerPos.size()>0){
+        if (customerPos != null && customerPos.size() > 0) {
             List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
                 CustomerVo customerVo = new CustomerVo();
                 BeanUtils.copyProperties(customerPo, customerVo);
                 return customerVo;
             }).collect(Collectors.toList());
             return customerVos;
-        }else {
+        } else {
             return null;
         }
 
 
     }
+
     /**
      * 根据主键查询 客户
      *
@@ -396,6 +413,17 @@ public class CustomerService {
         //如果存在 此客户 则进行 查询相关配置项
         if (customerPo != null && customerPo.getId() > 0) {
             BeanUtils.copyProperties(customerPo, customerVo);
+
+            /*创建人、最后更新人。*/
+            if(customerPo.getCreateUser()!=null){
+                User createUser = userManagerMapper.selectById(customerPo.getCreateUser());
+                customerVo.setCreateUserName(createUser.getUserName());
+            }
+
+            if(customerPo.getLastUpdateUser()!=null){
+                User lastUpdateUser = userManagerMapper.selectById(customerPo.getCreateUser());
+                customerVo.setCreateUserName(lastUpdateUser.getUserName());
+            }
             /*H5配置信息*/
             CustomerVo.H5Config h5ConfigVo = new CustomerVo.H5Config();
             WxConfigPo resultWxConfigPo = wxConfigMapper.selectConfigByCustomerId(customerVo.getId());
@@ -409,17 +437,17 @@ public class CustomerService {
                 List<WxBgImgPo> resultWxBgImgPoList = wxBgImgMapper.selectListByConfigId(queryWxBgImgPo);
 
                 //当图片列表不为空 遍历 h5端图片列表
-                if(resultWxBgImgPoList!=null&&resultWxBgImgPoList.size()>0){
+                if (resultWxBgImgPoList != null && resultWxBgImgPoList.size() > 0) {
                     List<CustomerVo.H5BgImg> h5BgImgList = resultWxBgImgPoList.stream().map(resultWxBgImgPo -> {
                         CustomerVo.H5BgImg h5BgImgVo = new CustomerVo.H5BgImg();
 
-                        BeanUtils.copyProperties(resultWxBgImgPo,h5BgImgVo);
+                        BeanUtils.copyProperties(resultWxBgImgPo, h5BgImgVo);
                         return h5BgImgVo;
 
                     }).collect(Collectors.toList());
 
                     h5ConfigVo.setH5BgImgList(h5BgImgList);
-                }else{
+                } else {
                     h5ConfigVo.setH5BgImgList(null);
                 }
             }
@@ -454,9 +482,9 @@ public class CustomerService {
                         if (androidSceneImgPoList != null && androidSceneImgPoList.size() > 0) {
                             List<CustomerVo.AndroidSceneImg> androidSceneImgVoList = androidSceneImgPoList.stream().map(androidSceneImgPo ->
                             {
-                                CustomerVo.AndroidSceneImg androidSceneImgVo = new  CustomerVo.AndroidSceneImg();
+                                CustomerVo.AndroidSceneImg androidSceneImgVo = new CustomerVo.AndroidSceneImg();
 
-                                BeanUtils.copyProperties(androidSceneImgPo,androidSceneImgVo);
+                                BeanUtils.copyProperties(androidSceneImgPo, androidSceneImgVo);
                                 return androidSceneImgVo;
                             }).collect(Collectors.toList());
                             //设置 场景图片列表
@@ -467,21 +495,21 @@ public class CustomerService {
                     }).collect(Collectors.toList());
                     //设置查询到的 场景列表
                     androidConfigVo.setAndroidSceneList(androidSceneVoList);
-                }else{
+                } else {
                     androidConfigVo.setAndroidSceneList(null);
                 }
                 customerVo.setAndroidConfig(androidConfigVo);
-            }else{
+            } else {
                 customerVo.setAndroidConfig(null);
             }
 
             /*管理后台配置信息*/
-            CustomerVo.BackendConfig backendConfigVo = new  CustomerVo.BackendConfig();
+            CustomerVo.BackendConfig backendConfigVo = new CustomerVo.BackendConfig();
             BackendConfigPo backendConfigPo = backendConfigMapper.selectConfigByCustomerId(customerPo.getId());
-            if(backendConfigPo!=null){
-                BeanUtils.copyProperties(backendConfigPo,backendConfigVo);
+            if (backendConfigPo != null) {
+                BeanUtils.copyProperties(backendConfigPo, backendConfigVo);
                 customerVo.setBackendConfig(backendConfigVo);
-            }else{
+            } else {
                 customerVo.setBackendConfig(null);
             }
 
@@ -489,18 +517,18 @@ public class CustomerService {
         return customerVo;
     }
 
-    public ApiResponse<Boolean> updateWebsiteInfo(CustomerVo.BackendLogo backendLogo)throws Exception{
+    public ApiResponse<Boolean> updateWebsiteInfo(CustomerVo.BackendLogo backendLogo) throws Exception {
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
         BackendConfigPo backendConfigPo = this.backendConfigMapper.selectConfigByCustomerId(customerId);
         //如果为非客户，返回错误信息，超级管理员不修改logo和tile
-        if(null == backendConfigPo){
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"不存在当前客户后台配置");
+        if (null == backendConfigPo) {
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "不存在当前客户后台配置");
         }
         backendConfigPo.setLogo(backendLogo.getLogo());
         backendConfigPo.setName(backendLogo.getName());
         this.backendConfigMapper.updateById(backendConfigPo);
-        return new ApiResponse<>(RetCode.OK,"更新成功",true);
+        return new ApiResponse<>(RetCode.OK, "更新成功", true);
     }
 
 
@@ -513,11 +541,11 @@ public class CustomerService {
     public CustomerVo selectBySLD(String SLD) {
         CustomerVo customerVo = new CustomerVo();
         CustomerPo customerPo = customerMapper.selectBySLD(SLD);
-        if(null!=customerPo){
+        if (null != customerPo) {
             BeanUtils.copyProperties(customerPo, customerVo);
             return customerVo;
-        }else{
-            return  null;
+        } else {
+            return null;
         }
     }
 
@@ -530,15 +558,14 @@ public class CustomerService {
     public CustomerVo.BackendLogo selectBackendConfigBySLD(String SLD) {
         CustomerVo.BackendLogo backendLogo = new CustomerVo.BackendLogo();
         BackendConfigPo backendConfigPo = backendConfigMapper.selectBackendConfigBySLD(SLD);
-        if(null!=backendConfigPo){
+        if (null != backendConfigPo) {
             backendLogo.setLogo(backendConfigPo.getLogo());
             backendLogo.setName(backendConfigPo.getName());
             return backendLogo;
-        }else{
-            return  null;
+        } else {
+            return null;
         }
     }
-
 
 
     public Boolean deleteCustomerById(Integer customerId) {
@@ -551,37 +578,37 @@ public class CustomerService {
         return ret;
     }
 
-    public Integer obtainCustomerId(boolean fromServer){
+    public Integer obtainCustomerId(boolean fromServer) {
 
         String customerId;
         String userHost = commonUtil.obtainSecondHost();
-        if(StringUtils.isNotBlank(userHost)){
-            if(!StringUtils.contains(skipRemoteHost,userHost)){
-                String customerKey = CUSTOMERID_PREIX+userHost;
-                if(!"www".equals(userHost)){
-                    if(!fromServer){
-                        try{
+        if (StringUtils.isNotBlank(userHost)) {
+            if (!StringUtils.contains(skipRemoteHost, userHost)) {
+                String customerKey = CUSTOMERID_PREIX + userHost;
+                if (!"www".equals(userHost)) {
+                    if (!fromServer) {
+                        try {
                             customerId = stringRedisTemplate.opsForValue().get(customerKey);
-                            if(null!=customerId){
+                            if (null != customerId) {
                                 return Integer.parseInt(customerId);
-                            }else{
+                            } else {
                                 return obtainCustomerId(true);
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             log.error("从Redis获取当前域名的客户主键失败={}", e);
-                            return  obtainCustomerId(true);
+                            return obtainCustomerId(true);
                         }
 
 
-                    }else{
+                    } else {
                         CustomerPo customerPo = customerMapper.selectBySLD(userHost);
-                        if(customerPo!=null){
+                        if (customerPo != null) {
                             customerId = customerPo.getId().toString();
-                            try{
+                            try {
                                 stringRedisTemplate.opsForValue().set(customerKey, customerId);
                                 stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
-                            }catch (Exception e){
-                                log.error("往Redis存储当前域名的客户主键失败={}",e);
+                            } catch (Exception e) {
+                                log.error("往Redis存储当前域名的客户主键失败={}", e);
                                 return Integer.parseInt(customerId);
                             }
 
@@ -589,12 +616,12 @@ public class CustomerService {
                         }
                     }
 
-                }else {
+                } else {
                     return null;
                 }
             }
 
-        }else{
+        } else {
             return null;
         }
 
