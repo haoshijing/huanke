@@ -530,7 +530,7 @@ public class CustomerService {
         }
         return new ApiResponse<>(this.selectById(userId));
     }
-
+    @Transactional
     public ApiResponse<Boolean> updateOwnerBaseInfo(CustomerVo customerVo)throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
@@ -549,7 +549,7 @@ public class CustomerService {
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
     }
 
-
+    @Transactional
     public ApiResponse<Boolean> updateOwnerH5Info(CustomerVo.H5Config h5Config)throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
@@ -671,8 +671,8 @@ public class CustomerService {
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
     }
 
-
-    public ApiResponse<Boolean> updateOwnerBackendInfo(CustomerVo.BackendConfig backendConfig)throws Exception{
+    @Transactional
+    public ApiResponse<Boolean> updateOwnerBackendInfo(CustomerVo customerVo)throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
         BackendConfigPo backendConfigPo = this.backendConfigMapper.selectConfigByCustomerId(customerId);
@@ -684,10 +684,11 @@ public class CustomerService {
         if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
-        backendConfigPo.setLogo(backendConfig.getLogo());
-        backendConfigPo.setName(backendConfig.getName());
-
+        backendConfigPo.setLogo(customerVo.getBackendConfig().getLogo());
+        backendConfigPo.setName(customerVo.getBackendConfig().getName());
         this.backendConfigMapper.updateById(backendConfigPo);
+        customerPo.setLoginName(customerVo.getLoginName());
+        customerMapper.updateById(customerPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
     }
 
