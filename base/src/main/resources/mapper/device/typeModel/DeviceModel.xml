@@ -183,7 +183,7 @@
                 and version = #{param.version}
             </if>
             <if test="param.status != null">
-                and status = #{param.status}
+                and m.status = #{param.status}
             </if>
             and t_device_model.typeId = t_device_type.id
             and t_device_model.customerId = t_customer.id
