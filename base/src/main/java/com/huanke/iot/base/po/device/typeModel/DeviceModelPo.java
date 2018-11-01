@@ -13,6 +13,7 @@ public class DeviceModelPo {
     private Integer id;
     private String name;
     private String modelNo;
+    private String modelCode;
     private Integer typeId; //类型id
     private String typeName; //类型id
     private Integer customerId;
@@ -27,8 +28,8 @@ public class DeviceModelPo {
     private String remark;
     private String childModelIds;
     private Long createTime;
+    private Integer createUser;
     private Long lastUpdateTime;
-    private Integer createUserId;
-    private Integer updateUserId;
+    private Integer lastUpdateUser;
 
 }

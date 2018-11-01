@@ -113,6 +113,55 @@ public class CustomerController {
         return new ApiResponse<>(customerVo);
     }
 
+    @ApiOperation("根据客户管理员主键查询客户详情")
+    @GetMapping(value = "/selectByUserId/{userId}")
+    public ApiResponse<CustomerVo> selectByUserId(@PathVariable("userId") Integer userId) throws Exception {
+        return customerService.selectByUserId(userId);
+    }
+
+    @ApiOperation("用户自己修改基本信息")
+    @PostMapping(value = "/updateOwnerBaseInfo")
+    public ApiResponse<Boolean> updateOwnerBaseInfo(@RequestBody CustomerVo customerVo){
+        try {
+            return this.customerService.updateOwnerBaseInfo(customerVo);
+        }catch (Exception e){
+            log.error("更改用户基本信息异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"客户基本信息更改错误");
+        }
+    }
+
+    @ApiOperation("用户自己修改H5APP设置")
+    @PostMapping(value = "/updateOwnerH5Info")
+    public ApiResponse<Boolean> updateOwnerH5Info(@RequestBody CustomerVo.H5Config h5Config){
+        try {
+            return this.customerService.updateOwnerH5Info(h5Config);
+        }catch (Exception e){
+            log.error("更改用户H5APP设置异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"客户H5APP设置更改错误");
+        }
+    }
+
+    @ApiOperation("用户自己修改安卓APP设置")
+    @PostMapping(value = "/updateOwnerAndroidInfo")
+    public ApiResponse<Boolean> updateOwnerAndroidInfo(@RequestBody CustomerVo.AndroidConfig androidConfig){
+        try {
+            return this.customerService.updateOwnerAndroidInfo(androidConfig);
+        }catch (Exception e){
+            log.error("更改用户安卓APP设置异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"客户安卓APP设置更改错误");
+        }
+    }
+
+    @ApiOperation("用户自己修改后台设置")
+    @PostMapping(value = "/updateOwnerBackendInfo")
+    public ApiResponse<Boolean> updateOwnerBackendInfo(@RequestBody CustomerVo customerVo){
+        try {
+            return this.customerService.updateOwnerBackendInfo(customerVo);
+        }catch (Exception e){
+            log.error("更改用户后台设置异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"客户后台设置更改错误");
+        }
+    }
 
     @ApiOperation("用户自己修改logo和title")
     @PostMapping(value = "/updateWebsiteInfo")

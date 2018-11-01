@@ -16,6 +16,7 @@ public class DeviceModelVo {
     private Integer id;
     private String name;
     private String modelNo;
+    private String modelCode;
     private Integer typeId; //类型id
     private String typeName;
     private Integer customerId;
@@ -29,6 +30,14 @@ public class DeviceModelVo {
     private String childModelIds;
     private Integer status = CommonConstant.STATUS_YES;
     private String remark;
+
+    private Long createTime;
+    private Integer createUser;
+    private String createUserName;
+    private Long lastUpdateTime;
+    private Integer lastUpdateUser;
+    private String lastUpdateUserName;
+
 
     private List<DeviceModelAbilityVo> deviceModelAbilitys;
 

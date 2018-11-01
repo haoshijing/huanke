@@ -70,7 +70,7 @@ public class AppController extends BaseController {
     @RequestMapping("/queryDeviceList")
     public ApiResponse<AppDeviceListVo> queryDeviceList() {
         Integer userId = getCurrentUserIdForApp();
-        log.info("查询我的设备列表，userId={}", userId);
+        log.debug("查询我的设备列表，userId={}", userId);
         AppDeviceListVo deviceListVo = appDeviceDataService.obtainMyDevice(userId);
         return new ApiResponse<>(deviceListVo);
     }
@@ -78,7 +78,7 @@ public class AppController extends BaseController {
     @RequestMapping("/getModelVo")
     public ApiResponse<DeviceModelVo> getModelVo(@RequestBody DeviceFormatRequest request) {
         Integer deviceId = request.getDeviceId();
-        log.info("获取功能项，deviceId={}", deviceId);
+        log.debug("获取功能项，deviceId={}", deviceId);
         DeviceModelVo deviceModelVo = appBasicService.getModelVo(deviceId);
         return new ApiResponse<>(deviceModelVo);
     }
@@ -86,7 +86,7 @@ public class AppController extends BaseController {
     @RequestMapping("/queryDetailByDeviceId")
     public ApiResponse<List<AppDeviceDataVo>> queryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
-        log.info("查询设备详情，设备ID={}",deviceId);
+        log.debug("查询设备详情，设备ID={}",deviceId);
         List<Integer> abilityIds = request.getAbilityIds();
         List<AppDeviceDataVo> deviceAbilityVos = appDeviceDataService.queryDetailAbilitysValue(deviceId,abilityIds);
         return new ApiResponse<>(deviceAbilityVos);
@@ -94,7 +94,7 @@ public class AppController extends BaseController {
 
     @RequestMapping("/getWeatherAndLocation/{deviceId}")
     public ApiResponse<List<Object>> queryDeviceWeather(@PathVariable("deviceId") Integer deviceId) {
-        log.info("查询设备天气，设备ID={}",deviceId);
+        log.debug("查询设备天气，设备ID={}",deviceId);
         WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
         LocationVo locationVo = deviceService.queryDeviceLocation(deviceId);
         List resp = new ArrayList();
@@ -108,7 +108,7 @@ public class AppController extends BaseController {
         Integer deviceId = request.getDeviceId();
         Integer type = request.getType();
         Integer userId = getCurrentUserIdForApp();
-        log.info("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
+        log.debug("查询设备历史曲线：userId={}, deviceId={}, type={}", userId, deviceId, type);
         return new ApiResponse<>(appBasicService.getHistoryData(deviceId, type));
     }
 
@@ -135,7 +135,7 @@ public class AppController extends BaseController {
 
     @RequestMapping("/sendFunc")
     public ApiResponse<String> sendFuc(@RequestBody DeviceFuncVo deviceFuncVo){
-        log.info("发送指令："+deviceFuncVo.toString());
+        log.debug("发送指令："+deviceFuncVo.toString());
         String funcId = deviceFuncVo.getFuncId();
         String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),2);
         return new ApiResponse<>(requestId);
@@ -144,7 +144,7 @@ public class AppController extends BaseController {
     @RequestMapping("/getAppPassword")
     public ApiResponse<String> getAppPassword(HttpServletRequest request){
         String appId = request.getParameter("appId");
-        log.info("获取设备选择密码，appId={}",appId);
+        log.debug("获取设备选择密码，appId={}",appId);
         String response= appBasicService.getPassword(appId);
         return new ApiResponse<>(response);
     }

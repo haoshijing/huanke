@@ -15,6 +15,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
+import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
@@ -27,6 +28,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
+import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
@@ -92,6 +94,8 @@ public class DeviceModelService {
     @Autowired
     private DeviceMapper deviceMapper;
 
+    @Autowired
+    private UserManagerMapper userManagerMapper;
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -342,6 +346,15 @@ public class DeviceModelService {
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
+            if(deviceModelPo.getCreateUser()!=null){
+                User createUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
+                deviceModelVo.setCreateUserName(createUser.getUserName());
+            }
+
+            if(deviceModelPo.getLastUpdateUser()!=null){
+                User lastUpdateUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
+                deviceModelVo.setCreateUserName(lastUpdateUser.getUserName());
+            }
 //            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(),deviceModelPo.getTypeId());
 //
 //            deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
@@ -474,6 +487,16 @@ public class DeviceModelService {
             deviceModelVo.setIcon(deviceModelPo.getIcon());
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
+
+            if(deviceModelPo.getCreateUser()!=null){
+                User createUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
+                deviceModelVo.setCreateUserName(createUser.getUserName());
+            }
+
+            if(deviceModelPo.getLastUpdateUser()!=null){
+                User lastUpdateUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
+                deviceModelVo.setCreateUserName(lastUpdateUser.getUserName());
+            }
 
             //型号的功能集
             List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());

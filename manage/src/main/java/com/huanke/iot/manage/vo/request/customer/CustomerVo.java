@@ -23,9 +23,17 @@ public class CustomerVo {
     private String remark;  //备注
     private String typeIds;  //设备类型id 集合
     private String modelIds;  //设备型号id 集合
+    private String busDirection;//业务场景
     private H5Config h5Config;  //H5配置
     private AndroidConfig androidConfig;    //安卓配置
     private BackendConfig backendConfig;    //管理后台配置
+
+    private Long createTime;
+    private Integer createUser;
+    private String createUserName;
+    private Long lastUpdateTime;
+    private Integer lastUpdateUser;
+    private String lastUpdateUserName;
 
 
     /**

@@ -15,7 +15,8 @@ public class DeviceModelCreateOrUpdateRequest {
 
     private Integer id;
     private String name; //名称
-    private String modelNo; //名称
+//    private String modelNo; //
+    private String modelCode; //
     private Integer typeId; //类型id
     private Integer customerId;
     private String productQrCode;
