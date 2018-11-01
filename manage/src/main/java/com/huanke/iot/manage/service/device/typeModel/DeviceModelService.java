@@ -140,6 +140,12 @@ public class DeviceModelService {
 //                    if (null != queryDeviceModelPo && !modelRequest.getId().equals(queryDeviceModelPo.getId())) {
 //                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
 //                    }
+                    //当 修改 设备型号的类型的时候，同步修改 该型号下的设备的类型
+                    if(deviceModelPo.getTypeId()!=null&&deviceModelPo.getTypeId()>0){
+                        deviceMapper.updateDeviceTypeByModelId(modelRequest.getId());
+                    }else{
+                        return new ApiResponse<>(RetCode.PARAM_ERROR, "设备类型不可为空。");
+                    }
                     deviceModelPo.setLastUpdateUser(user.getId());
                     deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
                     //如果不是删除，则设置成 正常状态
@@ -150,6 +156,10 @@ public class DeviceModelService {
 //                    if (null != queryDeviceModelPo) {
 //                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
 //                    }
+
+                    if(deviceModelPo.getTypeId()==null){
+                        return new ApiResponse<>(RetCode.PARAM_ERROR, "设备类型不可为空。");
+                    }
                     deviceModelPo.setModelNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_MODEl));
                     deviceModelPo.setCreateTime(System.currentTimeMillis());
                     deviceModelPo.setCreateUser(user.getId());

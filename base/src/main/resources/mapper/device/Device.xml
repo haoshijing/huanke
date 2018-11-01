@@ -680,7 +680,7 @@
     </delete>
 
     <!--批量更改设备的类型-->
-    <update id="updateDeviceTypeId" parameterType="java.lang.Integer">
+    <update id="updateDeviceTypeByModelId" parameterType="java.lang.Integer">
 
         UPDATE
         <include refid="tableName"/>
