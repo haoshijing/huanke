@@ -60,4 +60,14 @@ public class UserService {
         }
         return  hasUser;
     }
+
+    public String getUserName(Integer userId){
+        if(userId!=null){
+            User user = userManagerMapper.selectById(userId);
+            return user.getUserName();
+        }else{
+            return null;
+        }
+
+    }
 }

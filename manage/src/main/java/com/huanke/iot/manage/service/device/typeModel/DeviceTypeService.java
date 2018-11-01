@@ -12,6 +12,7 @@ import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeAbilitySetMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilitySetPo;
@@ -19,7 +20,9 @@ import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypeAbilitySetPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
+import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.UniNoCreateUtils;
+import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.vo.request.device.ability.DeviceTypeAbilitysCreateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeAbilitySetCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceTypeCreateOrUpdateRequest;
@@ -70,6 +73,13 @@ public class DeviceTypeService {
     @Autowired
     private DeviceMapper deviceMapper;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserManagerMapper userManagerMapper;
+
+
 
     @Value("${accessKeyId}")
     private String accessKeyId;
@@ -92,6 +102,7 @@ public class DeviceTypeService {
      */
     public ApiResponse<Integer> createOrUpdate(DeviceTypeCreateOrUpdateRequest typeRequest) {
 
+        User user = userService.getCurrentUser();
         //先保存 类型基本信息
         DeviceTypePo deviceTypePo = new DeviceTypePo();
         if (typeRequest != null) {
@@ -104,11 +115,13 @@ public class DeviceTypeService {
                 deviceTypePo.setStatus(CommonConstant.STATUS_YES);
             }
             deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
+            deviceTypePo.setLastUpdateUser(user.getId());
             deviceTypeMapper.updateById(deviceTypePo);
         } else {
             deviceTypePo.setStatus(CommonConstant.STATUS_YES);
             deviceTypePo.setTypeNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_TYPE));
             deviceTypePo.setCreateTime(System.currentTimeMillis());
+            deviceTypePo.setCreateUser(user.getId());
             deviceTypeMapper.insert(deviceTypePo);
         }
 
@@ -159,22 +172,26 @@ public class DeviceTypeService {
     public ApiResponse<Boolean> deleteDeviceType(Integer typeId) {
 
         Boolean ret = false;
-
+        User user = userService.getCurrentUser();
         List<DevicePo> devicePos = deviceMapper.selectByTypeId(typeId);
-        if(devicePos!=null&&devicePos.size()>0){
+        if (devicePos != null && devicePos.size() > 0) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "该类型已有设备，无法删除！");
         }
 
         List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectByTypeId(typeId);
-        if(deviceModelPos!=null&&deviceModelPos.size()>0){
+        if (deviceModelPos != null && deviceModelPos.size() > 0) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "已有型号使用该类型，无法删除！");
         }
 
-        ret = deviceTypeMapper.updateStatusById(typeId, CommonConstant.STATUS_DEL) > 0;
-        if(ret){
-            return new ApiResponse<>(RetCode.OK, "删除成功",ret);
-        }else {
-            return new ApiResponse<>(RetCode.ERROR, "删除失败",ret);
+        DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+        deviceTypePo.setStatus(CommonConstant.STATUS_DEL);
+        deviceTypePo.setLastUpdateUser(user.getId());
+        deviceTypePo.setLastUpdateTime(System.currentTimeMillis());
+        ret = deviceTypeMapper.updateStatusById(deviceTypePo) > 0;
+        if (ret) {
+            return new ApiResponse<>(RetCode.OK, "删除成功", ret);
+        } else {
+            return new ApiResponse<>(RetCode.ERROR, "删除失败", ret);
         }
     }
 
@@ -263,6 +280,11 @@ public class DeviceTypeService {
                 deviceTypeVo.setSource(deviceTypePo.getSource());
                 deviceTypeVo.setRemark(deviceTypePo.getRemark());
                 deviceTypeVo.setId(deviceTypePo.getId());
+
+                deviceTypeVo.setCreateTime(deviceTypePo.getCreateTime());
+                deviceTypeVo.setCreateUser(deviceTypePo.getCreateUser());
+                deviceTypeVo.setLastUpdateTime(deviceTypePo.getLastUpdateTime());
+                deviceTypeVo.setLastUpdateUser(deviceTypePo.getLastUpdateUser());
             }
 
             //查询该 类型的 功能集合
@@ -273,10 +295,10 @@ public class DeviceTypeService {
         }).collect(Collectors.toList());
     }
 
-    public ApiResponse<Integer> selectCount(Integer status)throws Exception{
-        DeviceTypePo deviceTypePo =new DeviceTypePo();
+    public ApiResponse<Integer> selectCount(Integer status) throws Exception {
+        DeviceTypePo deviceTypePo = new DeviceTypePo();
         deviceTypePo.setStatus(status);
-        return new ApiResponse<>(RetCode.OK,"查询类型总数成功",deviceTypeMapper.selectCount(deviceTypePo));
+        return new ApiResponse<>(RetCode.OK, "查询类型总数成功", deviceTypeMapper.selectCount(deviceTypePo));
     }
 
     /**
@@ -359,6 +381,15 @@ public class DeviceTypeService {
             deviceTypeVo.setSource(deviceTypePo.getSource());
             deviceTypeVo.setRemark(deviceTypePo.getRemark());
             deviceTypeVo.setId(deviceTypePo.getId());
+
+            deviceTypeVo.setCreateTime(deviceTypePo.getCreateTime());
+            deviceTypeVo.setCreateUser(deviceTypePo.getCreateUser());
+            deviceTypeVo.setLastUpdateTime(deviceTypePo.getLastUpdateTime());
+            deviceTypeVo.setLastUpdateUser(deviceTypePo.getLastUpdateUser());
+
+            deviceTypeVo.setCreateUserName(userService.getUserName(deviceTypePo.getCreateUser()));
+            deviceTypeVo.setLastUpdateUserName(userService.getUserName(deviceTypePo.getLastUpdateUser()));
+
             List<DeviceTypeAbilitysVo> deviceTypeAbilitysVos = selectAbilitysByTypeId(deviceTypePo.getId());
             deviceTypeVo.setDeviceTypeAbilitys(deviceTypeAbilitysVos);
         }

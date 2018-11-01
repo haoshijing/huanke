@@ -19,6 +19,13 @@ public class DeviceTypeVo {
     private String stopWatch;
     private String remark;
     private String source;
+    private Long createTime;
+    private Integer createUser;
+    private String createUserName;
+    private Long lastUpdateTime;
+    private Integer lastUpdateUser;
+    private String lastUpdateUserName;
+
 
     private List<DeviceTypeAbilitysVo> DeviceTypeAbilitys;
 

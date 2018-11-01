@@ -20,8 +20,8 @@ public class DeviceTypePo {
 
     private String remark;
     private Long createTime;
+    private Integer createUser;
     private Long lastUpdateTime;
-    private Integer createUserId;
-    private Integer updateUserId;
+    private Integer lastUpdateUser;
 
 }

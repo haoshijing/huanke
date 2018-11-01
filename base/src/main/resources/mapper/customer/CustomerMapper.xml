@@ -24,6 +24,7 @@
         SLD,
         typeIds,
         modelIds,
+        busDirection,
         status,
         createTime,
         createUser,
@@ -43,6 +44,7 @@
         #{SLD},
         #{typeIds},
         #{modelIds},
+        #{busDirection},
         #{status},
         #{createTime},
         #{createUser},
@@ -88,6 +90,9 @@
             </if>
             <if test="modelIds != null and modelIds != ''">
                 modelIds = #{modelIds},
+            </if>
+            <if test="busDirection != null and busDirection != ''">
+                busDirection = #{busDirection},
             </if>
             <if test="status != null ">
                 status = #{status},

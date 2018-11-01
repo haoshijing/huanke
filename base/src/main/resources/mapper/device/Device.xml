@@ -171,10 +171,11 @@
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
-       SELECT
+        SELECT
         d.*,t.`name` typeName ,m.`name` modelName
         FROM
-        <include refid="tableName"/> d
+        <include refid="tableName"/>
+        d
         LEFT JOIN t_device_type t ON d.typeId = t.id
         LEFT JOIN t_device_model m ON d.modelId = m.id
         WHERE
@@ -257,7 +258,8 @@
         from
         t_device d
         <if test="param.customerId == null">
-            LEFT JOIN ( SELECT r.*, cc.name FROM t_device_customer_relation r, t_customer cc WHERE r.customerId = cc.id ) c ON d.id = c.deviceId
+            LEFT JOIN ( SELECT r.*, cc.name FROM t_device_customer_relation r, t_customer cc WHERE r.customerId = cc.id
+            ) c ON d.id = c.deviceId
         </if>
         LEFT JOIN t_device_type t ON d.typeId = t.id
         LEFT JOIN t_device_model m ON d.modelId = m.id
@@ -278,7 +280,7 @@
             <if test="param.customerId != null">
                 and r.customerId = c.id
                 AND c.id = #{param.customerId}
---                 and ( c.id = 3 or c.parentCustomerId = 3) //todo 二级客户分配三级的时候 待完善
+                -- and ( c.id = 3 or c.parentCustomerId = 3) //todo 二级客户分配三级的时候 待完善
                 and d.id = r.deviceId
             </if>
             <if test="param.onlineStatus != null">
@@ -677,6 +679,19 @@
         </foreach>
     </delete>
 
+    <!--批量更改设备的类型-->
+    <update id="updateDeviceTypeId" parameterType="java.lang.Integer">
+
+        UPDATE
+        <include refid="tableName"/>
+        d
+        inner join t_device_model m
+        SET d.typeId = m.typeId
+        where d.modelId = m.id
+        and d.modelId = #{modelId}
+
+    </update>
+
     <select id="getCustomerId" parameterType="com.huanke.iot.base.po.device.DevicePo" resultType="java.lang.Integer">
         select customerId
         from t_device_customer_relation
@@ -786,7 +801,8 @@
 
     <select id="selectCustomerDataByTime" resultType="java.lang.Integer">
         select count(1) from
-        <include refid="tableName"/> d,
+        <include refid="tableName"/>
+        d,
         t_device_customer_relation r
         where
         1=1
