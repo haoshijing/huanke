@@ -13,6 +13,7 @@
         modelAbilityId,
         abilityOptionId,
         definedName,
+        defaultValue,
         minVal,
         maxVal,
         status,
@@ -22,6 +23,7 @@
         #{modelAbilityId},
         #{abilityOptionId},
         #{definedName},
+        #{defaultValue},
         #{minVal},
         #{maxVal},
         #{status},
@@ -42,6 +44,9 @@
             </if>
             <if test = "minVal != null ">
                 minVal = #{minVal},
+            </if>
+            <if test = "defaultValue != null ">
+                defaultValue = #{defaultValue},
             </if>
             <if test = "maxVal != null ">
                 maxVal = #{maxVal},

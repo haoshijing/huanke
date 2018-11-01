@@ -653,6 +653,7 @@ public class DeviceModelService {
 
                 deviceModelAbilityOptionVo.setAbilityOptionId(deviceAbilityOptionPo.getId());
                 deviceModelAbilityOptionVo.setDefinedName(deviceAbilityOptionPo.getOptionName());
+                deviceModelAbilityOptionVo.setDefaultVal(deviceAbilityOptionPo.getDefaultValue());
                 deviceModelAbilityOptionVo.setMinVal(deviceAbilityOptionPo.getMinVal());
                 deviceModelAbilityOptionVo.setMaxVal(deviceAbilityOptionPo.getMaxVal());
                 deviceModelAbilityOptionVo.setStatus(deviceAbilityOptionPo.getStatus());
@@ -665,6 +666,7 @@ public class DeviceModelService {
                         if (deviceModelAbilityOptionPo.getAbilityOptionId().equals(deviceAbilityOptionPo.getId())) {
 
                             deviceModelAbilityOptionVo.setDefinedName(deviceModelAbilityOptionPo.getDefinedName());
+                            deviceModelAbilityOptionVo.setDefaultVal(deviceModelAbilityOptionPo.getDefaultValue());
                             deviceModelAbilityOptionVo.setMinVal(deviceModelAbilityOptionPo.getMinVal());
                             deviceModelAbilityOptionVo.setMaxVal(deviceModelAbilityOptionPo.getMaxVal());
                             deviceModelAbilityOptionVo.setStatus(deviceModelAbilityOptionPo.getStatus());
