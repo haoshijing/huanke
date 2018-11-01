@@ -36,6 +36,7 @@ public class DeviceModelVo {
         private String optionName;
         private String optionDefinedName;
         private String optionValue;
+        private Integer defaultValue;
         private Integer minVal;
         private Integer maxVal;
         private Integer status;
