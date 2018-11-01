@@ -165,7 +165,7 @@
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1)
         from
-        <include refid="tableName"/>
+        t_device_model ,t_device_type,t_customer
         <where>
             <if test="param.name != null and param.name != ''">
                 AND name like CONCAT('%',CONCAT(#{param.name},'%'))
