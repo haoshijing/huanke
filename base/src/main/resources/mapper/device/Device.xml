@@ -253,12 +253,14 @@
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
         d.`createTime`,d.`lastUpdateTime`,d.`createUserId`,d.`updateUserId`
-        ,c.name customerName
+        ,c.name customerName,t.`name` typeName ,m.`name` modelName
         from
         t_device d
         <if test="param.customerId == null">
             LEFT JOIN ( SELECT r.*, cc.name FROM t_device_customer_relation r, t_customer cc WHERE r.customerId = cc.id ) c ON d.id = c.deviceId
         </if>
+        LEFT JOIN t_device_type t ON d.typeId = t.id
+        LEFT JOIN t_device_model m ON d.modelId = m.id
         <if test="param.customerId != null">
             ,t_device_customer_relation r,t_customer c
         </if>
