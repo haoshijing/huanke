@@ -27,20 +27,6 @@ import java.util.List;
 public class DeviceParamsController extends BaseController{
     @Autowired
     private DeviceParamsService deviceParamsService;
-    /**
-     * 判断是否有功能传参设置项
-     */
-    @RequestMapping("/exist")
-    public ApiResponse<Boolean> ifExist(@RequestBody DeviceParamRequest deviceParamRequest){
-        Integer deviceId = deviceParamRequest.getDeviceId();
-        String typeName = deviceParamRequest.getTypeName();
-        if(deviceId == null || typeName == null){
-            log.error("参数异常：deviceId={}, typeName={}", deviceId, typeName);
-            return new ApiResponse<>(RetCode.ERROR, "参数异常");
-        }
-        Boolean result = deviceParamsService.ifExist(deviceId, typeName);
-        return new ApiResponse<>(result);
-    }
 
     /**
      * 查配置列表

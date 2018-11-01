@@ -212,4 +212,16 @@
         on t1.id = t2.abilityId
         where t2.typeId = #{typeId}
     </select>
+
+    <select id="queryLikeByTypeName" resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        select * from <include refid="tableName"/>
+        where dirValue like  CONCAT('%',CONCAT(#{typeName},'%'))
+        AND status = 1
+    </select>
+
+    <select id="selectByDirValue" resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        select * from <include refid="tableName"/>
+        where dirValue = #{dirValue}
+        AND status = 1
+    </select>
 </mapper>

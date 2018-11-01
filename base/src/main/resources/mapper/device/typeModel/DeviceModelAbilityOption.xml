@@ -150,4 +150,10 @@
         AND status = 1
     </select>
 
+    <select id="queryByModelIdAbilityId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo">
+        SELECT * FROM <include refid="tableName"/>
+        WHERE modelAbilityId = (SELECT id FROM t_device_model_ability where modelId=#{modelId} AND abilityId=#{abilityId} AND status = 1)
+        AND status = 1
+    </select>
+
 </mapper>

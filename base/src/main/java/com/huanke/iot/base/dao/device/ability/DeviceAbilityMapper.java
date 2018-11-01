@@ -27,4 +27,8 @@ public interface DeviceAbilityMapper extends BaseMapper<DeviceAbilityPo> {
 
 
     List<String> getDirValuesByDeviceTypeId(Integer deviceTypeId);
+
+    List<DeviceAbilityPo> queryLikeByTypeName(@Param("typeName")String typeName);
+
+    DeviceAbilityPo selectByDirValue(@Param("dirValue")String dirValue);
 }
