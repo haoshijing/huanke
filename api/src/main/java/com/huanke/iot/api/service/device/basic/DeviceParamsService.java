@@ -6,10 +6,16 @@ import com.huanke.iot.api.controller.h5.response.DeviceParamsVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceParamConstants;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceParamsMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.po.device.DeviceParamsPo;
+import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +40,12 @@ public class DeviceParamsService {
     private DeviceOperLogMapper deviceOperLogMapper;
     @Autowired
     private MqttSendService mqttSendService;
+    @Autowired
+    private DeviceMapper deviceMapper;
+    @Autowired
+    private DeviceAbilityMapper deviceAbilityMapper;
+    @Autowired
+    private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
 
     /**
      * 判断某功能项是否有配置
@@ -59,13 +71,37 @@ public class DeviceParamsService {
      */
     public List<DeviceParamsVo> paramList(Integer deviceId, String typeName) {
         List<DeviceParamsVo> deviceParamsVoList = new ArrayList<>();
-        List<DeviceParamsPo> deviceParamsPoList = deviceParamsMapper.findExistByDeviceIdAndTypeName(deviceId, typeName);
-        for (DeviceParamsPo deviceParamsPo : deviceParamsPoList) {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        Integer modelId = devicePo.getModelId();
+        List<DeviceAbilityPo> deviceAbilityPoList = deviceAbilityMapper.queryLikeByTypeName(typeName);
+        for (DeviceAbilityPo deviceAbilityPo : deviceAbilityPoList) {
+            String[] split = deviceAbilityPo.getDirValue().split("\\.");
+            Integer abilityId = deviceAbilityPo.getId();
+            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoList = deviceModelAbilityOptionMapper.queryByModelIdAbilityId(modelId, abilityId);
             DeviceParamsVo deviceParamsVo = new DeviceParamsVo();
-            deviceParamsVo.setAbilityTypeName(deviceParamsPo.getTypeName());
-            deviceParamsVo.setSort(deviceParamsPo.getSort());
-            String value = deviceParamsPo.getValue();
-            deviceParamsVo.setValuesList(Arrays.asList(value.split(",")));
+            deviceParamsVo.setSort(Integer.valueOf(split[1]));
+            deviceParamsVo.setAbilityTypeName(split[0]);
+            //具体配置
+            DeviceParamsPo deviceParamsPo = deviceParamsMapper.findExistByDeviceIdAndTypeNameAndSort(deviceId, split[0], Integer.valueOf(split[1]));
+            List<String> valueList = new ArrayList<>();
+            if(deviceParamsPo != null){
+                String[] values = deviceParamsPo.getValue().split(",");
+                valueList = Arrays.asList(values);
+            }
+            List<DeviceParamsVo.ConfigValue> configValuesList = new ArrayList<>();
+            for(int i=0; i<deviceModelAbilityOptionPoList.size(); i++){
+                DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPoList.get(0);
+                DeviceParamsVo.ConfigValue configValue = new DeviceParamsVo.ConfigValue();
+                configValue.setDefaultValue(deviceModelAbilityOptionPo.getDefaultValue());
+                configValue.setMinValue(deviceModelAbilityOptionPo.getMinVal());
+                configValue.setMaxValue(deviceModelAbilityOptionPo.getMaxVal());
+                configValue.setDefinedName(deviceModelAbilityOptionPo.getDefinedName());
+                if(valueList.size()>0){
+                    configValue.setCurrentValue(Integer.valueOf(valueList.get(i)));
+                }
+                configValuesList.add(configValue);
+            }
+            deviceParamsVo.setConfigValuesList(configValuesList);
             deviceParamsVoList.add(deviceParamsVo);
         }
         return deviceParamsVoList;
@@ -88,21 +124,28 @@ public class DeviceParamsService {
             List<String> valuesList = paramConfig.getValuesList();
             String values = String.join(",", valuesList);
             DeviceParamsPo deviceParamsPo = new DeviceParamsPo();
+            DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectByDirValue(abilityTypeName + "." + sort);
             deviceParamsPo.setDeviceId(deviceId);
+            deviceParamsPo.setAbilityId(deviceAbilityPo.getId());
             deviceParamsPo.setTypeName(abilityTypeName);
             deviceParamsPo.setStatus(CommonConstant.STATUS_YES);
             deviceParamsPo.setSort(sort);
             DeviceParamsPo oldDeviceParamsPo = deviceParamsMapper.selectList(deviceParamsPo);
-            oldDeviceParamsPo.setValue(values);
-            oldDeviceParamsPo.setUpdateWay(DeviceParamConstants.H5);//更新渠道：1-H5
-            deviceParamsMapper.insert(oldDeviceParamsPo);
+            if(oldDeviceParamsPo == null){
+                deviceParamsPo.setValue(values);
+                deviceParamsPo.setUpdateWay(DeviceParamConstants.H5);//添加渠道：1-H5
+                deviceParamsMapper.insert(deviceParamsPo);
+            }else{
+                oldDeviceParamsPo.setValue(values);
+                oldDeviceParamsPo.setUpdateWay(DeviceParamConstants.H5);//更新渠道：1-H5
+                deviceParamsMapper.updateById(oldDeviceParamsPo);
+            }
             configMap.put(sort, valuesList);
         }
         //发送指令给设备
         String requestId = sendFuncToDevice(userId, deviceId, abilityTypeName, configMap, 1);
         return requestId;
     }
-
 
 
     private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, Map<Integer, List<String>> configMap, int operType) {

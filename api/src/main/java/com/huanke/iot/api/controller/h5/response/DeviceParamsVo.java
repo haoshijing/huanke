@@ -15,5 +15,14 @@ import java.util.List;
 public class DeviceParamsVo {
     private String abilityTypeName;
     private Integer sort;
-    private List<String> valuesList;
+    private List<ConfigValue> configValuesList;
+
+    @Data
+    public static class ConfigValue {
+        private String definedName;
+        private Integer defaultValue;
+        private Integer minValue;
+        private Integer maxValue;
+        private Integer currentValue;
+    }
 }
