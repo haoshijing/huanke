@@ -15,6 +15,7 @@ public class DeviceAbilityOptionPo {
     private String optionValue;
     private Integer abilityId;
     private Integer status = CommonConstant.STATUS_YES;
+    private Integer defaultValue;
     private Integer minVal;
     private Integer maxVal;
     private Long createTime;
