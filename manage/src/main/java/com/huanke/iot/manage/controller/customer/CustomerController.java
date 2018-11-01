@@ -156,7 +156,7 @@ public class CustomerController {
     @PostMapping(value = "/updateOwnerBackendInfo")
     public ApiResponse<Boolean> updateOwnerBackendInfo(@RequestBody CustomerVo customerVo){
         try {
-            return this.customerService.updateOwnerBackendInfo(customerVo.getBackendConfig());
+            return this.customerService.updateOwnerBackendInfo(customerVo);
         }catch (Exception e){
             log.error("更改用户后台设置异常 = {}",e);
             return new ApiResponse<>(RetCode.ERROR,"客户后台设置更改错误");
