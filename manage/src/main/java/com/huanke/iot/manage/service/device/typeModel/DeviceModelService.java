@@ -32,6 +32,7 @@ import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
+import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelFormatCreateRequest;
@@ -92,6 +93,9 @@ public class DeviceModelService {
     private CustomerService customerService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private DeviceMapper deviceMapper;
 
     @Autowired
@@ -121,7 +125,7 @@ public class DeviceModelService {
         int effectCount = 0;
         Boolean ret = true;
         DeviceModelPo deviceModelPo = new DeviceModelPo();
-
+        User user = userService.getCurrentUser();
         try {
             if (modelRequest != null) {
                 BeanUtils.copyProperties(modelRequest, deviceModelPo);
@@ -136,6 +140,7 @@ public class DeviceModelService {
 //                    if (null != queryDeviceModelPo && !modelRequest.getId().equals(queryDeviceModelPo.getId())) {
 //                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
 //                    }
+                    deviceModelPo.setLastUpdateUser(user.getId());
                     deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
                     //如果不是删除，则设置成 正常状态
                     deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
@@ -147,6 +152,7 @@ public class DeviceModelService {
 //                    }
                     deviceModelPo.setModelNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_MODEl));
                     deviceModelPo.setCreateTime(System.currentTimeMillis());
+                    deviceModelPo.setCreateUser(user.getId());
                     deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
                     deviceModelMapper.insert(deviceModelPo);
 
@@ -346,15 +352,6 @@ public class DeviceModelService {
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
-            if(deviceModelPo.getCreateUser()!=null){
-                User createUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
-                deviceModelVo.setCreateUserName(createUser.getUserName());
-            }
-
-            if(deviceModelPo.getLastUpdateUser()!=null){
-                User lastUpdateUser = userManagerMapper.selectById(deviceModelPo.getCreateUser());
-                deviceModelVo.setCreateUserName(lastUpdateUser.getUserName());
-            }
 //            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(),deviceModelPo.getTypeId());
 //
 //            deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);

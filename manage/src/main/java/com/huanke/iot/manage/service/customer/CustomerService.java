@@ -356,15 +356,6 @@ public class CustomerService {
         List<CustomerVo> customerVos = customerPos.stream().map(customerPo -> {
             CustomerVo customerVo = new CustomerVo();
             BeanUtils.copyProperties(customerPo, customerVo);
-            if(customerPo.getCreateUser()!=null){
-                User createUser = userManagerMapper.selectById(customerPo.getCreateUser());
-                customerVo.setCreateUserName(createUser.getUserName());
-            }
-
-            if(customerPo.getLastUpdateUser()!=null){
-                User lastUpdateUser = userManagerMapper.selectById(customerPo.getCreateUser());
-                customerVo.setCreateUserName(lastUpdateUser.getUserName());
-            }
 
             return customerVo;
         }).collect(Collectors.toList());
