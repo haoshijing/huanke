@@ -313,7 +313,7 @@ public class DeviceOperateService {
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
-            DeviceModelPo deviceModelPo = this.deviceModelMapper.selectById(devicePo.getId());
+            DeviceModelPo deviceModelPo = this.deviceModelMapper.selectById(devicePo.getModelId());
             if (null != deviceModelPo) {
                 deviceQueryVo.setModelName(deviceModelPo.getName());
                 log.info("当前的设备型号名：={}", deviceQueryVo.getModelName());
