@@ -31,6 +31,7 @@ public class DeviceModelAbilityVo {
         private Integer id;
         private Integer abilityOptionId;
         private String definedName;
+        private Integer defaultVal;
         private Integer minVal;
         private Integer maxVal;
         private Integer status = CommonConstant.STATUS_YES;

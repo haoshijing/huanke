@@ -78,6 +78,7 @@ public class DeviceAbilityService {
                     deviceAbilityOptionPo.setAbilityId(deviceAbilityPo.getId());
                     deviceAbilityOptionPo.setOptionName(deviceAbilityOptionRequest.getOptionName());
                     deviceAbilityOptionPo.setOptionValue(deviceAbilityOptionRequest.getOptionValue());
+                    deviceAbilityOptionPo.setDefaultValue(deviceAbilityOptionRequest.getDefaultVal());
                     deviceAbilityOptionPo.setMinVal(deviceAbilityOptionRequest.getMinVal());
                     deviceAbilityOptionPo.setMaxVal(deviceAbilityOptionRequest.getMaxVal());
                     deviceAbilityOptionPo.setStatus(CommonConstant.STATUS_YES);
@@ -156,6 +157,7 @@ public class DeviceAbilityService {
                 deviceAbilityOptionVo.setStatus(deviceAbilityOptionPo.getStatus());
                 deviceAbilityOptionVo.setOptionValue(deviceAbilityOptionPo.getOptionValue());
                 deviceAbilityOptionVo.setOptionName(deviceAbilityOptionPo.getOptionName());
+                deviceAbilityOptionVo.setDefaultVal(deviceAbilityOptionPo.getDefaultValue());
                 deviceAbilityOptionVo.setMinVal(deviceAbilityOptionPo.getMinVal());
                 deviceAbilityOptionVo.setMaxVal(deviceAbilityOptionPo.getMaxVal());
                 return deviceAbilityOptionVo;
@@ -204,6 +206,7 @@ public class DeviceAbilityService {
                 deviceAbilityOptionVo.setId(deviceAbilityOptionPo.getId());
                 deviceAbilityOptionVo.setOptionValue(deviceAbilityOptionPo.getOptionValue());
                 deviceAbilityOptionVo.setOptionName(deviceAbilityOptionPo.getOptionName());
+                deviceAbilityOptionVo.setDefaultVal(deviceAbilityOptionPo.getDefaultValue());
                 deviceAbilityOptionVo.setMinVal(deviceAbilityOptionPo.getMinVal());
                 deviceAbilityOptionVo.setMaxVal(deviceAbilityOptionPo.getMaxVal());
                 deviceAbilityOptionVo.setStatus(deviceAbilityOptionPo.getStatus());
@@ -248,6 +251,7 @@ public class DeviceAbilityService {
                 deviceAbilityOptionVo.setId(deviceAbilityOptionPo.getId());
                 deviceAbilityOptionVo.setOptionValue(deviceAbilityOptionPo.getOptionValue());
                 deviceAbilityOptionVo.setOptionName(deviceAbilityOptionPo.getOptionName());
+                deviceAbilityOptionVo.setDefaultVal(deviceAbilityOptionPo.getDefaultValue());
                 deviceAbilityOptionVo.setMinVal(deviceAbilityOptionPo.getMinVal());
                 deviceAbilityOptionVo.setMaxVal(deviceAbilityOptionPo.getMaxVal());
                 deviceAbilityOptionVo.setStatus(deviceAbilityOptionPo.getStatus());

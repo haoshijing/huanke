@@ -13,6 +13,7 @@ public class DeviceAbilityOptionCreateOrUpdateRequest {
     private Integer id;
     private String optionName;
     private String optionValue;
+    private Integer defaultVal;
     private Integer minVal;
     private Integer maxVal;
     private Integer status = CommonConstant.STATUS_YES;

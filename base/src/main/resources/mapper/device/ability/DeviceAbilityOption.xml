@@ -16,6 +16,7 @@
         optionName,
         optionValue,
         status,
+        defaultValue,
         minVal,
         maxVal,
         createTime,
@@ -27,6 +28,7 @@
         #{optionName},
         #{optionValue},
         #{status},
+        #{defaultValue},
         #{minVal},
         #{maxVal},
         #{createTime},
@@ -81,6 +83,9 @@
             </if>
             <if test="status != null ">
                 status = #{status},
+            </if>
+            <if test="defaultValue != null ">
+                defaultValue = #{defaultValue},
             </if>
             <if test="minVal != null ">
                 minVal = #{minVal},
