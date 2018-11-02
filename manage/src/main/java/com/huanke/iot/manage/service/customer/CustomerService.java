@@ -512,7 +512,7 @@ public class CustomerService {
         if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
-        return new ApiResponse<>(this.selectById(userId));
+        return new ApiResponse<>(this.selectById(customerId));
     }
     @Transactional
     public ApiResponse<Boolean> updateOwnerBaseInfo(CustomerVo customerVo)throws Exception{
