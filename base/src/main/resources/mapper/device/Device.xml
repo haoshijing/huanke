@@ -685,10 +685,10 @@
         UPDATE
         <include refid="tableName"/>
         d
-        inner join t_device_model m
-        SET d.typeId = m.typeId
-        where d.modelId = m.id
-        and d.modelId = #{modelId}
+        SET d.typeId = #{typeId},
+        lastUpdateTime = #{lastUpdateTime},
+        updateUserId = #{updateUserId}
+        where d.modelId = #{modelId}
 
     </update>
 

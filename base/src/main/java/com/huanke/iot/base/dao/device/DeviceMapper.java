@@ -33,7 +33,7 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     Integer updateByDeviceId(DevicePo devicePo);
 
-    Integer updateDeviceTypeByModelId(Integer modelId);
+    Integer updateDeviceTypeId(DevicePo devicePo);
 
     Integer insertBatch(List<DevicePo> devicePoList);
 
