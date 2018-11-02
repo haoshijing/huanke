@@ -566,8 +566,8 @@ public class DeviceOperateController {
         }
     }
 
-
-    @RequestMapping("/sendFunc")
+    @ApiOperation("单设备操作")
+    @PostMapping("/sendFunc")
     public ApiResponse<String> sendFuc(@RequestBody DeviceFuncRequest deviceFuncVo){
         log.debug("发送指令："+deviceFuncVo.toString());
         String funcId = deviceFuncVo.getFuncId();
