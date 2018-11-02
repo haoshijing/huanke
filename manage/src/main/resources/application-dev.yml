@@ -4,7 +4,10 @@
 server:
   address: 0.0.0.0
   port: 8070
-
+# 打印sql
+logging:
+  level:
+    com.huanke.iot.base.dao : debug
 swaggerUrl:
   #driftingjane.s1.natapp.cc
   dev.hcocloud.com:8070
