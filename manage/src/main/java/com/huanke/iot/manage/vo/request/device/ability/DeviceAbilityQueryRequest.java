@@ -2,7 +2,6 @@ package com.huanke.iot.manage.vo.request.device.ability;
 
 import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -27,8 +26,7 @@ public class DeviceAbilityQueryRequest {
     private Integer limit = 20;
 
     @Data
-    @NoArgsConstructor
-    public class DeviceAbilitysRequest {
+    public static class DeviceAbilitysRequest {
         private Integer deviceId;
         private List<Integer> abilityIds;
     }
