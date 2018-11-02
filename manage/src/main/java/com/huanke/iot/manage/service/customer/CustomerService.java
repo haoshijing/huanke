@@ -527,7 +527,6 @@ public class CustomerService {
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
         customerPo.setName(customerVo.getName());
-        customerPo.setAppsecret(customerVo.getAppsecret());
 
         customerMapper.updateById(customerPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
@@ -571,6 +570,8 @@ public class CustomerService {
         }
         androidConfigPo.setName(androidConfig.getName());
         androidConfigPo.setLogo(androidConfig.getLogo());
+        androidConfigPo.setAppUrl(androidConfig.getAppUrl());
+        androidConfigPo.setQrcode(androidConfig.getQrcode());
         androidConfigPo.setDeviceChangePassword(androidConfig.getDeviceChangePassword());
         androidConfigPo.setLastUpdateTime(System.currentTimeMillis());
         androidConfigMapper.updateById(androidConfigPo);
@@ -656,7 +657,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public ApiResponse<Boolean> updateOwnerBackendInfo(CustomerVo customerVo)throws Exception{
+    public ApiResponse<Boolean> updateOwnerBackendInfo(CustomerVo.BackendConfig backendConfig)throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
         BackendConfigPo backendConfigPo = this.backendConfigMapper.selectConfigByCustomerId(customerId);
@@ -668,11 +669,9 @@ public class CustomerService {
         if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
-        backendConfigPo.setLogo(customerVo.getBackendConfig().getLogo());
-        backendConfigPo.setName(customerVo.getBackendConfig().getName());
+        backendConfigPo.setLogo(backendConfig.getLogo());
+        backendConfigPo.setName(backendConfig.getName());
         this.backendConfigMapper.updateById(backendConfigPo);
-        customerPo.setLoginName(customerVo.getLoginName());
-        customerMapper.updateById(customerPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
     }
 
