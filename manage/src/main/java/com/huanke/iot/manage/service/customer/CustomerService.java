@@ -128,7 +128,7 @@ public class CustomerService {
             if (StringUtils.isNotEmpty(loginName)) {
                 CustomerPo queryCustomer = customerMapper.selectById(customerVo.getId());
                 //如果 准备修改的用户名和 库里的用户名不一致，则表明需要新增,反之不作处理
-                if (!customerVo.getId().equals(queryCustomer.getId())) {
+                if (!loginName.equals(queryCustomer.getLoginName())) {
                     boolean hasSameUser = userService.hasSameUser(loginName);
                     if (!hasSameUser) {
                         User newuser = new User();
