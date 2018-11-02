@@ -485,7 +485,7 @@ public class DeviceOperateController {
      * @return
      */
     @ApiOperation("新版首页查询我的设备")
-    @GetMapping("/newQueryDetailByDeviceId")
+    @PostMapping("/newQueryDetailByDeviceId")
     public ApiResponse<List<DeviceAbilityVo.DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilityQueryRequest.DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
         List<Integer> abilityIds = request.getAbilityIds();
