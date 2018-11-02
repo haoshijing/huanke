@@ -527,6 +527,8 @@ public class CustomerService {
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
         customerPo.setName(customerVo.getName());
+        customerPo.setPublicName(customerVo.getPublicName());
+        customerPo.setBusDirection(customerVo.getBusDirection());
 
         customerMapper.updateById(customerPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
