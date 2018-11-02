@@ -15,6 +15,7 @@ public class DeviceModelAbilityVo {
     private Integer modelId;
     private Integer abilityId;
     private Integer abilityType;
+    private String dirValue;
     private String definedName;
     private Integer minVal;
     private Integer maxVal;
@@ -30,6 +31,7 @@ public class DeviceModelAbilityVo {
 
         private Integer id;
         private Integer abilityOptionId;
+        private String optionValue;
         private String definedName;
         private Integer defaultVal;
         private Integer minVal;

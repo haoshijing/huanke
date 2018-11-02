@@ -547,8 +547,10 @@ public class DeviceModelService {
                 deviceModelAbilityVo.setId(deviceModelAbilityPo.getId());
                 deviceModelAbilityVo.setModelId(deviceModelAbilityPo.getModelId());
                 deviceModelAbilityVo.setAbilityId(deviceModelAbilityPo.getAbilityId());
+
                 deviceModelAbilityVo.setAbilityType(deviceModelAbilityPo.getAbilityType());
                 deviceModelAbilityVo.setDefinedName(deviceModelAbilityPo.getDefinedName());
+                deviceModelAbilityVo.setDirValue(deviceModelAbilityPo.getDirValue());
                 deviceModelAbilityVo.setMinVal(deviceModelAbilityPo.getMinVal());
                 deviceModelAbilityVo.setMaxVal(deviceModelAbilityPo.getMaxVal());
                 deviceModelAbilityVo.setStatus(deviceModelAbilityPo.getStatus());
@@ -629,6 +631,7 @@ public class DeviceModelService {
         deviceModelAbilityVo.setAbilityId(typeAbilityId);
         deviceModelAbilityVo.setAbilityType(deviceTypeAbilitysPo.getAbilityType());
         deviceModelAbilityVo.setDefinedName(deviceTypeAbilitysPo.getAbilityName());
+        deviceModelAbilityVo.setDirValue(deviceTypeAbilitysPo.getDirValue());
         deviceModelAbilityVo.setMinVal(deviceTypeAbilitysPo.getMinVal());
         deviceModelAbilityVo.setMaxVal(deviceTypeAbilitysPo.getMaxVal());
         deviceModelAbilityVo.setStatus(null);
@@ -681,6 +684,7 @@ public class DeviceModelService {
                 deviceModelAbilityOptionVo.setAbilityOptionId(deviceAbilityOptionPo.getId());
                 deviceModelAbilityOptionVo.setDefinedName(deviceAbilityOptionPo.getOptionName());
                 deviceModelAbilityOptionVo.setDefaultVal(deviceAbilityOptionPo.getDefaultValue());
+                deviceModelAbilityOptionVo.setOptionValue(deviceAbilityOptionPo.getOptionValue());
                 deviceModelAbilityOptionVo.setMinVal(deviceAbilityOptionPo.getMinVal());
                 deviceModelAbilityOptionVo.setMaxVal(deviceAbilityOptionPo.getMaxVal());
                 deviceModelAbilityOptionVo.setStatus(deviceAbilityOptionPo.getStatus());

@@ -90,7 +90,7 @@
 
     <select id="selectByModelId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo">
         select
-        ma.*,a.abilitytype
+        ma.*,a.abilitytype,a.dirValue
         FROM t_device_model_ability ma,t_device_ability a
         WHERE ma.modelId = #{modelId}
         and ma.abilityId = a.id

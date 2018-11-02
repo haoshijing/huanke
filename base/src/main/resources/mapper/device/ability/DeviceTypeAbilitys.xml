@@ -58,7 +58,7 @@
     </select>
     <select id="selectByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo">
         select
-        s.*,a.abilityName,a.minVal,a.maxVal,a.abilityType,a.status abilityStatus
+        s.*,a.abilityName,a.minVal,a.maxVal,a.abilityType ,a.dirValue,a.status abilityStatus
         FROM
         t_device_type_abilitys s,t_device_ability a
 

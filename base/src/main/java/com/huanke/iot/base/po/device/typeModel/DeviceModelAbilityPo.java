@@ -14,6 +14,7 @@ public class DeviceModelAbilityPo {
     private Integer modelId;
     private Integer abilityId;
     private Integer abilityType;
+    private String dirValue;
     private String definedName;
     private Integer minVal;
     private Integer maxVal;
