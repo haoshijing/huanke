@@ -57,4 +57,9 @@ public class DeviceConstant {
     public static final int DEVICE_UNI_NO_TYPE = 1;//type
     public static final int DEVICE_UNI_NO_MODEl = 2;//model
     public static final int DEVICE_UNI_NO_DEVICE = 3;//device
+
+    public static final Integer DEVICE_OPERATE_SYS_H5 = 1;//h5端
+    public static final Integer DEVICE_OPERATE_SYS_ANDROID = 2;//安卓端
+    public static final Integer DEVICE_OPERATE_SYS_BACKEND = 3;//后台端
+
 }

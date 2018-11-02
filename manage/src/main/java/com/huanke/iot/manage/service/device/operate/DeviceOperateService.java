@@ -29,12 +29,15 @@ import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
+import com.huanke.iot.manage.vo.request.device.group.FuncListMessage;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
@@ -44,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -130,6 +134,9 @@ public class DeviceOperateService {
 
     @Autowired
     private LocationUtils locationUtils;
+
+    @Autowired
+    private MqttSendService mqttSendService;
 
 
     private static String[] keys = {"name", "mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
@@ -1748,5 +1755,50 @@ public class DeviceOperateService {
             return (String) map.get(key);
         }
         return "0";
+    }
+
+
+    /**
+     * 设备操作指令
+     * @param deviceFuncVo
+     * @param operType
+     * @return
+     */
+    public ApiResponse<String> sendFunc (DeviceFuncRequest deviceFuncVo, Integer operType) {
+
+        //获取当前登录的用户
+        User user = this.userService.getCurrentUser();
+
+        DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
+        if (devicePo != null) {
+            Integer deviceId = devicePo.getId();
+            String topic = "/down2/control/" + deviceId;
+            String requestId = UUID.randomUUID().toString().replace("-", "");
+            /*操作日志*/
+            DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
+            deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
+            deviceOperLogPo.setDeviceId(deviceId);
+            deviceOperLogPo.setOperType(operType);
+            deviceOperLogPo.setOperUserId(user.getId());
+            deviceOperLogPo.setFuncValue(deviceFuncVo.getValue());
+            deviceOperLogPo.setRequestId(requestId);
+            deviceOperLogPo.setCreateTime(System.currentTimeMillis());
+            deviceOperLogMapper.insert(deviceOperLogPo);
+
+            FuncListMessage funcListMessage = new FuncListMessage();
+            funcListMessage.setMsg_type("control");
+            funcListMessage.setMsg_id(requestId);
+            FuncListMessage.FuncItemMessage funcItemMessage = new FuncListMessage.FuncItemMessage();
+            funcItemMessage.setType(deviceFuncVo.getFuncId());
+            funcItemMessage.setValue(deviceFuncVo.getValue());
+            funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
+            mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
+            stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
+            return new ApiResponse<>(RetCode.OK,"设备开/设备关成功",requestId);
+        }else{
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"该设备不存在");
+        }
+
+
     }
 }

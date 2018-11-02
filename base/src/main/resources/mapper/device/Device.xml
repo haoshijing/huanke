@@ -680,15 +680,15 @@
     </delete>
 
     <!--批量更改设备的类型-->
-    <update id="updateDeviceTypeByModelId" parameterType="java.lang.Integer">
+    <update id="updateDeviceTypeId" parameterType="java.lang.Integer">
 
         UPDATE
         <include refid="tableName"/>
         d
-        inner join t_device_model m
-        SET d.typeId = m.typeId
-        where d.modelId = m.id
-        and d.modelId = #{modelId}
+        SET d.typeId = #{typeId},
+        lastUpdateTime = #{lastUpdateTime},
+        updateUserId = #{updateUserId}
+        where d.modelId = #{modelId}
 
     </update>
 

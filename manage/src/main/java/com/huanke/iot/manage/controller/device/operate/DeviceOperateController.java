@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.controller.device.operate;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.DeviceUpgradeMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
@@ -485,7 +486,7 @@ public class DeviceOperateController {
      * @return
      */
     @ApiOperation("新版首页查询我的设备")
-    @GetMapping("/newQueryDetailByDeviceId")
+    @PostMapping("/newQueryDetailByDeviceId")
     public ApiResponse<List<DeviceAbilityVo.DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilityQueryRequest.DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
         List<Integer> abilityIds = request.getAbilityIds();
@@ -564,6 +565,24 @@ public class DeviceOperateController {
             return new ApiResponse<>(RetCode.ERROR,"删除分享（全部）失败");
         }
     }
+
+    @ApiOperation("单设备操作")
+    @PostMapping("/sendFunc")
+    public ApiResponse<String> sendFuc(@RequestBody DeviceFuncRequest deviceFuncVo){
+        log.debug("发送指令："+deviceFuncVo.toString());
+        String funcId = deviceFuncVo.getFuncId();
+        if(deviceFuncVo.getDeviceId()!=null){
+            if(StringUtils.isNotBlank(deviceFuncVo.getFuncId())&&StringUtils.isNotBlank(deviceFuncVo.getValue())){
+                return deviceService.sendFunc(deviceFuncVo, DeviceConstant.DEVICE_OPERATE_SYS_BACKEND);
+            }else {
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"指令不可为空");
+            }
+
+        }else {
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备主键不可为空");
+        }
+    }
+
 //    @RequestMapping("/queryOperLogList")
 //    public ApiResponse<List<DeviceOperLogVo>>queryOperLog(@RequestBody DeviceLogQueryRequest deviceLogQueryRequest){
 //        List<DeviceOperLogVo> deviceOperLogVos =  deviceOperLogService.queryOperLogList(deviceLogQueryRequest);

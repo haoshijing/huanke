@@ -141,8 +141,11 @@ public class DeviceModelService {
 //                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
 //                    }
                     //当 修改 设备型号的类型的时候，同步修改 该型号下的设备的类型
-                    if(deviceModelPo.getTypeId()!=null&&deviceModelPo.getTypeId()>0){
-                        deviceMapper.updateDeviceTypeByModelId(modelRequest.getId());
+                    if(modelRequest.getTypeId()!=null&&modelRequest.getTypeId()>0){
+                        DevicePo updatePo = new DevicePo();
+                        updatePo.setModelId(modelRequest.getId());
+                        updatePo.setTypeId(modelRequest.getTypeId());
+                        deviceMapper.updateDeviceTypeId(updatePo);
                     }else{
                         return new ApiResponse<>(RetCode.PARAM_ERROR, "设备类型不可为空。");
                     }

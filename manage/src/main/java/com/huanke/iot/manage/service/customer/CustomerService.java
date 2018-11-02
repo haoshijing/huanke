@@ -128,7 +128,7 @@ public class CustomerService {
             if (StringUtils.isNotEmpty(loginName)) {
                 CustomerPo queryCustomer = customerMapper.selectById(customerVo.getId());
                 //如果 准备修改的用户名和 库里的用户名不一致，则表明需要新增,反之不作处理
-                if (!customerVo.getId().equals(queryCustomer.getId())) {
+                if (!loginName.equals(queryCustomer.getLoginName())) {
                     boolean hasSameUser = userService.hasSameUser(loginName);
                     if (!hasSameUser) {
                         User newuser = new User();
@@ -512,7 +512,7 @@ public class CustomerService {
         if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
-        return new ApiResponse<>(this.selectById(userId));
+        return new ApiResponse<>(this.selectById(customerId));
     }
     @Transactional
     public ApiResponse<Boolean> updateOwnerBaseInfo(CustomerVo customerVo)throws Exception{
@@ -527,7 +527,8 @@ public class CustomerService {
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
         customerPo.setName(customerVo.getName());
-        customerPo.setAppsecret(customerVo.getAppsecret());
+        customerPo.setPublicName(customerVo.getPublicName());
+        customerPo.setBusDirection(customerVo.getBusDirection());
 
         customerMapper.updateById(customerPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
@@ -571,6 +572,8 @@ public class CustomerService {
         }
         androidConfigPo.setName(androidConfig.getName());
         androidConfigPo.setLogo(androidConfig.getLogo());
+        androidConfigPo.setAppUrl(androidConfig.getAppUrl());
+        androidConfigPo.setQrcode(androidConfig.getQrcode());
         androidConfigPo.setDeviceChangePassword(androidConfig.getDeviceChangePassword());
         androidConfigPo.setLastUpdateTime(System.currentTimeMillis());
         androidConfigMapper.updateById(androidConfigPo);
@@ -656,7 +659,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public ApiResponse<Boolean> updateOwnerBackendInfo(CustomerVo customerVo)throws Exception{
+    public ApiResponse<Boolean> updateOwnerBackendInfo(CustomerVo.BackendConfig backendConfig)throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
         BackendConfigPo backendConfigPo = this.backendConfigMapper.selectConfigByCustomerId(customerId);
@@ -668,11 +671,9 @@ public class CustomerService {
         if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
-        backendConfigPo.setLogo(customerVo.getBackendConfig().getLogo());
-        backendConfigPo.setName(customerVo.getBackendConfig().getName());
+        backendConfigPo.setLogo(backendConfig.getLogo());
+        backendConfigPo.setName(backendConfig.getName());
         this.backendConfigMapper.updateById(backendConfigPo);
-        customerPo.setLoginName(customerVo.getLoginName());
-        customerMapper.updateById(customerPo);
         return new ApiResponse<>(RetCode.OK,"更新成功",true);
     }
 

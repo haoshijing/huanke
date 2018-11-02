@@ -165,28 +165,28 @@
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1)
         from
-        t_device_model ,t_device_type,t_customer
+        t_device_model m ,t_device_type t,t_customer c
         <where>
             <if test="param.name != null and param.name != ''">
-                AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+                AND m.name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
             <if test="param.typeId != null">
-                and typeId = #{param.typeId}
+                and m.typeId = #{param.typeId}
             </if>
             <if test="param.customerId != null">
-                and customerId = #{param.customerId}
+                and m.customerId = #{param.customerId}
             </if>
             <if test="param.productId != null and param.productId != '' ">
-                and productId = #{param.productId}
+                and m.productId = #{param.productId}
             </if>
             <if test="param.version != null and param.version != '' ">
-                and version = #{param.version}
+                and m.version = #{param.version}
             </if>
             <if test="param.status != null">
                 and m.status = #{param.status}
             </if>
-            and t_device_model.typeId = t_device_type.id
-            and t_device_model.customerId = t_customer.id
+            AND m.typeId = t.id
+            AND m.customerId = c.id
         </where>
     </select>
 

@@ -27,9 +27,7 @@
         busDirection,
         status,
         createTime,
-        createUser,
-        createUserId,
-        updateUserId
+        createUser
         )
         VALUES (
         #{parentCustomerId},
@@ -47,9 +45,7 @@
         #{busDirection},
         #{status},
         #{createTime},
-        #{createUser},
-        #{createUserId},
-        #{updateUserId}
+        #{createUser}
         )
     </insert>
 
@@ -97,8 +93,8 @@
             <if test="status != null ">
                 status = #{status},
             </if>
-            updateUserId = #{updateUserId},
-            lastUpdateTime = #{lastUpdateTime}
+            lastUpdateTime = #{lastUpdateTime},
+            lastUpdateUser = #{lastUpdateUser}
         </set>
         where
         id = #{id}
