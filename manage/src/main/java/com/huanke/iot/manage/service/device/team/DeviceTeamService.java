@@ -578,6 +578,7 @@ public class DeviceTeamService {
         Integer customerId = this.customerService.obtainCustomerId(false);
         //二、三级客户
         if(null != customerId) {
+            log.info("当前客户id不为空");
             for (TeamCreateOrUpdateRequest.TeamDeviceCreateRequest device : deviceList.getTeamDeviceCreateRequestList()) {
                 DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
                 //如果当前设备已被分配或未被分配则返回错误
@@ -587,10 +588,11 @@ public class DeviceTeamService {
             }
         }else {
             //超管
+            log.info("当前客户id为空,身份为超级管理员");
             for (TeamCreateOrUpdateRequest.TeamDeviceCreateRequest device : deviceList.getTeamDeviceCreateRequestList()) {
                 DeviceCustomerRelationPo deviceCustomerRelationPo = this.deviceCustomerRelationMapper.selectByDeviceMac(device.getMac());
                 //如果当前设备已被分配或未被分配则返回错误
-                if (null != deviceCustomerRelationPo) {
+                if (null == deviceCustomerRelationPo) {
                     return device;
                 }
             }
