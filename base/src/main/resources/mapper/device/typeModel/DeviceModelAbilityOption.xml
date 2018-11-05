@@ -135,7 +135,7 @@
     <select id="getOptionsByModelAbilityId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo">
         select * from <include refid="tableName"/>
         <where>
-            status != 2
+            status = 1
             <if test = "modelAbilityId != null">
                 and modelAbilityId = #{modelAbilityId}
             </if>

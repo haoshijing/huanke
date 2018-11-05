@@ -30,6 +30,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author onlymark
@@ -80,9 +82,12 @@ public class DeviceFormatService {
         List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
         deviceModelVo.setPageName(wxFormatPagePo.getName());
         List<WxFormatItemPo> wxFormatItemPos = wxFormatItemMapper.selectByJoinId(formatId, wxFormatPagePo.getId());
+        //缓存
+        List<DeviceModelFormatItemPo> deviceModelFormatItemPoCaches = deviceModelFormatItemMapper.obtainModelFormatItems(modelFormatId);
+        Map<Integer, DeviceModelFormatItemPo> deviceModelFormatItemPoMap = deviceModelFormatItemPoCaches.stream().collect(Collectors.toMap(DeviceModelFormatItemPo::getItemId, a -> a, (k1, k2) -> k1));
         for (WxFormatItemPo wxFormatItemPo : wxFormatItemPos) {
             DeviceModelVo.FormatItems formatItems = new DeviceModelVo.FormatItems();
-            DeviceModelFormatItemPo deviceModelFormatItemPo = deviceModelFormatItemMapper.selectByJoinId(modelFormatId, wxFormatItemPo.getId());
+            DeviceModelFormatItemPo deviceModelFormatItemPo = deviceModelFormatItemPoMap.get(wxFormatItemPo.getId());
             formatItems.setItemId(wxFormatItemPo.getId());
             formatItems.setShowName(deviceModelFormatItemPo.getShowName());
             formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
@@ -93,14 +98,18 @@ public class DeviceFormatService {
         //查型号硬件功能项
         List<DeviceModelVo.Abilitys> abilitysList = new ArrayList<>();
         List<DeviceTypeAbilitysPo> deviceTypeabilitysPos = deviceTypeabilitysMapper.selectByTypeId(typeId);
+        //缓存功能项集
+        List<DeviceAbilityPo> deviceAbilityPoCaches = deviceabilityMapper.selectList(new DeviceAbilityPo(), 10000, 0);
+        Map<Integer,DeviceAbilityPo> deviceAbilityPoMap = deviceAbilityPoCaches.stream().collect(Collectors.toMap(DeviceAbilityPo::getId, a -> a,(k1, k2)->k1));
+        List<DeviceModelAbilityPo> deviceModelAbilityPoCaches = deviceModelabilityMapper.selectByModelId(modelId);
+        Map<Integer, DeviceModelAbilityPo> deviceModelAbilityPoMap = deviceModelAbilityPoCaches.stream().collect(Collectors.toMap(DeviceModelAbilityPo::getAbilityId, a -> a, (k1, k2) -> k1));
         for (DeviceTypeAbilitysPo deviceTypeabilitysPo : deviceTypeabilitysPos) {
             Integer abilityId = deviceTypeabilitysPo.getAbilityId();
-
             DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
             abilitys.setAbilityId(abilityId);
-            DeviceAbilityPo deviceabilityPo = deviceabilityMapper.selectById(abilityId);
+            DeviceAbilityPo deviceabilityPo = deviceAbilityPoMap.get(abilityId);
             abilitys.setAbilityName(deviceabilityPo.getAbilityName());
-            DeviceModelAbilityPo deviceModelabilityPo = deviceModelabilityMapper.getByJoinId(modelId, abilityId);
+            DeviceModelAbilityPo deviceModelabilityPo = deviceModelAbilityPoMap.get(abilityId);
             if(deviceModelabilityPo != null){
                 abilitys.setDefinedName(deviceModelabilityPo.getDefinedName());
             }else{
@@ -111,14 +120,17 @@ public class DeviceFormatService {
 
             List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceabilityOptionMapper.selectOptionsByAbilityId(deviceabilityPo.getId());
             //查功能项选项及别名
+            //缓存
+            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoCaches = deviceModelabilityOptionMapper.getOptionsByModelAbilityId(deviceModelabilityPo.getId());
+            Map<Integer, DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoMap = deviceModelAbilityOptionPoCaches.stream().collect(Collectors.toMap(DeviceModelAbilityOptionPo::getAbilityOptionId, a -> a, (k1, k2) -> k1));
             for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
-                DeviceModelVo.AbilityOption abilityOption = new DeviceModelVo.AbilityOption();
-                abilityOption.setOptionName(deviceabilityOptionPo.getOptionName());
-                abilityOption.setOptionValue(deviceabilityOptionPo.getOptionValue());
-                abilityOption.setMaxVal(deviceabilityOptionPo.getMaxVal());
-                abilityOption.setMinVal(deviceabilityOptionPo.getMinVal());
-                DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelabilityOptionMapper.getByJoinId(deviceModelabilityPo.getId(), deviceabilityOptionPo.getId());
+                DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelAbilityOptionPoMap.get(deviceabilityOptionPo.getId());
                 if(deviceModelabilityOptionPo != null){
+                    DeviceModelVo.AbilityOption abilityOption = new DeviceModelVo.AbilityOption();
+                    abilityOption.setOptionName(deviceabilityOptionPo.getOptionName());
+                    abilityOption.setOptionValue(deviceabilityOptionPo.getOptionValue());
+                    abilityOption.setMaxVal(deviceabilityOptionPo.getMaxVal());
+                    abilityOption.setMinVal(deviceabilityOptionPo.getMinVal());
                     abilityOption.setOptionDefinedName(deviceModelabilityOptionPo.getDefinedName());
                     abilityOption.setDefaultValue(deviceModelabilityOptionPo.getDefaultValue());
                     abilityOption.setMaxVal(deviceModelabilityOptionPo.getMaxVal());
