@@ -606,12 +606,12 @@ public class CustomerService {
                 androidScenePo.setStatus(CommonConstant.STATUS_YES);
                 androidScenePo.setCustomerId(customerId);
                 androidScenePo.setConfigId(androidConfigPo.getId());
-                androidSceneMapper.insert(androidScenePo);
+                int id = androidSceneMapper.insert(androidScenePo);
                 List<CustomerVo.AndroidSceneImg> androidSceneImgs = androidConfig.getAndroidSceneList().get(i).getAndroidSceneImgList();
                 for(CustomerVo.AndroidSceneImg temp : androidSceneImgs){
                     AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
                     BeanUtils.copyProperties(temp, androidSceneImgPo);
-                    androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+                    androidSceneImgPo.setAndroidSceneId(id);
                     androidSceneImgPo.setConfigId(androidConfigPo.getId());
                     androidSceneImgPo.setCustomerId(customerId);
                     androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
