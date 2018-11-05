@@ -31,6 +31,11 @@
         )
     </insert>
 
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
     <update id="updateById" parameterType="com.huanke.iot.base.po.customer.AndroidSceneImgPo">
         update
         <include refid="tableName"/>

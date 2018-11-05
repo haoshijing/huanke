@@ -73,6 +73,11 @@
         </foreach>
     </insert>
 
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+
     <select id="selectListByConfigId"  resultType="com.huanke.iot.base.po.customer.AndroidScenePo">
         select
         *
