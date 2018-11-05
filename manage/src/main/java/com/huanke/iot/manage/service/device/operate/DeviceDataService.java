@@ -59,7 +59,11 @@ public class DeviceDataService {
         if(null == deviceOperLogPoList || 0 == deviceOperLogPoList.size()){
             return new ApiResponse<>(RetCode.OK,"暂无数据");
         }
-        List<DeviceOperLogVo> deviceOperLogVoList = deviceOperLogPoList.stream().map(deviceOperLogPo -> {
+        List<DeviceOperLogVo> deviceOperLogVoList = deviceOperLogPoList.stream().filter(temp ->{
+            FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(temp.getFuncId());
+            if(funcTypeEnums!=null) return false;
+            else return true;
+        }).map(deviceOperLogPo -> {
             DeviceOperLogVo deviceOperLogVo = new DeviceOperLogVo();
             BeanUtils.copyProperties(deviceOperLogPo,deviceOperLogVo);
             deviceOperLogVo.setOperateTime(deviceOperLogPo.getCreateTime());
