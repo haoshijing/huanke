@@ -179,15 +179,15 @@ public class DeviceParamsService {
         return requestId;
     }
     public String sendOldFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, List<DeviceParamConfigRequest.ParamConfig> paramConfigList){
-        List inSpeed = new ArrayList();
-        List outSpeed = new ArrayList();
+        List<Integer> inSpeed = new ArrayList();
+        List<Integer> outSpeed = new ArrayList();
         if(abilityTypeName.equals("C10")){
             for (DeviceParamConfigRequest.ParamConfig paramConfig : paramConfigList) {
                 if(paramConfig.getSort() == 0){
-                    inSpeed = paramConfig.getValuesList();
+                    paramConfig.getValuesList().stream().forEach(temp->{inSpeed.add(Integer.valueOf(temp));});
                 }
                 if(paramConfig.getSort() == 1){
-                    outSpeed = paramConfig.getValuesList();
+                    paramConfig.getValuesList().stream().forEach(temp->{outSpeed.add(Integer.valueOf(temp));});
                 }
             }
             if((inSpeed == null || inSpeed.size() < 1 ) && (outSpeed == null || outSpeed.size() < 1 )){
@@ -205,10 +205,10 @@ public class DeviceParamsService {
             ByteBuf byteBuf = Unpooled.buffer(2 + length);
             byteBuf.writeShort(length);
             inSpeed.forEach(speed -> {
-                byteBuf.writeShort(Integer.valueOf(speed.toString()));
+                byteBuf.writeShort(speed);
             });
             outSpeed.forEach(speed -> {
-                byteBuf.writeShort(Integer.valueOf(speed.toString()));
+                byteBuf.writeShort(speed);
             });
             String topic = "/down2/cfg/" + deviceId;
             mqttSendService.sendMessage(topic, byteBuf.array());
