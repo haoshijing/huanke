@@ -12,4 +12,5 @@ import java.util.List;
 public interface DeviceAbilityOptionMapper extends BaseMapper<DeviceAbilityOptionPo> {
 
     List<DeviceAbilityOptionPo> selectOptionsByAbilityId(Integer abilityId);
+    List<DeviceAbilityOptionPo> selectActiveOptionsByAbilityId(Integer abilityId);
 }

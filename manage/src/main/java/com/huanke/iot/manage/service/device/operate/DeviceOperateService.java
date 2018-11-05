@@ -1684,7 +1684,7 @@ public class DeviceOperateService {
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_single:
-                    List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(abilityId);
                     String optionValue = getData(controlDatas, dirValue);
                     List<DeviceAbilityVo.abilityOption> abilityOptionList = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
@@ -1700,7 +1700,7 @@ public class DeviceOperateService {
                     deviceAbilitysVo.setAbilityOptionList(abilityOptionList);
                     break;
                 case DeviceAbilityTypeContants.ability_type_checkbox:
-                    List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(abilityId);
                     List<DeviceAbilityVo.abilityOption> abilityOptionList1 = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos1) {
                         String targetOptionValue = deviceabilityOptionPo.getOptionValue();

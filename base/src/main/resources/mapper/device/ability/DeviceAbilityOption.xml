@@ -61,12 +61,23 @@
         limit #{offset},#{limit}
     </select>
 
+    <!--查询非删除的功能项选项-->
     <select id="selectOptionsByAbilityId" parameterType="java.lang.Integer"
             resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo">
         select * from
         <include refid="tableName"/>
         <where>
             status != 2
+            AND abilityId = #{abilityId}
+        </where>
+    </select>
+    <!--查询有效的功能项选项-->
+    <select id="selectActiveOptionsByAbilityId" parameterType="java.lang.Integer"
+            resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            status = 1
             AND abilityId = #{abilityId}
         </where>
     </select>
