@@ -153,10 +153,13 @@ public class DeviceOperateService {
      * @return
      */
     public ApiResponse<List<DeviceAddSuccessVo>> createDevice(List<DeviceCreateOrUpdateRequest.DeviceUpdateList> deviceLists) throws Exception {
+        User user = userService.getCurrentUser();
         List<DeviceAddSuccessVo> deviceAddSuccessVoList = new ArrayList<>();
         List<DevicePo> devicePoList = deviceLists.stream().map(device -> {
             DevicePo insertPo = new DevicePo();
             insertPo.setName(device.getName());
+            //如果管理名称为空，则默认为 设备名称
+            insertPo.setManageName(StringUtils.isNotBlank(device.getManageName())?device.getManageName():device.getName());
             insertPo.setTypeId(device.getTypeId());
             insertPo.setMac(device.getMac());
             //设定绑定状态为未绑定
@@ -172,9 +175,11 @@ public class DeviceOperateService {
             insertPo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
             insertPo.setHardVersion(device.getHardVersion());
             insertPo.setBirthTime(device.getBirthTime());
+
+            /*添加人与添加时间*/
             insertPo.setCreateTime(System.currentTimeMillis());
-            insertPo.setLastUpdateTime(System.currentTimeMillis());
-            insertPo.setCreateUserId(device.getCreateUserId());
+            insertPo.setCreateUser(user.getId());
+
             insertPo.setDeviceNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
             return insertPo;
         }).collect(Collectors.toList());
@@ -200,9 +205,14 @@ public class DeviceOperateService {
      */
     public ApiResponse<Boolean> updateDevice(DeviceUpdateRequest deviceUpdateRequest) {
         boolean ret = true;
+        User user = userService.getCurrentUser();
         DevicePo devicePo = deviceMapper.selectById(deviceUpdateRequest.getId());
         if (devicePo != null) {
             BeanUtils.copyProperties(deviceUpdateRequest, devicePo);
+            /*修改人与修改时间*/
+            devicePo.setLastUpdateUser(user.getId());
+            devicePo.setLastUpdateTime(System.currentTimeMillis());
+
             ret = deviceMapper.updateById(devicePo) > 0;
         } else {
             return new ApiResponse<>(RetCode.OK, "该设备不存在！", false);
@@ -232,6 +242,7 @@ public class DeviceOperateService {
         DeviceCustomerRelationPo deviceCustomerRelationPo;
         DeviceListVo deviceQueryVo = new DeviceListVo();
         deviceQueryVo.setName(devicePo.getName());
+        deviceQueryVo.setManageName(devicePo.getManageName());
         deviceQueryVo.setMac(devicePo.getMac());
         deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
         deviceQueryVo.setWxDeviceId(devicePo.getWxDeviceId());
@@ -271,7 +282,13 @@ public class DeviceOperateService {
         }
         deviceQueryVo.setId(devicePo.getId());
         deviceQueryVo.setBirthTime(devicePo.getBirthTime());
+        /*创建人、创建时间、修改人，修改时间*/
+        deviceQueryVo.setCreateTime(devicePo.getCreateTime());
         deviceQueryVo.setLastUpdateTime(devicePo.getLastUpdateTime());
+        deviceQueryVo.setCreateUser(devicePo.getCreateUser());
+        deviceQueryVo.setCreateUserName(userService.getUserName(devicePo.getCreateUser()));
+        deviceQueryVo.setLastUpdateUser(devicePo.getLastUpdateUser());
+        deviceQueryVo.setLastUpdateUserName(userService.getUserName(devicePo.getLastUpdateUser()));
         //查询绑定信息
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
         if (null != deviceCustomerUserRelationPo) {
@@ -318,6 +335,7 @@ public class DeviceOperateService {
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceListVo deviceQueryVo = new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
+            deviceQueryVo.setManageName(devicePo.getManageName());
             deviceQueryVo.setMac(devicePo.getMac());
             deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
 
@@ -346,21 +364,10 @@ public class DeviceOperateService {
             deviceOperLogPo.setFuncValue(funcValues.get(devicePo.getId().toString()));
             if (null != deviceOperLogPo && StringUtils.isNotEmpty(deviceOperLogPo.getFuncValue())) {
                 //0-关机 1-开机
-                log.info("设备的开机关机状态:{}", deviceOperLogPo.getFuncValue());
                 deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0") ? 0 : 1);
-                log.info("vo的设备开关机状态：{}", deviceQueryVo.getPowerStatus());
             } else {
                 deviceQueryVo.setPowerStatus(0);
             }
-            //查询开关机状态  todo
-//            DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
-//            if(null != deviceOperLogPo){
-//                //0-关机 1-开机
-//                log.info("设备的开机关机状态:",deviceOperLogPo);
-//                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0")?0:1);
-//            }else {
-//                deviceQueryVo.setPowerStatus(0);
-//            }
             //获取主从相关的信息
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
             Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getId());
@@ -377,7 +384,13 @@ public class DeviceOperateService {
             }
             deviceQueryVo.setId(devicePo.getId());
             deviceQueryVo.setBirthTime(devicePo.getBirthTime());
+            /*创建人、创建时间、修改人，修改时间*/
+            deviceQueryVo.setCreateTime(devicePo.getCreateTime());
             deviceQueryVo.setLastUpdateTime(devicePo.getLastUpdateTime());
+            deviceQueryVo.setCreateUser(devicePo.getCreateUser());
+//            deviceQueryVo.setCreateUserName(userService.getUserName(devicePo.getCreateUser()));
+            deviceQueryVo.setLastUpdateUser(devicePo.getLastUpdateUser());
+//            deviceQueryVo.setLastUpdateUserName(userService.getUserName(devicePo.getLastUpdateUser()));
             //查询绑定信息
             DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = this.deviceCustomerUserRelationMapper.selectByDeviceId(devicePo.getId());
             if (null != deviceCustomerUserRelationPo) {
@@ -568,6 +581,7 @@ public class DeviceOperateService {
      * @return
      */
     public ApiResponse<DevicePo> deleteOneDevice(DeviceUnbindRequest.deviceVo deviceVo) throws Exception {
+        User user = userService.getCurrentUser();
         Integer deviceId = deviceVo.deviceId;
         String mac = deviceVo.mac;
         //解除 用户绑定关系、组关系
@@ -617,7 +631,7 @@ public class DeviceOperateService {
 
                 queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
 
-                queryDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+                queryDevicePo.setLastUpdateUser(user.getId());
 
                 deviceMapper.updateById(queryDevicePo);
             }
@@ -637,6 +651,7 @@ public class DeviceOperateService {
     public ApiResponse<Boolean> recoverDevice(DeviceUnbindRequest.deviceVo deviceVo) {
         try {
 
+            User user = userService.getCurrentUser();
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
             if (null == deviceId || deviceId <= 0 || StringUtils.isBlank(mac)) {
@@ -651,7 +666,7 @@ public class DeviceOperateService {
             } else if (!mac.equals(queryDevicePo.getMac())) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "设备主键与mac地址不匹配");
             }
-            if (CommonConstant.STATUS_YES == queryDevicePo.getStatus()) {
+            if (CommonConstant.STATUS_YES.equals(queryDevicePo.getStatus()) ) {
                 return new ApiResponse<>(RetCode.PARAM_ERROR, "非已删除设备不可恢复");
             }
 
@@ -664,9 +679,9 @@ public class DeviceOperateService {
             queryDevicePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
             //设定启用状态为禁用
             queryDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
-            queryDevicePo.setCreateTime(System.currentTimeMillis());
+//            queryDevicePo.setCreateTime(System.currentTimeMillis());
             queryDevicePo.setLastUpdateTime(System.currentTimeMillis());
-            queryDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+            queryDevicePo.setLastUpdateUser(user.getId());
 
             deviceMapper.updateById(queryDevicePo);
             return new ApiResponse<>(RetCode.OK, "设备恢复成功");
@@ -687,6 +702,7 @@ public class DeviceOperateService {
      */
     public ApiResponse<Boolean> assignDeviceToCustomer(DeviceAssignToCustomerRequest deviceAssignToCustomerRequest) throws Exception {
         Boolean ret = true;
+        User user = userService.getCurrentUser();
         //获取设备列表
         List<DeviceQueryRequest.DeviceQueryList> deviceList = deviceAssignToCustomerRequest.getDeviceQueryRequest().getDeviceList();
         if (deviceList != null && deviceList.size() > 0) {
@@ -745,6 +761,8 @@ public class DeviceOperateService {
                     devicePo.setWxQrticket(resultPo.getWxQrticket());
                     //刷新最新更新时间
                     devicePo.setLastUpdateTime(System.currentTimeMillis());
+                    devicePo.setLastUpdateUser(user.getId());
+
                     //记录本次需要更新的设备
                     devicePoList.add(devicePo);
                 }
@@ -774,6 +792,8 @@ public class DeviceOperateService {
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceIdPoolPo> deviceIdPoolPoList = new ArrayList<>();
 
+        User user = userService.getCurrentUser();
+
         if (deviceQueryRequests != null && deviceQueryRequests.size() > 0) {
             deviceQueryRequests.stream().forEach(device -> {
                         DevicePo devicePo = this.deviceMapper.selectByMac(device.getMac());
@@ -793,7 +813,6 @@ public class DeviceOperateService {
                             this.deviceTeamItemMapper.deleteItemsByDeviceId(devicePo.getId());
                             devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
                             devicePo.setBindTime(null);
-                            devicePo.setLastUpdateTime(System.currentTimeMillis());
                         }
                         //记录要更新的设备信息
                         devicePo.setModelId(null);
@@ -805,6 +824,7 @@ public class DeviceOperateService {
                         devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
                         devicePo.setAssignTime(null);
                         devicePo.setLastUpdateTime(System.currentTimeMillis());
+                        devicePo.setLastUpdateUser(user.getId());
                         devicePoList.add(devicePo);
                     }
             );
@@ -830,6 +850,7 @@ public class DeviceOperateService {
      */
     public ApiResponse<Boolean> callBackDeviceList(List<DevicePo> devicePos) throws Exception {
 
+        User user = userService.getCurrentUser();
         //客户设备关系集合
         List<DeviceCustomerRelationPo> deviceCustomerRelationPoList = new ArrayList<>();
         //设备集合
@@ -857,7 +878,6 @@ public class DeviceOperateService {
                     this.deviceTeamItemMapper.deleteItemsByDeviceId(devicePo.getId());
                     devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
                     devicePo.setBindTime(null);
-                    devicePo.setLastUpdateTime(System.currentTimeMillis());
                 }
                 //记录要更新的设备信息
                 devicePo.setModelId(null);
@@ -869,6 +889,7 @@ public class DeviceOperateService {
                 devicePo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
                 devicePo.setAssignTime(null);
                 devicePo.setLastUpdateTime(System.currentTimeMillis());
+                devicePo.setLastUpdateUser(user.getId());
                 devicePoList.add(devicePo);
             });
 
@@ -893,6 +914,8 @@ public class DeviceOperateService {
      * @return
      */
     public ApiResponse<Boolean> bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest) throws Exception {
+
+        User user = userService.getCurrentUser();
         List<DeviceTeamItemPo> deviceTeamItemPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
         List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = new ArrayList<>();
@@ -940,7 +963,10 @@ public class DeviceOperateService {
                         devicePo.setBindStatus(DeviceConstant.BIND_STATUS_YES);
                         //设定绑定时间
                         devicePo.setBindTime(System.currentTimeMillis());
+
                         devicePo.setLastUpdateTime(System.currentTimeMillis());
+                        devicePo.setLastUpdateUser(user.getId());
+
                         deviceTeamItemPo.setDeviceId(devicePo.getId());
                         deviceTeamItemPo.setTeamId(deviceTeamId);
                         deviceTeamItemPo.setUserId(customerUserPo.getId());
@@ -988,7 +1014,7 @@ public class DeviceOperateService {
     public ApiResponse<DevicePo> untieOneDeviceToUser(DeviceUnbindRequest.deviceVo deviceVo) {//设备解绑 todo
 
         try {
-//            User user = userService.getCurrentUser();
+            User user = userService.getCurrentUser();
             Integer deviceId = deviceVo.deviceId;
             String mac = deviceVo.mac;
             if (null == deviceId || deviceId <= 0 || StringUtils.isBlank(mac)) {
@@ -1017,7 +1043,7 @@ public class DeviceOperateService {
             unbindDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
             unbindDevicePo.setBindTime(null);
             unbindDevicePo.setLastUpdateTime(System.currentTimeMillis());
-//            unbindDevicePo.setUpdateUserId(user.getId());
+            unbindDevicePo.setLastUpdateUser(user.getId());
 
             deviceMapper.updateById(unbindDevicePo);
 
@@ -1037,12 +1063,13 @@ public class DeviceOperateService {
     public ApiResponse<Boolean> untieDeviceToUser(DeviceUnbindRequest unbindRequest) {//设备解绑 todo
 
         try {
+            User user = userService.getCurrentUser();
             List<DeviceUnbindRequest.deviceVo> deviceVos = unbindRequest.deviceVos;
             if (deviceVos != null && deviceVos.size() > 0) {
                 deviceVos.stream().forEach(deviceVo -> {
                     Integer deviceId = deviceVo.deviceId;
                     String mac = deviceVo.mac;
-                    DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
+//                    DevicePo queryDevicePo = deviceMapper.selectById(deviceId);
                     //查询已被该设备绑定的用户 ，并进行解绑
 
                     deviceCustomerUserRelationMapper.deleteRealationByDeviceId(deviceId);
@@ -1070,7 +1097,7 @@ public class DeviceOperateService {
                     unbindDevicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
                     unbindDevicePo.setBindTime(null);
                     unbindDevicePo.setLastUpdateTime(System.currentTimeMillis());
-                    unbindDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+                    unbindDevicePo.setLastUpdateUser(user.getId());
 
                     deviceMapper.updateById(unbindDevicePo);
 
@@ -1094,6 +1121,7 @@ public class DeviceOperateService {
     public ApiResponse<Boolean> updateDeivceDisble(DeviceUnbindRequest unbindRequest) {//设备禁用 todo
 
         try {
+            User user = userService.getCurrentUser();
             List<DeviceUnbindRequest.deviceVo> deviceVos = unbindRequest.deviceVos;
             if (deviceVos != null && deviceVos.size() > 0) {
                 deviceVos.stream().forEach(deviceVo -> {
@@ -1106,7 +1134,7 @@ public class DeviceOperateService {
                     updateDevicePo.setId(deviceId);
                     updateDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
                     updateDevicePo.setLastUpdateTime(System.currentTimeMillis());
-                    updateDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+                    updateDevicePo.setLastUpdateUser(deviceVo.getLastUpdateUser());
 
                     deviceMapper.updateById(updateDevicePo);
 
@@ -1128,6 +1156,7 @@ public class DeviceOperateService {
     public ApiResponse<Boolean> updateDeivceEnable(DeviceUnbindRequest unbindRequest) {//设备启用 todo
 
         try {
+            User user = userService.getCurrentUser();
             List<DeviceUnbindRequest.deviceVo> deviceVos = unbindRequest.deviceVos;
             if (deviceVos != null && deviceVos.size() > 0) {
                 deviceVos.stream().forEach(deviceVo -> {
@@ -1140,7 +1169,7 @@ public class DeviceOperateService {
                     updateDevicePo.setId(deviceId);
                     updateDevicePo.setEnableStatus(DeviceConstant.ENABLE_STATUS_YES);
                     updateDevicePo.setLastUpdateTime(System.currentTimeMillis());
-                    updateDevicePo.setUpdateUserId(deviceVo.getUpdateUesrId());
+                    updateDevicePo.setLastUpdateUser(user.getId());
 
                     deviceMapper.updateById(updateDevicePo);
 

@@ -12,6 +12,7 @@
         <include refid="tableName"/>
         (
         name,
+        manageName,
         mac,
         deviceNo,
         wxDeviceId,
@@ -44,12 +45,13 @@
         childId,
         createTime,
         lastUpdateTime,
-        createUserId,
-        updateUserId
+        createUser,
+        lastUpdateUser
         )
         VALUES
         (
         #{name},
+        #{manageName},
         #{mac},
         #{deviceNo},
         #{wxDeviceId},
@@ -82,8 +84,8 @@
         #{childId},
         #{createTime},
         #{lastUpdateTime},
-        #{createUserId},
-        #{updateUserId}
+        #{createUser},
+        #{lastUpdateUser}
         )
     </insert>
 
@@ -93,6 +95,7 @@
         <include refid="tableName"/>
         (
         name,
+        manageName,
         mac,
         deviceNo,
         wxDeviceId,
@@ -125,13 +128,14 @@
         childId,
         createTime,
         lastUpdateTime,
-        createUserId,
-        updateUserId
+        createUser,
+        lastUpdateUser
         )
         VALUES
         <foreach collection="list" item="device" separator=",">
             (
             #{device.name},
+            #{device.manageName},
             #{device.mac},
             #{device.deviceNo},
             #{device.wxDeviceId},
@@ -164,8 +168,8 @@
             #{device.childId},
             #{device.createTime},
             #{device.lastUpdateTime},
-            #{device.createUserId},
-            #{device.updateUserId}
+            #{device.createUser},
+            #{device.lastUpdateUser}
             )
         </foreach>
     </insert>
@@ -244,7 +248,7 @@
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select d.`id`, d.`name`, d.`mac`,d.`deviceNo`,
+        select d.`id`, d.`name`,d.`manageName` ,d.`mac`,d.`deviceNo`,
         d.`wxDeviceId`,d.`wxDevicelicence`,d.`wxQrticket`,
         d.`imei`,d.`imsi`,d.`saNo`,d.`typeId`,d.`modelId`,
         d.`productId`,c.`id` customerId ,
@@ -253,7 +257,7 @@
         d.`speedConfig`,d.`version`,d.`location`,d.`status`,
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
-        d.`createTime`,d.`lastUpdateTime`,d.`createUserId`,d.`updateUserId`
+        d.`createTime`,d.`lastUpdateTime`,d.`createUser`,d.`lastUpdateUser`
         ,c.name customerName,t.`name` typeName ,m.`name` modelName
         from
         t_device d
@@ -276,6 +280,9 @@
             </if>
             <if test="param.name != null  and param.name != ''  ">
                 AND d.name like CONCAT('%',CONCAT(#{param.name},'%'))
+            </if>
+            <if test="param.manageName != null  and param.manageName != ''  ">
+                AND d.manageName like CONCAT('%',CONCAT(#{param.manageName},'%'))
             </if>
             <if test="param.customerId != null">
                 and r.customerId = c.id
@@ -323,6 +330,9 @@
             <if test="param.name != null  and param.name != ''  ">
                 AND d.name like CONCAT('%',CONCAT(#{param.name},'%'))
             </if>
+            <if test="param.manageName != null  and param.manageName != ''  ">
+                AND d.manageName like CONCAT('%',CONCAT(#{param.manageName},'%'))
+            </if>
             <if test="param.customerId != null">
                 AND r.customerId = #{param.customerId}
                 and d.id = r.deviceId
@@ -368,6 +378,9 @@
         <set>
             <if test="name != null  and name!='' ">
                 name = #{name},
+            </if>
+            <if test="manageName != null  and manageName!='' ">
+                manageName = #{manageName},
             </if>
             <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
@@ -429,8 +442,8 @@
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>
-            <if test="updateUserId != null">
-                updateUserId = #{updateUserId},
+            <if test="lastUpdateUser != null">
+                lastUpdateUser = #{lastUpdateUser},
             </if>
         </set>
         where
@@ -446,6 +459,9 @@
         <set>
             <if test="name != null  and name!='' ">
                 name = #{name},
+            </if>
+            <if test="manageName != null  and manageName!='' ">
+                manageName = #{manageName},
             </if>
             <if test="mac != null  and mac!='' ">
                 mac = #{mac},
@@ -511,8 +527,8 @@
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>
-            <if test="updateUserId != null">
-                updateUserId = #{updateUserId}
+            <if test="lastUpdateUser != null">
+                lastUpdateUser = #{lastUpdateUser}
             </if>
         </set>
         where
@@ -584,10 +600,10 @@
                     </if>
                 </foreach>
             </trim>
-            <trim prefix="updateUserId =case" suffix="end,">
+            <trim prefix="lastUpdateUser =case" suffix="end,">
                 <foreach collection="list" item="device" index="index">
-                    <if test="device.updateUserId !=null">
-                        when id=#{device.id} then #{device.updateUserId}
+                    <if test="device.lastUpdateUser !=null">
+                        when id=#{device.id} then #{device.lastUpdateUser}
                     </if>
                 </foreach>
             </trim>
@@ -621,7 +637,7 @@
                 workStatus = #{workStatus},
             </if>
             lastUpdateTime = #{lastUpdateTime},
-            updateUserId = #{updateUserId}
+            lastUpdateUser = #{lastUpdateUser}
         </set>
         where
         deviceId = #{deviceId}
@@ -634,7 +650,7 @@
             assignStatus = #{assignStatus},
             assignTime = #{assignTime},
             lastUpdateTime = #{lastUpdateTime},
-            updateUserId = #{updateUserId}
+            lastUpdateUser = #{lastUpdateUser}
         </set>
         WHERE id = #{id}
         <!--<foreach collection="list" index="index" item="item" open="(" separator="," close=")">-->
@@ -687,7 +703,7 @@
         d
         SET d.typeId = #{typeId},
         lastUpdateTime = #{lastUpdateTime},
-        updateUserId = #{updateUserId}
+        lastUpdateUser = #{lastUpdateUser}
         where d.modelId = #{modelId}
 
     </update>

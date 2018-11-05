@@ -18,6 +18,6 @@ public class DeviceUnbindRequest {
     public static class deviceVo{
         public Integer deviceId;
         public String mac;
-        private Integer updateUesrId;
+        private Integer lastUpdateUser;
     }
 }

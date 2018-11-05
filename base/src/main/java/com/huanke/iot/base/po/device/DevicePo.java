@@ -19,6 +19,7 @@ public class DevicePo {
      */
     private Integer id;
     private String name;
+    private String manageName;
 
     /**
      * 设备mac地址
@@ -79,9 +80,10 @@ public class DevicePo {
     private String communicationVersion;
     private String softVersion;
     private Long birthTime;
+
+    private Integer createUser;
     private Long createTime;
+    private Integer lastUpdateUser;
     private Long lastUpdateTime;
-    private Integer createUserId;
-    private Integer updateUserId;
 
 }

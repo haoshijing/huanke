@@ -545,7 +545,7 @@ public class DeviceOperateController {
         }
     }
     @ApiOperation("删除分享（单个）")
-    @RequestMapping("/clearRelation")
+    @PutMapping("/clearRelation")
     public ApiResponse<Boolean> clearRelation(@RequestBody UpdateShareRequest updateShareRequest) {
         try {
             return this.deviceService.clearRelation(updateShareRequest);
@@ -556,7 +556,7 @@ public class DeviceOperateController {
     }
 
     @ApiOperation("删除分享（全部）")
-    @RequestMapping("/clearAllRelation")
+    @PutMapping("/clearAllRelation")
     public ApiResponse<Boolean> clearAllRelation(@RequestBody UpdateShareRequest updateShareRequest) {
         try {
             return this.deviceService.clearAllRelation(updateShareRequest);

@@ -80,8 +80,6 @@ public class DeviceListVo {
 
     private Long birthTime;
 
-    private Long lastUpdateTime;
-
     private String userOpenId;
 
     private String userName;
@@ -89,5 +87,13 @@ public class DeviceListVo {
     private String location;
 
     private Integer status;
+
+
+    private Integer createUser;
+    private String createUserName;
+    private Long createTime;
+    private Integer lastUpdateUser;
+    private String lastUpdateUserName;
+    private Long lastUpdateTime;
 
 }

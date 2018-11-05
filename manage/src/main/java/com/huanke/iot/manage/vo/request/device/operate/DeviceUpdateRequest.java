@@ -13,6 +13,8 @@ public class DeviceUpdateRequest {
     /*设备名称*/
     private String name;
 
+    private String manageName;
+
     /*设备mac地址*/
     private String mac;
 

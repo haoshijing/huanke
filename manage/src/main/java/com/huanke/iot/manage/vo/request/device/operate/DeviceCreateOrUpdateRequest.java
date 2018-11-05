@@ -15,6 +15,7 @@ public class DeviceCreateOrUpdateRequest {
          * 设备名称
          */
         private String name;
+        private String manageName;
         /**
          * 设备类型id
          */
@@ -32,11 +33,11 @@ public class DeviceCreateOrUpdateRequest {
         /**
          * 创建用户id
          */
-        private Integer createUserId;
+        private Integer createUser;
         /**
          * 修改用户id
          */
-        private Integer updateUserId;
+        private Integer lastUpdateUser;
 
     }
 }
