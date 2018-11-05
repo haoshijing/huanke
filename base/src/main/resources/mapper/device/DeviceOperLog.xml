@@ -90,6 +90,16 @@
         limit 1
     </select>
 
+    <select id="queryAllPowerByCreateTime"  parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" >
+        select deviceId,right( max(concat(createTime,funcValue)),1) funcValue
+        from <include refid="tableName"/>
+        WHERE
+        funcId = '210'
+        AND
+        funcValue is not null
+        group by deviceId;
+    </select>
+
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1) from
         <include refid="tableName"/>

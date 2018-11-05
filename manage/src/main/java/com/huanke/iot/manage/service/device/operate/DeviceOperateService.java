@@ -312,6 +312,9 @@ public class DeviceOperateService {
         if (null == devicePos || 0 == devicePos.size()) {
             return new ApiResponse<>(RetCode.OK, "暂无设备", null);
         }
+        List<DeviceOperLogPo> deviceOperLogPos = deviceOperLogMapper.queryAllPowerByCreateTime();
+        Map<String,String> funcValues = new HashMap<String,String>();
+        deviceOperLogPos.stream().forEach(temp ->{funcValues.put(temp.getDeviceId().toString(),temp.getFuncValue());});
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceListVo deviceQueryVo = new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
@@ -338,8 +341,10 @@ public class DeviceOperateService {
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
             //查询开关机状态
-            DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
-            if (null != deviceOperLogPo) {
+            //DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
+            DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
+            deviceOperLogPo.setFuncValue(funcValues.get(devicePo.getId().toString()));
+            if (null != deviceOperLogPo && StringUtils.isNotEmpty(deviceOperLogPo.getFuncValue())) {
                 //0-关机 1-开机
                 log.info("设备的开机关机状态:{}", deviceOperLogPo.getFuncValue());
                 deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0") ? 0 : 1);
