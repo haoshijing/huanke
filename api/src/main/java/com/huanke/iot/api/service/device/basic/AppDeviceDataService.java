@@ -8,10 +8,12 @@ import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppDeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
+import com.huanke.iot.base.dao.device.DeviceTeamSceneMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
@@ -27,6 +29,7 @@ import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamScenePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
@@ -67,6 +70,9 @@ public class AppDeviceDataService {
     private CustomerUserMapper customerUserMapper;
     @Autowired
     private DeviceTeamMapper deviceTeamMapper;
+
+    @Autowired
+    private DeviceTeamSceneMapper deviceTeamSceneMapper;
     @Autowired
     private LocationUtils locationUtils;
     @Autowired
@@ -122,6 +128,23 @@ public class AppDeviceDataService {
                             }
                         }
                     }
+                    List<DeviceTeamScenePo> deviceTeamScenePoImgs = deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId(), DeviceTeamConstants.IMAGE_VIDEO_MARK_IMAGE);
+                    List<DeviceTeamScenePo> deviceTeamScenePoVideos = deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId(), DeviceTeamConstants.IMAGE_VIDEO_MARK_VIDEO);
+                    deviceTeamData.setTeamImages(new ArrayList<String>());
+                    deviceTeamData.setTeamVideos(new ArrayList<String>());
+                    if(deviceTeamScenePoImgs != null && deviceTeamScenePoImgs.size() > 0){
+                        List<String> collect = deviceTeamScenePoImgs.stream().map(temp -> {
+                            return temp.getImgVideo();
+                        }).collect(Collectors.toList());
+                        deviceTeamData.setTeamImages(collect);
+                    }
+                    if(deviceTeamScenePoVideos != null && deviceTeamScenePoVideos.size() > 0){
+                        List<String> collect = deviceTeamScenePoVideos.stream().map(temp -> {
+                            return temp.getImgVideo();
+                        }).collect(Collectors.toList());
+                        deviceTeamData.setTeamVideos(collect);
+                    }
+
                     deviceTeamData.setAdImages(adImages);
                     String videoUrl = deviceTeamPo.getVideoUrl();
                     if (StringUtils.isEmpty(videoUrl)) {
