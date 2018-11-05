@@ -57,6 +57,7 @@ public class DeviceParamsController extends BaseController{
             return new ApiResponse<>(RetCode.ERROR, "参数异常");
         }
         String requestId = deviceParamsService.sendParamFunc(currentUserId, deviceId, abilityTypeName, paramConfigList);
+        deviceParamsService.sendOldFuncToDevice(currentUserId, deviceId, abilityTypeName, paramConfigList);
         return new ApiResponse<>(requestId);
     }
 

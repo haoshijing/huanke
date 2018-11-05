@@ -16,8 +16,11 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -174,6 +177,43 @@ public class DeviceParamsService {
         req.put("datas", configFuncMessages);
         mqttSendService.sendMessage(topic, JSON.toJSONString(req));
         return requestId;
+    }
+    public String sendOldFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, List<DeviceParamConfigRequest.ParamConfig> paramConfigList){
+        List inSpeed = new ArrayList();
+        List outSpeed = new ArrayList();
+        if(abilityTypeName.equals("C10")){
+            for (DeviceParamConfigRequest.ParamConfig paramConfig : paramConfigList) {
+                if(paramConfig.getSort() == 0){
+                    inSpeed = paramConfig.getValuesList();
+                }
+                if(paramConfig.getSort() == 1){
+                    outSpeed = paramConfig.getValuesList();
+                }
+            }
+            if((inSpeed == null || inSpeed.size() < 1 ) && (outSpeed == null || outSpeed.size() < 1 )){
+                return null;
+            }
+            log.info("发送老风速设置指令");
+            JSONObject config = new JSONObject();
+            config.put("in", inSpeed);
+            config.put("out", outSpeed);
+            DevicePo updatePo = new DevicePo();
+            updatePo.setId(deviceId);
+            updatePo.setSpeedConfig(config.toString());
+
+            int length = inSpeed.size() * 2 + outSpeed.size() * 2;
+            ByteBuf byteBuf = Unpooled.buffer(2 + length);
+            byteBuf.writeShort(length);
+            inSpeed.forEach(speed -> {
+                byteBuf.writeShort(Integer.valueOf(speed.toString()));
+            });
+            outSpeed.forEach(speed -> {
+                byteBuf.writeShort(Integer.valueOf(speed.toString()));
+            });
+            String topic = "/down2/cfg/" + deviceId;
+            mqttSendService.sendMessage(topic, byteBuf.array());
+        }
+        return null;
     }
 
     /**
