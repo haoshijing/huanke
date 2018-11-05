@@ -538,7 +538,7 @@ public class CustomerService {
     public ApiResponse<Boolean> updateOwnerH5Info(CustomerVo.H5Config h5Config)throws Exception{
         //根据当前的customerId查询与客户相关的信息
         Integer customerId = obtainCustomerId(false);
-        WxConfigPo wxConfigPo = this.wxConfigMapper.selectById(customerId);
+        WxConfigPo wxConfigPo = this.wxConfigMapper.selectConfigByCustomerId(customerId);
         //如果为非客户，返回错误信息
         if(null == wxConfigPo){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"未查到客户信息");
