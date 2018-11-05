@@ -264,7 +264,6 @@ public class DeviceDataService {
             return null;
         }
         Integer modelId = devicePo.getModelId();
-        deviceModelAbilityMapper.selectByModelId(modelId);
         List<DeviceAbilityPo> deviceAbilityPos = deviceModelAbilityMapper.selectActiveByModelId(modelId);
         List<String> dirValues = deviceAbilityPos.stream().map(deviceAbilityPo -> deviceAbilityPo.getDirValue()).collect(Collectors.toList());
 

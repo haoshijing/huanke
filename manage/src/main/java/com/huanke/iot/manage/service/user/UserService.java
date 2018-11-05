@@ -38,6 +38,9 @@ public class UserService {
     public User getCurrentUser() {
         Subject subject = SecurityUtils.getSubject();
         User user = (User) SecurityUtils.getSubject().getSession().getAttribute("user");
+        if(user == null || user.getUserName()==null){
+            throw new BusinessException("登录超时失效，请重新登录！");
+        }
         user.setPassword(null);
         return user;
     }
