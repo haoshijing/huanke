@@ -104,7 +104,7 @@ public class DeviceService {
         CustomerPo customerPo = customerMapper.selectById(customerId);
         List<String> wxDeviceIdList = wechartUtil.obtainMyDeviceIdList(openId);
 
-        if(wxDeviceIdList != null){
+        if(wxDeviceIdList != null && wxDeviceIdList.size() != 0){
             List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByOpenId(openId);
             List<Integer> deviceIdList = deviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getDeviceId()).collect(Collectors.toList());
             List<DevicePo> devicePoList = deviceMapper.queryDeviceIdsByWxDeviceIdList(wxDeviceIdList);

@@ -60,7 +60,7 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setCreateTime(System.currentTimeMillis());
             deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
             try {
-                deviceControlMapper.insert(deviceControlData);
+                //deviceControlMapper.insert(deviceControlData);
 
                 stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             }catch (Exception e){
