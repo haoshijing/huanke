@@ -22,6 +22,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dto.DeviceListDto;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
@@ -270,7 +271,7 @@ public class DeviceService {
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
             log.error("找不到设备，deviceId={}", deviceId);
-            return false;
+            throw new BusinessException("找不到设备");
         }
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
         DeviceCustomerUserRelationPo querydeviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
@@ -278,9 +279,8 @@ public class DeviceService {
         querydeviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(querydeviceCustomerUserRelationPo);
         if (deviceCustomerUserRelationPo == null) {
-
             log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", deviceId, customerUserPo.getOpenId());
-            return false;
+            throw new BusinessException("非主绑定人无法修改设备名称");
         }
         //
         DevicePo updatePo = new DevicePo();
