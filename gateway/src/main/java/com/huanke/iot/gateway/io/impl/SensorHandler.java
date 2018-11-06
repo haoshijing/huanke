@@ -75,7 +75,7 @@ public class SensorHandler  extends AbstractHandler {
 
             deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
             try {
-                deviceSensorDataMapper.insert(deviceSensorPo);
+                //deviceSensorDataMapper.insert(deviceSensorPo);
                 stringRedisTemplate.opsForHash().put("sensor2." + deviceId, type, String.valueOf(value));
             }catch (Exception e){
                 log.error("",e);
