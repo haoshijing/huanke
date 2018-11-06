@@ -35,6 +35,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
             if(userByTicket != null){
                 UserRequestContext requestContext = UserRequestContextHolder.get();
                 requestContext.setCurrentId(userByTicket.getId());
+                requestContext.setOpenId(openId);
                 CustomerPo customerPo = customerMapper.selectById(userByTicket.getCustomerId());
 
                 UserRequestContext.CustomerVo customerVo = new UserRequestContext.CustomerVo();

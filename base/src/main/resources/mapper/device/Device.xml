@@ -815,4 +815,13 @@
         and status = 1
         and assignStatus = 1
     </select>
+
+    <select id="queryDeviceIdsByWxDeviceIdList" parameterType="java.util.List" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * FROM <include refid="tableName"/>
+        WHERE wxDeviceId IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND status = 1;
+    </select>
 </mapper>

@@ -64,4 +64,5 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DevicePo> selectByModelId(Integer modelId);
     List<DevicePo> selectByTypeId(Integer typeId);
 
+    List<DevicePo> queryDeviceIdsByWxDeviceIdList(List<String> wxDeviceIdList);
 }

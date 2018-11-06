@@ -1,6 +1,7 @@
 package com.huanke.iot.api.wechat;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
@@ -8,9 +9,17 @@ import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -18,6 +27,9 @@ import org.springframework.stereotype.Repository;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -281,4 +293,66 @@ public class WechartUtil {
         Integer customerId = context.getCustomerVo().getCustomerId();
         return customerId;
     }
+
+    public List<String> obtainMyDeviceIdList(String openId){
+        List<String> deviceIdList = new ArrayList<>();
+        String accessToken = this.getAccessToken(false);
+        String url = "https://api.weixin.qq.com/device/get_bind_device?access_token=" + accessToken + "&openid=" + openId;
+        try {
+            HttpGet httpGet = new HttpGet();
+            httpGet.setURI(new URI(url));
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpGet);
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+            StringBuilder result = new StringBuilder();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            log.info("getByRefreshToken result = {}",result.toString());
+            JSONObject jsonObject = JSON.parseObject(result.toString());
+            JSONArray deviceJsonList = jsonObject.getJSONArray("device_list");
+
+            for(int i=0; i<deviceJsonList.size(); i++){
+                Map<String, Object> itemMap = JSONObject.toJavaObject(deviceJsonList.getJSONObject(i), Map.class);
+                String deviceId = (String) itemMap.get("device_id");
+                deviceIdList.add(deviceId);
+            }
+            return deviceIdList;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Boolean unbindDevice(String openId, String wxDeviceId) {
+        List<String> deviceIdList = new ArrayList<>();
+        String accessToken = this.getAccessToken(false);
+        String url = "https://api.weixin.qq.com/device/compel_unbind?access_token=" + accessToken;
+        HttpResponse httpResponse = null;
+        ArrayList<NameValuePair> postParameters;
+        HttpClient httpclient = new DefaultHttpClient();
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setHeader("Accept", "application/json");
+            JSONObject json = new JSONObject();
+            json.put("device_id", wxDeviceId);
+            json.put("openid", openId);
+            HttpEntity e = new StringEntity(json.toString());
+            httpPost.setEntity(e);
+            httpResponse = httpclient.execute(httpPost);
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                String result = EntityUtils.toString
+                        (httpResponse.getEntity());
+                JSONObject resultJsonObject = JSONObject.parseObject(result);
+                if(resultJsonObject.getJSONObject("base_resp").getInteger("errcode") == 0){
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

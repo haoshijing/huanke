@@ -14,6 +14,7 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
+import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
@@ -110,6 +111,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceModelAbilityMapper deviceModelAbilityMapper;
+
+    @Autowired
+    private WechartUtil wechartUtil;
 
     @Value("${unit}")
     private Integer unit;
@@ -586,8 +590,26 @@ public class DeviceDataService {
         return wxConfigPo.getServiceUser();
     }
 
-    public Boolean deleteDeviceItem(Integer userId, Integer deviceId) {
-        return deviceTeamItemMapper.deleteByJoinId(deviceId, userId) > 0;
+    @Transactional
+    public Boolean deleteDeviceItem(Integer userId, String openId, Integer deviceId) throws Exception {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        deviceCustomerUserRelationPo.setOpenId(openId);
+        DeviceCustomerUserRelationPo byDeviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
+        if(deviceCustomerUserRelationPo != null){
+            //主用户删除微信绑定关系
+            Boolean aBoolean = deleteDevice(userId, deviceId);
+            Map<String, String> requestMap = new HashMap<>();
+            requestMap.put("OpenID", openId);
+            requestMap.put("DeviceID", devicePo.getWxDeviceId());
+            requestMap.put("status", "huanke");
+            aBoolean = aBoolean && wechartUtil.unbindDevice(openId, devicePo.getWxDeviceId());
+            return aBoolean;
+        }else{
+            //从用户只需要删除环可绑定关系
+            return deviceTeamItemMapper.deleteByJoinId(deviceId, userId) > 0;
+        }
     }
 
 

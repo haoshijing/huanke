@@ -11,6 +11,7 @@ import com.huanke.iot.api.controller.h5.response.LocationVo;
 import com.huanke.iot.api.controller.h5.response.WeatherVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
+import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
@@ -41,6 +42,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -87,15 +89,39 @@ public class DeviceService {
     private MqttSendService mqttSendService;
 
     @Autowired
+    private DeviceBindService deviceBindService;
+
+    @Autowired
     private WxFormatMapper wxFormatMapper;
+
+    @Autowired
+    private WechartUtil wechartUtil;
+
+
 
     @Value("${speed}")
     private int speed;
 
-    public DeviceListVo obtainMyDevice(Integer userId) {
+    public DeviceListVo obtainMyDevice(Integer userId, String openId, Integer customerId) {
+        //查询当前用户在该公众号微信端已绑定设备，并同步到数据库
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        List<String> wxDeviceIdList = wechartUtil.obtainMyDeviceIdList(openId);
 
-        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
-        CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
+        if(wxDeviceIdList != null){
+            List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByOpenId(openId);
+            List<Integer> deviceIdList = deviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getDeviceId()).collect(Collectors.toList());
+            List<DevicePo> devicePoList = deviceMapper.queryDeviceIdsByWxDeviceIdList(wxDeviceIdList);
+            List<DevicePo> unBindDeviceList = devicePoList.stream().filter(e -> !deviceIdList.contains(e.getId())).collect(Collectors.toList());
+            //绑定微信触发事件遗漏deviceId
+            for (DevicePo devicePo : unBindDeviceList) {
+                Map<String, String> requestMap = new HashMap<>();
+                requestMap.put("OpenID", openId);
+                requestMap.put("DeviceID", devicePo.getWxDeviceId());
+                requestMap.put("status", "huanke");
+                deviceBindService.handlerDeviceEvent(null, requestMap, "bind");
+            }
+        }
+        //查询设备列表
         DeviceListVo deviceListVo = new DeviceListVo();
 
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
@@ -243,6 +269,7 @@ public class DeviceService {
         querydeviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(querydeviceCustomerUserRelationPo);
         if (deviceCustomerUserRelationPo == null) {
+
             log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", deviceId, customerUserPo.getOpenId());
             return false;
         }
