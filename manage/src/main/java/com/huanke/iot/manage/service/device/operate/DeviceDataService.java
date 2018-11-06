@@ -61,8 +61,7 @@ public class DeviceDataService {
         }
         List<DeviceOperLogVo> deviceOperLogVoList = deviceOperLogPoList.stream().filter(temp ->{
             FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(temp.getFuncId());
-            if(funcTypeEnums!=null) return false;
-            else return true;
+            return funcTypeEnums!=null;
         }).map(deviceOperLogPo -> {
             DeviceOperLogVo deviceOperLogVo = new DeviceOperLogVo();
             BeanUtils.copyProperties(deviceOperLogPo,deviceOperLogVo);
@@ -87,8 +86,8 @@ public class DeviceDataService {
             deviceOperLogVo.setFuncName(funcTypeEnums.getMark());
             if(!funcTypeEnums.getRange().equals("")){
                 String[] ranges = funcTypeEnums.getRange().split(",");
-                if(null != deviceOperLogPo.getFuncValue()) {
-                    Integer valueIndex = Integer.parseInt(deviceOperLogPo.getFuncValue());
+                Integer valueIndex = Integer.parseInt(deviceOperLogPo.getFuncValue());
+                if(null != deviceOperLogPo.getFuncValue() && valueIndex < ranges.length) {
                     //设置操作的具体值
                     deviceOperLogVo.setFuncValue(ranges[valueIndex]);
                 }else {
