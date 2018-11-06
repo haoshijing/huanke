@@ -150,7 +150,7 @@ public class DeviceParamsService {
 
     private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, Map<Integer, List<String>> configMap, int operType) {
         List<ConfigFuncMessage> configFuncMessages = new ArrayList<>();
-        String topic = "/down2/cfg/" + deviceId;
+        String topic = "/down2/cfgC/" + deviceId;
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId(abilityTypeName);
