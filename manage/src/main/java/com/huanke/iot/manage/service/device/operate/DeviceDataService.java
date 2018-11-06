@@ -7,12 +7,14 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
+import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
+import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.data.DeviceOperLogVo;
@@ -48,6 +50,9 @@ public class DeviceDataService {
     private CustomerMapper customerMapper;
 
     @Autowired
+    private UserManagerMapper userMapper;
+
+    @Autowired
     private DeviceMapper deviceMapper;
 
     public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceDataQueryRequest request) throws Exception{
@@ -77,8 +82,12 @@ public class DeviceDataService {
                         deviceOperLogVo.setOperName("未知用户");
                     }
                 }else {
-                    CustomerPo customerPo = this.customerMapper.selectById(deviceOperLogPo.getOperUserId());
-                    deviceOperLogVo.setOperName(customerPo.getName());
+                    User userPo = this.userMapper.selectById(deviceOperLogPo.getOperUserId());
+                    if(null != userPo) {
+                        deviceOperLogVo.setOperName(userPo.getNickName());
+                    }else {
+                        deviceOperLogVo.setOperName("未知用户");
+                    }
                 }
             }
             FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(deviceOperLogVo.getFuncId());
