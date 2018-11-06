@@ -45,7 +45,9 @@
             <if test="param.deviceId != null">
                 AND deviceId = #{param.deviceId}
             </if>
+            AND funcId != '410'
         </where>
+        ORDER BY createTime DESC
         limit #{offset},#{limit}
     </select>
 
@@ -59,6 +61,7 @@
             </if>
             AND (funcId = '210' OR funcId = '410')
         </where>
+        ORDER BY createTime DESC
         limit #{offset},#{limit}
     </select>
 
