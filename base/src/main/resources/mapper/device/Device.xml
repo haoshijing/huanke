@@ -523,7 +523,9 @@
             <if test="location != null and location != '' ">
                 location = #{location},
             </if>
-            bindTime = #{bindTime},
+            <if test="bindTime != null">
+                bindTime = #{bindTime},
+            </if>
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>

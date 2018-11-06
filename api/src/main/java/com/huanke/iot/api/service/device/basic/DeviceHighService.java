@@ -117,4 +117,11 @@ public class DeviceHighService {
         }
         return childDeviceVos;
     }
+
+    public Boolean editManageName(Integer deviceId, String manageName) {
+        DevicePo devicePo = new DevicePo();
+        devicePo.setId(deviceId);
+        devicePo.setManageName(manageName);
+        return deviceMapper.updateById(devicePo) > 0;
+    }
 }
