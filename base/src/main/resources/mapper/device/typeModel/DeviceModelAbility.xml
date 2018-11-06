@@ -96,6 +96,13 @@
         and ma.abilityId = a.id
     </select>
 
+    <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo">
+        select ma.*
+        from t_device_model_ability ma,t_device t;
+        where t.id = #{deviceId}
+        and ma.modelId = t.modelId
+    </select>
+
     <select id = "selectCount" resultType="java.lang.Integer">
         select count(1)
         from <include refid="tableName"/>

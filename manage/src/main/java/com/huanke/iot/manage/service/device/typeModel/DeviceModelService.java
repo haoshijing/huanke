@@ -497,6 +497,7 @@ public class DeviceModelService {
             deviceModelVo.setIcon(deviceModelPo.getIcon());
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
+            deviceModelVo.setModelCode(deviceModelPo.getModelCode());
 
             deviceModelVo.setCreateUserName(userService.getUserName(deviceModelPo.getCreateUser()));
             deviceModelVo.setLastUpdateUserName(userService.getUserName(deviceModelPo.getLastUpdateUser()));
