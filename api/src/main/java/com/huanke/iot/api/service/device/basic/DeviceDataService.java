@@ -14,6 +14,7 @@ import com.huanke.iot.api.controller.h5.response.DeviceShareVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
+import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
@@ -31,6 +32,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
@@ -55,7 +57,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -111,6 +112,9 @@ public class DeviceDataService {
     @Autowired
     private DeviceModelAbilityMapper deviceModelAbilityMapper;
 
+    @Autowired
+    private WechartUtil wechartUtil;
+
     @Value("${unit}")
     private Integer unit;
 
@@ -127,7 +131,7 @@ public class DeviceDataService {
     private static final String TOKEN_PREFIX = "token.";
 
     @Transactional
-    public Object shareDevice(Integer toId, ShareRequest request) throws InvocationTargetException, IllegalAccessException {
+    public Object shareDevice(Integer toId, ShareRequest request) {
         Integer deviceId = request.getDeviceId();
         String master = request.getMasterOpenId();
         String token = request.getToken();
@@ -135,23 +139,23 @@ public class DeviceDataService {
         String deviceIdStr = devicePo.getWxDeviceId();
         if (devicePo == null) {
             log.error("找不到设备，deviceId={}", deviceId);
-            return false;
+            throw new BusinessException("找不到设备");
         }
         //通过设备查customerId
         Integer customerId = deviceMapper.getCustomerId(devicePo);
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(master);
         if (customerUserPo == null) {
             log.error("找不到用户，openId={}", master);
-            return false;
+            throw new BusinessException("找不到用户");
         }
         String storeToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + deviceIdStr);
         if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, token)) {
             log.error("找不到Token，deviceIdStr={}", deviceIdStr);
-            return false;
+            throw new BusinessException("此分享已过期");
         }
         if (customerUserPo.getId().equals(toId)) {
             log.error("无法给自己分享设备");
-            return false;
+            throw new BusinessException("无法给自己分享设备");
         }
 
         //TODO检查deviceId和用户是不是可以对应上的
@@ -162,7 +166,7 @@ public class DeviceDataService {
         Integer itemCount = deviceTeamMapper.queryItemCount(queryTeamItemPo);
         if (itemCount == 0) {
             log.error("用户组下无设备");
-            return false;
+            throw new BusinessException("用户组下无设备");
         }
         //TODO检查deviceId和要分享用户是不是已存在
         DeviceTeamItemPo toQueryTeamItemPo = new DeviceTeamItemPo();
@@ -172,7 +176,7 @@ public class DeviceDataService {
         List<DeviceTeamItemPo> deviceTeamItemPoList = deviceTeamMapper.queryTeamItems(toQueryTeamItemPo);
         if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_YES)) {
             log.error("该用户已拥有此设备");
-            return false;
+            throw new BusinessException("该用户已拥有此设备");
         }
 
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
@@ -586,8 +590,26 @@ public class DeviceDataService {
         return wxConfigPo.getServiceUser();
     }
 
-    public Boolean deleteDeviceItem(Integer userId, Integer deviceId) {
-        return deviceTeamItemMapper.deleteByJoinId(deviceId, userId) > 0;
+    @Transactional
+    public Boolean deleteDeviceItem(Integer userId, String openId, Integer deviceId) throws Exception {
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = new DeviceCustomerUserRelationPo();
+        deviceCustomerUserRelationPo.setDeviceId(deviceId);
+        deviceCustomerUserRelationPo.setOpenId(openId);
+        DeviceCustomerUserRelationPo byDeviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
+        if(deviceCustomerUserRelationPo != null){
+            //主用户删除微信绑定关系
+            Boolean aBoolean = deleteDevice(userId, deviceId);
+            Map<String, String> requestMap = new HashMap<>();
+            requestMap.put("OpenID", openId);
+            requestMap.put("DeviceID", devicePo.getWxDeviceId());
+            requestMap.put("status", "huanke");
+            aBoolean = aBoolean && wechartUtil.unbindDevice(openId, devicePo.getWxDeviceId());
+            return aBoolean;
+        }else{
+            //从用户只需要删除环可绑定关系
+            return deviceTeamItemMapper.deleteByJoinId(deviceId, userId) > 0;
+        }
     }
 
 
