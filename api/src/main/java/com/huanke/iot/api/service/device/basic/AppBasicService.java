@@ -176,14 +176,18 @@ public class AppBasicService {
         //查型号硬件功能项
         List<DeviceModelVo.Abilitys> abilitysList = new ArrayList<>();
         List<DeviceTypeAbilitysPo> deviceTypeabilitysPos = deviceTypeabilitysMapper.selectByTypeId(typeId);
+        //缓存功能项集
+        List<DeviceAbilityPo> deviceAbilityPoCaches = deviceAbilityMapper.selectList(new DeviceAbilityPo(), 10000, 0);
+        Map<Integer,DeviceAbilityPo> deviceAbilityPoMap = deviceAbilityPoCaches.stream().collect(Collectors.toMap(DeviceAbilityPo::getId, a -> a,(k1, k2)->k1));
+        List<DeviceModelAbilityPo> deviceModelAbilityPoCaches = deviceModelabilityMapper.selectByModelId(modelId);
+        Map<Integer, DeviceModelAbilityPo> deviceModelAbilityPoMap = deviceModelAbilityPoCaches.stream().collect(Collectors.toMap(DeviceModelAbilityPo::getAbilityId, a -> a, (k1, k2) -> k1));
         for (DeviceTypeAbilitysPo deviceTypeabilitysPo : deviceTypeabilitysPos) {
             Integer abilityId = deviceTypeabilitysPo.getAbilityId();
-
             DeviceModelVo.Abilitys abilitys = new DeviceModelVo.Abilitys();
             abilitys.setAbilityId(abilityId);
-            DeviceAbilityPo deviceabilityPo = deviceAbilityMapper.selectById(abilityId);
+            DeviceAbilityPo deviceabilityPo = deviceAbilityPoMap.get(abilityId);
             abilitys.setAbilityName(deviceabilityPo.getAbilityName());
-            DeviceModelAbilityPo deviceModelabilityPo = deviceModelabilityMapper.getByJoinId(modelId, abilityId);
+            DeviceModelAbilityPo deviceModelabilityPo = deviceModelAbilityPoMap.get(abilityId);
             if(deviceModelabilityPo != null){
                 abilitys.setDefinedName(deviceModelabilityPo.getDefinedName());
             }else{
@@ -194,14 +198,17 @@ public class AppBasicService {
 
             List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceabilityOptionMapper.selectOptionsByAbilityId(deviceabilityPo.getId());
             //查功能项选项及别名
+            //缓存
+            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoCaches = deviceModelabilityOptionMapper.getOptionsByModelAbilityId(deviceModelabilityPo.getId());
+            Map<Integer, DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoMap = deviceModelAbilityOptionPoCaches.stream().collect(Collectors.toMap(DeviceModelAbilityOptionPo::getAbilityOptionId, a -> a, (k1, k2) -> k1));
             for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
-                DeviceModelVo.AbilityOption abilityOption = new DeviceModelVo.AbilityOption();
-                abilityOption.setOptionName(deviceabilityOptionPo.getOptionName());
-                abilityOption.setOptionValue(deviceabilityOptionPo.getOptionValue());
-                abilityOption.setMaxVal(deviceabilityOptionPo.getMaxVal());
-                abilityOption.setMinVal(deviceabilityOptionPo.getMinVal());
-                DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelabilityOptionMapper.getByJoinId(deviceModelabilityPo.getId(), deviceabilityOptionPo.getId());
+                DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelAbilityOptionPoMap.get(deviceabilityOptionPo.getId());
                 if(deviceModelabilityOptionPo != null){
+                    DeviceModelVo.AbilityOption abilityOption = new DeviceModelVo.AbilityOption();
+                    abilityOption.setOptionName(deviceabilityOptionPo.getOptionName());
+                    abilityOption.setOptionValue(deviceabilityOptionPo.getOptionValue());
+                    abilityOption.setMaxVal(deviceabilityOptionPo.getMaxVal());
+                    abilityOption.setMinVal(deviceabilityOptionPo.getMinVal());
                     abilityOption.setOptionDefinedName(deviceModelabilityOptionPo.getDefinedName());
                     abilityOption.setMaxVal(deviceModelabilityOptionPo.getMaxVal());
                     abilityOption.setMinVal(deviceModelabilityOptionPo.getMinVal());
