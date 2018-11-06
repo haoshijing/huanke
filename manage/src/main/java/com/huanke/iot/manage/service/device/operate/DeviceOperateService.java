@@ -1720,9 +1720,9 @@ public class DeviceOperateService {
                         DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                         if (optionValue.equals(deviceabilityOptionPo.getOptionValue())) {
-                            abilityOption.setIsSelect(1);
+                            abilityOption.setIsSelect(CommonConstant.STATUS_IS_YES);
                         } else {
-                            abilityOption.setIsSelect(0);
+                            abilityOption.setIsSelect(CommonConstant.STATUS_IS_NO);
                         }
                         abilityOptionList.add(abilityOption);
                     }
@@ -1737,9 +1737,9 @@ public class DeviceOperateService {
                         DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                         if (Integer.valueOf(finalOptionValue) == 1) {
-                            abilityOption.setIsSelect(1);
+                            abilityOption.setIsSelect(CommonConstant.STATUS_IS_YES);
                         } else {
-                            abilityOption.setIsSelect(0);
+                            abilityOption.setIsSelect(CommonConstant.STATUS_IS_NO);
                         }
                         abilityOptionList1.add(abilityOption);
                     }
