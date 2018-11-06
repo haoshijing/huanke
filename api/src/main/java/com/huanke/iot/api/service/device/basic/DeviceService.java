@@ -11,6 +11,7 @@ import com.huanke.iot.api.controller.h5.response.LocationVo;
 import com.huanke.iot.api.controller.h5.response.WeatherVo;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.vo.SpeedConfigRequest;
+import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
@@ -19,7 +20,7 @@ import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
-import com.huanke.iot.base.dao.format.WxFormatMapper;
+import com.huanke.iot.base.dto.DeviceListDto;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
@@ -27,7 +28,6 @@ import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import io.netty.buffer.ByteBuf;
@@ -41,6 +41,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -87,17 +88,37 @@ public class DeviceService {
     private MqttSendService mqttSendService;
 
     @Autowired
-    private WxFormatMapper wxFormatMapper;
+    private DeviceBindService deviceBindService;
+
+    @Autowired
+    private WechartUtil wechartUtil;
+
+
 
     @Value("${speed}")
     private int speed;
 
-    public DeviceListVo obtainMyDevice(Integer userId) {
+    public DeviceListVo obtainMyDevice(Integer userId, String openId, Integer customerId) {
+        //查询当前用户在该公众号微信端已绑定设备，并同步到数据库
+        CustomerPo customerPo = customerMapper.selectById(customerId);
+        List<String> wxDeviceIdList = wechartUtil.obtainMyDeviceIdList(openId);
 
-        CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
-        CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
+        if(wxDeviceIdList != null){
+            List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByOpenId(openId);
+            List<Integer> deviceIdList = deviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getDeviceId()).collect(Collectors.toList());
+            List<DevicePo> devicePoList = deviceMapper.queryDeviceIdsByWxDeviceIdList(wxDeviceIdList);
+            List<DevicePo> unBindDeviceList = devicePoList.stream().filter(e -> !deviceIdList.contains(e.getId())).collect(Collectors.toList());
+            //绑定微信触发事件遗漏deviceId
+            for (DevicePo devicePo : unBindDeviceList) {
+                Map<String, String> requestMap = new HashMap<>();
+                requestMap.put("OpenID", openId);
+                requestMap.put("DeviceID", devicePo.getWxDeviceId());
+                requestMap.put("status", "huanke");
+                deviceBindService.handlerDeviceEvent(null, requestMap, "bind");
+            }
+        }
+        //查询设备列表
         DeviceListVo deviceListVo = new DeviceListVo();
-
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
         queryDevicePo.setMasterUserId(userId);
         queryDevicePo.setStatus(CommonConstant.STATUS_YES);
@@ -156,7 +177,21 @@ public class DeviceService {
                     List<DeviceTeamItemPo> itemPos = deviceTeamMapper.queryTeamItems(queryDeviceTeamItem);
                     List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().map(deviceTeamItemPo -> {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
-                        DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
+
+                        //1106
+                        DeviceListDto deviceListDto = deviceMapper.queryDeviceList(deviceTeamItemPo.getDeviceId());
+                        deviceItemPo.setDeviceId(deviceListDto.getDeviceId());
+                        deviceItemPo.setMac(deviceListDto.getMac());
+                        deviceItemPo.setWxDeviceId(deviceListDto.getWxDeviceId());
+                        int childDeviceCount = deviceMapper.queryChildDeviceCount(deviceListDto.getDeviceId());
+                        deviceItemPo.setChildDeviceCount(childDeviceCount);
+                        deviceItemPo.setDeviceModelName(deviceListDto.getModelName());
+                        deviceItemPo.setFormatName(deviceListDto.getFormatName());
+                        deviceItemPo.setTypeId(deviceListDto.getTypeId());
+                        deviceItemPo.setTypeNo(deviceListDto.getTypeNo());
+                        deviceItemPo.setOnlineStatus(deviceListDto.getOnlineStatus());
+
+                       /* DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getId());
                         deviceItemPo.setMac(devicePo.getMac());
                         deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
@@ -172,17 +207,17 @@ public class DeviceService {
                         deviceItemPo.setTypeId(typeId);
                         DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
                         deviceItemPo.setTypeNo(deviceTypePo.getTypeNo());
-                        deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
+                        deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());*/
 
                         //添加返回客户名称
                         deviceItemPo.setCustomerName(customerPo.getName());
-                        deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
-                        if (deviceTypePo != null) {
-                            deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
-                            deviceItemPo.setIcon(deviceTypePo.getIcon());
-                        }
-                        if (StringUtils.isEmpty(devicePo.getLocation())) {
-                            JSONObject locationJson = locationUtils.getLocation(devicePo.getIp(), false);
+                        deviceItemPo.setDeviceName(deviceListDto.getDeviceName() == null ? "默认名称" : deviceListDto.getDeviceName());
+                        deviceItemPo.setDeviceTypeName(deviceListDto.getTypeName());
+                        deviceItemPo.setIcon(deviceListDto.getTypeIcon());
+
+
+                        if (StringUtils.isEmpty(deviceListDto.getLocation())) {
+                            JSONObject locationJson = locationUtils.getLocation(deviceListDto.getIp(), false);
                             if (locationJson != null) {
                                 if (locationJson.containsKey("content")) {
                                     JSONObject content = locationJson.getJSONObject("content");
@@ -197,10 +232,10 @@ public class DeviceService {
                                 }
                             }
                         } else {
-                            String[] locationArray = devicePo.getLocation().split(",");
+                            String[] locationArray = deviceListDto.getLocation().split(",");
                             deviceItemPo.setLocation(Joiner.on(" ").join(locationArray));
                         }
-                        Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
+                        Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + deviceListDto.getDeviceId());
                         deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
                         deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
                         deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
@@ -243,6 +278,7 @@ public class DeviceService {
         querydeviceCustomerUserRelationPo.setDeviceId(devicePo.getId());
         DeviceCustomerUserRelationPo deviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(querydeviceCustomerUserRelationPo);
         if (deviceCustomerUserRelationPo == null) {
+
             log.error("找不到设备用户对应关系，wxDeviceId={}，openId={}", deviceId, customerUserPo.getOpenId());
             return false;
         }

@@ -7,6 +7,7 @@ import lombok.Data;
 public class UserRequestContext {
 
     private Integer currentId;
+    private String openId;
     private CustomerVo customerVo;
 
     @Data
