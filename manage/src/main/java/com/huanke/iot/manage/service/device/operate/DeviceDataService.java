@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
@@ -14,6 +15,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
@@ -46,14 +48,15 @@ public class DeviceDataService {
     @Autowired
     private CustomerUserMapper customerUserMapper;
 
-    @Autowired
-    private CustomerMapper customerMapper;
 
     @Autowired
     private UserManagerMapper userMapper;
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private DeviceModelAbilityMapper deviceModelAbilityMapper;
 
     public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceDataQueryRequest request) throws Exception{
         DeviceOperLogPo queryPo = new DeviceOperLogPo();
@@ -131,6 +134,24 @@ public class DeviceDataService {
         deviceSensorStatPo.setDeviceId(deviceDataQueryRequest.getDeviceId());
         Integer offset = (deviceDataQueryRequest.getPage() - 1)*deviceDataQueryRequest.getLimit();
         Integer limit = deviceDataQueryRequest.getLimit();
+        //根据deviceId查询设备的具备的功能项，并将其与设备数据表的中功能项对比，只显示设备具有的功能项
+        List<DeviceModelAbilityPo> deviceModelAbilityPoList = this.deviceModelAbilityMapper.selectByDeviceId(deviceDataQueryRequest.getDeviceId());
+        //进行匹配
+//        deviceModelAbilityPoList.stream().forEach(eachPo ->{
+//            switch (eachPo.getDefinedName()){
+//                case "PM2.5":
+//                    break;
+//                case "CO2":
+//                    break;
+//                case "甲醛":
+//                    break;
+//                case "温度":
+//                    break;
+//                case "湿度":
+//                    break;
+//                    case "VOC"
+//            }
+//        });
         List<DeviceSensorStatPo> deviceSensorStatPoList = this.deviceSensorStatMapper.selectList(deviceSensorStatPo,limit,offset);
         if(null == deviceSensorStatPoList || 0 == deviceSensorStatPoList.size()){
             return new ApiResponse<>(RetCode.OK,"暂无数据");

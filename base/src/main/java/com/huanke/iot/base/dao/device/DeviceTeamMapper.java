@@ -22,7 +22,7 @@ public interface DeviceTeamMapper  extends BaseMapper<DeviceTeamPo> {
 
     DeviceTeamPo queryByName(DeviceTeamPo queryPo);
 
-    List<DeviceTeamPo> selectByUserOpenId(String openId);
+    List<DeviceTeamPo> selectByUserOpenId(@Param("openId") String openId,@Param("customerId") Integer customerId);
 
     int updateDeviceGroupId(@Param("userId") Integer userId,
                             @Param("newTeamId") int newTeamId,
