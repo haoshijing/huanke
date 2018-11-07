@@ -449,8 +449,8 @@ public class DeviceOperateController {
     }
 
     @ApiOperation("导出设备列表")
-    @RequestMapping(value = "/exportDeviceData", method = RequestMethod.POST)
-    public ApiResponse<String> exportDeviceData(@RequestBody DeviceListExportRequest deviceListExportRequest, HttpServletResponse response) {
+    @RequestMapping(value = "/exportDeviceData", method = RequestMethod.GET)
+    public ApiResponse<String> exportDeviceData(DeviceListExportRequest deviceListExportRequest, HttpServletResponse response) {
         try {
             this.deviceService.exportDeviceList(response, deviceListExportRequest);
         } catch (Exception e) {
