@@ -6,6 +6,8 @@ import lombok.Data;
 public class DeviceListExportRequest {
     //名称
     private Boolean name;
+    //管理名称
+    private Boolean manageName;
     //MAC
     private Boolean mac;
     //归属
