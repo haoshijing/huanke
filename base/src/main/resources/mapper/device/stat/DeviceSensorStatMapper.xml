@@ -53,6 +53,7 @@
                 AND deviceId = #{param.deviceId}
             </if>
         </where>
+        ORDER BY startTime DESC
         limit #{offset},#{limit}
     </select>
 

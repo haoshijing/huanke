@@ -21,6 +21,8 @@ public interface DeviceModelAbilityMapper extends BaseMapper<DeviceModelAbilityP
 
     DeviceModelAbilityPo getByJoinId(@Param("modelId") Integer modelId, @Param("abilityId") Integer abilityId);
 
+    List<DeviceModelAbilityPo> selectByDeviceId(@Param("deviceId") Integer deviceId);
+
     List<DeviceAbilityPo> selectActiveByModelId(@Param("modelId") Integer modelId);
 
     List<DeviceParamsDto> queryParamsAbility(@Param("modelId")Integer modelId);

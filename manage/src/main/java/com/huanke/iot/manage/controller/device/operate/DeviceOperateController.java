@@ -360,6 +360,8 @@ public class DeviceOperateController {
         if (null == deviceBindToUserRequest.getOpenId() || StringUtils.isEmpty(deviceBindToUserRequest.getOpenId())) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "请指定一个用户", false);
         }
+        //查询当前的openId用户是否属于当前客户
+
         if (null == deviceBindToUserRequest.getTeamId() || 0 == deviceBindToUserRequest.getTeamId()) {
             return new ApiResponse<>(RetCode.PARAM_ERROR, "请指定一个组", false);
         }
