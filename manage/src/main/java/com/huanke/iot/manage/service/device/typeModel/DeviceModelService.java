@@ -363,6 +363,7 @@ public class DeviceModelService {
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
             deviceModelVo.setIcon(deviceModelPo.getIcon());
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
+            deviceModelVo.setModelCode(deviceModelPo.getModelCode());
             deviceModelVo.setId(deviceModelPo.getId());
 
 //            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(),deviceModelPo.getTypeId());

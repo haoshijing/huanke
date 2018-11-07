@@ -914,7 +914,7 @@ public class DeviceOperateService {
      * @return
      */
     public ApiResponse<Boolean> bindDeviceToUser(DeviceBindToUserRequest deviceBindToUserRequest) throws Exception {
-
+        Integer customerId = this.customerService.obtainCustomerId(false);
         User user = userService.getCurrentUser();
         List<DeviceTeamItemPo> deviceTeamItemPoList = new ArrayList<>();
         List<DevicePo> devicePoList = new ArrayList<>();
@@ -922,7 +922,11 @@ public class DeviceOperateService {
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(deviceBindToUserRequest.getOpenId());
         if (null == customerUserPo) {
-            return new ApiResponse<>(RetCode.PARAM_ERROR, "该用户openid不正确");
+            return new ApiResponse<>(RetCode.PARAM_ERROR, "该用户不存在");
+        }
+        //二级客户进行绑定操作则进行用户鉴权
+        if(null != customerId && customerUserPo.getCustomerId() != customerId){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"用户不存在或尚未关注公众号");
         }
         //如果该设备组的id为-1 ，认定为 没有该组。则新增组
         if (DeviceConstant.HAS_TEAM_NO.equals(deviceBindToUserRequest.getTeamId())) {
@@ -1494,7 +1498,9 @@ public class DeviceOperateService {
      */
     public ApiResponse<List<DeviceTeamPo>> queryTeamInfoByUser(String openId) throws Exception {
         //加载该用户名下未删除的自定义组
-        List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectByUserOpenId(openId);
+        //只查询属于当前客户下的用户的组
+        Integer customerId = this.customerService.obtainCustomerId(false);
+        List<DeviceTeamPo> deviceTeamPoList = this.deviceTeamMapper.selectByUserOpenId(openId,customerId);
         DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
         CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(openId);
         if (null == deviceTeamPoList || 0 == deviceTeamPoList.size()) {
@@ -1510,6 +1516,7 @@ public class DeviceOperateService {
         }
         return new ApiResponse<>(RetCode.OK, "查询用户组成功", deviceTeamPoList);
     }
+
 
     public CustomerUserPo isUserExist(String openId) {
         return this.customerUserMapper.selectByOpenId(openId);

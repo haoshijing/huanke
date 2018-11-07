@@ -149,6 +149,9 @@
         t_device_team,t_customer_user
         WHERE
         t_customer_user.openId = #{openId}
+        <if test="customerId != null">
+            AND t_customer_user.customerId = #{customerId}
+        </if>
         AND
         t_device_team.masterUserId = t_customer_user.id
         AND
