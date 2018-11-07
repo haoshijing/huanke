@@ -8,6 +8,7 @@ import java.util.List;
 public class DeviceModelVo {
     private Integer formatId;
     private String formatShowName;
+    private String manageName;
     private String pageName;
     private Integer modelId;
     private String typeNo;
