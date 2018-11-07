@@ -244,63 +244,98 @@ public class CustomerService {
         }
         /*安卓场景列表*/
         //遍历保存安卓场景列表
-        List<CustomerVo.AndroidScene> androidSceneList = androidConfig.getAndroidSceneList();
-        if (androidSceneList != null && androidSceneList.size() > 0) {
-            for (CustomerVo.AndroidScene androidScene : androidSceneList) {
-
-                AndroidScenePo androidScenePo = new AndroidScenePo();
-                //如果场景不为空,且主键不为空 则是更新，否则新增
-                if (androidScene != null && androidScene.getId() != null && androidScene.getId() > 0) {
-                    BeanUtils.copyProperties(androidScene, androidScenePo);
-                    androidScenePo.setLastUpdateTime(System.currentTimeMillis());
-                    androidSceneMapper.updateById(androidScenePo);
-                } else {
-                    androidScenePo = new AndroidScenePo();
-                    BeanUtils.copyProperties(androidScene, androidScenePo);
-                    androidScenePo.setCustomerId(customerPo.getId());
-                    androidScenePo.setConfigId(androidConfigPo.getId());
-                    androidScenePo.setCreateTime(System.currentTimeMillis());
-                    androidScenePo.setStatus(CommonConstant.STATUS_YES);
-                    androidSceneMapper.insert(androidScenePo);
+        AndroidScenePo androidScenePo = new AndroidScenePo();
+        androidScenePo.setConfigId(androidConfigPo.getId());
+        List<AndroidScenePo> androidScenePos = this.androidSceneMapper.selectListByConfigId(androidScenePo);
+        if(androidScenePos == null){
+            //初始化
+            androidScenePos = new ArrayList<AndroidScenePo>();
+        }
+        int dbSceneSize = androidScenePos.size();
+        int newSceneSize = androidConfig.getAndroidSceneList().size();
+        for(int i = 0 ; i<Math.max(dbSceneSize,newSceneSize) ; i++){
+            if(i>=newSceneSize){
+                //上送比数据库少，删除多余的Scene和其下SceneImg
+                AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+                List<AndroidSceneImgPo> androidSceneImgPos = androidSceneImgMapper.selectListBySceneId(androidSceneImgPo);
+                for(AndroidSceneImgPo temp : androidSceneImgPos){
+                    androidSceneImgMapper.deleteById(temp.getId());
                 }
-
-                /*安卓场景-图册*/
-//                List<AndroidSceneImgPo> toAddAndroidSceneImgPoList = new ArrayList<>();
-                //遍历保存场景图册
-                List<CustomerVo.AndroidSceneImg> androidSceneImgList = androidScene.getAndroidSceneImgList();
-                if (androidSceneImgList != null && androidSceneImgList.size() > 0) {
-                    for (CustomerVo.AndroidSceneImg androidSceneImg : androidSceneImgList) {
-                        AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
-                        if (androidSceneImg != null && androidSceneImg.getId() != null && androidSceneImg.getId() > 0) {
-                            BeanUtils.copyProperties(androidSceneImg, androidSceneImgPo);
-                            //客户id
-                            androidSceneImgPo.setCustomerId(customerPo.getId());
-                            //安卓配置id
-                            androidSceneImgPo.setConfigId(androidConfigPo.getId());
-                            //场景id
-                            androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
-                            androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
-                            androidSceneImgMapper.updateById(androidSceneImgPo);
-                        } else {
-                            BeanUtils.copyProperties(androidSceneImg, androidSceneImgPo);
-                            //客户id
-                            androidSceneImgPo.setCustomerId(customerPo.getId());
-                            //安卓配置id
-                            androidSceneImgPo.setConfigId(androidConfigPo.getId());
-                            //场景id
-                            androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
-                            androidSceneImgPo.setCreateTime(System.currentTimeMillis());
-                            androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
-                            androidSceneImgMapper.insert(androidSceneImgPo);
-                        }
-
-//                        toAddAndroidSceneImgPoList.add(androidSceneImgPo);
-                    }
+                androidSceneMapper.deleteById(androidScenePos.get(i).getId());
+                continue;
+            }
+            if(i>=dbSceneSize) {
+                //上送比数据库多，新增
+                androidScenePo = new AndroidScenePo();
+                //BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePo);不copy自增ID;
+                androidScenePo.setName(androidConfig.getAndroidSceneList().get(i).getName());
+                androidScenePo.setImgsCover(androidConfig.getAndroidSceneList().get(i).getImgsCover());
+                androidScenePo.setDescription(androidConfig.getAndroidSceneList().get(i).getDescription());
+                androidScenePo.setCreateTime(System.currentTimeMillis());
+                androidScenePo.setStatus(CommonConstant.STATUS_YES);
+                androidScenePo.setCustomerId(customerPo.getId());
+                androidScenePo.setConfigId(androidConfigPo.getId());
+                int id = androidSceneMapper.insert(androidScenePo);
+                List<CustomerVo.AndroidSceneImg> androidSceneImgs = androidConfig.getAndroidSceneList().get(i).getAndroidSceneImgList();
+                for(CustomerVo.AndroidSceneImg temp : androidSceneImgs){
+                    AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                    BeanUtils.copyProperties(temp, androidSceneImgPo);
+                    androidSceneImgPo.setAndroidSceneId(id);
+                    androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                    androidSceneImgPo.setCustomerId(customerPo.getId());
+                    androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
+                    androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                    androidSceneImgMapper.insert(androidSceneImgPo);
                 }
-
+                continue;
+            }
+            //其余修改
+            //BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePos.get(i));不copy自增ID;
+            androidScenePos.get(i).setName(androidConfig.getAndroidSceneList().get(i).getName());
+            androidScenePos.get(i).setImgsCover(androidConfig.getAndroidSceneList().get(i).getImgsCover());
+            androidScenePos.get(i).setDescription(androidConfig.getAndroidSceneList().get(i).getDescription());
+            androidScenePos.get(i).setStatus(CommonConstant.STATUS_YES);
+            androidScenePos.get(i).setLastUpdateTime(System.currentTimeMillis());
+            androidSceneMapper.updateById(androidScenePos.get(i));
+            AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+            androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+            List<AndroidSceneImgPo> androidSceneImgPos = androidSceneImgMapper.selectListBySceneId(androidSceneImgPo);
+            List<CustomerVo.AndroidSceneImg> androidSceneImgs = androidConfig.getAndroidSceneList().get(i).getAndroidSceneImgList();
+            if (androidSceneImgPos == null) {
+                //初始化
+                androidSceneImgPos = new ArrayList<AndroidSceneImgPo>();
+            }
+            int dbImgSize = androidSceneImgPos.size();
+            int newImgSize = androidSceneImgs.size();
+            for (int j = 0;j<Math.max(dbImgSize,newImgSize);j++) {
+                if(j>=newImgSize){
+                    androidSceneImgMapper.deleteById(androidSceneImgPos.get(j).getId());
+                    continue;
+                }
+                if(j>=dbImgSize){
+                    androidSceneImgPo = new AndroidSceneImgPo();
+                    //BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPo);不copy自增ID;
+                    androidSceneImgPo.setDescription(androidSceneImgs.get(j).getDescription());
+                    androidSceneImgPo.setImgVideo(androidSceneImgs.get(j).getImgVideo());
+                    androidSceneImgPo.setName(androidSceneImgs.get(j).getName());
+                    androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
+                    androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                    androidSceneImgPo.setCustomerId(customerPo.getId());
+                    androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
+                    androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                    androidSceneImgMapper.insert(androidSceneImgPo);
+                    continue;
+                }
+                //BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPos.get(j));不copy自增ID;
+                androidSceneImgPos.get(j).setDescription(androidSceneImgs.get(j).getDescription());
+                androidSceneImgPos.get(j).setImgVideo(androidSceneImgs.get(j).getImgVideo());
+                androidSceneImgPos.get(j).setName(androidSceneImgs.get(j).getName());
+                androidSceneImgPos.get(j).setStatus(CommonConstant.STATUS_YES);
+                androidSceneImgPos.get(j).setLastUpdateTime(System.currentTimeMillis());
+                androidSceneImgMapper.updateById(androidSceneImgPos.get(j));
             }
         }
-
 //        this.androidSceneImgMapper.insertBatch(toAddAndroidSceneImgPoList);
 
         //管理后台配置信息
@@ -601,7 +636,10 @@ public class CustomerService {
             if(i>=dbSceneSize) {
                 //上送比数据库多，新增
                 androidScenePo = new AndroidScenePo();
-                BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePo);
+                //BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePo);不copy自增ID;
+                androidScenePo.setName(androidConfig.getAndroidSceneList().get(i).getName());
+                androidScenePo.setImgsCover(androidConfig.getAndroidSceneList().get(i).getImgsCover());
+                androidScenePo.setDescription(androidConfig.getAndroidSceneList().get(i).getDescription());
                 androidScenePo.setCreateTime(System.currentTimeMillis());
                 androidScenePo.setStatus(CommonConstant.STATUS_YES);
                 androidScenePo.setCustomerId(customerId);
@@ -621,7 +659,11 @@ public class CustomerService {
                 continue;
             }
             //其余修改
-            BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePos.get(i));
+            //BeanUtils.copyProperties(androidConfig.getAndroidSceneList().get(i),androidScenePos.get(i));不copy自增ID;
+            androidScenePos.get(i).setName(androidConfig.getAndroidSceneList().get(i).getName());
+            androidScenePos.get(i).setImgsCover(androidConfig.getAndroidSceneList().get(i).getImgsCover());
+            androidScenePos.get(i).setDescription(androidConfig.getAndroidSceneList().get(i).getDescription());
+            androidScenePos.get(i).setStatus(CommonConstant.STATUS_YES);
             androidScenePos.get(i).setLastUpdateTime(System.currentTimeMillis());
             androidSceneMapper.updateById(androidScenePos.get(i));
             AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
@@ -641,7 +683,10 @@ public class CustomerService {
                 }
                 if(j>=dbImgSize){
                     androidSceneImgPo = new AndroidSceneImgPo();
-                    BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPo);
+                    //BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPo);不copy自增ID;
+                    androidSceneImgPo.setDescription(androidSceneImgs.get(j).getDescription());
+                    androidSceneImgPo.setImgVideo(androidSceneImgs.get(j).getImgVideo());
+                    androidSceneImgPo.setName(androidSceneImgs.get(j).getName());
                     androidSceneImgPo.setAndroidSceneId(androidScenePos.get(i).getId());
                     androidSceneImgPo.setConfigId(androidConfigPo.getId());
                     androidSceneImgPo.setCustomerId(customerId);
@@ -650,7 +695,11 @@ public class CustomerService {
                     androidSceneImgMapper.insert(androidSceneImgPo);
                     continue;
                 }
-                BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPos.get(j));
+                //BeanUtils.copyProperties(androidSceneImgs.get(j), androidSceneImgPos.get(j));不copy自增ID;
+                androidSceneImgPos.get(j).setDescription(androidSceneImgs.get(j).getDescription());
+                androidSceneImgPos.get(j).setImgVideo(androidSceneImgs.get(j).getImgVideo());
+                androidSceneImgPos.get(j).setName(androidSceneImgs.get(j).getName());
+                androidSceneImgPos.get(j).setStatus(CommonConstant.STATUS_YES);
                 androidSceneImgPos.get(j).setLastUpdateTime(System.currentTimeMillis());
                 androidSceneImgMapper.updateById(androidSceneImgPos.get(j));
             }

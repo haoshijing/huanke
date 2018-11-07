@@ -11,6 +11,7 @@ import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupDetailVo;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -115,7 +116,6 @@ public class DeviceGroupController {
             return new ApiResponse<>(RetCode.ERROR,"查询集群总数异常");
         }
     }
-
 
     /**
      *在设备列表中点击集群时，显示设备列表中已有集群的集群名称，若存在多个集群，则返回错误
