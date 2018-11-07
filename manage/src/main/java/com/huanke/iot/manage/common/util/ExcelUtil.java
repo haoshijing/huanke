@@ -80,17 +80,9 @@ public class ExcelUtil<T>{
     public void exportExcel(String fileName,HttpServletResponse response ,String title, String[] headers, Collection<T> dataSet, Map<String,String> filterMap,String version) throws Exception{
         response.reset();
         response.setContentType("application/msexcel;charset=utf-8");
-        if(fileName.contains(".xls")||fileName.contains(".xlsx")){
-            response.setHeader("Content-disposition","attachment;filename="+new String(fileName.getBytes("gb2312"),
-                    "iso8859-1"));
-        }else{
-            response.setHeader("Content-Disposition","attachment;filename="+fileName+".xls");
-        }
-        if(StringUtils.isBlank(version) || EXCEL_FILE_2003.equals(version.trim())){
-            exportExcel2003(title, headers, dataSet, response.getOutputStream(), "yyyy-MM-dd hh:mm:ss");
-        }else{
-            exportExcel2007(title, headers, dataSet, filterMap, response.getOutputStream(), "yyyy-MM-dd hh:mm:ss");
-        }
+        response.setHeader("Content-disposition","attachment;filename="+new String(fileName.getBytes("gb2312"),
+                "iso8859-1"));
+        exportExcel2007(title, headers, dataSet, filterMap, response.getOutputStream(), "yyyy-MM-dd hh:mm:ss");
     }
 
     /**
@@ -170,72 +162,75 @@ public class ExcelUtil<T>{
             row = sheet.createRow(index);
             t = (T) it.next();
             // 利用反射，根据JavaBean属性的先后顺序，动态调用getXxx()方法得到属性值
-            fields = t.getClass().getDeclaredFields();
-            for (int i = 0; i < fields.length; i++) {
-                field = fields[i];
-                fieldName = field.getName();
-                //包含需要筛选的列是才创建的新的dataCell
-                if(filterMap.get(fieldName) == fieldName) {
-                    cell = row.createCell(colCount);
-                    cell.setCellStyle(style2);
-                    getMethodName = "get" + fieldName.substring(0, 1).toUpperCase()
-                            + fieldName.substring(1);
-                    try {
-                        tCls = t.getClass();
-                        getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                        value = getMethod.invoke(t, new Object[]{});
-                        // 判断值的类型后进行强制类型转换
-                        textValue = null;
-                        if (value instanceof Integer) {
-                            cell.setCellValue((Integer) value);
-                        } else if (value instanceof Float) {
-                            textValue = String.valueOf((Float) value);
-                            cell.setCellValue(textValue);
-                        } else if (value instanceof Double) {
-                            textValue = String.valueOf((Double) value);
-                            cell.setCellValue(textValue);
-                        } else if (value instanceof Long) {
-                            cell.setCellValue((Long) value);
-                        }
-                        if (value instanceof Boolean) {
-                            textValue = "是";
-                            if (!(Boolean) value) {
-                                textValue = "否";
+            //包含需要筛选的列是才创建的新的dataCell
+            for(String eachCell : headers){
+                fields = t.getClass().getDeclaredFields();
+                for (int i = 0; i < fields.length; i++) {
+                    field = fields[i];
+                    fieldName = field.getName();
+                        if(filterMap.containsKey(fieldName)) {
+                            if (filterMap.get(fieldName).equals(eachCell)) {
+                                cell = row.createCell(colCount);
+                                cell.setCellStyle(style2);
+                                getMethodName = "get" + fieldName.substring(0, 1).toUpperCase()
+                                        + fieldName.substring(1);
+                                try {
+                                    tCls = t.getClass();
+                                    getMethod = tCls.getMethod(getMethodName, new Class[]{});
+                                    value = getMethod.invoke(t, new Object[]{});
+                                    // 判断值的类型后进行强制类型转换
+                                    textValue = null;
+                                    if (value instanceof Integer) {
+                                        cell.setCellValue((Integer) value);
+                                    } else if (value instanceof Float) {
+                                        textValue = String.valueOf((Float) value);
+                                        cell.setCellValue(textValue);
+                                    } else if (value instanceof Double) {
+                                        textValue = String.valueOf((Double) value);
+                                        cell.setCellValue(textValue);
+                                    } else if (value instanceof Long) {
+                                        cell.setCellValue((Long) value);
+                                    }
+                                    if (value instanceof Boolean) {
+                                        textValue = "是";
+                                        if (!(Boolean) value) {
+                                            textValue = "否";
+                                        }
+                                    } else if (value instanceof Date) {
+                                        textValue = sdf.format((Date) value);
+                                    } else {
+                                        // 其它数据类型都当作字符串简单处理
+                                        if (value != null) {
+                                            textValue = value.toString();
+                                        }
+                                    }
+                                    if (textValue != null) {
+                                        matcher = p.matcher(textValue);
+                                        if (matcher.matches()) {
+                                            // 是数字当作double处理
+                                            cell.setCellValue(Double.parseDouble(textValue));
+                                        } else {
+                                            richString = new XSSFRichTextString(textValue);
+                                            cell.setCellValue(richString);
+                                        }
+                                    }
+                                } catch (SecurityException e) {
+                                    e.printStackTrace();
+                                } catch (NoSuchMethodException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    // 清理资源
+                                }
+                                colCount++;
                             }
-                        } else if (value instanceof Date) {
-                            textValue = sdf.format((Date) value);
-                        } else {
-                            // 其它数据类型都当作字符串简单处理
-                            if (value != null) {
-                                textValue = value.toString();
-                            }
                         }
-                        if (textValue != null) {
-                            matcher = p.matcher(textValue);
-                            if (matcher.matches()) {
-                                // 是数字当作double处理
-                                cell.setCellValue(Double.parseDouble(textValue));
-                            } else {
-                                richString = new XSSFRichTextString(textValue);
-                                cell.setCellValue(richString);
-                            }
-                        }
-                    } catch (SecurityException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    } finally {
-                        // 清理资源
                     }
-                    colCount++;
-                }
-
             }
             colCount = 0;
         }

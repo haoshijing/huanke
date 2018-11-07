@@ -139,10 +139,10 @@ public class DeviceOperateService {
     private MqttSendService mqttSendService;
 
 
-    private static String[] keys = {"name", "mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
+    private static String[] keys = {"name","manageName","mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
             "workStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastUpdateTime", "location"};
 
-    private static String[] texts = {"名称", "MAC", "归属", "类型", "绑定状态", "启用状态", "集群名", "工作状态", "在线状态", "设备型号ID", "设备型号名称", "注册时间", "最后上上线时间", "地理位置"};
+    private static String[] texts = {"名称","管理名称", "MAC", "归属", "类型", "绑定状态", "启用状态", "集群名", "工作状态", "在线状态", "设备型号ID", "设备型号名称", "注册时间", "最后上上线时间", "地理位置"};
 
     /**
      * 2018-08-15
@@ -485,7 +485,7 @@ public class DeviceOperateService {
                 if (result) {
                     titleKeys.add(field.getName());
                     titleNames.add(titleMap.get(field.getName()));
-                    filterMap.put(field.getName(), field.getName());
+                    filterMap.put(field.getName(),titleMap.get(field.getName()));
                 }
             }
         }
