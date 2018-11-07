@@ -12,6 +12,7 @@ import com.huanke.iot.manage.service.device.operate.DeviceDataService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.vo.request.device.ability.DeviceAbilityQueryRequest;
+import com.huanke.iot.manage.vo.request.device.group.GroupControlRequest;
 import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
@@ -460,7 +461,7 @@ public class DeviceOperateController {
         return new ApiResponse<>(RetCode.OK, "导出excel成功");
     }
 
-    @ApiOperation("查询设备位置")
+    @ApiOperation("查询设备位置(单个)")
     @RequestMapping(value = "/queryDevicePosition/{id}", method = RequestMethod.POST)
     public ApiResponse<DeviceLocationVo> queryDevicePosition(@PathVariable("id") Integer id) {
         try {
@@ -468,6 +469,20 @@ public class DeviceOperateController {
         } catch (Exception e) {
             log.error("设备位置查询异常 = {}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备位置查询错误");
+        }
+    }
+
+    @ApiOperation("查询设备位置(多个)")
+    @RequestMapping(value = "/queryDevicePosition", method = RequestMethod.POST)
+    public ApiResponse<List<DeviceLocationVo>> queryDevicePositionInGroup(GroupControlRequest groupControlRequest) {
+        if(null == groupControlRequest.getDeviceIdList() || 0 == groupControlRequest.getDeviceIdList().size()){
+            return new ApiResponse<>(RetCode.OK,"设备列表中暂无设备");
+        }
+        try {
+            return this.deviceService.queryDeviceLocationInGroup(groupControlRequest.getDeviceIdList());
+        }catch (Exception e){
+            log.error("集群中设备查询异常 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR, "集群中设备位置查询错误");
         }
     }
 

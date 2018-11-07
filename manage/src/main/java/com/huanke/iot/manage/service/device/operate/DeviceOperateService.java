@@ -1411,6 +1411,22 @@ public class DeviceOperateService {
 
     }
 
+    public ApiResponse<List<DeviceLocationVo>> queryDeviceLocationInGroup(List<Integer> deviceIdList) throws Exception {
+        List<DeviceLocationVo> deviceLocationVoList = new ArrayList<>();
+        for(Integer deviceId : deviceIdList){
+            DeviceLocationVo deviceLocationVo = new DeviceLocationVo();
+            ApiResponse<DeviceLocationVo> deviceLocationVoRtn = queryDeviceLocation(deviceId);
+            if(RetCode.OK == deviceLocationVoRtn.getCode()){
+                deviceLocationVo = deviceLocationVoRtn.getData();
+            }else {
+                deviceLocationVo.setArea("无此设备区域数据");
+                deviceLocationVo.setLocation("无此设备位置数据");
+            }
+            deviceLocationVoList.add(deviceLocationVo);
+        }
+        return new ApiResponse<>(RetCode.OK,"查询集群中设备位置成功",deviceLocationVoList);
+    }
+
     /**
      * 查询天气
      *
