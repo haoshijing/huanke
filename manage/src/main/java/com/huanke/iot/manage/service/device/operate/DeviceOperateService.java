@@ -180,7 +180,7 @@ public class DeviceOperateService {
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setCreateUser(user.getId());
 
-            insertPo.setDeviceNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
+            insertPo.setSaNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
             return insertPo;
         }).collect(Collectors.toList());
         //批量插入
@@ -244,7 +244,7 @@ public class DeviceOperateService {
         deviceQueryVo.setName(devicePo.getName());
         deviceQueryVo.setManageName(devicePo.getManageName());
         deviceQueryVo.setMac(devicePo.getMac());
-        deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
+        deviceQueryVo.setSaNo(devicePo.getSaNo());
         deviceQueryVo.setWxDeviceId(devicePo.getWxDeviceId());
 
         deviceQueryVo.setTypeId(devicePo.getTypeId());
@@ -337,7 +337,7 @@ public class DeviceOperateService {
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setManageName(devicePo.getManageName());
             deviceQueryVo.setMac(devicePo.getMac());
-            deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
+            deviceQueryVo.setSaNo(devicePo.getSaNo());
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
