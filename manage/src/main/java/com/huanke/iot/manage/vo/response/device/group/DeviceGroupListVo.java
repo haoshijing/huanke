@@ -16,6 +16,8 @@ public class DeviceGroupListVo {
     private Integer deviceCount;
     private Integer status;
     private Long createTime;
+    private String createUser;
+    private String lastUpdateUser;
     private List<DeviceInGroup> deviceList;
     @Data
     public static class DeviceInGroup{

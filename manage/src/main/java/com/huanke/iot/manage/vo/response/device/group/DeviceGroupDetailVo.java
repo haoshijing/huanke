@@ -15,6 +15,8 @@ public class DeviceGroupDetailVo {
     private Integer deviceCount;
     private String createLocation;
     private Long createTime;
+    private String createUser;
+    private String lastUpdateUser;
     private List<DeviceInGroup> deviceList;
     private List<Images> imagesList;
     private List<Videos> videosList;

@@ -21,7 +21,9 @@
         remark,
         createLocation,
         createTime,
-        lastUpdateTime
+        lastUpdateTime,
+        createUser,
+        lastUpdateUser
         )
         VALUES (
         #{name},
@@ -33,7 +35,9 @@
         #{remark},
         #{createLocation},
         #{createTime},
-        #{lastUpdateTime}
+        #{lastUpdateTime},
+        #{createUser},
+        #{lastUpdateUser}
         )
     </insert>
 
@@ -51,7 +55,9 @@
         remark,
         createLocation,
         createTime,
-        lastUpdateTime
+        lastUpdateTime,
+        createUser,
+        lastUpdateUser
         )
         VALUES
         <foreach collection="list" item="group" separator=",">
@@ -65,7 +71,9 @@
             #{group.remark},
             #{group.createLocation},
             #{group.createTime},
-            #{group.lastUpdateTime}
+            #{group.lastUpdateTime},
+            #{group.createUser},
+            #{group.lastUpdateUser}
             )
         </foreach>
     </insert>
@@ -162,6 +170,12 @@
         <set>
             <if test="name != null">
                 name = #{name},
+            </if>
+            <if test="createUser != null">
+                createUser = #{createUser},
+            </if>
+            <if test="lastUpdateUser != null">
+                lastUpdateUser = #{lastUpdateUser},
             </if>
             <if test="introduction != null">
                 introduction = #{introduction},

@@ -110,10 +110,12 @@ public class DeviceGroupService {
      */
     public ApiResponse<Integer> createOrUpdateGroup(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) throws Exception {
         DeviceGroupPo insertOrUpdatePo = new DeviceGroupPo();
+        User user = userService.getCurrentUser();
         BeanUtils.copyProperties(groupCreateOrUpdateRequest, insertOrUpdatePo);
         if (null != groupCreateOrUpdateRequest.getId() && 0 < groupCreateOrUpdateRequest.getId()) {
             //若id为非空则进行更新操作
             insertOrUpdatePo.setLastUpdateTime(System.currentTimeMillis());
+            insertOrUpdatePo.setLastUpdateUser(user.getId());
             this.deviceGroupMapper.updateById(insertOrUpdatePo);
         }
         //否则进行新增
@@ -121,6 +123,8 @@ public class DeviceGroupService {
             insertOrUpdatePo.setStatus(CommonConstant.STATUS_YES);
             insertOrUpdatePo.setCreateTime(System.currentTimeMillis());
             insertOrUpdatePo.setLastUpdateTime(System.currentTimeMillis());
+            insertOrUpdatePo.setLastUpdateUser(user.getId());
+            insertOrUpdatePo.setCreateUser(user.getId());
             this.deviceGroupMapper.insert(insertOrUpdatePo);
             //新增完之后获取groupId
             groupCreateOrUpdateRequest.setId(insertOrUpdatePo.getId());
@@ -236,6 +240,8 @@ public class DeviceGroupService {
                 deviceGroupListVo.setRemark(deviceGroupPo.getRemark());
                 deviceGroupListVo.setStatus(deviceGroupPo.getStatus());
                 deviceGroupListVo.setLocation(deviceGroupPo.getCreateLocation());
+                deviceGroupListVo.setCreateUser(this.userService.getUserName(deviceGroupPo.getCreateUser()));
+                deviceGroupListVo.setLastUpdateUser(this.userService.getUserName(deviceGroupPo.getLastUpdateUser()));
                 //查询当前集群的客户信息
                 CustomerPo customerPo = this.customerMapper.selectById(deviceGroupPo.getCustomerId());
                 deviceGroupListVo.setCustomerId(customerPo.getId());
@@ -299,6 +305,8 @@ public class DeviceGroupService {
         DeviceGroupPo deviceGroupPo = this.deviceGroupMapper.selectById(groupId);
         if (null != deviceGroupPo) {
             BeanUtils.copyProperties(deviceGroupPo, deviceGroupDetailVo);
+            deviceGroupDetailVo.setCreateUser(this.userService.getUserName(deviceGroupPo.getCreateUser()));
+            deviceGroupDetailVo.setLastUpdateUser(this.userService.getUserName(deviceGroupPo.getLastUpdateUser()));
             //查询集群下设备
             List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(groupId);
             if (null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
