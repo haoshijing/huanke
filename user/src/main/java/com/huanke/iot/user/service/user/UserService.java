@@ -124,6 +124,19 @@ public class UserService {
         return 1 == userManagerMapper.deleteById(userId);
     }
 
+    public User getUserById(Integer userId) {
+
+        User user = userManagerMapper.selectById(userId);
+
+        if(user!=null){
+            user.setCreateUserName(getUserName(user.getCreateUser()));
+            user.setLastUpdateUserName(getUserName(user.getLastUpdateUser()));
+            user.setPassword(null);
+        }
+
+        return user;
+    }
+
     public List<User> getUserList() {
 
         /*获取当前域名*/
