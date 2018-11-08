@@ -68,4 +68,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DevicePo> queryDeviceIdsByWxDeviceIdList(List<String> wxDeviceIdList);
 
     DeviceListDto queryDeviceList(@Param("deviceId")Integer deviceId);
+
+    Integer queryCustomerCount(@Param("customerId")Integer id);
 }
