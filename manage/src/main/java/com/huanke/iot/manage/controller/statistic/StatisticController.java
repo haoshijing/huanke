@@ -7,7 +7,9 @@ import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +49,16 @@ public class StatisticController {
         return new ApiResponse<>(deviceTypePercentList);
     }
 
+
+    @ApiOperation("设备型号统计")
+    @GetMapping(value = "/modelPercent")
+    public ApiResponse<List<DeviceModelVo.DeviceModelPercent>> modelPercent() {
+        List<DeviceModelVo.DeviceModelPercent> deviceTypePercentList = statisticService.selectModelPercent();
+
+        return new ApiResponse<>(deviceTypePercentList);
+    }
+
+
     @ApiOperation("每月新增设备统计")
     @GetMapping(value = "/deviceCountPerMonth")
     public ApiResponse<List<DeviceStatisticsVo>> deviceCountPerMonth() {
@@ -58,9 +70,8 @@ public class StatisticController {
     @ApiOperation("今日新增设备统计")
     @GetMapping(value = "/newDeviceCountOfToday")
     public ApiResponse<Integer> newDeviceCountOfToday(){
-        return this.statisticService.selectDeviceByDay(null);
+        return this.statisticService.selectDeviceByDay();
     }
-
 
     @ApiOperation("首页统计")
     @GetMapping(value = "/queryHomePageStatistic")

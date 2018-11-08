@@ -31,7 +31,7 @@ public class DeviceModelFormatCreateRequest {
     public static class DeviceModelFormatItemCreateRequest {
         private Integer id;
         private Integer itemId;
-        private Integer abilityId;
+        private String abilityIds;
         private Integer showStatus;
         private String showName;
         private Integer status = CommonConstant.STATUS_YES;

@@ -180,7 +180,7 @@ public class DeviceOperateService {
             insertPo.setCreateTime(System.currentTimeMillis());
             insertPo.setCreateUser(user.getId());
 
-            insertPo.setDeviceNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
+            insertPo.setSaNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_DEVICE));
             return insertPo;
         }).collect(Collectors.toList());
         //批量插入
@@ -244,7 +244,7 @@ public class DeviceOperateService {
         deviceQueryVo.setName(devicePo.getName());
         deviceQueryVo.setManageName(devicePo.getManageName());
         deviceQueryVo.setMac(devicePo.getMac());
-        deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
+        deviceQueryVo.setSaNo(devicePo.getSaNo());
         deviceQueryVo.setWxDeviceId(devicePo.getWxDeviceId());
 
         deviceQueryVo.setTypeId(devicePo.getTypeId());
@@ -337,7 +337,7 @@ public class DeviceOperateService {
             deviceQueryVo.setName(devicePo.getName());
             deviceQueryVo.setManageName(devicePo.getManageName());
             deviceQueryVo.setMac(devicePo.getMac());
-            deviceQueryVo.setDeviceNo(devicePo.getDeviceNo());
+            deviceQueryVo.setSaNo(devicePo.getSaNo());
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
@@ -493,6 +493,9 @@ public class DeviceOperateService {
         ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListExportRequest.getDeviceListQueryRequest());
         if (RetCode.OK == result.getCode()) {
             List<DeviceListVo> deviceListVoList = result.getData();
+            if(null == deviceListVoList || 0 == deviceListVoList.size()){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"当期条件下设备列表中无设备");
+            }
             String[] titles = new String[titleNames.size()];
             titleNames.toArray(titles);
             ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();

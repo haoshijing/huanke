@@ -243,4 +243,26 @@
         limit 1
     </select>
 
+    <select id="selectModelPercent" resultType="java.util.HashMap">
+        SELECT
+        m.id modelId,
+        m.`name` modelName,
+        count( 1 ) deviceCount
+        FROM
+        t_device_model m,
+        t_device d
+        <if test="customerId != null">
+            ,t_device_customer_relation r
+        </if>
+        WHERE
+        m.id = d.modelId
+        <if test="customerId != null">
+            and d.id = r.deviceId
+            and m.customerId =  #{customerId}
+        </if>
+        AND d.`status` = 1
+        AND m.`status` = 1
+        GROUP BY
+        m.id
+    </select>
 </mapper>
