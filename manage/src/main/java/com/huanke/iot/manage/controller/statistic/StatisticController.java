@@ -7,6 +7,7 @@ import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationCountVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
@@ -54,9 +55,9 @@ public class StatisticController {
     @ApiOperation("设备型号统计")
     @GetMapping(value = "/modelPercent")
     public ApiResponse<List<DeviceModelVo.DeviceModelPercent>> modelPercent() {
-        List<DeviceModelVo.DeviceModelPercent> deviceTypePercentList = statisticService.selectModelPercent();
+        List<DeviceModelVo.DeviceModelPercent> deviceModelPercentList = statisticService.selectModelPercent();
 
-        return new ApiResponse<>(deviceTypePercentList);
+        return new ApiResponse<>(deviceModelPercentList);
     }
 
 
@@ -75,7 +76,7 @@ public class StatisticController {
     }
     @ApiOperation("设备区域统计")
     @GetMapping(value = "/deviceLocationCount")
-    public ApiResponse<Map<String ,Map<String, Map<String,Integer>>>> deviceLocationCount(){
+    public ApiResponse<DeviceLocationCountVo> deviceLocationCount(){
         return this.statisticService.queryLocationCount();
     }
     @ApiOperation("首页统计")
