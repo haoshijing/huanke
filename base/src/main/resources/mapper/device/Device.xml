@@ -14,7 +14,6 @@
         name,
         manageName,
         mac,
-        deviceNo,
         wxDeviceId,
         wxDevicelicence,
         wxQrticket,
@@ -53,7 +52,6 @@
         #{name},
         #{manageName},
         #{mac},
-        #{deviceNo},
         #{wxDeviceId},
         #{wxDevicelicence},
         #{wxQrticket},
@@ -97,7 +95,6 @@
         name,
         manageName,
         mac,
-        deviceNo,
         wxDeviceId,
         wxDevicelicence,
         wxQrticket,
@@ -137,7 +134,6 @@
             #{device.name},
             #{device.manageName},
             #{device.mac},
-            #{device.deviceNo},
             #{device.wxDeviceId},
             #{device.wxDevicelicence},
             #{device.wxQrticket},
@@ -248,7 +244,7 @@
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select d.`id`, d.`name`,d.`manageName` ,d.`mac`,d.`deviceNo`,
+        select d.`id`, d.`name`,d.`manageName` ,d.`mac`,
         d.`wxDeviceId`,d.`wxDevicelicence`,d.`wxQrticket`,
         d.`imei`,d.`imsi`,d.`saNo`,d.`typeId`,d.`modelId`,
         d.`productId`,c.`id` customerId ,

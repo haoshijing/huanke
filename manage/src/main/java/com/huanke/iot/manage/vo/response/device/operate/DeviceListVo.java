@@ -21,7 +21,7 @@ public class DeviceListVo {
      * mac地址
      */
     private String mac;
-    private String deviceNo;
+    private String saNo;
 
     private String wxDeviceId;
 

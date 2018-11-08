@@ -25,14 +25,13 @@ public class DevicePo {
      * 设备mac地址
      */
     private String mac;
-    private String deviceNo;
+    private String saNo;
 
 
 
     //设备序列号
     private String imei;
     private String imsi;
-    private String saNo;
 
     //设备 类型、型号
     private Integer typeId;
