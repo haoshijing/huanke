@@ -855,4 +855,11 @@
         and wf.id = dm.formatId
         and wf.status =1;
     </select>
+
+    <select id="queryCustomerCount" resultType="java.lang.Integer">
+        select count(1)
+        FROM t_device
+        WHERE modelId in (SELECT id FROM t_device_model where customerId = #{customerId} and status = 1)
+        and status = 1
+    </select>
 </mapper>
