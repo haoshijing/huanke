@@ -69,9 +69,15 @@ public class StatisticController {
     @ApiOperation("今日新增设备统计")
     @GetMapping(value = "/newDeviceCountOfToday")
     public ApiResponse<Integer> newDeviceCountOfToday(){
-        return this.statisticService.selectDeviceByDay(null);
+        return this.statisticService.selectDeviceByDay();
     }
 
+
+    @ApiOperation("设备在线率统计")
+    @GetMapping(value = "/deviceOnlinePercent")
+    public ApiResponse<String> deviceOnlinePercent(){
+        return this.statisticService.queryCurrentOnline();
+    }
 
     @ApiOperation("首页统计")
     @GetMapping(value = "/queryHomePageStatistic")

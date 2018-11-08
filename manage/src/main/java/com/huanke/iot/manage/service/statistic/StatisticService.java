@@ -2,6 +2,7 @@ package com.huanke.iot.manage.service.statistic;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
@@ -341,7 +342,8 @@ public class StatisticService {
      * 设备今日增长数
      * @return
      */
-    public ApiResponse<Integer> selectDeviceByDay(Integer customerId){
+    public ApiResponse<Integer> selectDeviceByDay(){
+        Integer customerId = this.customerService.obtainCustomerId(false);
         //获取当前系统时间戳
         Long endTime = System.currentTimeMillis();
         //获取当前日期的0点时间戳
@@ -355,10 +357,13 @@ public class StatisticService {
         Long startTime = calendar.getTimeInMillis();
 
         //查询当日0点时间戳至当前时间戳中的设备数据
-        Integer newDeviceOfToday = null;
+        Integer newDeviceOfToday;
+        //二级客户设备新增
         if(null!=customerId){
             newDeviceOfToday = this.deviceMapper.selectCustomerDataByTime(startTime,endTime,customerId);
-        }else{
+        }
+        //超管设备新增
+        else{
             newDeviceOfToday = this.deviceMapper.selectDataByTime(startTime,endTime);
         }
         return new ApiResponse<>(RetCode.OK,"查询今日新增成功",newDeviceOfToday);
@@ -383,7 +388,7 @@ public class StatisticService {
         deviceHomePageStatisticVo.setDeviceTotalCount(totalDeviceCount);
 
         /*统计设备今日增长数量*/
-        ApiResponse<Integer> todayDeviceAddCountRtn = selectDeviceByDay(customerId);
+        ApiResponse<Integer> todayDeviceAddCountRtn = selectDeviceByDay();
         deviceHomePageStatisticVo.setTodayDeviceAddCount(todayDeviceAddCountRtn.getData());
 
         /*统计当前用户总人数*/
@@ -448,5 +453,22 @@ public class StatisticService {
 
         int nowLiveUserCount = customerUserMapper.selectLiveUserCountByTime(startTime,endTime,customerId);
         return nowLiveUserCount;
+    }
+
+    public ApiResponse<String> queryCurrentOnline(){
+        Integer customerId = this.customerService.obtainCustomerId(false);
+        DevicePo queryPo =new DevicePo();
+        //二级客户
+        if(null != customerId){
+            queryPo.setCustomerId(customerId);
+        }
+        //查询设备总数
+        Integer totalDevice = this.deviceMapper.selectCount(queryPo);
+        //查询在线设备总数
+        queryPo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES);
+        Integer onlineDevice = this.deviceMapper.selectCount(queryPo);
+        DecimalFormat df = new DecimalFormat("0.00");
+        String onLinePercent = df.format((float)onlineDevice/totalDevice);
+        return new ApiResponse<>(RetCode.OK,"查询设备在线率成功",onLinePercent);
     }
 }
