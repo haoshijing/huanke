@@ -28,6 +28,12 @@ public class DeviceHomePageStatisticVo {
     private Integer todayUserLiveCount;
     /*今日订单数*/
     private Integer todayOrderCount;
+    /*在线设备数*/
+    private Integer deviceOnlineCount;
+    /*离线设备数*/
+    private Integer deviceOfflineCount;
+    /*设备在线率*/
+    private String deviceOnlinePercent;
 
     /*PM 2.5 传感器总数*/
     private Integer totalPMCount;

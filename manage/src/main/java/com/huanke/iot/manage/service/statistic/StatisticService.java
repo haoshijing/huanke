@@ -13,6 +13,7 @@ import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
@@ -391,6 +392,11 @@ public class StatisticService {
         ApiResponse<Integer> todayDeviceAddCountRtn = selectDeviceByDay();
         deviceHomePageStatisticVo.setTodayDeviceAddCount(todayDeviceAddCountRtn.getData());
 
+        DeviceOnlineStatVo deviceOnlineStatVo = queryCurrentOnline();
+        deviceHomePageStatisticVo.setDeviceOnlineCount(deviceOnlineStatVo.getOnlineDevice());
+        deviceHomePageStatisticVo.setDeviceOfflineCount(totalDeviceCount - deviceOnlineStatVo.getOnlineDevice());
+        deviceHomePageStatisticVo.setDeviceOnlinePercent(deviceOnlineStatVo.getOnlinePercent());
+
         /*统计当前用户总人数*/
         int totalUserCount = customerUserMapper.selectUserCount(customerId);
         /*统计昨日用户增长数*/
@@ -455,7 +461,7 @@ public class StatisticService {
         return nowLiveUserCount;
     }
 
-    public ApiResponse<String> queryCurrentOnline(){
+    public DeviceOnlineStatVo queryCurrentOnline(){
         Integer customerId = this.customerService.obtainCustomerId(false);
         DevicePo queryPo =new DevicePo();
         //二级客户
@@ -469,6 +475,12 @@ public class StatisticService {
         Integer onlineDevice = this.deviceMapper.selectCount(queryPo);
         DecimalFormat df = new DecimalFormat("0.00");
         String onLinePercent = df.format((float)onlineDevice/totalDevice);
-        return new ApiResponse<>(RetCode.OK,"查询设备在线率成功",onLinePercent);
+        DeviceOnlineStatVo deviceOnlineStatVo = new DeviceOnlineStatVo();
+        deviceOnlineStatVo.setTotalDevice(totalDevice);
+        deviceOnlineStatVo.setOnlineDevice(onlineDevice);
+        deviceOnlineStatVo.setOfflineDevice(totalDevice-onlineDevice);
+        deviceOnlineStatVo.setOnlinePercent(onLinePercent);
+        return deviceOnlineStatVo;
     }
+
 }
