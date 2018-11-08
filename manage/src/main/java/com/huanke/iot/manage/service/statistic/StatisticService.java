@@ -5,6 +5,7 @@ import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.util.CommonUtil;
@@ -12,6 +13,7 @@ import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class StatisticService {
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
 
     @Autowired
     private DeviceMapper deviceMapper;
@@ -179,6 +184,54 @@ public class StatisticService {
         return deviceTypePercents;
 
     }
+
+    /**
+     * 首页大数据面板-设备型号统计
+     *
+     * @return
+     */
+    public List<DeviceModelVo.DeviceModelPercent> selectModelPercentPerMonth() {
+
+        List<DeviceModelVo.DeviceModelPercent> deviceTypePercents = new ArrayList<DeviceModelVo.DeviceModelPercent>();
+
+        Integer customerId = customerService.obtainCustomerId(false);
+        /*查询设备总量*/
+        DevicePo queryDevicePo = new DevicePo();
+        queryDevicePo.setStatus(CommonConstant.STATUS_YES);
+        queryDevicePo.setCustomerId(customerId);
+        Integer deviceTotal = deviceMapper.selectCount(queryDevicePo);
+
+        if(deviceTotal!=null&&deviceTotal!=0){
+            List deviceModelPercentList = deviceModelMapper.selectModelPercent(customerId);
+
+            if (deviceModelPercentList != null && deviceModelPercentList.size() > 0) {
+                for(int i=0;i<deviceModelPercentList.size();i++){
+                    DeviceModelVo.DeviceModelPercent deviceTypePercent = new DeviceModelVo.DeviceModelPercent();
+                    Map deviceTypePercentMap = (Map)deviceModelPercentList.get(i);
+                    Integer modelId = (Integer)deviceTypePercentMap.get("modelId");
+                    String modelName = (String)deviceTypePercentMap.get("modelName");
+                    Long deviceCount = (Long)deviceTypePercentMap.get("deviceCount");
+
+                    DecimalFormat df = new DecimalFormat();
+                    df.setMaximumFractionDigits(2);
+                    df.setMinimumFractionDigits(2);
+                    String modelPercent = df.format(deviceCount * 100.00 / deviceTotal) + "%";
+
+                    deviceTypePercent.setModelId(modelId);
+                    deviceTypePercent.setModelName(modelName);
+                    deviceTypePercent.setDeviceCount(deviceCount);
+                    deviceTypePercent.setModelPercent(modelPercent);
+
+                    deviceTypePercents.add(deviceTypePercent);
+                }
+            }
+        }
+
+        return deviceTypePercents;
+
+    }
+
+
 
     /**
      * 首页面板-统计设备
