@@ -123,6 +123,7 @@ public class DeviceGroupService {
             insertOrUpdatePo.setStatus(CommonConstant.STATUS_YES);
             insertOrUpdatePo.setCreateTime(System.currentTimeMillis());
             insertOrUpdatePo.setLastUpdateTime(System.currentTimeMillis());
+            insertOrUpdatePo.setLastUpdateUser(user.getId());
             insertOrUpdatePo.setCreateUser(user.getId());
             this.deviceGroupMapper.insert(insertOrUpdatePo);
             //新增完之后获取groupId
