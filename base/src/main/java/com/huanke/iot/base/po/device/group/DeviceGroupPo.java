@@ -54,4 +54,8 @@ public class DeviceGroupPo {
      */
     private Long lastUpdateTime;
 
+    private Integer createUser;
+
+    private Integer lastUpdateUser;
+
 }
