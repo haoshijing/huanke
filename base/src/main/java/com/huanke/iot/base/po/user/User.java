@@ -41,8 +41,16 @@ public class User implements Serializable {
 
     private Integer templateId;
 
+    private Integer createUser;
+
+    private String createUserName;
+
     private Date createTime;
 
     private Date lastUpdateTime;
+
+    private Integer lastUpdateUser;
+
+    private String lastUpdateUserName;
 
 }
