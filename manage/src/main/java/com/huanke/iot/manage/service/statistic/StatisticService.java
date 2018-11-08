@@ -190,7 +190,7 @@ public class StatisticService {
      *
      * @return
      */
-    public List<DeviceModelVo.DeviceModelPercent> selectModelPercentPerMonth() {
+    public List<DeviceModelVo.DeviceModelPercent> selectModelPercent() {
 
         List<DeviceModelVo.DeviceModelPercent> deviceTypePercents = new ArrayList<DeviceModelVo.DeviceModelPercent>();
 

@@ -52,7 +52,7 @@ public class StatisticController {
     @ApiOperation("设备型号统计")
     @GetMapping(value = "/modelPercent")
     public ApiResponse<List<DeviceModelVo.DeviceModelPercent>> modelPercent() {
-        List<DeviceModelVo.DeviceModelPercent> deviceTypePercentList = statisticService.selectModelPercentPerMonth();
+        List<DeviceModelVo.DeviceModelPercent> deviceTypePercentList = statisticService.selectModelPercent();
 
         return new ApiResponse<>(deviceTypePercentList);
     }
