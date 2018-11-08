@@ -260,6 +260,8 @@ public class DeviceOperateService {
             deviceQueryVo.setSLD(deviceCustomerRelationPo.getSLD());
         }
 
+        deviceQueryVo.setIp(devicePo.getIp());
+        deviceQueryVo.setMapGps(devicePo.getMapGps());
         deviceQueryVo.setLocation(devicePo.getLocation());
         deviceQueryVo.setAssignStatus(devicePo.getAssignStatus());
         deviceQueryVo.setBindStatus(devicePo.getBindStatus());

@@ -31,6 +31,7 @@
         enableStatus,
         workStatus,
         ip,
+        mapGps,
         speedConfig,
         version,
         location,
@@ -69,6 +70,7 @@
         #{enableStatus},
         #{workStatus},
         #{ip},
+        #{mapGps},
         #{speedConfig},
         #{version},
         #{location},
@@ -112,6 +114,7 @@
         enableStatus,
         workStatus,
         ip,
+        mapGps,
         speedConfig,
         version,
         location,
@@ -151,6 +154,7 @@
             #{device.enableStatus},
             #{device.workStatus},
             #{device.ip},
+            #{device.mapGps},
             #{device.speedConfig},
             #{device.version},
             #{device.location},
@@ -249,7 +253,7 @@
         d.`imei`,d.`imsi`,d.`saNo`,d.`typeId`,d.`modelId`,
         d.`productId`,c.`id` customerId ,
         d.`onlineStatus`,d.`bindStatus`,d.`bindTime`,d.`assignStatus`,
-        d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,
+        d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,d.`mapGps`,
         d.`speedConfig`,d.`version`,d.`location`,d.`status`,
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
@@ -426,6 +430,9 @@
             <if test="ip != null and ip != '' ">
                 ip = #{ip},
             </if>
+            <if test="mapGps != null and mapGps != '' ">
+                mapGps = #{mapGps},
+            </if>
             <if test="speedConfig != null">
                 speedConfig = #{speedConfig},
             </if>
@@ -509,6 +516,9 @@
             </if>
             <if test="ip != null and ip != '' ">
                 ip = #{ip},
+            </if>
+            <if test="mapGps != null and mapGps != '' ">
+                mapGps = #{mapGps},
             </if>
             <if test="speedConfig != null">
                 speedConfig = #{speedConfig},
