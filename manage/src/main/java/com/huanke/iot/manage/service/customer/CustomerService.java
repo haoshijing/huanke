@@ -4,11 +4,15 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.*;
+import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.po.customer.*;
+import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.request.customer.CustomerDetailVo;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerListVo;
@@ -23,9 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -72,6 +75,12 @@ public class CustomerService {
 
     @Autowired
     private UserManagerMapper userManagerMapper;
+
+    @Autowired
+    private DeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
 
     @Autowired
     private CommonUtil commonUtil;
@@ -838,4 +847,17 @@ public class CustomerService {
         return null;
     }
 
+    public CustomerDetailVo selectCustomerDetailById(Integer id) {
+        CustomerDetailVo customerDetailVo = new CustomerDetailVo();
+        CustomerPo customerPo = customerMapper.selectById(id);
+        List<String> typeIdStrs = Arrays.asList(customerPo.getTypeIds().split(","));
+        List<Integer> typeIds = typeIdStrs.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList());
+        List<DeviceTypePo> deviceTypePos = deviceTypeMapper.selectListByTypeIds(typeIds);
+        List<String> typeNameList = deviceTypePos.stream().map(e -> e.getName()).collect(Collectors.toList());
+        customerDetailVo.setTypeNameList(typeNameList);
+        //查设备总数量
+        Integer deviceCount = deviceMapper.queryCustomerCount(id);
+        customerDetailVo.setDeviceCount(deviceCount);
+        return customerDetailVo;
+    }
 }

@@ -280,11 +280,12 @@ public class DeviceTypeService {
                 deviceTypeVo.setSource(deviceTypePo.getSource());
                 deviceTypeVo.setRemark(deviceTypePo.getRemark());
                 deviceTypeVo.setId(deviceTypePo.getId());
-
                 deviceTypeVo.setCreateTime(deviceTypePo.getCreateTime());
                 deviceTypeVo.setCreateUser(deviceTypePo.getCreateUser());
+                deviceTypeVo.setCreateUserName(this.userService.getUserName(deviceTypePo.getCreateUser()));
                 deviceTypeVo.setLastUpdateTime(deviceTypePo.getLastUpdateTime());
                 deviceTypeVo.setLastUpdateUser(deviceTypePo.getLastUpdateUser());
+                deviceTypeVo.setLastUpdateUserName(this.userService.getUserName(deviceTypePo.getLastUpdateUser()));
             }
 
             //查询该 类型的 功能集合
