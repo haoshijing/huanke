@@ -81,6 +81,10 @@ public class DeviceParamsService {
             String[] split = deviceAbilityPo.getDirValue().split("\\.");
             Integer abilityId = deviceAbilityPo.getId();
             List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoList = deviceModelAbilityOptionMapper.queryByModelIdAbilityId(modelId, abilityId);
+            //型号配置项为禁用，则size是0
+            if(deviceModelAbilityOptionPoList == null || deviceModelAbilityOptionPoList.size() == 0){
+                continue;
+            }
             DeviceParamsVo deviceParamsVo = new DeviceParamsVo();
             deviceParamsVo.setSort(Integer.valueOf(split[1]));
             deviceParamsVo.setAbilityTypeName(split[0]);
