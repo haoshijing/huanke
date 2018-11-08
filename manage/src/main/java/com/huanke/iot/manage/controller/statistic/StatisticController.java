@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author caikun
@@ -72,7 +73,11 @@ public class StatisticController {
     public ApiResponse<Integer> newDeviceCountOfToday(){
         return this.statisticService.selectDeviceByDay();
     }
-
+    @ApiOperation("设备区域统计")
+    @GetMapping(value = "/deviceLocationCount")
+    public ApiResponse<Map<String ,Map<String, Map<String,Integer>>>> deviceLocationCount(){
+        return this.statisticService.queryLocationCount();
+    }
     @ApiOperation("首页统计")
     @GetMapping(value = "/queryHomePageStatistic")
     public ApiResponse<DeviceHomePageStatisticVo> queryHomePageStatistic(){

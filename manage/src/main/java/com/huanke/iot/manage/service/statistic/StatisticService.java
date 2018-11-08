@@ -18,6 +18,7 @@ import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -482,5 +483,36 @@ public class StatisticService {
         deviceOnlineStatVo.setOnlinePercent(onLinePercent);
         return deviceOnlineStatVo;
     }
-
+    public ApiResponse<Map<String ,Map<String,Map<String,Integer>>>> queryLocationCount(){
+        Integer customerId = customerService.obtainCustomerId(false);
+        DevicePo queryDevicePo = new DevicePo();
+        queryDevicePo.setCustomerId(customerId);
+        int totalDeviceCount = deviceMapper.selectCount(queryDevicePo);
+        List<DevicePo> lists = deviceMapper.selectList(queryDevicePo,totalDeviceCount,0);
+        Map<String ,Map<String,Map<String,Integer>>> locationCountMap = new HashMap<>();
+        lists.stream().forEach(temp->{
+            String[] locations;
+            if(temp.getLocation()!=null){
+                locations = temp.getLocation().split(",");
+            }else {
+                locations =new String[0];
+            }
+            if(locations.length>=2&& StringUtils.isNotEmpty(locations[0])&&StringUtils.isNotEmpty(locations[1])&&StringUtils.isNotEmpty(locations[2])){
+                if(locationCountMap.get(locations[0])==null)locationCountMap.put(locations[0],new HashMap<>());
+                if(locationCountMap.get(locations[0]).get(locations[1])==null)locationCountMap.get(locations[0]).put(locations[1],new HashMap<>());
+                if(locationCountMap.get(locations[0]).get(locations[1]).get(locations[2])==null)locationCountMap.get(locations[0]).get(locations[1]).put(locations[2],0);
+                locationCountMap.get(locations[0]).get(locations[1]).put(locations[2],locationCountMap.get(locations[0]).get(locations[1]).get(locations[2])+1);
+            }else{
+                if(locationCountMap.get("其他")==null){
+                    Map<String,Map<String,Integer>> city = new HashMap<String,Map<String,Integer>>();
+                    Map<String,Integer> distanct = new HashMap<String,Integer>();
+                    distanct.put("其他",0);
+                    city.put("其他",distanct);
+                    locationCountMap.put("其他",city);
+                }
+                locationCountMap.get("其他").get("其他").put("其他",locationCountMap.get("其他").get("其他").get("其他")+1);
+            }
+        });
+        return new ApiResponse<>(locationCountMap);
+    }
 }
