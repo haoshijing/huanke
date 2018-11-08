@@ -44,5 +44,12 @@ public class DeviceModelVo {
     private ModelFormatVo deviceModelFormat;
 
     private Integer devicePoolCount;
+    @Data
+    public static class DeviceModelPercent{
+        private Integer modelId;
+        private String modelName;
+        private Long deviceCount;
+        private String modelPercent;
+    }
 
 }
