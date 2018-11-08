@@ -13,11 +13,13 @@ import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationCountVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -482,5 +484,63 @@ public class StatisticService {
         deviceOnlineStatVo.setOnlinePercent(onLinePercent);
         return deviceOnlineStatVo;
     }
-
+    public ApiResponse<DeviceLocationCountVo> queryLocationCount(){
+        Integer customerId = customerService.obtainCustomerId(false);
+        DevicePo queryDevicePo = new DevicePo();
+        queryDevicePo.setCustomerId(customerId);
+        int totalDeviceCount = deviceMapper.selectCount(queryDevicePo);
+        List<DevicePo> lists = deviceMapper.selectList(queryDevicePo,totalDeviceCount,0);
+        Map<String ,Map<String,Map<String,Integer>>> locationCountMap = new HashMap<>();
+        lists.stream().forEach(temp->{
+            String[] temps = new String[3];
+            if(temp.getLocation()!=null){
+                temps = temp.getLocation().split(",");
+            }
+            List<String> locations = new ArrayList<>();
+            for(int i =0 ;i< 3;i++){
+                if(i>=temps.length||StringUtils.isEmpty(temps[i])){
+                    locations.add("其他");
+                    locations.add("其他");
+                    locations.add("其他");
+                    break;
+                }else{
+                    locations.add(temps[i]);
+                }
+            }
+            if(locationCountMap.get(locations.get(0))==null)locationCountMap.put(locations.get(0),new HashMap<>());
+            if(locationCountMap.get(locations.get(0)).get(locations.get(1))==null)locationCountMap.get(locations.get(0)).put(locations.get(1),new HashMap<>());
+            if(locationCountMap.get(locations.get(0)).get(locations.get(1)).get(locations.get(2))==null)locationCountMap.get(locations.get(0)).get(locations.get(1)).put(locations.get(2),0);
+            locationCountMap.get(locations.get(0)).get(locations.get(1)).put(locations.get(2),locationCountMap.get(locations.get(0)).get(locations.get(1)).get(locations.get(2))+1);
+        });
+        DeviceLocationCountVo deviceLocationCountVo = new DeviceLocationCountVo();
+        deviceLocationCountVo.setTotal(0);
+        List<DeviceLocationCountVo.Province> provinces = new ArrayList<>();
+        for(String provinceTemp : locationCountMap.keySet()){
+            DeviceLocationCountVo.Province province = new DeviceLocationCountVo.Province();
+            province.setProvince(provinceTemp);
+            province.setCount(0);
+            List<DeviceLocationCountVo.City> citys = new ArrayList<>();
+            for(String cityTemp : locationCountMap.get(provinceTemp).keySet()){
+                DeviceLocationCountVo.City city = new DeviceLocationCountVo.City();
+                city.setCity(cityTemp);
+                city.setCount(0);
+                List<DeviceLocationCountVo.District> districts = new ArrayList<>();
+                for (String districtTemp : locationCountMap.get(provinceTemp).get(cityTemp).keySet()){
+                    DeviceLocationCountVo.District district = new DeviceLocationCountVo.District();
+                    district.setDistrict(districtTemp);
+                    district.setCount(locationCountMap.get(provinceTemp).get(cityTemp).get(districtTemp));
+                    city.setCount(city.getCount()+district.getCount());
+                    districts.add(district);
+                }
+                city.setDistancts(districts);
+                province.setCount(province.getCount()+city.getCount());
+                citys.add(city);
+            }
+            province.setCitys(citys);
+            deviceLocationCountVo.setTotal(deviceLocationCountVo.getTotal()+province.getCount());
+            provinces.add(province);
+        }
+        deviceLocationCountVo.setProvinces(provinces);
+        return new ApiResponse<>(deviceLocationCountVo);
+    }
 }

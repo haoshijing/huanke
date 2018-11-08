@@ -7,6 +7,7 @@ import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationCountVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceStatisticsVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author caikun
@@ -53,9 +55,9 @@ public class StatisticController {
     @ApiOperation("设备型号统计")
     @GetMapping(value = "/modelPercent")
     public ApiResponse<List<DeviceModelVo.DeviceModelPercent>> modelPercent() {
-        List<DeviceModelVo.DeviceModelPercent> deviceTypePercentList = statisticService.selectModelPercent();
+        List<DeviceModelVo.DeviceModelPercent> deviceModelPercentList = statisticService.selectModelPercent();
 
-        return new ApiResponse<>(deviceTypePercentList);
+        return new ApiResponse<>(deviceModelPercentList);
     }
 
 
@@ -72,7 +74,11 @@ public class StatisticController {
     public ApiResponse<Integer> newDeviceCountOfToday(){
         return this.statisticService.selectDeviceByDay();
     }
-
+    @ApiOperation("设备区域统计")
+    @GetMapping(value = "/deviceLocationCount")
+    public ApiResponse<DeviceLocationCountVo> deviceLocationCount(){
+        return this.statisticService.queryLocationCount();
+    }
     @ApiOperation("首页统计")
     @GetMapping(value = "/queryHomePageStatistic")
     public ApiResponse<DeviceHomePageStatisticVo> queryHomePageStatistic(){
