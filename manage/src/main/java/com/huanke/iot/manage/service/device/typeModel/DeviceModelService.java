@@ -812,11 +812,14 @@ public class DeviceModelService {
 
                             DeviceModelFormatItemPo deviceModelFormatItemPo = new DeviceModelFormatItemPo();
 
-                            deviceModelFormatItemPo.setAbilityId(modelFormatItemCreateRequest.getAbilityId());
+
+
                             deviceModelFormatItemPo.setItemId(modelFormatItemCreateRequest.getItemId());
                             deviceModelFormatItemPo.setModelFormatId(deviceModelFormatPo.getId());
                             deviceModelFormatItemPo.setShowName(modelFormatItemCreateRequest.getShowName());
                             deviceModelFormatItemPo.setShowStatus(modelFormatItemCreateRequest.getShowStatus());
+
+                            deviceModelFormatItemPo.setAbilityIds(modelFormatItemCreateRequest.getAbilityIds());
 
                             //更新操作
                             if (modelFormatItemCreateRequest.getId() != null && modelFormatItemCreateRequest.getId() > 0) {
@@ -899,7 +902,7 @@ public class DeviceModelService {
                                 if (deviceModelFormatItemPo.getItemId().equals(wxFormatItemPo.getId())) {
 
                                     deviceModelFormatItemVo.setId(deviceModelFormatItemPo.getId());
-                                    deviceModelFormatItemVo.setAbilityId(deviceModelFormatItemPo.getAbilityId());
+                                    deviceModelFormatItemVo.setAbilityIds(deviceModelFormatItemPo.getAbilityIds());
                                     deviceModelFormatItemVo.setShowName(deviceModelFormatItemPo.getShowName());
                                     deviceModelFormatItemVo.setShowStatus(deviceModelFormatItemPo.getShowStatus());
                                     deviceModelFormatItemVo.setStatus(deviceModelFormatItemPo.getStatus());
