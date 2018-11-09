@@ -41,6 +41,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -273,7 +274,15 @@ public class AppBasicService {
                 } else {
                     continue;
                 }
-                map.put(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:00:00"),value);
+                String key = new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:00:00");
+                if(map.get(key)==null){
+                    map.put(key,value);
+                }else{
+                    Float ave = Float.valueOf(map.get(key))/2+Float.valueOf(value)/2;
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    map.put(key,df.format(ave));
+                }
+
             }
             for(String key : map.keySet()){
                 xdata.add(key);

@@ -50,9 +50,10 @@
             <if test="itemId != null">
                 itemId = #{itemId},
             </if>
-            <if test="abilityIds != null and abilityIds != ''">
-                abilityIds = #{abilityIds},
-            </if>
+            abilityIds = #{abilityIds},
+        <!--    <if test="abilityIds != null and abilityIds != ''">
+
+            </if>-->
             <if test="showStatus != null">
                 showStatus = #{showStatus},
             </if>

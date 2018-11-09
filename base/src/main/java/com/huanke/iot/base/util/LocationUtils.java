@@ -44,8 +44,8 @@ public class LocationUtils {
                 if (jsonObject != null) {
                     stringRedisTemplate.opsForValue().set(ip+".location",jsonObject.toJSONString());
                 }
+                return jsonObject;
             }
-            return null;
         }
         return JSON.parseObject(deviceIpStr);
     }
@@ -61,6 +61,13 @@ public class LocationUtils {
                 JSONObject jsonObject = doGetWeather(ip);
                 log.info("jsonObject = {}",jsonObject);
                 if (jsonObject != null && jsonObject.containsKey("result") && jsonObject.getJSONObject("result").containsKey("weather") ) {
+                    stringRedisTemplate.opsForValue().set(key, jsonObject.toJSONString());
+                    stringRedisTemplate.expire(key,2,TimeUnit.HOURS);
+                    return jsonObject;
+                }else{
+                    JSONObject location = getLocation(ip, true);
+                    String loc = location.getJSONArray("HeWeather6").getJSONObject(0).getJSONArray("basic").getJSONObject(0).getString("location");
+                    jsonObject = doGetWeather(loc);
                     stringRedisTemplate.opsForValue().set(key, jsonObject.toJSONString());
                     stringRedisTemplate.expire(key,2,TimeUnit.HOURS);
                     return jsonObject;
@@ -110,7 +117,7 @@ public class LocationUtils {
     }
 
     public JSONObject doGetLocation(String ip) {
-        String url = String.format("http://api.map.baidu.com/location/ip?ak=omi69HPHpl5luMtrjFzXn9df&ip=%s&coor=bd09ll", ip);
+        String url = String.format("https://search.heweather.com/find?key=3d44a396adcd4ea8a304403b3838508b&location="+ip);
         try {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
