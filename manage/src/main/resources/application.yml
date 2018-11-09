@@ -22,3 +22,4 @@ bucketName: idcfota
 skipRemoteHost: pro,dev
 defaultPassWord: 123456
 
+env: idc

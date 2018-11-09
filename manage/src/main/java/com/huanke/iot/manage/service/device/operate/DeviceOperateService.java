@@ -297,6 +297,14 @@ public class DeviceOperateService {
             deviceQueryVo.setUserOpenId(deviceCustomerUserRelationPo.getOpenId());
             deviceQueryVo.setUserName(deviceCustomerUserRelationPo.getNickname());
         }
+        String funcValue = deviceOperLogMapper.queryPowerByDeviceId(deviceId);
+
+        if (null != funcValue && StringUtils.isNotEmpty(funcValue)) {
+            //0-关机 1-开机
+            deviceQueryVo.setPowerStatus(funcValue.equals("0") ? 0 : 1);
+        } else {
+            deviceQueryVo.setPowerStatus(0);
+        }
         deviceQueryVo.setLocation(devicePo.getLocation());
 
         return deviceQueryVo;
