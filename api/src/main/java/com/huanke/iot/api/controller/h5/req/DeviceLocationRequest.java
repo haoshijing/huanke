@@ -12,5 +12,5 @@ import lombok.Data;
 public class DeviceLocationRequest {
     private Integer deviceId;
     private String location;
-    private String[] mapGps;
+    private String mapGps;
 }

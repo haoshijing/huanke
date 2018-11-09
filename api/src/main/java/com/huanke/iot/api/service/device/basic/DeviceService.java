@@ -377,11 +377,11 @@ public class DeviceService {
         return deviceSpeedConfigVo;
     }
 
-    public Boolean editDeviceLoc(Integer userId, Integer deviceId, String location, String[] mapGps) {
+    public Boolean editDeviceLoc(Integer userId, Integer deviceId, String location, String mapGps) {
         DevicePo devicePo = new DevicePo();
         devicePo.setId(deviceId);
         devicePo.setLocation(location);
-        devicePo.setMapGps(mapGps[0] + "," + mapGps[1]);
+        devicePo.setMapGps(mapGps);
         return deviceMapper.updateById(devicePo) > 0;
     }
 
@@ -416,6 +416,10 @@ public class DeviceService {
             String[] locationArray = devicePo.getLocation().split(",");
             locationVo.setArea(Joiner.on(" ").join(locationArray));
             locationVo.setLocation(devicePo.getLocation());
+        }
+
+        if (devicePo.getMapGps() != null){
+            locationVo.setMapGps(devicePo.getMapGps());
         }
         return locationVo;
     }
