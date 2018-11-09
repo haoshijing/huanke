@@ -81,6 +81,10 @@ public class DeviceParamsService {
             String[] split = deviceAbilityPo.getDirValue().split("\\.");
             Integer abilityId = deviceAbilityPo.getId();
             List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoList = deviceModelAbilityOptionMapper.queryByModelIdAbilityId(modelId, abilityId);
+            //型号配置项为禁用，则size是0
+            if(deviceModelAbilityOptionPoList == null || deviceModelAbilityOptionPoList.size() == 0){
+                continue;
+            }
             DeviceParamsVo deviceParamsVo = new DeviceParamsVo();
             deviceParamsVo.setSort(Integer.valueOf(split[1]));
             deviceParamsVo.setAbilityTypeName(split[0]);
@@ -153,7 +157,7 @@ public class DeviceParamsService {
 
     private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, Map<Integer, List<String>> configMap, int operType) {
         List<ConfigFuncMessage> configFuncMessages = new ArrayList<>();
-        String topic = "/down2/cfg/" + deviceId;
+        String topic = "/down2/cfgC/" + deviceId;
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId(abilityTypeName);

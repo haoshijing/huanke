@@ -55,8 +55,10 @@ public class DeviceController extends BaseController {
     @RequestMapping("/obtainMyDevice")
     public ApiResponse<DeviceListVo> obtainMyDevice() {
         Integer userId = getCurrentUserId();
-        log.info("查询我的设备列表，userId={}", userId);
-        DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId);
+        String openId = getCurrentUserOpenId();
+        Integer customerId = getCurrentCustomerId();
+        log.info("查询我的设备列表，userId={},customerId={}", userId, customerId);
+        DeviceListVo deviceListVo = deviceService.obtainMyDevice(userId, openId, customerId);
         return new ApiResponse<>(deviceListVo);
     }
 
@@ -141,11 +143,12 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/deleteDevice")
-    public ApiResponse<Boolean> deleteDevice(@RequestBody BaseRequest<Integer> request){
+    public ApiResponse<Boolean> deleteDevice(@RequestBody BaseRequest<Integer> request) throws Exception {
         Integer deviceId = request.getValue();
         Integer userId = getCurrentUserId();
+        String openId = getCurrentUserOpenId();
         log.info("删除设备，deviceId={}，userId={}", deviceId, userId);
-        Boolean ret = deviceDataService.deleteDeviceItem(userId,deviceId);
+        Boolean ret = deviceDataService.deleteDeviceItem(userId, openId, deviceId);
         return new ApiResponse<>(ret);
     }
 

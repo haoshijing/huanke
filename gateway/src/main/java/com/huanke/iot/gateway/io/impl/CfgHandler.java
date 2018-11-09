@@ -36,7 +36,7 @@ public class CfgHandler extends AbstractHandler {
 
     @Override
     protected String getTopicType() {
-        return "cfg";
+        return "cfgC";
     }
 
     @Override

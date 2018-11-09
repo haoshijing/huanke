@@ -2,10 +2,10 @@ package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
+import com.huanke.iot.api.controller.h5.req.DeviceRequest;
 import com.huanke.iot.api.controller.h5.req.HighTokenRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
 import com.huanke.iot.api.controller.h5.response.DeviceModelTypeVo;
-import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.api.service.device.basic.DeviceHighService;
 import com.huanke.iot.api.service.device.basic.DeviceModelService;
 import com.huanke.iot.api.service.device.basic.DeviceService;
@@ -40,8 +40,7 @@ public class DeviceHighController extends BaseController{
     private DeviceService deviceService;
     @Autowired
     private DeviceModelService deviceModelService;
-    @Autowired
-    private DeviceDataService deviceDataService;
+
 
     /**
      * 获取高级设置token
@@ -72,6 +71,19 @@ public class DeviceHighController extends BaseController{
     public Object delToken(@PathVariable("token") String token){
         stringRedisTemplate.delete(token);
         return new ApiResponse<>();
+    }
+
+    /**
+     * 编辑管理名称
+     * @return
+     */
+    @RequestMapping("editManageName")
+    public ApiResponse<Boolean> editManageName(@RequestBody DeviceRequest request){
+        Integer deviceId = request.getDeviceId();
+        String manageName = request.getDeviceName();
+        log.info("修改设备管理名称：deviceId={}, manageName ={}", deviceId, manageName);
+        Boolean result = deviceHighService.editManageName(deviceId, manageName);
+        return new ApiResponse<>(result);
     }
 
     /**

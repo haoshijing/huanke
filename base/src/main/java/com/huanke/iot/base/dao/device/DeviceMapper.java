@@ -1,6 +1,7 @@
 package com.huanke.iot.base.dao.device;
 
 import com.huanke.iot.base.dao.BaseMapper;
+import com.huanke.iot.base.dto.DeviceListDto;
 import com.huanke.iot.base.po.device.DevicePo;
 import org.apache.ibatis.annotations.Param;
 
@@ -64,4 +65,9 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DevicePo> selectByModelId(Integer modelId);
     List<DevicePo> selectByTypeId(Integer typeId);
 
+    List<DevicePo> queryDeviceIdsByWxDeviceIdList(List<String> wxDeviceIdList);
+
+    DeviceListDto queryDeviceList(@Param("deviceId")Integer deviceId);
+
+    Integer queryCustomerCount(@Param("customerId")Integer id);
 }

@@ -4,6 +4,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.vo.request.customer.CustomerDetailVo;
 import com.huanke.iot.manage.vo.request.customer.CustomerQueryRequest;
 import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerListVo;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 客户
@@ -97,6 +97,14 @@ public class CustomerController {
     public ApiResponse<List<CustomerVo>> selectAllCustomers() throws Exception {
         List<CustomerVo> customerVos = customerService.selectAllCustomers();
         return new ApiResponse<>(customerVos);
+    }
+
+
+    @ApiOperation("根据客户主键查询客户类型，设备总数")
+    @GetMapping(value = "/selectDetailById/{id}")
+    public ApiResponse<CustomerDetailVo> selectDetailById(@PathVariable("id") Integer id) {
+        CustomerDetailVo customerDetailVo = customerService.selectCustomerDetailById(id);
+        return new ApiResponse<>(customerDetailVo);
     }
 
     /**

@@ -74,6 +74,7 @@ public class DeviceFormatService {
         Integer formatId = deviceModelMapper.getFormatIdById(modelId);
         deviceModelVo.setFormatId(formatId);
         deviceModelVo.setModelId(modelId);
+        deviceModelVo.setManageName(devicePo.getManageName());
         WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectByJoinId(formatId, pageNo);
         DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, wxFormatPagePo.getId());
         Integer modelFormatId = deviceModelFormatPo.getId();
