@@ -492,7 +492,7 @@ public class StatisticService {
         List<DevicePo> lists = deviceMapper.selectList(queryDevicePo,totalDeviceCount,0);
         Map<String ,Map<String,Map<String,Integer>>> locationCountMap = new HashMap<>();
         lists.stream().forEach(temp->{
-            String[] temps = new String[3];
+            String[] temps = new String[4];
             if(temp.getLocation()!=null){
                 temps = temp.getLocation().split(",");
             }
@@ -503,6 +503,9 @@ public class StatisticService {
                     locations.add("其他");
                     locations.add("其他");
                     break;
+                }else if("上海市".equals(temps[i])||"北京市".equals(temps[i])||"重庆市".equals(temps[i])||"天津市".equals(temps[i])) {
+                    locations.add(temps[i]);
+                    locations.add("市辖区");
                 }else{
                     locations.add(temps[i]);
                 }

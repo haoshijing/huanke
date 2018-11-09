@@ -177,13 +177,13 @@ public class DeviceController extends BaseController {
     public ApiResponse<Boolean> updateDeviceLocation(@RequestBody DeviceLocationRequest request){
         Integer deviceId = request.getDeviceId();
         String location = request.getLocation();
-        String[] gps = request.getGps();
-        if(StringUtils.isEmpty(location) || deviceId == null || gps == null || gps.length == 0){
+        String mapGps = request.getMapGps();
+        if(StringUtils.isEmpty(location) || deviceId == null || mapGps == null){
             return new ApiResponse(RetCode.PARAM_ERROR, "参数错误");
         }
         Integer userId = getCurrentUserId();
         log.info("更新设备地址，userId={}, 设备Id={}, location={}", userId, deviceId, location);
-        Boolean updateOk = deviceService.editDeviceLoc(userId, deviceId,location, gps);
+        Boolean updateOk = deviceService.editDeviceLoc(userId, deviceId,location, mapGps);
         return new ApiResponse<>(updateOk);
     }
 

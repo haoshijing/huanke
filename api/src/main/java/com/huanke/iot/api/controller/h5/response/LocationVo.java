@@ -15,4 +15,5 @@ public class LocationVo {
     private String city;
     private String area;
     private String location;
+    private String mapGps;
 }

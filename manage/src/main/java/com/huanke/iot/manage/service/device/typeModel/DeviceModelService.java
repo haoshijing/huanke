@@ -902,7 +902,7 @@ public class DeviceModelService {
                                 if (deviceModelFormatItemPo.getItemId().equals(wxFormatItemPo.getId())) {
 
                                     deviceModelFormatItemVo.setId(deviceModelFormatItemPo.getId());
-                                    deviceModelFormatItemVo.setAbilityIds(deviceModelFormatItemPo.getAbilityIds());
+                                    deviceModelFormatItemVo.setAbilityId(deviceModelFormatItemPo.getAbilityIds());
                                     deviceModelFormatItemVo.setShowName(deviceModelFormatItemPo.getShowName());
                                     deviceModelFormatItemVo.setShowStatus(deviceModelFormatItemPo.getShowStatus());
                                     deviceModelFormatItemVo.setStatus(deviceModelFormatItemPo.getStatus());
