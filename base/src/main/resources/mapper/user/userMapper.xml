@@ -27,7 +27,9 @@
         status,
         templateId,
         createTime,
-        lastUpdateTime
+        lastUpdateTime,
+        createUser,
+        lastUpdateUser
         )
         VALUE (
         #{userName},
@@ -43,7 +45,9 @@
         #{status},
         #{templateId},
         now(),
-        now()
+        now(),
+        #{createUser},
+        #{lastUpdateUser}
         )
     </insert>
     <update id="updateById" parameterType="com.huanke.iot.base.po.user.User">
@@ -89,7 +93,8 @@
             <if test="templateId != null">
                 templateId = #{templateId},
             </if>
-            lastUpdateTime = now()
+            lastUpdateTime = now(),
+            lastUpdateUser = #{lastUpdateUser}
         </set>
         where id = #{id}
     </update>

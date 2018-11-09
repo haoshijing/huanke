@@ -88,6 +88,8 @@ public class DeviceListVo {
 
     private Integer status;
 
+    private String ip;
+    private String mapGps;
 
     private Integer createUser;
     private String createUserName;

@@ -98,4 +98,13 @@ public class UserController {
     }
 
 
+    @RequiresAuthentication
+    @ApiOperation("根据id获取用户详情")
+    @GetMapping("/getUserById/{id}")
+    public ApiResponse<User> getUserById(@PathVariable("id") Integer userId) {
+
+        return new ApiResponse<>(userService.getUserById(userId));
+    }
+
+
 }

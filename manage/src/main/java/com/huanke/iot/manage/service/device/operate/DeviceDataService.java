@@ -135,7 +135,7 @@ public class DeviceDataService {
         Integer offset = (deviceDataQueryRequest.getPage() - 1)*deviceDataQueryRequest.getLimit();
         Integer limit = deviceDataQueryRequest.getLimit();
         //根据deviceId查询设备的具备的功能项，并将其与设备数据表的中功能项对比，只显示设备具有的功能项
-        List<DeviceModelAbilityPo> deviceModelAbilityPoList = this.deviceModelAbilityMapper.selectByDeviceId(deviceDataQueryRequest.getDeviceId());
+        //List<DeviceModelAbilityPo> deviceModelAbilityPoList = this.deviceModelAbilityMapper.selectByDeviceId(deviceDataQueryRequest.getDeviceId());
         //进行匹配
 //        deviceModelAbilityPoList.stream().forEach(eachPo ->{
 //            switch (eachPo.getDefinedName()){

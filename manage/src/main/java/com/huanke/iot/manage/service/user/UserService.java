@@ -46,12 +46,12 @@ public class UserService {
     }
 
     public Integer createUser(User user) {
-
+        User curUser = getCurrentUser();
         if (null != userManagerMapper.selectByUserName(user.getUserName())) {
             throw new BusinessException("用户名已存在");
         }
-
         user.setPassword(MD5Util.md5(MD5Util.md5(user.getPassword()) + saltEncrypt));
+        user.setCreateUser(curUser.getId());
         userManagerMapper.insert(user);
         return user.getId();
     }

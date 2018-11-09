@@ -74,6 +74,7 @@ public class DevicePo {
      * 机器所在ip
      */
     private String ip;
+    private String mapGps;
     private String speedConfig;
     private String version;
     private Integer status;

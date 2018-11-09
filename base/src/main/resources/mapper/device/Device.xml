@@ -31,10 +31,10 @@
         enableStatus,
         workStatus,
         ip,
+        mapGps,
         speedConfig,
         version,
         location,
-        gps,
         status,
         hardVersion,
         communicationVersion,
@@ -70,10 +70,10 @@
         #{enableStatus},
         #{workStatus},
         #{ip},
+        #{mapGps},
         #{speedConfig},
         #{version},
         #{location},
-        #{gps},
         #{status},
         #{hardVersion},
         #{communicationVersion},
@@ -114,10 +114,10 @@
         enableStatus,
         workStatus,
         ip,
+        mapGps,
         speedConfig,
         version,
         location,
-        gps,
         status,
         hardVersion,
         communicationVersion,
@@ -154,10 +154,10 @@
             #{device.enableStatus},
             #{device.workStatus},
             #{device.ip},
+            #{device.mapGps},
             #{device.speedConfig},
             #{device.version},
             #{device.location},
-            #{device.gps},
             #{device.status},
             #{device.hardVersion},
             #{device.communicationVersion},
@@ -253,8 +253,8 @@
         d.`imei`,d.`imsi`,d.`saNo`,d.`typeId`,d.`modelId`,
         d.`productId`,c.`id` customerId ,
         d.`onlineStatus`,d.`bindStatus`,d.`bindTime`,d.`assignStatus`,
-        d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,
-        d.`speedConfig`,d.`version`,d.`location`,d.`gps`,d.`status`,
+        d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,d.`mapGps`,
+        d.`speedConfig`,d.`version`,d.`location`,d.`status`,
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
         d.`createTime`,d.`lastUpdateTime`,d.`createUser`,d.`lastUpdateUser`
@@ -430,6 +430,9 @@
             <if test="ip != null and ip != '' ">
                 ip = #{ip},
             </if>
+            <if test="mapGps != null and mapGps != '' ">
+                mapGps = #{mapGps},
+            </if>
             <if test="speedConfig != null">
                 speedConfig = #{speedConfig},
             </if>
@@ -438,9 +441,6 @@
             </if>
             <if test="location != null and location != '' ">
                 location = #{location},
-            </if>
-            <if test="gps != null and gps != '' ">
-                gps = #{gps},
             </if>
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
@@ -517,6 +517,9 @@
             <if test="ip != null and ip != '' ">
                 ip = #{ip},
             </if>
+            <if test="mapGps != null and mapGps != '' ">
+                mapGps = #{mapGps},
+            </if>
             <if test="speedConfig != null">
                 speedConfig = #{speedConfig},
             </if>
@@ -525,9 +528,6 @@
             </if>
             <if test="location != null and location != '' ">
                 location = #{location},
-            </if>
-            <if test="gps != null and gps != '' ">
-                gps = #{gps},
             </if>
             <if test="bindTime != null">
                 bindTime = #{bindTime},
@@ -838,6 +838,34 @@
             ]]>
         and status = 1
         and assignStatus = 1
+    </select>
+    <select id="queryDeviceIdsByWxDeviceIdList" parameterType="java.util.List" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * FROM <include refid="tableName"/>
+        WHERE wxDeviceId IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND status = 1;
+    </select>
+
+    <select id="queryDeviceList" resultType="com.huanke.iot.base.dto.DeviceListDto">
+        select d.id deviceId,d.mac,d.wxDeviceId,d.onlineStatus,d.name deviceName,d.location,d.ip,dm.name modelName,dt.id typeId,dt.name typeName,dt.typeNo, dt.icon typeIcon, wf.name formatName
+        FROM t_device d,t_device_model dm,t_device_type dt,wx_format wf
+        WHERE d.id = #{deviceId}
+        and d.status = 1
+        and d.modelId = dm.id
+        and dm.status = 1
+        and dt.id = dm.typeId
+        and dt.status = 1
+        and wf.id = dm.formatId
+        and wf.status =1;
+    </select>
+
+    <select id="queryCustomerCount" resultType="java.lang.Integer">
+        select count(1)
+        FROM t_device
+        WHERE modelId in (SELECT id FROM t_device_model where customerId = #{customerId} and status = 1)
+        and status = 1
     </select>
 
     <select id="queryDeviceIdsByWxDeviceIdList" parameterType="java.util.List" resultType="com.huanke.iot.base.po.device.DevicePo">

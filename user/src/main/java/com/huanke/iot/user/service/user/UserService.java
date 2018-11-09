@@ -87,12 +87,16 @@ public class UserService {
     public User getCurrentUser() {
 
         User user = (User) SecurityUtils.getSubject().getSession().getAttribute("user");
+
+        user.setCreateUserName(getUserName(user.getCreateUser()));
+        user.setLastUpdateUserName(getUserName(user.getLastUpdateUser()));
         user.setPassword(null);
         return user;
     }
 
     public Integer createUser(User user) {
 
+        User curUser = getCurrentUser();
         UserValidator.getInstance().validateCreateUser(user);
         if (null != userManagerMapper.selectByUserName(user.getUserName())) {
             throw new BusinessException("用户名已存在");
@@ -101,14 +105,16 @@ public class UserService {
         String userHost = commonUtil.obtainSecondHost();
         user.setSecondDomain(userHost);
         user.setPassword(MD5Util.md5(MD5Util.md5(user.getPassword()) + saltEncrypt));
+        user.setCreateUser(curUser.getId());
         userManagerMapper.insert(user);
         return user.getId();
     }
 
     public Boolean updateUser(User user) {
-
+        User curUser = getCurrentUser();
         UserValidator.getInstance().validateUpdateUser(user);
         user.setPassword(MD5Util.md5(MD5Util.md5(user.getPassword()) + saltEncrypt));
+        user.setLastUpdateUser(curUser.getId());
         return 1 == userManagerMapper.updateById(user);
     }
 
@@ -116,6 +122,19 @@ public class UserService {
 
         UserValidator.getInstance().validateDelUser(userId);
         return 1 == userManagerMapper.deleteById(userId);
+    }
+
+    public User getUserById(Integer userId) {
+
+        User user = userManagerMapper.selectById(userId);
+
+        if(user!=null){
+            user.setCreateUserName(getUserName(user.getCreateUser()));
+            user.setLastUpdateUserName(getUserName(user.getLastUpdateUser()));
+            user.setPassword(null);
+        }
+
+        return user;
     }
 
     public List<User> getUserList() {
@@ -126,10 +145,8 @@ public class UserService {
         /*过滤特殊域名 pro*/
         List<User> users = new ArrayList<>();
         if (StringUtils.contains(skipRemoteHost, userHost)) {
-            log.info("查询全部用户:{}");
             users = userManagerMapper.selectAll();
         } else {
-            log.info("查询域名：" + userHost + "的用户");
             users = userManagerMapper.selectAllBySLD(userHost);
         }
         users.forEach(
@@ -150,5 +167,21 @@ public class UserService {
             hasUser = true;
         }
         return hasUser;
+    }
+
+    public String getUserName(Integer userId){
+        if(userId!=null){
+            User user = userManagerMapper.selectById(userId);
+            if(user!=null){
+                return user.getUserName();
+
+            }else{
+                return null;
+            }
+
+        }else{
+            return null;
+        }
+
     }
 }
