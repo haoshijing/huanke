@@ -177,8 +177,8 @@ public class DeviceController extends BaseController {
     public ApiResponse<Boolean> updateDeviceLocation(@RequestBody DeviceLocationRequest request){
         Integer deviceId = request.getDeviceId();
         String location = request.getLocation();
-        String[] mapGps = request.getMapGps();
-        if(StringUtils.isEmpty(location) || deviceId == null || mapGps == null || mapGps.length == 0){
+        String mapGps = request.getMapGps();
+        if(StringUtils.isEmpty(location) || deviceId == null || mapGps == null){
             return new ApiResponse(RetCode.PARAM_ERROR, "参数错误");
         }
         Integer userId = getCurrentUserId();
