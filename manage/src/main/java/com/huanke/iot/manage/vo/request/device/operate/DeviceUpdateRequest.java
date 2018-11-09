@@ -25,6 +25,7 @@ public class DeviceUpdateRequest {
 
     //设备位置
     private String location;
+    private String mapGps;
 
     /**
      * 机器所在ip
