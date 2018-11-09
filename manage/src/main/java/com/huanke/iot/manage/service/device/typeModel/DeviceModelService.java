@@ -819,7 +819,7 @@ public class DeviceModelService {
                             deviceModelFormatItemPo.setShowName(modelFormatItemCreateRequest.getShowName());
                             deviceModelFormatItemPo.setShowStatus(modelFormatItemCreateRequest.getShowStatus());
 
-                            deviceModelFormatItemPo.setAbilityIds(modelFormatItemCreateRequest.getAbilityIds());
+                            deviceModelFormatItemPo.setAbilityIds(modelFormatItemCreateRequest.getAbilityId());
 
                             //更新操作
                             if (modelFormatItemCreateRequest.getId() != null && modelFormatItemCreateRequest.getId() > 0) {
