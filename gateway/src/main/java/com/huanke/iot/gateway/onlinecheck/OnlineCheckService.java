@@ -55,7 +55,7 @@ public class OnlineCheckService {
         Iterator<Map.Entry<Integer, OnlineCheckData>> it = idMap.entrySet().iterator();
         while (it.hasNext()){
             OnlineCheckData data = it.next().getValue();
-            if (data.getLastUpdateTime() < (System.currentTimeMillis() - 1000)) {
+            if (data.getLastUpdateTime() < (System.currentTimeMillis() - 15000)) {
                 data.setFailCount(data.getFailCount() + 1);
                 if (data.getFailCount() > 3) {
                     data.setOnline(false);
