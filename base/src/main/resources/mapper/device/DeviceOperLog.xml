@@ -103,6 +103,17 @@
         group by deviceId;
     </select>
 
+    <select id="queryPowerByDeviceId" resultType="java.lang.String">
+        select right( max(concat(createTime,funcValue)),1) funcValue
+        from <include refid="tableName"/>
+        WHERE
+        funcId = '210'
+        AND
+        deviceId = #{deviceId}
+        AND
+        funcValue is not null;
+    </select>
+
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1) from
         <include refid="tableName"/>
