@@ -34,6 +34,7 @@
         speedConfig,
         version,
         location,
+        gps,
         status,
         hardVersion,
         communicationVersion,
@@ -72,6 +73,7 @@
         #{speedConfig},
         #{version},
         #{location},
+        #{gps},
         #{status},
         #{hardVersion},
         #{communicationVersion},
@@ -115,6 +117,7 @@
         speedConfig,
         version,
         location,
+        gps,
         status,
         hardVersion,
         communicationVersion,
@@ -154,6 +157,7 @@
             #{device.speedConfig},
             #{device.version},
             #{device.location},
+            #{device.gps},
             #{device.status},
             #{device.hardVersion},
             #{device.communicationVersion},
@@ -250,7 +254,7 @@
         d.`productId`,c.`id` customerId ,
         d.`onlineStatus`,d.`bindStatus`,d.`bindTime`,d.`assignStatus`,
         d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,
-        d.`speedConfig`,d.`version`,d.`location`,d.`status`,
+        d.`speedConfig`,d.`version`,d.`location`,d.`gps`,d.`status`,
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
         d.`createTime`,d.`lastUpdateTime`,d.`createUser`,d.`lastUpdateUser`
@@ -435,6 +439,9 @@
             <if test="location != null and location != '' ">
                 location = #{location},
             </if>
+            <if test="gps != null and gps != '' ">
+                gps = #{gps},
+            </if>
             <if test="lastUpdateTime != null">
                 lastUpdateTime = #{lastUpdateTime},
             </if>
@@ -518,6 +525,9 @@
             </if>
             <if test="location != null and location != '' ">
                 location = #{location},
+            </if>
+            <if test="gps != null and gps != '' ">
+                gps = #{gps},
             </if>
             <if test="bindTime != null">
                 bindTime = #{bindTime},
