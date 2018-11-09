@@ -60,8 +60,6 @@ public class DevicePo {
     private Integer workStatus;
     //设备位置
     private String location;
-    //经纬度
-    private String gps;
 
     //设备 主从状态 1-主设备 ；2-从设备
     private Integer hostStatus;

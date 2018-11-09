@@ -377,11 +377,11 @@ public class DeviceService {
         return deviceSpeedConfigVo;
     }
 
-    public Boolean editDeviceLoc(Integer userId, Integer deviceId, String location, String[] gps) {
+    public Boolean editDeviceLoc(Integer userId, Integer deviceId, String location, String[] mapGps) {
         DevicePo devicePo = new DevicePo();
         devicePo.setId(deviceId);
         devicePo.setLocation(location);
-        devicePo.setGps(gps[0] + "," + gps[1]);
+        devicePo.setMapGps(mapGps[0] + "," + mapGps[1]);
         return deviceMapper.updateById(devicePo) > 0;
     }
 
