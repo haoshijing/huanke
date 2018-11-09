@@ -47,6 +47,6 @@ public class DeviceModelVo {
         private Integer itemId;
         private String showName;
         private Integer showStatus;
-        private Integer abilityId;
+        private String abilityIds;
     }
 }

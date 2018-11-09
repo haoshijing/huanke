@@ -91,7 +91,7 @@ public class DeviceFormatService {
             formatItems.setItemId(wxFormatItemPo.getId());
             formatItems.setShowName(deviceModelFormatItemPo.getShowName());
             formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
-            formatItems.setAbilityId(deviceModelFormatItemPo.getAbilityId());
+            formatItems.setAbilityIds(deviceModelFormatItemPo.getAbilityIds());
             formatItemsList.add(formatItems);
         }
         deviceModelVo.setFormatItemsList(formatItemsList);
