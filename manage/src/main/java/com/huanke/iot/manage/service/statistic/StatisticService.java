@@ -503,9 +503,11 @@ public class StatisticService {
                     locations.add("其他");
                     locations.add("其他");
                     break;
-                }else if("上海市".equals(temps[i])||"北京市".equals(temps[i])||"重庆市".equals(temps[i])||"天津市".equals(temps[i])) {
-                    locations.add(temps[i]);
+                }else if("上海市".equals(temps[0])||"北京市".equals(temps[0])||"重庆市".equals(temps[0])||"天津市".equals(temps[0])) {
+                    locations.add(temps[0]);
                     locations.add("市辖区");
+                    locations.add(temps[2]);
+                    break;
                 }else{
                     locations.add(temps[i]);
                 }
