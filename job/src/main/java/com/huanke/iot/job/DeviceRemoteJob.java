@@ -39,7 +39,6 @@ public class DeviceRemoteJob {
     private MqttSendService mqttSendService;
     @PostConstruct
     public void init(){
-        doWork();
     }
 
 
