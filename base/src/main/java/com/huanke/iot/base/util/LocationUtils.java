@@ -66,7 +66,12 @@ public class LocationUtils {
                     return jsonObject;
                 }else{
                     JSONObject location = getLocation(ip, true);
-                    String loc = location.getJSONArray("HeWeather6").getJSONObject(0).getJSONArray("basic").getJSONObject(0).getString("location");
+                    String loc = "";
+                    try {
+                        loc = location.getJSONArray("HeWeather6").getJSONObject(0).getJSONArray("basic").getJSONObject(0).getString("location");
+                    }catch (Exception e){
+                        return null;
+                    }
                     jsonObject = doGetWeather(loc);
                     stringRedisTemplate.opsForValue().set(key, jsonObject.toJSONString());
                     stringRedisTemplate.expire(key,2,TimeUnit.HOURS);
