@@ -113,7 +113,7 @@ public class OnlineCheckService {
     private void loadOnlineFromDb(){
         DevicePo queryPo = new DevicePo();
         queryPo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES);
-        List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,0,100000);
+        List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,100000,0);
         devicePoList.forEach(devicePo -> {
             resetOnline(devicePo.getId());
         });
