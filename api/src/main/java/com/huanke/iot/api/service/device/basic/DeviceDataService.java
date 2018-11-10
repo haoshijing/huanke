@@ -16,6 +16,7 @@ import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
@@ -194,7 +195,7 @@ public class DeviceDataService {
         } else {
             deviceTeamPo.setCreateTime(System.currentTimeMillis());
             deviceTeamPo.setTeamStatus(1);
-            deviceTeamPo.setTeamType(3);
+            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
             deviceTeamPo.setCreateUserId(toId);
             deviceTeamPo.setCustomerId(customerId);
             deviceTeamMapper.insert(deviceTeamPo);

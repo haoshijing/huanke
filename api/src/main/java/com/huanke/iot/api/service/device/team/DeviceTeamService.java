@@ -4,6 +4,7 @@ import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
@@ -62,7 +63,7 @@ public class DeviceTeamService {
             deviceTeamPo.setCreateUserId(userId);
             deviceTeamPo.setCustomerId(customerId);
             deviceTeamPo.setName(teamName);
-            deviceTeamPo.setTeamType(3);
+            deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
             deviceTeamPo.setTeamStatus(0);
             deviceTeamPo.setStatus(CommonConstant.STATUS_YES);
             deviceTeamMapper.insert(deviceTeamPo);
@@ -72,7 +73,7 @@ public class DeviceTeamService {
             DeviceTeamPo updatePo = new DeviceTeamPo();
             updatePo.setName(newRequest.getTeamName());
             updatePo.setStatus(CommonConstant.STATUS_YES);
-            updatePo.setTeamType(3);
+            updatePo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
             updatePo.setCreateUserId(userId);
             updatePo.setCustomerId(customerId);
             updatePo.setTeamStatus(0);
