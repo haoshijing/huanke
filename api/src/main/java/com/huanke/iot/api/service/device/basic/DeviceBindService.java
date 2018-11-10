@@ -2,6 +2,7 @@ package com.huanke.iot.api.service.device.basic;
 
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
+import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
@@ -118,7 +119,7 @@ public class DeviceBindService {
                 deviceTeamPo.setStatus(1);
                 deviceTeamPo.setCreateTime(System.currentTimeMillis());
                 deviceTeamPo.setTeamStatus(1);
-                deviceTeamPo.setTeamType(3);
+                deviceTeamPo.setTeamType(DeviceTeamConstants.DEVICE_TEAM_TYPE_USER);
                 deviceTeamPo.setCreateUserId(userId);
                 deviceTeamPo.setCustomerId(customerId);
                 deviceTeamMapper.insert(deviceTeamPo);
