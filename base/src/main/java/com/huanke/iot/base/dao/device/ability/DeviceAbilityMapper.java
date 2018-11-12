@@ -31,4 +31,6 @@ public interface DeviceAbilityMapper extends BaseMapper<DeviceAbilityPo> {
     List<DeviceAbilityPo> queryLikeByTypeName(@Param("typeName")String typeName);
 
     DeviceAbilityPo selectByDirValue(@Param("dirValue")String dirValue);
+
+    void flushCache();
 }

@@ -30,6 +30,7 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.enums.SensorTypeEnums;
@@ -76,6 +77,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
 
     @Autowired
     private DeviceAbilityMapper deviceAbilityMapper;
@@ -763,7 +767,13 @@ public class DeviceDataService {
         return "";
     }
 
-
+    public void flushCache() {
+        deviceAbilityMapper.flushCache();
+        deviceAbilityOptionMapper.flushCache();
+        deviceModelMapper.flushCache();
+        deviceModelAbilityMapper.flushCache();
+        deviceModelAbilityOptionMapper.flushCache();
+    }
     private void getIndexData(DeviceDetailVo deviceDetailVo, Integer deviceId, Integer deviceTypeId) {
 
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
