@@ -251,6 +251,8 @@ public class DeviceOperateService {
         deviceQueryVo.setDeviceType(devicePo.getTypeName());
         deviceQueryVo.setModelId(devicePo.getModelId());
         deviceQueryVo.setModelName(devicePo.getModelName());
+        deviceQueryVo.setModelCode(devicePo.getModelCode());
+        deviceQueryVo.setModelNo(devicePo.getModelNo());
 
         /*设置设备客户从属关系*/
         deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());

@@ -65,6 +65,8 @@ public class DeviceListVo {
 
     private Integer modelId;
     private String modelName;
+    private String modelNo;
+    private String modelCode;
 
     private Integer hostStatus;
 
