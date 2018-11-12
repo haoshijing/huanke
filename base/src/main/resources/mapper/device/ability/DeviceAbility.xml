@@ -224,4 +224,10 @@
         where dirValue = #{dirValue}
         AND status = 1
     </select>
+    <select id="flushCache" parameterType="java.lang.Integer" resultType="java.lang.Integer" flushCache="true">
+        select count(1) from
+        <include refid="tableName"/>
+        WHERE 1=1
+        limit 1
+    </select>
 </mapper>

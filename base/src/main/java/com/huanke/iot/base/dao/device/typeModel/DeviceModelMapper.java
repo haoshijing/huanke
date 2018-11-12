@@ -25,4 +25,6 @@ public interface DeviceModelMapper extends BaseMapper<DeviceModelPo> {
     List<DeviceModelPo> selectModelsByCustomerId(Integer customerId);
 
     List selectModelPercent(@Param("customerId")Integer customerId);
+
+    void flushCache();
 }

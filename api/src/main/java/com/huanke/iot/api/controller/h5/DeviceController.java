@@ -263,5 +263,10 @@ public class DeviceController extends BaseController {
         String serverUser = deviceDataService.queryServerUser(userId);
         return new ApiResponse<>(serverUser);
     }
-
+    @RequestMapping("/flushCache")
+    public ApiResponse<Boolean> flushCache() {
+        log.info("刷新缓存");
+        deviceDataService.flushCache();
+        return new ApiResponse<>(true);
+    }
 }

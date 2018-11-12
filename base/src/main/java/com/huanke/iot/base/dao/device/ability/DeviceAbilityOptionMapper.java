@@ -13,4 +13,6 @@ public interface DeviceAbilityOptionMapper extends BaseMapper<DeviceAbilityOptio
 
     List<DeviceAbilityOptionPo> selectOptionsByAbilityId(Integer abilityId);
     List<DeviceAbilityOptionPo> selectActiveOptionsByAbilityId(Integer abilityId);
+
+    void flushCache();
 }

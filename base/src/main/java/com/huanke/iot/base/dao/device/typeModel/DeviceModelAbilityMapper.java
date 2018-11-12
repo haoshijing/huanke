@@ -26,4 +26,6 @@ public interface DeviceModelAbilityMapper extends BaseMapper<DeviceModelAbilityP
     List<DeviceAbilityPo> selectActiveByModelId(@Param("modelId") Integer modelId);
 
     List<DeviceParamsDto> queryParamsAbility(@Param("modelId")Integer modelId);
+
+    void flushCache();
 }
