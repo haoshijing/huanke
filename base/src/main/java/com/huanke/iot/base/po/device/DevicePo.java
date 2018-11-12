@@ -14,6 +14,8 @@ public class DevicePo {
     private String customerName;
     private String typeName;
     private String modelName;
+    private String modelNo;
+    private String modelCode;
     /**
      * 设备id
      */

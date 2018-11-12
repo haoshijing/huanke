@@ -176,7 +176,7 @@
 
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
         SELECT
-        d.*,t.`name` typeName ,m.`name` modelName
+        d.*,t.`name` typeName ,m.`name` modelName,m.modelNo,m.modelCode
         FROM
         <include refid="tableName"/>
         d
