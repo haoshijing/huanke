@@ -12,6 +12,7 @@ import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
@@ -28,6 +29,7 @@ import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.LocationUtils;
@@ -109,6 +111,9 @@ public class DeviceOperateService {
 
     @Autowired
     private DeviceAbilityOptionMapper deviceAbilityOptionMapper;
+
+    @Autowired
+    private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
 
     @Autowired
     private DeviceTeamItemMapper deviceTeamItemMapper;
@@ -1733,10 +1738,16 @@ public class DeviceOperateService {
      * @return
      */
     public List<DeviceAbilityVo.DeviceAbilitysVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds) {
+        Integer modelId = deviceMapper.selectById(deviceId).getModelId();
         List<DeviceAbilityVo.DeviceAbilitysVo> deviceAbilitysVoList = new ArrayList<>();
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
+        //缓存功能项集
+//        List<DeviceAbilityPo> deviceAbilityPoCaches = deviceAbilityMapper.selectList(new DeviceAbilityPo(), 10000, 0);
+//        Map<Integer,DeviceAbilityPo> deviceAbilityPoMap = deviceAbilityPoCaches.stream().collect(Collectors.toMap(DeviceAbilityPo::getId, a -> a,(k1, k2)->k1));
         for (Integer abilityId : abilityIds) {
+            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoCaches = new ArrayList<>();
+            Map<Integer, DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoMap = new HashMap<>();
             DeviceAbilityPo deviceabilityPo = deviceAbilityMapper.selectById(abilityId);
             String dirValue = deviceabilityPo.getDirValue();
             Integer abilityType = deviceabilityPo.getAbilityType();
@@ -1753,12 +1764,21 @@ public class DeviceOperateService {
                     break;
                 case DeviceAbilityTypeContants.ability_type_single:
                     List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(abilityId);
+
+                    //缓存
+                    deviceModelAbilityOptionPoCaches = deviceModelAbilityOptionMapper.queryByModelIdAbilityId(modelId ,abilityId );
+                    deviceModelAbilityOptionPoMap = deviceModelAbilityOptionPoCaches.stream().collect(Collectors.toMap(DeviceModelAbilityOptionPo::getAbilityOptionId, a -> a, (k1, k2) -> k1));
                     String optionValue = getData(controlDatas, dirValue);
                     List<DeviceAbilityVo.abilityOption> abilityOptionList = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
+                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPoMap.get(deviceabilityOptionPo.getId());
+                        if(deviceModelAbilityOptionPo == null){
+                            continue;
+                        }
                         DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                         if (optionValue.equals(deviceabilityOptionPo.getOptionValue())) {
+                            deviceAbilitysVo.setCurrValue(deviceabilityOptionPo.getOptionValue());
                             abilityOption.setIsSelect(CommonConstant.STATUS_IS_YES);
                         } else {
                             abilityOption.setIsSelect(CommonConstant.STATUS_IS_NO);
@@ -1768,9 +1788,16 @@ public class DeviceOperateService {
                     deviceAbilitysVo.setAbilityOptionList(abilityOptionList);
                     break;
                 case DeviceAbilityTypeContants.ability_type_checkbox:
-                    List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(abilityId);
+                    List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                    //缓存
+                    deviceModelAbilityOptionPoCaches = deviceModelAbilityOptionMapper.queryByModelIdAbilityId(modelId ,abilityId );
+                    deviceModelAbilityOptionPoMap = deviceModelAbilityOptionPoCaches.stream().collect(Collectors.toMap(DeviceModelAbilityOptionPo::getAbilityOptionId, a -> a, (k1, k2) -> k1));
                     List<DeviceAbilityVo.abilityOption> abilityOptionList1 = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos1) {
+                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPoMap.get(deviceabilityOptionPo.getId());
+                        if(deviceModelAbilityOptionPo == null){
+                            continue;
+                        }
                         String targetOptionValue = deviceabilityOptionPo.getOptionValue();
                         String finalOptionValue = getData(controlDatas, targetOptionValue);
                         DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
@@ -1789,7 +1816,41 @@ public class DeviceOperateService {
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_threshholdselect:
-
+                    DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(abilityId);
+                    if (deviceAbilityPo.getDirValue().equals("-1")) {//滤网临时妥协办法，后期再想更优方式
+                        List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                        List<DeviceAbilityVo.abilityOption> abilityOptionList5 = new ArrayList<>();
+                        for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
+                            String optionValue5 = getData(controlDatas, deviceabilityOptionPo.getOptionValue());
+                            DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
+                            abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                            abilityOption.setCurrValue(optionValue5);
+                            abilityOptionList5.add(abilityOption);
+                        }
+                        deviceAbilitysVo.setAbilityOptionList(abilityOptionList5);
+                    } else {
+                        List<DeviceAbilityOptionPo> deviceabilityOptionPos5 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
+                        //缓存
+                        deviceModelAbilityOptionPoCaches = deviceModelAbilityOptionMapper.queryByModelIdAbilityId(modelId ,abilityId );
+                        deviceModelAbilityOptionPoMap = deviceModelAbilityOptionPoCaches.stream().collect(Collectors.toMap(DeviceModelAbilityOptionPo::getAbilityOptionId, a -> a, (k1, k2) -> k1));
+                        String optionValue5 = getData(controlDatas, dirValue);
+                        List<DeviceAbilityVo.abilityOption> abilityOptionList5 = new ArrayList<>();
+                        for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
+                            DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPoMap.get(deviceabilityOptionPo.getId());
+                            if(deviceModelAbilityOptionPo == null){
+                                continue;
+                            }
+                            DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
+                            abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
+                            if (optionValue5.equals(deviceabilityOptionPo.getOptionValue())) {
+                                abilityOption.setIsSelect(CommonConstant.STATUS_IS_YES);
+                            } else {
+                                abilityOption.setIsSelect(CommonConstant.STATUS_IS_NO);
+                            }
+                            abilityOptionList5.add(abilityOption);
+                        }
+                        deviceAbilitysVo.setAbilityOptionList(abilityOptionList5);
+                    }
                     break;
                 default:
                     break;

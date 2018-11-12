@@ -42,6 +42,7 @@ public class DeviceAbilityVo {
     public static class abilityOption{
         private String dirValue;
         private Integer isSelect;
+        private String currValue;
     }
 
 }
