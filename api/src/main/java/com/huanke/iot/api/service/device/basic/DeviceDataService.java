@@ -19,6 +19,7 @@ import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.customer.WxBgImgMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
@@ -116,6 +117,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceModelAbilityMapper deviceModelAbilityMapper;
+
+    @Autowired
+    private WxBgImgMapper wxBgImgMapper;
 
     @Autowired
     private WechartUtil wechartUtil;
@@ -629,6 +633,11 @@ public class DeviceDataService {
             //从用户只需要删除环可绑定关系
             return deviceTeamItemMapper.deleteByJoinId(deviceId, userId) > 0;
         }
+    }
+
+    public List<String> queryBgImgs(Integer customerId) {
+        List<String> bgImgs = wxBgImgMapper.queryBgImgs(customerId);
+        return bgImgs;
     }
 
 
