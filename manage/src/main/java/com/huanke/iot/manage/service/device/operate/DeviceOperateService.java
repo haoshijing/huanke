@@ -326,6 +326,7 @@ public class DeviceOperateService {
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         Integer customerId = customerService.obtainCustomerId(false);
+        log.info("当前的用户id: =",customerId);
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
