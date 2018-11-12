@@ -94,6 +94,7 @@
         FROM t_device_model_ability ma,t_device_ability a
         WHERE ma.modelId = #{modelId}
         and ma.abilityId = a.id
+        and ma.status = 1
     </select>
 
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo">
