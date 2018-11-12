@@ -11,8 +11,7 @@ import java.io.Serializable;
  **/
 
 @Data
-public class DeviceModelAbilityPo implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class DeviceModelAbilityPo {
 
     private Integer id;
     private Integer modelId;
