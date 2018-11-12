@@ -10,8 +10,7 @@ import java.io.Serializable;
  * @date 2018/8/16 15:19
  */
 @Data
-public class DeviceModelPo implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class DeviceModelPo {
 
     private Integer id;
     private String name;

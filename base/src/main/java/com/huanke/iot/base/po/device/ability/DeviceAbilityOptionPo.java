@@ -10,8 +10,7 @@ import java.io.Serializable;
  * @date 2018/8/14 19:19
  */
 @Data
-public class DeviceAbilityOptionPo implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class DeviceAbilityOptionPo {
 
     private Integer id;
     private String optionName;
