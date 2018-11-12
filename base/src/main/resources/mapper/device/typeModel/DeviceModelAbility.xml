@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper">
-    <cache eviction="LRU" flushInterval="3600000" readOnly="true" size="512"/>
+    <cache eviction="LRU" flushInterval="3600000" readOnly="ture" size="512"/>
     <sql id="tableName">
         t_device_model_ability
     </sql>
@@ -94,6 +94,7 @@
         FROM t_device_model_ability ma,t_device_ability a
         WHERE ma.modelId = #{modelId}
         and ma.abilityId = a.id
+        and ma.status = 1
     </select>
 
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo">
