@@ -264,4 +264,12 @@ public class DeviceController extends BaseController {
         return new ApiResponse<>(serverUser);
     }
 
+    @RequestMapping("/getBgImgs")
+    public ApiResponse<List<String>> getBgImgs() {
+        Integer customerId = getCurrentCustomerId();
+        log.info("查询背景图片信息：customerId={}", customerId);
+        List<String> bgImgs = deviceDataService.queryBgImgs(customerId);
+        return new ApiResponse<>(bgImgs);
+    }
+
 }
