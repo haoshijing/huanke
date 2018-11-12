@@ -506,6 +506,8 @@ public class DeviceOperateService {
         ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListExportRequest.getDeviceListQueryRequest());
         if (RetCode.OK == result.getCode()) {
             List<DeviceListVo> deviceListVoList = result.getData();
+            log.info("当时设备列表的长度：=",deviceListVoList.size());
+            log.info("当前列表中的第一条数据的设备名称：=",deviceListVoList.get(0).getName());
             if(null == deviceListVoList || 0 == deviceListVoList.size()){
                 return new ApiResponse<>(RetCode.PARAM_ERROR,"当期条件下设备列表中无设备");
             }
