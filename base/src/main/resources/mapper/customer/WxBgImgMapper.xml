@@ -88,4 +88,12 @@
         </if>
     </select>
 
+    <select id="queryBgImgs" resultType="java.lang.String">
+        select
+        bgImg
+        FROM <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+        AND status = 1
+    </select>
+
 </mapper>
