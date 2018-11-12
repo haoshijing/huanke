@@ -3,12 +3,14 @@ package com.huanke.iot.base.po.device.ability;
 import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author Caik
  * @date 2018/8/14 19:19
  */
 @Data
-public class DeviceAbilityPo {
+public class DeviceAbilityPo implements Serializable {
 
     private Integer id;
     private String abilityName;

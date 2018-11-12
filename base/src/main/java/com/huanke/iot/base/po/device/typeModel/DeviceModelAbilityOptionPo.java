@@ -3,13 +3,15 @@ package com.huanke.iot.base.po.device.typeModel;
 import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author caikun
  * @date 2018/8/19 上午9:38
  **/
 
 @Data
-public class DeviceModelAbilityOptionPo {
+public class DeviceModelAbilityOptionPo implements Serializable {
     private Integer id;
     private Integer modelAbilityId;
     private Integer abilityOptionId;
