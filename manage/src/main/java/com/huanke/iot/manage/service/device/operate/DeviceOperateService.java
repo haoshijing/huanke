@@ -251,6 +251,8 @@ public class DeviceOperateService {
         deviceQueryVo.setDeviceType(devicePo.getTypeName());
         deviceQueryVo.setModelId(devicePo.getModelId());
         deviceQueryVo.setModelName(devicePo.getModelName());
+        deviceQueryVo.setModelCode(devicePo.getModelCode());
+        deviceQueryVo.setModelNo(devicePo.getModelNo());
 
         /*设置设备客户从属关系*/
         deviceCustomerRelationPo = deviceCustomerRelationMapper.selectByDeviceId(devicePo.getId());
@@ -326,6 +328,7 @@ public class DeviceOperateService {
         Integer offset = (deviceListQueryRequest.getPage() - 1) * deviceListQueryRequest.getLimit();
         Integer limit = deviceListQueryRequest.getLimit();
         Integer customerId = customerService.obtainCustomerId(false);
+        log.info("当前的用户id: =",customerId);
         //查询所有数据相关数据，要求DevicePo所有值为null，所以新建一个空的DevicePo
         //此处仅仅查询主设备
         DevicePo queryPo = new DevicePo();
@@ -501,16 +504,16 @@ public class DeviceOperateService {
         }
         //生成列后按列条件筛选device数据
         ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListExportRequest.getDeviceListQueryRequest());
-        if (RetCode.OK == result.getCode()) {
-            List<DeviceListVo> deviceListVoList = result.getData();
-            if(null == deviceListVoList || 0 == deviceListVoList.size()){
-                return new ApiResponse<>(RetCode.PARAM_ERROR,"当期条件下设备列表中无设备");
-            }
-            String[] titles = new String[titleNames.size()];
-            titleNames.toArray(titles);
-            ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();
-            deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(), response, deviceListExportRequest.getSheetTitle(), titles, deviceListVoList, filterMap, deviceListVoExcelUtil.EXCEl_FILE_2007);
+        log.info("当时设备列表的查询代码：= {}",result.getCode());
+        log.info("当时设备列表的查询数据：= {}",result.getData());
+        if(null == result.getData() || RetCode.OK != result.getCode()){
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"当期条件下设备列表中无设备");
         }
+        List<DeviceListVo> deviceListVoList = result.getData();
+        String[] titles = new String[titleNames.size()];
+        titleNames.toArray(titles);
+        ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();
+        deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(), response, deviceListExportRequest.getSheetTitle(), titles, deviceListVoList, filterMap, deviceListVoExcelUtil.EXCEl_FILE_2007);
         return new ApiResponse<>(RetCode.OK, "ss");
     }
 

@@ -451,13 +451,15 @@ public class DeviceOperateController {
     @ApiOperation("导出设备列表")
     @RequestMapping(value = "/exportDeviceData", method = RequestMethod.GET)
     public ApiResponse<String> exportDeviceData(DeviceListExportRequest deviceListExportRequest, HttpServletResponse response) {
+        log.info("当前导出的请求页数：={}",deviceListExportRequest.getDeviceListQueryRequest().getPage());
+        log.info("当前导出的请求限制：={}",deviceListExportRequest.getDeviceListQueryRequest().getLimit());
+        log.info("当前导出的请求文件名：={}",deviceListExportRequest.getFileName());
         try {
             this.deviceService.exportDeviceList(response, deviceListExportRequest);
         } catch (Exception e) {
             log.error("设备列表导出错误 = {}", e);
             return new ApiResponse<>(RetCode.ERROR, "设备列表导出异常");
         }
-
         return new ApiResponse<>(RetCode.OK, "导出excel成功");
     }
 
