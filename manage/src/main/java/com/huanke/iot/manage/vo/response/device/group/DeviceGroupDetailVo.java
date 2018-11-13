@@ -13,7 +13,7 @@ public class DeviceGroupDetailVo {
     private String customerName;
     private String introduction;
     private Integer deviceCount;
-    private String createLocation;
+    private String location;
     private Long createTime;
     private String createUser;
     private String lastUpdateUser;

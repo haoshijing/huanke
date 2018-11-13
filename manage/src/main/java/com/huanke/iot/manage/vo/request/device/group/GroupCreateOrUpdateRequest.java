@@ -23,7 +23,7 @@ public class GroupCreateOrUpdateRequest {
 
     private String remark;
 
-    private String createLocation;
+    private String location;
 
     private List<Images> imagesList;
 

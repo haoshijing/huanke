@@ -79,9 +79,10 @@ public class ExcelUtil<T>{
      */
     public void exportExcel(String fileName,HttpServletResponse response ,String title, String[] headers, Collection<T> dataSet, Map<String,String> filterMap,String version) throws Exception{
         response.reset();
-        response.setContentType("application/msexcel;charset=utf-8");
-        response.setHeader("Content-disposition","attachment;filename="+new String(fileName.getBytes("gb2312"),
-                "iso8859-1"));
+        response.setContentType("application/msexcel");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=" + new String(fileName.getBytes("utf-8"), "ISO8859-1"));
         exportExcel2007(title, headers, dataSet, filterMap, response.getOutputStream(), "yyyy-MM-dd hh:mm:ss");
     }
 
