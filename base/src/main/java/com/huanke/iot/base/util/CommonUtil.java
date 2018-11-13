@@ -38,13 +38,8 @@ public final class CommonUtil {
         String userHost = "";
         if(!StringUtils.isEmpty(requestHost)){
             int userHostIdx =   requestHost.indexOf("."+serverConfigHost);
-            int userHost1x =   requestHost.indexOf("://");
             if(userHostIdx > -1){
-                if(userHost1x > -1){
-                    userHost = requestHost.substring(userHost1x+3, userHostIdx);
-                }else {
-                    userHost = requestHost.substring(0, userHostIdx);
-                }
+                userHost = requestHost.substring(0, userHostIdx);
             }
         }
 
