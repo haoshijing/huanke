@@ -25,6 +25,8 @@ public class GroupCreateOrUpdateRequest {
 
     private String location;
 
+    private String mapGps;
+
     private List<Images> imagesList;
 
     private List<Videos> videosList;

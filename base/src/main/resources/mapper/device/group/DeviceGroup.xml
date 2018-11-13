@@ -20,6 +20,7 @@
         introduction,
         remark,
         location,
+        mapGps,
         createTime,
         lastUpdateTime,
         createUser,
@@ -34,6 +35,7 @@
         #{introduction},
         #{remark},
         #{location},
+        #{mapGps},
         #{createTime},
         #{lastUpdateTime},
         #{createUser},
@@ -54,6 +56,7 @@
         introduction,
         remark,
         location,
+        mapGps,
         createTime,
         lastUpdateTime,
         createUser,
@@ -70,6 +73,7 @@
             #{group.introduction},
             #{group.remark},
             #{group.location},
+            #{group.mapGps},
             #{group.createTime},
             #{group.lastUpdateTime},
             #{group.createUser},
@@ -171,23 +175,24 @@
             <if test="name != null">
                 name = #{name},
             </if>
-            <if test="createUser != null">
-                createUser = #{createUser},
-            </if>
-            <if test="lastUpdateUser != null">
-                lastUpdateUser = #{lastUpdateUser},
-            </if>
+
             <if test="introduction != null">
                 introduction = #{introduction},
             </if>
-            <if test="location != null">
+            <if test="location != null and location !='' ">
                 location = #{location},
             </if>
-            <if test="remark != null">
+            <if test="mapGps != null and mapGps !='' ">
+                mapGps = #{mapGps},
+            </if>
+            <if test="remark != null and remark !='' ">
                 remark = #{remark},
             </if>
             <if test="status != null">
                 status = #{status},
+            </if>
+            <if test="lastUpdateUser != null">
+                lastUpdateUser = #{lastUpdateUser},
             </if>
             lastUpdateTime = #{lastUpdateTime}
             where id = #{id}

@@ -44,6 +44,8 @@ public class DeviceGroupPo {
 
     private String location;
 
+    private String mapGps;
+
     /**
      * 创建时间
      */
