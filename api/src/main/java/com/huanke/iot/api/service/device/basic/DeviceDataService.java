@@ -620,7 +620,7 @@ public class DeviceDataService {
         deviceCustomerUserRelationPo.setDeviceId(deviceId);
         deviceCustomerUserRelationPo.setOpenId(openId);
         DeviceCustomerUserRelationPo byDeviceCustomerUserRelationPo = deviceCustomerUserRelationMapper.findAllByDeviceCustomerUserRelationPo(deviceCustomerUserRelationPo);
-        if(deviceCustomerUserRelationPo != null){
+        if(byDeviceCustomerUserRelationPo != null){
             //主用户删除微信绑定关系
             Boolean aBoolean = deleteDevice(userId, deviceId);
             Map<String, String> requestMap = new HashMap<>();
