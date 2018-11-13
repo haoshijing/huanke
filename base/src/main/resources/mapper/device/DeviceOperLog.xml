@@ -103,6 +103,16 @@
         group by deviceId;
     </select>
 
+    <select id="queryAllOnlineByCreateTime"  parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" >
+        select deviceId,MAX(createTime) createTime
+        from <include refid="tableName"/>
+        WHERE
+        funcId = '410'
+        AND
+        funcValue = 1
+        group by deviceId;
+    </select>
+
     <select id="queryPowerByDeviceId" resultType="java.lang.String">
         select right( max(concat(createTime,funcValue)),1) funcValue
         from <include refid="tableName"/>
@@ -112,6 +122,19 @@
         deviceId = #{deviceId}
         AND
         funcValue is not null;
+    </select>
+
+    <select id="queryOnlineByCreateTime"  parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.data.DeviceOperLogPo" >
+        select *
+        from <include refid="tableName"/>
+        WHERE
+        deviceId = #{deviceId}
+        AND
+        funcId = '410'
+        AND
+        funcValue is not null
+        ORDER BY createTime DESC
+        limit 1
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer">

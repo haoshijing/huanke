@@ -1,10 +1,9 @@
 package com.huanke.iot.manage.vo.response.device.operate;
 
-import io.swagger.models.auth.In;
 import lombok.Data;
 
 @Data
-public class DeviceListVo {
+public class DeviceExportVo {
 
     /* 归属 */
     private Integer customerId;
@@ -30,16 +29,18 @@ public class DeviceListVo {
     /**
      * 分配状态
      */
-    private Integer assignStatus;
+    private String assignStatus;
 
     /**
      * 绑定状态
      */
-    private Integer bindStatus;
+    private String bindStatus;
     /**
      * 启用状态
      */
-    private Integer enableStatus;
+    private String enableStatus;
+
+    private String lastOnlineTime;
     /**
      * 集群id
      */
@@ -51,16 +52,16 @@ public class DeviceListVo {
     /**
      * 工作状态
      */
-    private Integer workStatus;
+    private String workStatus;
 
     /**
      * 开关机状态
      */
-    private Integer powerStatus;
+    private String powerStatus;
     /**
      * 在线状态
      */
-    private Integer onlineStatus;
+    private String onlineStatus;
 
     private Integer id;
 
@@ -81,9 +82,7 @@ public class DeviceListVo {
      * 设备型号
      */
 
-    private Long lastOnlineTime;
-
-    private Long birthTime;
+    private String birthTime;
 
     private String userOpenId;
 

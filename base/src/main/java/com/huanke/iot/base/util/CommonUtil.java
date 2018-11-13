@@ -39,7 +39,7 @@ public final class CommonUtil {
         if(!StringUtils.isEmpty(requestHost)){
             int userHostIdx =   requestHost.indexOf("."+serverConfigHost);
             if(userHostIdx > -1){
-                userHost = requestHost.substring(0,userHostIdx);
+                userHost = requestHost.substring(0, userHostIdx);
             }
         }
 

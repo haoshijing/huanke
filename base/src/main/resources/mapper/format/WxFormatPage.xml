@@ -46,6 +46,16 @@
         and status = 1
     </select>
 
+    <select id="selectPagesByFormatId" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            AND formatId = #{formatId}
+            AND status = 1
+        </where>
+    </select>
+
     <select id="selectList" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
         select * from
         <include refid="tableName"/>
@@ -64,15 +74,6 @@
         limit #{offset},#{limit}
     </select>
 
-    <select id="selectPagesByFormatId" resultType="com.huanke.iot.base.po.format.WxFormatPagePo">
-        select * from
-        <include refid="tableName"/>
-        <where>
-            1 = 1
-                AND formatId = #{formatId}
-                AND status = 1
-        </where>
-    </select>
 
     <update id="updateById" parameterType="com.huanke.iot.base.po.format.WxFormatPagePo">
         update
@@ -129,5 +130,6 @@
         </if>
         and status = 1
     </select>
+
 
 </mapper>
