@@ -556,7 +556,28 @@ public class CustomerService {
         wxConfigPo.setDefaultTeamName(h5Config.getDefaultTeamName());
         wxConfigPo.setPassword(h5Config.getPassword());
         wxConfigPo.setServiceUser(h5Config.getServiceUser());
-        wxConfigPo.setBackgroundImg(h5Config.getBackgroundImg());
+        List<CustomerVo.H5BgImg> h5BgImgList = h5Config.getH5BgImgList();
+        if (h5BgImgList != null && h5BgImgList.size() > 0) {
+            for (CustomerVo.H5BgImg h5BgImg : h5BgImgList) {
+
+                WxBgImgPo h5BgImgPo = new WxBgImgPo();
+                //如果场景不为空,且主键不为空 则是更新，否则新增
+                if (h5BgImg != null && h5BgImg.getId() != null && h5BgImg.getId() > 0) {
+                    BeanUtils.copyProperties(h5BgImg, h5BgImgPo);
+                    h5BgImgPo.setLastUpdateTime(System.currentTimeMillis());
+                    wxBgImgMapper.updateById(h5BgImgPo);
+                } else {
+                    h5BgImgPo = new WxBgImgPo();
+                    BeanUtils.copyProperties(h5BgImg, h5BgImgPo);
+                    h5BgImgPo.setCustomerId(customerPo.getId());
+                    h5BgImgPo.setConfigId(wxConfigPo.getId());
+                    h5BgImgPo.setCreateTime(System.currentTimeMillis());
+                    h5BgImgPo.setStatus(CommonConstant.STATUS_YES);
+                    wxBgImgMapper.insert(h5BgImgPo);
+                }
+
+            }
+        }
         wxConfigPo.setThemeName(h5Config.getThemeName());
         wxConfigPo.setLogo(h5Config.getLogo());
         wxConfigMapper.updateById(wxConfigPo);
