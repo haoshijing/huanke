@@ -64,7 +64,6 @@ public class DbInterceptor implements Interceptor {
     }
     @SuppressWarnings("unchecked")
     private void doIntercept(Object entity, SqlCommandType commandType) throws Exception {
-        log.info("api缓存刷新");
         if (commandType == SqlCommandType.INSERT || commandType == SqlCommandType.UPDATE) {
             if (entity == null || !CLASS_LIST.contains(entity.getClass())) {
                 return;
@@ -95,6 +94,7 @@ public class DbInterceptor implements Interceptor {
     }
     private void refreshCache(){
         try {
+            log.info("api缓存刷新");
             String url = String.format("http://"+apiHost + "/api/h5/api/flushCache");
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(new URI(url));
