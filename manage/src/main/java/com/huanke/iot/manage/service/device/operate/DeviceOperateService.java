@@ -523,8 +523,8 @@ public class DeviceOperateService {
         }
         //生成列后按列条件筛选device数据
         ApiResponse<List<DeviceListVo>> result = this.queryDeviceByPage(deviceListExportRequest.getDeviceListQueryRequest());
-        log.info("当时设备列表的查询代码：= {}",result.getCode());
-        log.info("当时设备列表的查询数据：= {}",result.getData());
+//        log.info("当时设备列表的查询代码：= {}",result.getCode());
+//        log.info("当时设备列表的查询数据：= {}",result.getData());
         if(null == result.getData() || RetCode.OK != result.getCode()){
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当期条件下设备列表中无设备");
         }
@@ -534,10 +534,10 @@ public class DeviceOperateService {
         deviceListVoList.stream().forEach(eachPo ->{
             DeviceExportVo deviceExportVo = new DeviceExportVo();
             BeanUtils.copyProperties(eachPo,deviceExportVo);
-            deviceExportVo.setAssignStatus(eachPo.getAssignStatus() == DeviceConstant.ASSIGN_STATUS_YES?"已分配":"未分配");
-            deviceExportVo.setBindStatus(eachPo.getBindStatus() == DeviceConstant.BIND_STATUS_YES?"已绑定":"未绑定");
-            deviceExportVo.setEnableStatus(eachPo.getEnableStatus() == DeviceConstant.ENABLE_STATUS_YES?"启用":"禁用");
-            deviceExportVo.setOnlineStatus(eachPo.getOnlineStatus() == DeviceConstant.ONLINE_STATUS_YES?"在线":"离线");
+            deviceExportVo.setAssignStatus( DeviceConstant.ASSIGN_STATUS_YES.equals(eachPo.getAssignStatus())?"已分配":"未分配");
+            deviceExportVo.setBindStatus( DeviceConstant.BIND_STATUS_YES.equals(eachPo.getBindStatus())?"已绑定":"未绑定");
+            deviceExportVo.setEnableStatus( DeviceConstant.ENABLE_STATUS_YES.equals(eachPo.getEnableStatus())?"启用":"禁用");
+            deviceExportVo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES.equals(eachPo.getOnlineStatus())?"在线":"离线");
             if(null != eachPo.getLastOnlineTime()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 deviceExportVo.setLastOnlineTime(sdf.format(new Date(eachPo.getLastOnlineTime())));
