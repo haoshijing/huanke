@@ -61,6 +61,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -145,7 +146,7 @@ public class DeviceOperateService {
 
 
     private static String[] keys = {"name","manageName","mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
-            "workStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastUpdateTime", "location"};
+            "workStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastOnlineTime", "location"};
 
     private static String[] texts = {"名称","管理名称", "MAC", "归属", "类型", "绑定状态", "启用状态", "集群名", "工作状态", "在线状态", "设备型号ID", "设备型号名称", "注册时间", "最后上上线时间", "地理位置"};
 
@@ -348,9 +349,12 @@ public class DeviceOperateService {
         if (null == devicePos || 0 == devicePos.size()) {
             return new ApiResponse<>(RetCode.OK, "暂无设备", null);
         }
-        List<DeviceOperLogPo> deviceOperLogPos = deviceOperLogMapper.queryAllPowerByCreateTime();
-        Map<String,String> funcValues = new HashMap<String,String>();
-        deviceOperLogPos.stream().forEach(temp ->{funcValues.put(temp.getDeviceId().toString(),temp.getFuncValue());});
+        List<DeviceOperLogPo> devicePowerPos = deviceOperLogMapper.queryAllPowerByCreateTime();
+        List<DeviceOperLogPo> deviceOnlinePos = deviceOperLogMapper.queryAllOnlineByCreateTime();
+        Map<String,String> powerValues = new HashMap<String,String>();
+        Map<String,Long> onlineValues = new HashMap<String,Long>();
+        devicePowerPos.stream().forEach(temp ->{powerValues.put(temp.getDeviceId().toString(),temp.getFuncValue());});
+        deviceOnlinePos.stream().forEach(temp ->{onlineValues.put(temp.getDeviceId().toString(),temp.getCreateTime());});
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceListVo deviceQueryVo = new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
@@ -379,13 +383,22 @@ public class DeviceOperateService {
             deviceQueryVo.setStatus(devicePo.getStatus());
             //查询开关机状态
             //DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
-            DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
-            deviceOperLogPo.setFuncValue(funcValues.get(devicePo.getId().toString()));
-            if (null != deviceOperLogPo && StringUtils.isNotEmpty(deviceOperLogPo.getFuncValue())) {
+            DeviceOperLogPo devicePowerPo = new DeviceOperLogPo();
+            devicePowerPo.setFuncValue(powerValues.get(devicePo.getId().toString()));
+            if (null != devicePowerPo && StringUtils.isNotEmpty(devicePowerPo.getFuncValue())) {
                 //0-关机 1-开机
-                deviceQueryVo.setPowerStatus(deviceOperLogPo.getFuncValue().equals("0") ? 0 : 1);
+                deviceQueryVo.setPowerStatus(devicePowerPo.getFuncValue().equals("0") ? 0 : 1);
             } else {
                 deviceQueryVo.setPowerStatus(0);
+            }
+            //最后上线时间
+            DeviceOperLogPo deviceOnlinePo = new DeviceOperLogPo();
+            deviceOnlinePo.setCreateTime(onlineValues.get(devicePo.getId().toString()));
+            if (null != devicePowerPo && null != deviceOnlinePo.getCreateTime()) {
+                //0-关机 1-开机
+                deviceQueryVo.setLastOnlineTime(deviceOnlinePo.getCreateTime());
+            } else {
+                deviceQueryVo.setPowerStatus(null);
             }
             //获取主从相关的信息
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
@@ -516,6 +529,20 @@ public class DeviceOperateService {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"当期条件下设备列表中无设备");
         }
         List<DeviceListVo> deviceListVoList = result.getData();
+        //数值类型转换
+        List<DeviceExportVo> deviceExportVoList = new ArrayList<>();
+        deviceListVoList.stream().forEach(eachPo ->{
+            DeviceExportVo deviceExportVo = new DeviceExportVo();
+            BeanUtils.copyProperties(eachPo,deviceExportVo);
+            deviceExportVo.setAssignStatus(eachPo.getAssignStatus() == DeviceConstant.ASSIGN_STATUS_YES?"已分配":"未分配");
+            deviceExportVo.setBindStatus(eachPo.getBindStatus() == DeviceConstant.BIND_STATUS_YES?"已绑定":"未绑定");
+            deviceExportVo.setEnableStatus(eachPo.getEnableStatus() == DeviceConstant.ENABLE_STATUS_YES?"启用":"禁用");
+            deviceExportVo.setOnlineStatus(eachPo.getOnlineStatus() == DeviceConstant.ONLINE_STATUS_YES?"在线":"离线");
+            if(null != eachPo.getLastOnlineTime()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                deviceExportVo.setLastOnlineTime(sdf.format(new Date(eachPo.getLastOnlineTime())));
+            }
+        });
         String[] titles = new String[titleNames.size()];
         titleNames.toArray(titles);
         ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();

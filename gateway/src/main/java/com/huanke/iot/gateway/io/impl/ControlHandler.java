@@ -61,7 +61,6 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
             try {
                 deviceControlMapper.insert(deviceControlData);
-
                 stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             }catch (Exception e){
                 log.error("",e);
