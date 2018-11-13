@@ -15,6 +15,7 @@ import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
+import com.huanke.iot.base.dao.format.WxFormatPageMapper;
 import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerPo;
@@ -28,6 +29,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
+import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
@@ -90,6 +92,9 @@ public class DeviceModelService {
     private WxFormatItemMapper wxFormatItemMapper;
 
     @Autowired
+    private WxFormatPageMapper wxFormatPageMapper;
+
+    @Autowired
     private CustomerService customerService;
 
     @Autowired
@@ -141,12 +146,12 @@ public class DeviceModelService {
 //                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
 //                    }
                     //当 修改 设备型号的类型的时候，同步修改 该型号下的设备的类型
-                    if(modelRequest.getTypeId()!=null&&modelRequest.getTypeId()>0){
+                    if (modelRequest.getTypeId() != null && modelRequest.getTypeId() > 0) {
                         DevicePo updatePo = new DevicePo();
                         updatePo.setModelId(modelRequest.getId());
                         updatePo.setTypeId(modelRequest.getTypeId());
                         deviceMapper.updateDeviceTypeId(updatePo);
-                    }else{
+                    } else {
                         return new ApiResponse<>(RetCode.PARAM_ERROR, "设备类型不可为空。");
                     }
                     deviceModelPo.setLastUpdateUser(user.getId());
@@ -160,7 +165,7 @@ public class DeviceModelService {
 //                        return new ApiResponse<>(RetCode.PARAM_ERROR, "已存在此产品id。");
 //                    }
 
-                    if(deviceModelPo.getTypeId()==null){
+                    if (deviceModelPo.getTypeId() == null) {
                         return new ApiResponse<>(RetCode.PARAM_ERROR, "设备类型不可为空。");
                     }
                     deviceModelPo.setModelNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_MODEl));
@@ -276,10 +281,10 @@ public class DeviceModelService {
                 if (deviceModelAbilityRequest.getId() != null && deviceModelAbilityRequest.getId() > 0) {
                     deviceModelAbilityPo.setId(deviceModelAbilityRequest.getId());
                     deviceModelAbilityPo.setLastUpdateTime(System.currentTimeMillis());
-                    deviceModelAbilityPo.setStatus(deviceModelAbilityRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityRequest.getStatus());
+                    deviceModelAbilityPo.setStatus(deviceModelAbilityRequest.getStatus() == null ? CommonConstant.STATUS_YES : deviceModelAbilityRequest.getStatus());
                     deviceModelAbilityMapper.updateById(deviceModelAbilityPo);
                 } else {
-                    deviceModelAbilityPo.setStatus(deviceModelAbilityRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityRequest.getStatus());
+                    deviceModelAbilityPo.setStatus(deviceModelAbilityRequest.getStatus() == null ? CommonConstant.STATUS_YES : deviceModelAbilityRequest.getStatus());
                     deviceModelAbilityPo.setCreateTime(System.currentTimeMillis());
                     deviceModelAbilityMapper.insert(deviceModelAbilityPo);
                 }
@@ -298,12 +303,12 @@ public class DeviceModelService {
 
                         // 如果 有id 是 更新，否则是新增
                         if (deviceModelAbilityOptionRequest.getId() != null && deviceModelAbilityOptionRequest.getId() > 0) {
-                            deviceModelAbilityOptionPo.setStatus(deviceModelAbilityOptionRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityOptionRequest.getStatus());
+                            deviceModelAbilityOptionPo.setStatus(deviceModelAbilityOptionRequest.getStatus() == null ? CommonConstant.STATUS_YES : deviceModelAbilityOptionRequest.getStatus());
                             deviceModelAbilityOptionPo.setId(deviceModelAbilityOptionRequest.getId());
                             deviceModelAbilityOptionPo.setLastUpdateTime(System.currentTimeMillis());
                             deviceModelAbilityOptionMapper.updateById(deviceModelAbilityOptionPo);
                         } else {
-                            deviceModelAbilityOptionPo.setStatus(deviceModelAbilityOptionRequest.getStatus()==null?CommonConstant.STATUS_YES:deviceModelAbilityOptionRequest.getStatus());
+                            deviceModelAbilityOptionPo.setStatus(deviceModelAbilityOptionRequest.getStatus() == null ? CommonConstant.STATUS_YES : deviceModelAbilityOptionRequest.getStatus());
                             deviceModelAbilityOptionPo.setCreateTime(System.currentTimeMillis());
                             deviceModelAbilityOptionMapper.insert(deviceModelAbilityOptionPo);
                         }
@@ -813,7 +818,6 @@ public class DeviceModelService {
                             DeviceModelFormatItemPo deviceModelFormatItemPo = new DeviceModelFormatItemPo();
 
 
-
                             deviceModelFormatItemPo.setItemId(modelFormatItemCreateRequest.getItemId());
                             deviceModelFormatItemPo.setModelFormatId(deviceModelFormatPo.getId());
                             deviceModelFormatItemPo.setShowName(modelFormatItemCreateRequest.getShowName());
@@ -871,11 +875,16 @@ public class DeviceModelService {
                 deviceModelFormatPageVo.setId(deviceModelFormatPagePo.getId());
                 deviceModelFormatPageVo.setPageId(deviceModelFormatPagePo.getPageId());
                 deviceModelFormatPageVo.setShowName(deviceModelFormatPagePo.getShowName());
+
                 deviceModelFormatPageVo.setShowStatus(deviceModelFormatPagePo.getShowStatus());
                 deviceModelFormatPageVo.setStatus(deviceModelFormatPagePo.getStatus());
                 deviceModelFormatPageVo.setFormatId(formatId);
                 deviceModelFormatPageVo.setModelId(modelId);
 
+                WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectById(deviceModelFormatPagePo.getPageId());
+                if(wxFormatPagePo!=null){
+                    deviceModelFormatPageVo.setShowImg(wxFormatPagePo.getShowImg());
+                }
                 /*
                  *  查询版式的配置，和型号的配置项进行做对比，是否版式项有增删。*/
                 //查询 版式配置表
@@ -924,7 +933,7 @@ public class DeviceModelService {
             }).collect(Collectors.toList());
 
             modelFormatVo.setModelFormatPages(deviceModelFormatPageVos);
-        }else{
+        } else {
             modelFormatVo = null;
         }
         return modelFormatVo;

@@ -26,6 +26,7 @@ public class DeviceListVo {
     private String wxDeviceId;
 
     private Integer typeId;
+    private String typeNo;
     /**
      * 分配状态
      */

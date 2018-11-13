@@ -239,7 +239,7 @@ public class DeviceGroupService {
                 deviceGroupListVo.setIntroduction(deviceGroupPo.getIntroduction());
                 deviceGroupListVo.setRemark(deviceGroupPo.getRemark());
                 deviceGroupListVo.setStatus(deviceGroupPo.getStatus());
-                deviceGroupListVo.setLocation(deviceGroupPo.getCreateLocation());
+                deviceGroupListVo.setLocation(deviceGroupPo.getLocation());
                 deviceGroupListVo.setCreateUser(this.userService.getUserName(deviceGroupPo.getCreateUser()));
                 deviceGroupListVo.setLastUpdateUser(this.userService.getUserName(deviceGroupPo.getLastUpdateUser()));
                 //查询当前集群的客户信息

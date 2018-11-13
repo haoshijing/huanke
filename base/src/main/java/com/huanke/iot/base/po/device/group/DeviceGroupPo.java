@@ -42,7 +42,7 @@ public class DeviceGroupPo {
 
     private String remark;
 
-    private String createLocation;
+    private String location;
 
     /**
      * 创建时间

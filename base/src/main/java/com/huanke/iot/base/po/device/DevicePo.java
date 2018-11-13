@@ -12,10 +12,11 @@ public class DevicePo {
 
     private Integer customerId;
     private String customerName;
-    private String typeName;
     private String modelName;
     private String modelNo;
     private String modelCode;
+    private String typeName;
+    private String typeNo;
     /**
      * 设备id
      */

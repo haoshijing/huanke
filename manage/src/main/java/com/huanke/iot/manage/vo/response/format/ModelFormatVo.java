@@ -17,6 +17,7 @@ public class ModelFormatVo {
         private Integer pageId;
         private Integer showStatus;
         private String showName;
+        private String showImg;
         private Integer status;
         List<DeviceModelFormatItemVo> modelFormatItems;
 
