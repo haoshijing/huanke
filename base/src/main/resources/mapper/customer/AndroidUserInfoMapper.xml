@@ -7,72 +7,51 @@
         android_user_info
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.AndroidConfigPo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.AndroidUserInfoPo">
         INSERT INTO <include refid="tableName"/>
         (
         customerId,
-        name,
-        logo,
-        appUrl,
-        qrcode,
-        version,
-        createTime,
-        deviceChangePassword
+        imei,
+        custUserId,
+        updateTime
         )
         VALUES (
         #{customerId},
-        #{name},
-        #{logo},
-        #{appUrl},
-        #{qrcode},
-        #{version},
-        #{createTime},
-        #{deviceChangePassword}
+        #{imei},
+        #{custUserId},
+        #{updateTime}
         )
     </insert>
 
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.AndroidConfigPo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.AndroidUserInfoPo">
         update
         <include refid="tableName"/>
         <set>
-            <if test="customerId != null ">
-                customerId = #{customerId},
+            <if test="imei != null ">
+                imei = #{imei},
             </if>
-            <if test="name != null  and name != ''">
-                name = #{name},
+            <if test="customerId != null  and customerId != '' ">
+                logo = #{customerId},
             </if>
-            <if test="logo != null  and logo != '' ">
-                logo = #{logo},
+            <if test="custUserId != null  and custUserId != ''">
+                name = #{custUserId},
             </if>
-            <if test="appUrl != null  and appUrl != '' ">
-                appUrl = #{appUrl},
+            <if test="updateTime != null  and updateTime != '' ">
+                logo = #{updateTime},
             </if>
-            <if test="qrcode != null">
-                qrcode = #{qrcode},
-            </if>
-            <if test="version != null  and version != '' ">
-                version = #{version},
-            </if>
-            <if test="deviceChangePassword != null  and deviceChangePassword != '' ">
-                deviceChangePassword = #{deviceChangePassword},
-            </if>
-            <if test="status != null ">
-                status = #{status},
-            </if>
-            lastUpdateTime = #{lastUpdateTime}
         </set>
         where
         id = #{id}
     </update>
 
-    <select id="selectConfigByCustomerId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.AndroidConfigPo">
+    <select id="selectByCustomerAndImei" resultType="com.huanke.iot.base.po.customer.AndroidUserInfoPo">
         SELECT * FROM
         <include refid="tableName"/>
-        WHERE customerId = #{customerId} limit 1
+        WHERE customerId = #{customerId} AND imei = #{imei}
     </select>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.AndroidConfigPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.AndroidUserInfoPo">
         select
         *
         FROM
