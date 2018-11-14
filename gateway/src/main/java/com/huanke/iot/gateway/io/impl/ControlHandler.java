@@ -6,6 +6,7 @@ import com.huanke.iot.base.dao.device.data.DeviceControlMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceControlData;
 import com.huanke.iot.gateway.io.AbstractHandler;
+import com.huanke.iot.gateway.powercheck.PowerCheckService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class ControlHandler extends AbstractHandler {
     private DeviceControlMapper deviceControlMapper;
     @Autowired
     private DeviceMapper deviceMapper;
+    @Autowired
+    private PowerCheckService powerCheckService;
     @Data
     public static class FuncItemMessage{
         private String type;
@@ -61,6 +64,10 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
             try {
                 deviceControlMapper.insert(deviceControlData);
+                //如果上报状态为开关机状态则进行记录
+                if(deviceControlData.getFuncId().equals("210")){
+                    this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
+                }
                 stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             }catch (Exception e){
                 log.error("",e);

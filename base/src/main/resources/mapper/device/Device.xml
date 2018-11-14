@@ -252,7 +252,7 @@
         d.`wxDeviceId`,d.`wxDevicelicence`,d.`wxQrticket`,
         d.`imei`,d.`imsi`,d.`saNo`,d.`typeId`,d.`modelId`,
         d.`productId`,c.`id` customerId ,
-        d.`onlineStatus`,d.`bindStatus`,d.`bindTime`,d.`assignStatus`,
+        d.`onlineStatus`,d.`powerStatus`,d.`bindStatus`,d.`bindTime`,d.`assignStatus`,
         d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,d.`mapGps`,
         d.`speedConfig`,d.`version`,d.`location`,d.`status`,
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
@@ -292,6 +292,9 @@
             </if>
             <if test="param.onlineStatus != null">
                 AND d.onlineStatus = #{param.onlineStatus}
+            </if>
+            <if test="param.powerStatus != null">
+                AND d.powerStatus = #{param.powerStatus}
             </if>
             <if test="param.bindStatus != null">
                 AND d.bindStatus = #{param.bindStatus}
@@ -625,7 +628,6 @@
 
 
     <update id="updateStatus" parameterType="com.huanke.iot.base.po.device.DevicePo">
-
         update
         <include refid="tableName"/>
         <set>
@@ -637,6 +639,9 @@
             </if>
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
+            </if>
+            <if test="powerStatus != null">
+                powerStatus = #{powerStatus},
             </if>
             <if test="enableStatus != null">
                 enableStatus = #{enableStatus},

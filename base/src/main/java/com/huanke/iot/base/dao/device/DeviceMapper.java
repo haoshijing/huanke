@@ -32,7 +32,7 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     DevicePo selectByWxDeviceId(String wxDeviceId);
 
-    Integer updateByDeviceId(DevicePo devicePo);
+    Integer updateStatus(DevicePo devicePo);
 
     Integer updateDeviceTypeId(DevicePo devicePo);
 

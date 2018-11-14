@@ -174,6 +174,8 @@ public class DeviceOperateService {
             insertPo.setAssignStatus(DeviceConstant.ASSIGN_STATUS_NO);
             //设定工作状态为空闲
             insertPo.setWorkStatus(DeviceConstant.WORKING_STATUS_NO);
+            //设定开关状态为关机
+            insertPo.setPowerStatus(DeviceConstant.POWER_STATUS__NO);
             insertPo.setStatus(CommonConstant.STATUS_YES);
             //设定在线状态为离线
             insertPo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
@@ -349,11 +351,8 @@ public class DeviceOperateService {
         if (null == devicePos || 0 == devicePos.size()) {
             return new ApiResponse<>(RetCode.OK, "暂无设备", null);
         }
-        List<DeviceOperLogPo> devicePowerPos = deviceOperLogMapper.queryAllPowerByCreateTime();
         List<DeviceOperLogPo> deviceOnlinePos = deviceOperLogMapper.queryAllOnlineByCreateTime();
-        Map<String,String> powerValues = new HashMap<String,String>();
         Map<String,Long> onlineValues = new HashMap<String,Long>();
-        devicePowerPos.stream().forEach(temp ->{powerValues.put(temp.getDeviceId().toString(),temp.getFuncValue());});
         deviceOnlinePos.stream().forEach(temp ->{onlineValues.put(temp.getDeviceId().toString(),temp.getCreateTime());});
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceListVo deviceQueryVo = new DeviceListVo();
@@ -379,22 +378,13 @@ public class DeviceOperateService {
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
+            deviceQueryVo.setPowerStatus(devicePo.getPowerStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
-            //查询开关机状态
-            //DeviceOperLogPo deviceOperLogPo = this.deviceOperLogMapper.queryPowerByCreateTime(devicePo.getId());
-            DeviceOperLogPo devicePowerPo = new DeviceOperLogPo();
-            devicePowerPo.setFuncValue(powerValues.get(devicePo.getId().toString()));
-            if (null != devicePowerPo && StringUtils.isNotEmpty(devicePowerPo.getFuncValue())) {
-                //0-关机 1-开机
-                deviceQueryVo.setPowerStatus(devicePowerPo.getFuncValue().equals("0") ? 0 : 1);
-            } else {
-                deviceQueryVo.setPowerStatus(0);
-            }
             //最后上线时间
             DeviceOperLogPo deviceOnlinePo = new DeviceOperLogPo();
             deviceOnlinePo.setCreateTime(onlineValues.get(devicePo.getId().toString()));
-            if (null != devicePowerPo && null != deviceOnlinePo.getCreateTime()) {
+            if (null != deviceOnlinePo && null != deviceOnlinePo.getCreateTime()) {
                 //0-关机 1-开机
                 deviceQueryVo.setLastOnlineTime(deviceOnlinePo.getCreateTime());
             } else {

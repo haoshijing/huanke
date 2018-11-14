@@ -61,6 +61,8 @@ public class DevicePo {
     private Integer enableStatus;
     //工作状态 或 租赁状态
     private Integer workStatus;
+    //开关机状态
+    private Integer powerStatus;
     //设备位置
     private String location;
 

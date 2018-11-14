@@ -18,6 +18,10 @@ public class DeviceConstant {
     public static final Integer ONLINE_STATUS_YES = 1; //在线
     public static final Integer ONLINE_STATUS_NO = 0;//离线
 
+    /*开关机状态*/
+    public static final Integer POWER_STATUS_YES = 1; //开机
+    public static final Integer POWER_STATUS__NO = 0;//关机
+
     /*工作状态*/
     public static final Integer WORKING_STATUS_YES = 1; // 开机/租赁中
     public static final Integer WORKING_STATUS_NO = 0;// 关机/空闲
