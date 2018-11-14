@@ -258,7 +258,7 @@
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
         d.`createTime`,d.`lastUpdateTime`,d.`createUser`,d.`lastUpdateUser`
-        ,c.name customerName,t.`name` typeName ,m.`name` modelName
+        ,c.name customerName,t.`name` typeName ,m.`name` modelName,m.`modelNo`,m.`modelCode`
         from
         t_device d
         <if test="param.customerId == null">

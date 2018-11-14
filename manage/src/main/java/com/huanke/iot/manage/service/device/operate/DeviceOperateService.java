@@ -367,6 +367,8 @@ public class DeviceOperateService {
             deviceQueryVo.setTypeId(devicePo.getTypeId());
             deviceQueryVo.setModelId(devicePo.getModelId());
             deviceQueryVo.setModelName(devicePo.getModelName());
+            deviceQueryVo.setModelCode(devicePo.getModelCode());
+            deviceQueryVo.setModelNo(devicePo.getModelNo());
             //查询管理名称
 //            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
 //            if(null != deviceTeamItemPo){
