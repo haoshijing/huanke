@@ -32,5 +32,7 @@ public interface DeviceAbilityMapper extends BaseMapper<DeviceAbilityPo> {
 
     DeviceAbilityPo selectByDirValue(@Param("dirValue")String dirValue);
 
+    DeviceAbilityPo selectByAbilityCode(@Param("abilityCode")String abilityCode);
+
     void flushCache();
 }

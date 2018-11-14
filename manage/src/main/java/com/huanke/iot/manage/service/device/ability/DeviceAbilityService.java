@@ -16,6 +16,7 @@ import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityOptionVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceTypeAbilitysVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +52,14 @@ public class DeviceAbilityService {
 
         int effectCount = 0;
         Boolean ret = false;
+
+        if(StringUtils.isNotBlank(abilityRequest.getAbilityCode())){
+            DeviceAbilityPo queryAbilityPo = deviceAbilityMapper.selectByAbilityCode(abilityRequest.getAbilityCode());
+            if(queryAbilityPo!=null&&queryAbilityPo.getId().equals(abilityRequest.getId())){
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"已存在此功能项代码");
+            }
+        }
+
         DeviceAbilityPo deviceAbilityPo = new DeviceAbilityPo();
         try {
             BeanUtils.copyProperties(abilityRequest, deviceAbilityPo);
@@ -123,6 +132,7 @@ public class DeviceAbilityService {
 
         DeviceAbilityPo queryDeviceAbilityPo = new DeviceAbilityPo();
         queryDeviceAbilityPo.setAbilityName(request.getAbilityName());
+        queryDeviceAbilityPo.setAbilityCode(request.getAbilityCode());
         queryDeviceAbilityPo.setDirValue(request.getDirValue());
         queryDeviceAbilityPo.setWriteStatus(request.getWriteStatus());
         queryDeviceAbilityPo.setReadStatus(request.getReadStatus());
@@ -138,6 +148,7 @@ public class DeviceAbilityService {
         List<DeviceAbilityVo> deviceAbilityVos = deviceAbilityPos.stream().map(deviceAbilityPo -> {
             DeviceAbilityVo deviceAbilityVo = new DeviceAbilityVo();
             deviceAbilityVo.setAbilityName(deviceAbilityPo.getAbilityName());
+            deviceAbilityVo.setAbilityCode(deviceAbilityPo.getAbilityCode());
             deviceAbilityVo.setDirValue(deviceAbilityPo.getDirValue());
             deviceAbilityVo.setWriteStatus(deviceAbilityPo.getWriteStatus());
             deviceAbilityVo.setReadStatus(deviceAbilityPo.getReadStatus());
