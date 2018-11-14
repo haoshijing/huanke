@@ -173,7 +173,7 @@ public class DeviceGroupService {
         }
         //向集群中添加设备
         //如设备列表中无设备则不进行任何操作
-        if (null == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList() || 0 == groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList().size()) {
+        if (null == groupCreateOrUpdateRequest.getDeviceList() || 0 == groupCreateOrUpdateRequest.getDeviceList().size()) {
             return new ApiResponse<>(RetCode.OK, "新增或更新成功", insertOrUpdatePo.getId());
         } else {
             //查询并删除集群中已有的设备
@@ -184,7 +184,7 @@ public class DeviceGroupService {
             }
             deviceGroupItemPoList.clear();
             //重新添加设备
-            for (DeviceQueryRequest.DeviceQueryList deviceList : groupCreateOrUpdateRequest.getDeviceQueryRequest().getDeviceList()) {
+            for (DeviceQueryRequest.DeviceQueryList deviceList : groupCreateOrUpdateRequest.getDeviceList()) {
                 DevicePo devicePo = this.deviceMapper.selectByMac(deviceList.getMac());
                 DeviceGroupItemPo deviceGroupItemPo = new DeviceGroupItemPo();
                 deviceGroupItemPo.setGroupId(insertOrUpdatePo.getId());
@@ -490,7 +490,7 @@ public class DeviceGroupService {
      * @param deviceList
      * @return devicePo
      */
-    public DeviceQueryRequest.DeviceQueryList queryDeviceByMac(DeviceQueryRequest deviceList) {
+    public DeviceQueryRequest.DeviceQueryList queryDeviceByMac(GroupCreateOrUpdateRequest deviceList) {
         for (DeviceQueryRequest.DeviceQueryList device : deviceList.getDeviceList()) {
             DevicePo devicePo = deviceMapper.selectByMac(device.getMac());
             if (null == devicePo) {
