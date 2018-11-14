@@ -378,6 +378,7 @@ public class DeviceOperateService {
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
+            log.info("当前设备powerStatus:{}",devicePo.getPowerStatus());
             deviceQueryVo.setPowerStatus(devicePo.getPowerStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
