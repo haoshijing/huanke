@@ -11,9 +11,10 @@ import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
@@ -25,17 +26,19 @@ import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
+import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
@@ -44,6 +47,7 @@ import com.huanke.iot.manage.vo.request.device.operate.*;
 import com.huanke.iot.manage.vo.response.device.BaseListVo;
 import com.huanke.iot.manage.vo.response.device.ability.DeviceAbilityVo;
 import com.huanke.iot.manage.vo.response.device.operate.*;
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -64,11 +68,6 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-//import org.apache.shiro.SecurityUtils;
-//import org.apache.shiro.subject.Subject;
-
-//import com.huanke.iot.user.model.user.User;
 
 @Repository
 @Slf4j
@@ -99,10 +98,10 @@ public class DeviceOperateService {
     private DeviceIdPoolMapper deviceIdPoolMapper;
 
     @Autowired
-    private DeviceModelMapper deviceModelMapper;
+    private DeviceTypeAbilitysMapper deviceTypeAbilitysMapper;
 
     @Autowired
-    private DeviceTypeMapper deviceTypeMapper;
+    private DeviceModelAbilityMapper deviceModelAbilityMapper;
 
     @Autowired
     private DeviceTeamMapper deviceTeamMapper;
@@ -317,6 +316,10 @@ public class DeviceOperateService {
             deviceQueryVo.setPowerStatus(0);
         }
         deviceQueryVo.setLocation(devicePo.getLocation());
+
+        /*查询设备的 阈值类与传参类功能项*/
+        List<DeviceModelAbilityVo> deviceModelAbilityVos = getModelVo(deviceId);
+        deviceQueryVo.setDeviceModelAbilityVos(deviceModelAbilityVos);
 
         return deviceQueryVo;
     }
@@ -1952,6 +1955,87 @@ public class DeviceOperateService {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"该设备不存在");
         }
 
+
+    }
+
+    /**
+     * 获取 设备的 功能项及其选项（传参及 阈值型）
+     */
+    public List<DeviceModelAbilityVo> getModelVo(Integer deviceId) {
+
+        List<DeviceModelAbilityVo> deviceModelAbilityVos = new ArrayList<>();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+
+        if (devicePo == null) {
+            return null;
+        }
+        if (devicePo.getModelId() == null) {
+            return null;
+        }
+
+        //查询 类型所有状态的功能项
+        List<DeviceTypeAbilitysPo> deviceTypeAbilitysPos = deviceTypeAbilitysMapper.selectByTypeId(devicePo.getTypeId());
+        //查询型号的所有状态的 功能项
+        List<DeviceModelAbilityPo> deviceModelAbilityPos = deviceModelAbilityMapper.selectByModelId(devicePo.getModelId());
+
+        Map<Integer, DeviceModelAbilityPo> deviceModelAbilityPoMap = deviceModelAbilityPos.stream().collect(Collectors.toMap(DeviceModelAbilityPo::getAbilityId, a -> a, (k1, k2) -> k1));
+
+        /* 以 型号能力项为原数据 对比 类型 的功能项，找出 类型删除的功能项*/
+        for (DeviceTypeAbilitysPo deviceTypeAbilitysPo : deviceTypeAbilitysPos) {
+            Integer abilityId = deviceTypeAbilitysPo.getAbilityId();
+            DeviceModelAbilityVo modelAbilityVo = new DeviceModelAbilityVo();
+
+            modelAbilityVo.setAbilityId(abilityId);
+
+            /*过滤 阈值类 与 传参类*/
+            if(!deviceTypeAbilitysPo.getAbilityType().equals(DeviceConstant.ABILITY_TYPE_NUMBER)&&deviceTypeAbilitysPo.getAbilityType().equals(DeviceConstant.ABILITY_TYPE_SELECT_PARAM)){
+                continue;
+            }
+
+            DeviceModelAbilityPo deviceModelAbilityPo = deviceModelAbilityPoMap.get(abilityId);
+            if (deviceModelAbilityPo != null) {
+                modelAbilityVo.setDefinedName(deviceModelAbilityPo.getDefinedName());
+            } else {
+                continue;
+            }
+
+            BeanUtils.copyProperties(deviceModelAbilityPo, modelAbilityVo);
+            modelAbilityVo.setAbilityName(deviceTypeAbilitysPo.getAbilityName());
+
+            //型号的功能项选项
+            List<DeviceModelAbilityVo.DeviceModelAbilityOptionVo> abilityOptionList = new ArrayList();
+
+            //查功能项选项及别名
+            //缓存
+            List<DeviceAbilityOptionPo> deviceAbilityOptionPos = deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(abilityId);
+            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = deviceModelAbilityOptionMapper.getOptionsByModelAbilityId(deviceModelAbilityPo.getId());
+            Map<Integer, DeviceModelAbilityOptionPo> deviceModelAbilityOptionPoMap = deviceModelAbilityOptionPos.stream().collect(Collectors.toMap(DeviceModelAbilityOptionPo::getAbilityOptionId, a -> a, (k1, k2) -> k1));
+
+            for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceAbilityOptionPos) {
+                DeviceModelAbilityOptionPo deviceModelabilityOptionPo = deviceModelAbilityOptionPoMap.get(deviceabilityOptionPo.getId());
+                if (deviceModelabilityOptionPo != null) {
+
+                    DeviceModelAbilityVo.DeviceModelAbilityOptionVo deviceModelAbilityOptionVo = new DeviceModelAbilityVo.DeviceModelAbilityOptionVo();
+
+                    deviceModelAbilityOptionVo.setAbilityOptionId(deviceabilityOptionPo.getId());
+                    deviceModelAbilityOptionVo.setOptionName(deviceabilityOptionPo.getOptionName());
+                    deviceModelAbilityOptionVo.setOptionValue(deviceabilityOptionPo.getOptionValue());
+                    deviceModelAbilityOptionVo.setDefinedName(deviceModelabilityOptionPo.getDefinedName());
+                    deviceModelAbilityOptionVo.setDefaultVal(deviceModelabilityOptionPo.getDefaultValue());
+                    deviceModelAbilityOptionVo.setMaxVal(deviceModelabilityOptionPo.getMaxVal());
+                    deviceModelAbilityOptionVo.setMinVal(deviceModelabilityOptionPo.getMinVal());
+
+                    deviceModelAbilityOptionVo.setStatus(deviceModelabilityOptionPo.getStatus());
+
+                    abilityOptionList.add(deviceModelAbilityOptionVo);
+                }
+            }
+
+            modelAbilityVo.setDeviceModelAbilityOptions(abilityOptionList);
+            deviceModelAbilityVos.add(modelAbilityVo);
+        }
+
+        return deviceModelAbilityVos;
 
     }
 }

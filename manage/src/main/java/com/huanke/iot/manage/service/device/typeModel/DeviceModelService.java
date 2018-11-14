@@ -22,6 +22,7 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
@@ -52,6 +53,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -882,7 +884,7 @@ public class DeviceModelService {
                 deviceModelFormatPageVo.setModelId(modelId);
 
                 WxFormatPagePo wxFormatPagePo = wxFormatPageMapper.selectById(deviceModelFormatPagePo.getPageId());
-                if(wxFormatPagePo!=null){
+                if (wxFormatPagePo != null) {
                     deviceModelFormatPageVo.setShowImg(wxFormatPagePo.getShowImg());
                 }
                 /*
@@ -938,4 +940,7 @@ public class DeviceModelService {
         }
         return modelFormatVo;
     }
+
+
+
 }

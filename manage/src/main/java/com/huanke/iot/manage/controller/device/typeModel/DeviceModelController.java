@@ -9,6 +9,7 @@ import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
 import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -200,6 +201,14 @@ public class DeviceModelController {
             return new ApiResponse<>(RetCode.ERROR, "增加设备配额失败");
         }
     }
+
+//    @ApiOperation("获取设备的型号功能项")
+//    @GetMapping(value = "/getModelVo/{deviceId}")
+//    public ApiResponse<List<DeviceModelAbilityVo>> getModelVo(@PathVariable("deviceId") Integer deviceId) {
+//
+//        List<DeviceModelAbilityVo> deviceModelAbilityVos = deviceModelService.getModelVo(deviceId);
+//        return new ApiResponse<>(deviceModelAbilityVos);
+//    }
 //    /**
 //     * 添加型号的版式配置
 //     * @param modelFormatRequests

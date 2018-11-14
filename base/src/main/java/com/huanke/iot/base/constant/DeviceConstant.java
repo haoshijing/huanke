@@ -37,6 +37,7 @@ public class DeviceConstant {
     public static final Integer ABILITY_TYPE_SELECT = 3; //多选类
     public static final Integer ABILITY_TYPE_NUMBER = 4; //阈值类
     public static final Integer ABILITY_TYPE_SELECT_NUMBER = 5; //阈值选项类
+    public static final Integer ABILITY_TYPE_SELECT_PARAM = 6; //传参类
 
     public static  final Integer WXDEVICEID_STATUS_YES = 1; // 已占用
     public static  final Integer WXDEVICEID_STATUS_NO = 0; // 未占用
