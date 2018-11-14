@@ -378,7 +378,6 @@ public class DeviceOperateService {
             deviceQueryVo.setBindStatus(devicePo.getBindStatus());
             deviceQueryVo.setEnableStatus(devicePo.getEnableStatus());
             deviceQueryVo.setWorkStatus(devicePo.getWorkStatus());
-            log.info("当前设备powerStatus:{}",devicePo.getPowerStatus());
             deviceQueryVo.setPowerStatus(devicePo.getPowerStatus());
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
@@ -386,10 +385,9 @@ public class DeviceOperateService {
             DeviceOperLogPo deviceOnlinePo = new DeviceOperLogPo();
             deviceOnlinePo.setCreateTime(onlineValues.get(devicePo.getId().toString()));
             if (null != deviceOnlinePo && null != deviceOnlinePo.getCreateTime()) {
-                //0-关机 1-开机
                 deviceQueryVo.setLastOnlineTime(deviceOnlinePo.getCreateTime());
             } else {
-                deviceQueryVo.setPowerStatus(null);
+                deviceQueryVo.setLastOnlineTime(null);
             }
             //获取主从相关的信息
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
