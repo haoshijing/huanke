@@ -57,7 +57,7 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/setApkInfo")
-    public Object setApkInfo(HttpServletRequest request) {
+    public ApiResponse<Object> setApkInfo(HttpServletRequest request) {
         return appBasicService.addUserAppInfo(request);
     }
 

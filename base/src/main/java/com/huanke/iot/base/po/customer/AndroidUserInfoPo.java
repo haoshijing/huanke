@@ -8,5 +8,5 @@ public class AndroidUserInfoPo {
     private Integer customerId;
     private String imei;
     private Integer custUserId;
-    private Long createTime;
+    private Long updateTime;
 }
