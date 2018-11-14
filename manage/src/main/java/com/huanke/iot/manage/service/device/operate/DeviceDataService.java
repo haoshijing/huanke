@@ -5,6 +5,7 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
@@ -27,6 +28,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +51,8 @@ public class DeviceDataService {
     @Autowired
     private CustomerUserMapper customerUserMapper;
 
+    @Autowired
+    private DeviceAbilityMapper deviceAbilityMapper;
 
     @Autowired
     private UserManagerMapper userMapper;
@@ -55,8 +60,6 @@ public class DeviceDataService {
     @Autowired
     private DeviceMapper deviceMapper;
 
-    @Autowired
-    private DeviceModelAbilityMapper deviceModelAbilityMapper;
 
     public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceDataQueryRequest request) throws Exception{
         DeviceOperLogPo queryPo = new DeviceOperLogPo();
@@ -134,31 +137,35 @@ public class DeviceDataService {
         deviceSensorStatPo.setDeviceId(deviceDataQueryRequest.getDeviceId());
         Integer offset = (deviceDataQueryRequest.getPage() - 1)*deviceDataQueryRequest.getLimit();
         Integer limit = deviceDataQueryRequest.getLimit();
-        //根据deviceId查询设备的具备的功能项，并将其与设备数据表的中功能项对比，只显示设备具有的功能项
-        //List<DeviceModelAbilityPo> deviceModelAbilityPoList = this.deviceModelAbilityMapper.selectByDeviceId(deviceDataQueryRequest.getDeviceId());
-        //进行匹配
-//        deviceModelAbilityPoList.stream().forEach(eachPo ->{
-//            switch (eachPo.getDefinedName()){
-//                case "PM2.5":
-//                    break;
-//                case "CO2":
-//                    break;
-//                case "甲醛":
-//                    break;
-//                case "温度":
-//                    break;
-//                case "湿度":
-//                    break;
-//                    case "VOC"
-//            }
-//        });
         List<DeviceSensorStatPo> deviceSensorStatPoList = this.deviceSensorStatMapper.selectList(deviceSensorStatPo,limit,offset);
         if(null == deviceSensorStatPoList || 0 == deviceSensorStatPoList.size()){
             return new ApiResponse<>(RetCode.OK,"暂无数据");
         }
+        //获取设备的设备功能代码
+        List<String> abilityCodeList = this.deviceAbilityMapper.selectAbilityCodeByDeviceId(deviceDataQueryRequest.getDeviceId());
+        if(null == abilityCodeList || 0 == abilityCodeList.size()){
+            return new ApiResponse<>(RetCode.OK,"该设备尚未配备传感器功能");
+        }
+        List<String> tempList = new ArrayList<>();
+        //利用反射筛选不需要复制的属性
+        Class cls = deviceSensorStatPo.getClass();
+        Field[] fields = cls.getDeclaredFields();
+        for (Field field : fields) {
+            String fieldType = field.getGenericType().toString();
+            if (fieldType.equals("class java.lang.Integer")) {
+                String attrName = field.getName();
+                //收集不包含当前功能项的属性
+                if(!abilityCodeList.contains(attrName) && !attrName.equals("id") && !attrName.equals("deviceId")){
+                    tempList.add(attrName);
+                }
+            }
+        }
+        String[] abilityCodeStrings = new String[tempList.size()];
+        tempList.toArray(abilityCodeStrings);
         List<DeviceSensorStatVo> deviceSensorStatVoList = deviceSensorStatPoList.stream().map(eachPo ->{
             DeviceSensorStatVo deviceSensorStatVo = new DeviceSensorStatVo();
-            BeanUtils.copyProperties(eachPo,deviceSensorStatVo);
+            //忽略没有该功能项的属性
+            BeanUtils.copyProperties(eachPo,deviceSensorStatVo,abilityCodeStrings);
             DevicePo devicePo = this.deviceMapper.selectById(eachPo.getDeviceId());
             if(null != devicePo){
                 deviceSensorStatVo.setName(devicePo.getName());

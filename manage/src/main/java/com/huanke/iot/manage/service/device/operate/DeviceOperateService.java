@@ -146,7 +146,7 @@ public class DeviceOperateService {
 
 
     private static String[] keys = {"name","manageName","mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
-            "workStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastOnlineTime", "location"};
+            "powerStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastOnlineTime", "location"};
 
     private static String[] texts = {"名称","管理名称", "MAC", "归属", "类型", "绑定状态", "启用状态", "集群名", "工作状态", "在线状态", "设备型号ID", "设备型号名称", "注册时间", "最后上上线时间", "地理位置"};
 
@@ -527,15 +527,17 @@ public class DeviceOperateService {
             deviceExportVo.setBindStatus( DeviceConstant.BIND_STATUS_YES.equals(eachPo.getBindStatus())?"已绑定":"未绑定");
             deviceExportVo.setEnableStatus( DeviceConstant.ENABLE_STATUS_YES.equals(eachPo.getEnableStatus())?"启用":"禁用");
             deviceExportVo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES.equals(eachPo.getOnlineStatus())?"在线":"离线");
+            deviceExportVo.setPowerStatus(DeviceConstant.POWER_STATUS_YES.equals(eachPo.getPowerStatus())?"开机":"关机");
             if(null != eachPo.getLastOnlineTime()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 deviceExportVo.setLastOnlineTime(sdf.format(new Date(eachPo.getLastOnlineTime())));
             }
+            deviceExportVoList.add(deviceExportVo);
         });
         String[] titles = new String[titleNames.size()];
         titleNames.toArray(titles);
-        ExcelUtil<DeviceListVo> deviceListVoExcelUtil = new ExcelUtil<>();
-        deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(), response, deviceListExportRequest.getSheetTitle(), titles, deviceListVoList, filterMap, deviceListVoExcelUtil.EXCEl_FILE_2007);
+        ExcelUtil<DeviceExportVo> deviceListVoExcelUtil = new ExcelUtil<>();
+        deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(), response, deviceListExportRequest.getSheetTitle(), titles, deviceExportVoList, filterMap, deviceListVoExcelUtil.EXCEl_FILE_2007);
         return new ApiResponse<>(RetCode.OK, "ss");
     }
 

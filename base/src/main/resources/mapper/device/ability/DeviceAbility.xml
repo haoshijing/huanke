@@ -242,4 +242,13 @@
         WHERE 1=1
         limit 1
     </select>
+    <select id="selectAbilityCodeByDeviceId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select tda.abilityCode from
+        t_device_ability tda,t_device td,t_device_model_ability tdm
+        where 1=1
+        AND td.id = #{deviceId}
+        AND td.modelId = tdm.modelId
+        AND tdm.abilityId = tda.id
+        AND tda.status = 1
+    </select>
 </mapper>
