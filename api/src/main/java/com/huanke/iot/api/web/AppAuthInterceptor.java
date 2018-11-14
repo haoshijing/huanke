@@ -29,6 +29,7 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
         String imei = request.getHeader(TICKET);
         String appId = request.getHeader(APPID);
         if(StringUtils.isNotEmpty(imei)){
+
             CustomerUserPo customerUserPo = userService.getUserByIMeiAndAppId(imei,appId);
             //判断是否注册
             if(customerUserPo != null){
