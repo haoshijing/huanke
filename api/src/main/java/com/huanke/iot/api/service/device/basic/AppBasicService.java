@@ -137,14 +137,14 @@ public class AppBasicService {
         androidUserInfoPo = androidUserInfoMapper.selectByCustomerAndImei(customerPo.getId(),iMei);
         if(androidUserInfoPo != null ){
             androidUserInfoPo.setCustUserId(customerUserPo.getId());
-            androidUserInfoPo.setCreateTime(System.currentTimeMillis());
+            androidUserInfoPo.setUpdateTime(System.currentTimeMillis());
             androidUserInfoMapper.updateById(androidUserInfoPo);
         }else{
             androidUserInfoPo = new AndroidUserInfoPo();
             androidUserInfoPo.setCustomerId(customerPo.getId());
             androidUserInfoPo.setImei(iMei);
             androidUserInfoPo .setCustUserId(customerUserPo.getId());
-            androidUserInfoPo .setCreateTime(System.currentTimeMillis());
+            androidUserInfoPo .setUpdateTime(System.currentTimeMillis());
             androidUserInfoMapper.insert(androidUserInfoPo);
         }
         log.info("appAddUser,绑定成功，openId={}，iMei={}",openId,iMei);
