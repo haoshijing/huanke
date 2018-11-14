@@ -21,8 +21,6 @@ public class DictPo {
     private String description;
     private Integer sort;
     private String remarks;
-    private Integer operationUserId;
-
     private Date createTime;
     private Date updateTime;
     private Integer createUserId;

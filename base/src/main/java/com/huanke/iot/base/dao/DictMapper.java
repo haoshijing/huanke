@@ -1,6 +1,8 @@
 package com.huanke.iot.base.dao;
 
 import com.huanke.iot.base.po.config.DictPo;
+import com.huanke.iot.base.resp.DictRspPo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -12,4 +14,8 @@ import java.util.List;
  */
 public interface DictMapper extends BaseMapper<DictPo> {
     List<DictPo> selectByType(String type);
+
+    Boolean batchDelete(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
+
+    List<DictRspPo> selectPageList(@Param("dictPo") DictPo dictPo, @Param("start") int start, @Param("limit") int limit);
 }

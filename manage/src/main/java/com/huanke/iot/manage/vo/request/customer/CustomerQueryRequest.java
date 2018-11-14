@@ -3,8 +3,6 @@ package com.huanke.iot.manage.vo.request.customer;
 import com.huanke.iot.base.constant.CommonConstant;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * 保存客户信息
  */
@@ -17,6 +15,7 @@ public class CustomerQueryRequest {
     private String publicName;
     private String publicId;
     private String appid;
+
     private String appsecret;
     private Integer userType;
     private String loginName;

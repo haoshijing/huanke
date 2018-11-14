@@ -17,10 +17,8 @@
         description,
         sort,
         remarks,
-        operationUserId,
         createTime,
         createUserId,
-        updateUserId,
         isDelete
         )
         VALUES
@@ -31,10 +29,8 @@
         #{description},
         #{sort},
         #{remarks},
-        #{operationUserId},
         #{createTime},
         #{createUserId},
-        #{updateUserId},
         #{isDelete}
         )
     </insert>
@@ -80,9 +76,6 @@
             <if test="remarks != null and remarks != ''">
                 remarks = #{remarks},
             </if>
-            <if test="operationUserId != null">
-                operationUserId = #{operationUserId},
-            </if>
             <if test="updateUserId != null">
                 updateUserId = #{updateUserId},
             </if>
@@ -115,5 +108,34 @@
         <include refid="tableName"/>
         where type = #{type}
         AND  isDelete = 0
+    </select>
+
+    <update id="batchDelete">
+        UPDATE <include refid="tableName"/>
+        SET isDelete = 1
+        ,updateUserId = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <select id="selectCount"  resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where 1=1
+        <if test="param.type != null and param.type!='' ">
+            AND type = #{param.type}
+        </if>
+    </select>
+
+    <select id="selectPageList" resultType="com.huanke.iot.base.resp.DictRspPo">
+      SELECT d.id, d.label, d.description, d.createTime, d.updateTime, u.nickName createName,u1.nickName updateName
+      FROM t_dict d left join t_user u on d.createUserId = u.id left join t_user u1 on  d.updateUserId = u1.id
+      WHERE 1=1
+        <if test = "dictPo.type != null and dictPo.type != ''">
+            AND d.type = #{dictPo.name}
+        </if>
+      LIMIT 0,3
     </select>
 </mapper>
