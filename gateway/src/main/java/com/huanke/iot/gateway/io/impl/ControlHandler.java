@@ -63,11 +63,11 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setCreateTime(System.currentTimeMillis());
             deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
             try {
-                deviceControlMapper.insert(deviceControlData);
-                //如果上报状态为开关机状态则进行记录
                 if(deviceControlData.getFuncId().equals("210")){
                     this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
                 }
+                deviceControlMapper.insert(deviceControlData);
+                //如果上报状态为开关机状态则进行记录
                 stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             }catch (Exception e){
                 log.error("",e);

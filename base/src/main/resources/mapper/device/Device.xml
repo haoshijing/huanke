@@ -502,6 +502,9 @@
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
             </if>
+            <if test="powerStatus != null">
+                powerStatus = #{powerStatus},
+            </if>
             <if test="bindStatus != null">
                 bindStatus = #{bindStatus},
             </if>
