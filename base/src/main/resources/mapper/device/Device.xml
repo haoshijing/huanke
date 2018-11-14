@@ -343,6 +343,9 @@
             <if test="param.onlineStatus != null">
                 AND d.onlineStatus = #{param.onlineStatus}
             </if>
+            <if test="param.powerStatus != null">
+                AND d.powerStatus = #{param.powerStatus}
+            </if>
             <if test="param.bindStatus != null">
                 AND d.bindStatus = #{param.bindStatus}
             </if>
