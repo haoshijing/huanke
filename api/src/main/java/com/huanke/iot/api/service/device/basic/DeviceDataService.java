@@ -16,6 +16,7 @@ import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
@@ -627,6 +628,10 @@ public class DeviceDataService {
             requestMap.put("OpenID", openId);
             requestMap.put("DeviceID", devicePo.getWxDeviceId());
             requestMap.put("status", "huanke");
+            //同步更新设备状态
+            devicePo.setBindStatus(DeviceConstant.BIND_STATUS_NO);
+            devicePo.setBindTime(null);
+            deviceMapper.updateById(devicePo);
             aBoolean = aBoolean && wechartUtil.unbindDevice(openId, devicePo.getWxDeviceId());
             return aBoolean;
         }else{
