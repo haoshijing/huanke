@@ -282,12 +282,12 @@ public class DeviceOperateService {
         return requestId;
     }
 
-    private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, Map<Integer, List<String>> configMap, int operType) {
+    private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityDirValue, Map<Integer, List<String>> configMap, int operType) {
         List<DeviceUpdateRequest.ConfigFuncMessage> configFuncMessages = new ArrayList<>();
         String topic = "/down2/cfgC/" + deviceId;
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
-        deviceOperLogPo.setFuncId(abilityTypeName);
+        deviceOperLogPo.setFuncId(abilityDirValue);
         deviceOperLogPo.setDeviceId(deviceId);
         deviceOperLogPo.setOperType(operType);
         deviceOperLogPo.setOperUserId(userId);
@@ -300,7 +300,7 @@ public class DeviceOperateService {
             Integer sort = entry.getKey();
             List<String> values = entry.getValue();
             DeviceUpdateRequest.ConfigFuncMessage configFuncMessage = new DeviceUpdateRequest.ConfigFuncMessage();
-            configFuncMessage.setType(abilityTypeName + "." + sort);
+            configFuncMessage.setType(abilityDirValue + "." + sort);
             configFuncMessage.setValue(values);
             configFuncMessages.add(configFuncMessage);
         }
