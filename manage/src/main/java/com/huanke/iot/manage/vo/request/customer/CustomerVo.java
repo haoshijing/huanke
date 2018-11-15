@@ -108,6 +108,7 @@ public class CustomerVo {
         private String description;
         private Integer status = CommonConstant.STATUS_YES;
         private List<AndroidSceneImg> androidSceneImgList;  //图片列表
+        private List<AndroidSceneImg> androidSceneVideoList;  //图片列表
     }
 
     /**

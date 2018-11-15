@@ -16,6 +16,7 @@
         appUrl,
         qrcode,
         version,
+        status,
         createTime,
         deviceChangePassword
         )
@@ -26,6 +27,7 @@
         #{appUrl},
         #{qrcode},
         #{version},
+        #{status},
         #{createTime},
         #{deviceChangePassword}
         )

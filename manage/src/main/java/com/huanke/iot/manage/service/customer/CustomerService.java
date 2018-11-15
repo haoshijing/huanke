@@ -282,6 +282,7 @@ public class CustomerService {
                     androidSceneImgPo.setConfigId(androidConfigPo.getId());
                     //场景id
                     androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                    androidSceneImgPo.setImgVideoMark(1);
                     androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
                     androidSceneImgMapper.updateById(androidSceneImgPo);
                 } else {
@@ -292,6 +293,37 @@ public class CustomerService {
                     androidSceneImgPo.setConfigId(androidConfigPo.getId());
                     //场景id
                     androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                    androidSceneImgPo.setImgVideoMark(1);
+                    androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                    androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
+                    androidSceneImgMapper.insert(androidSceneImgPo);
+                }
+            }
+        }
+        List<CustomerVo.AndroidSceneImg> androidSceneVideoList = androidScene.getAndroidSceneVideoList();
+        if (androidSceneVideoList != null && androidSceneVideoList.size() > 0) {
+            for (CustomerVo.AndroidSceneImg androidSceneVideo : androidSceneVideoList) {
+                AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                if (androidSceneVideo != null && androidSceneVideo.getId() != null && androidSceneVideo.getId() > 0) {
+                    BeanUtils.copyProperties(androidSceneVideo, androidSceneImgPo);
+                    //客户id
+                    androidSceneImgPo.setCustomerId(customerPo.getId());
+                    //安卓配置id
+                    androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                    //场景id
+                    androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                    androidSceneImgPo.setImgVideoMark(2);
+                    androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
+                    androidSceneImgMapper.updateById(androidSceneImgPo);
+                } else {
+                    BeanUtils.copyProperties(androidSceneVideo, androidSceneImgPo);
+                    //客户id
+                    androidSceneImgPo.setCustomerId(customerPo.getId());
+                    //安卓配置id
+                    androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                    //场景id
+                    androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                    androidSceneImgPo.setImgVideoMark(2);
                     androidSceneImgPo.setCreateTime(System.currentTimeMillis());
                     androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
                     androidSceneImgMapper.insert(androidSceneImgPo);
@@ -453,15 +485,28 @@ public class CustomerService {
                         List<AndroidSceneImgPo> androidSceneImgPoList = androidSceneImgMapper.selectListBySceneId(resultAndroidScenePo.getId());
                         //如果长场景图片列表不为空，则遍历。
                         if (androidSceneImgPoList != null && androidSceneImgPoList.size() > 0) {
-                            List<CustomerVo.AndroidSceneImg> androidSceneImgVoList = androidSceneImgPoList.stream().map(androidSceneImgPo ->
-                            {
-                                CustomerVo.AndroidSceneImg androidSceneImgVo = new CustomerVo.AndroidSceneImg();
+                            List<CustomerVo.AndroidSceneImg> androidSceneImgVoList = androidSceneImgPoList.stream()
+                                    .filter(androidSceneImgPo->{return androidSceneImgPo.getImgVideoMark()==1;})
+                                    .map(androidSceneImgPo ->{
+                                        CustomerVo.AndroidSceneImg androidSceneImgVo = new CustomerVo.AndroidSceneImg();
 
-                                BeanUtils.copyProperties(androidSceneImgPo, androidSceneImgVo);
-                                return androidSceneImgVo;
-                            }).collect(Collectors.toList());
+                                        BeanUtils.copyProperties(androidSceneImgPo, androidSceneImgVo);
+                                        return androidSceneImgVo;
+                                    }
+                                    ).collect(Collectors.toList());
                             //设置 场景图片列表
                             androidSceneVo.setAndroidSceneImgList(androidSceneImgVoList);
+                            List<CustomerVo.AndroidSceneImg> androidSceneVideoVoList = androidSceneImgPoList.stream()
+                                    .filter(androidSceneImgPo->{return androidSceneImgPo.getImgVideoMark()==2;})
+                                    .map(androidSceneImgPo ->{
+                                                CustomerVo.AndroidSceneImg androidSceneImgVo = new CustomerVo.AndroidSceneImg();
+
+                                                BeanUtils.copyProperties(androidSceneImgPo, androidSceneImgVo);
+                                                return androidSceneImgVo;
+                                            }
+                                    ).collect(Collectors.toList());
+                            //设置 场景图片列表
+                            androidSceneVo.setAndroidSceneVideoList(androidSceneVideoVoList);
                         }
 
                     //设置查询到的 场景列表
@@ -613,6 +658,7 @@ public class CustomerService {
                         androidSceneImgPo.setConfigId(androidConfigPo.getId());
                         //场景id
                         androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                        androidSceneImgPo.setImgVideoMark(1);
                         androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
                         androidSceneImgMapper.updateById(androidSceneImgPo);
                     } else {
@@ -623,6 +669,37 @@ public class CustomerService {
                         androidSceneImgPo.setConfigId(androidConfigPo.getId());
                         //场景id
                         androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                        androidSceneImgPo.setImgVideoMark(1);
+                        androidSceneImgPo.setCreateTime(System.currentTimeMillis());
+                        androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
+                        androidSceneImgMapper.insert(androidSceneImgPo);
+                    }
+                }
+            }
+            List<CustomerVo.AndroidSceneImg> androidSceneVideoList = androidScene.getAndroidSceneVideoList();
+            if (androidSceneVideoList != null && androidSceneVideoList.size() > 0) {
+                for (CustomerVo.AndroidSceneImg androidSceneVideo : androidSceneVideoList) {
+                    AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                    if (androidSceneVideo != null && androidSceneVideo.getId() != null && androidSceneVideo.getId() > 0) {
+                        BeanUtils.copyProperties(androidSceneVideo, androidSceneImgPo);
+                        //客户id
+                        androidSceneImgPo.setCustomerId(customerPo.getId());
+                        //安卓配置id
+                        androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                        //场景id
+                        androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                        androidSceneImgPo.setImgVideoMark(2);
+                        androidSceneImgPo.setLastUpdateTime(System.currentTimeMillis());
+                        androidSceneImgMapper.updateById(androidSceneImgPo);
+                    } else {
+                        BeanUtils.copyProperties(androidSceneVideo, androidSceneImgPo);
+                        //客户id
+                        androidSceneImgPo.setCustomerId(customerPo.getId());
+                        //安卓配置id
+                        androidSceneImgPo.setConfigId(androidConfigPo.getId());
+                        //场景id
+                        androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                        androidSceneImgPo.setImgVideoMark(2);
                         androidSceneImgPo.setCreateTime(System.currentTimeMillis());
                         androidSceneImgPo.setStatus(CommonConstant.STATUS_YES);
                         androidSceneImgMapper.insert(androidSceneImgPo);
