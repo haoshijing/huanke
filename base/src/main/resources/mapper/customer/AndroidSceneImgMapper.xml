@@ -93,8 +93,6 @@
         *
         FROM <include refid="tableName"/>
         WHERE androidSceneId = #{androidSceneId}
-        <if test="status != null  ">
-            AND status = #{status}
-        </if>
+            AND status = 1
     </select>
 </mapper>

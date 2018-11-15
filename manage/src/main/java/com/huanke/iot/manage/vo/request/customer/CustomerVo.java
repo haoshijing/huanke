@@ -93,7 +93,7 @@ public class CustomerVo {
         private String version;
         private String deviceChangePassword;    //设备切换密码
         private Integer status = CommonConstant.STATUS_YES;
-        private List<AndroidScene> androidSceneList;  //场景列表
+        private AndroidScene androidScene;  //场景
     }
 
 
