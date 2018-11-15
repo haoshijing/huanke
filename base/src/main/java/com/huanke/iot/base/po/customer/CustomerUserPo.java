@@ -10,7 +10,13 @@ import lombok.Data;
 public class CustomerUserPo {
     private Integer id;
     private Integer customerId;
+    private Integer groupId;
+    private Integer typeId;
+    private Integer modelId;
     private String openId;
+    private String groupName;
+    private String typeName;
+    private String modelName;
     private String nickname;
     private String unionid;
     private String headimgurl;
