@@ -7,8 +7,10 @@ import com.huanke.iot.base.request.config.DictQueryRequest;
 import com.huanke.iot.base.request.config.DictRequest;
 import com.huanke.iot.base.resp.DictRsp;
 import com.huanke.iot.base.resp.DictRspPo;
+import com.huanke.iot.base.resp.QueryDictRsp;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.request.BaseRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,5 +91,12 @@ public class DictService {
         List<DictRspPo> dictPoList = dictMapper.selectPageList(dictPo, start, limit);
         dictRsp.setDictRspPoList(dictPoList);
         return dictRsp;
+    }
+
+    public List<QueryDictRsp> queryDict(BaseRequest<String> request) {
+        Integer customerId = customerService.obtainCustomerId(false);
+        String type = request.getValue();
+        List<QueryDictRsp> queryDictRspList = dictMapper.queryDict(customerId, type);
+        return queryDictRspList;
     }
 }

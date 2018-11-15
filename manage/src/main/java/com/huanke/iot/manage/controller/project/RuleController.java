@@ -2,8 +2,8 @@ package com.huanke.iot.manage.controller.project;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
+import com.huanke.iot.base.request.BaseListRequest;
 import com.huanke.iot.base.request.config.DictQueryRequest;
-import com.huanke.iot.base.request.config.DictRequest;
 import com.huanke.iot.base.request.project.RuleRequest;
 import com.huanke.iot.base.resp.DictRsp;
 import com.huanke.iot.manage.service.project.RuleService;
@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 描述:
@@ -32,7 +34,7 @@ public class RuleController {
     @ApiOperation("查询客户列表")
     @PostMapping(value = "/selectList")
     public ApiResponse<DictRsp> selectList(@RequestBody DictQueryRequest request) throws Exception {
-        DictRsp dictRsp = dictService.selectList(request);
+        DictRsp dictRsp = ruleService.selectList(request);
         return new ApiResponse<>(dictRsp);
     }
 
@@ -45,8 +47,8 @@ public class RuleController {
 
     @ApiOperation("修改字典信息")
     @PostMapping(value = "/editDict")
-    public ApiResponse<Boolean> editRule(@RequestBody DictRequest request) {
-        Boolean result = dictService.addOrUpdateDict(request);
+    public ApiResponse<Boolean> editRule(@RequestBody RuleRequest request) {
+        Boolean result = ruleService.addOrUpdate(request);
         return new ApiResponse<>(result);
     }
 
@@ -57,7 +59,7 @@ public class RuleController {
         if(valueList.size() == 0){
             throw new BusinessException("没有要删除设备信息");
         }
-        Boolean result = dictService.deleteDict(valueList);
+        Boolean result = ruleService.deleteDict(valueList);
         return new ApiResponse<>(result);
     }
 }

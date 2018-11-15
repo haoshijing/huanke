@@ -1,43 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.DictMapper">
+<mapper namespace="com.huanke.iot.base.dao.project.RuleMapper">
 
     <sql id="tableName">
-        t_dict
+        t_project_rule
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.config.DictPo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectRule">
         INSERT INTO
         <include refid="tableName"/>
         (
         customerId,
-        value,
-        label,
-        type,
+        name,
         description,
-        sort,
-        remarks,
+        typeId,
+        warnLevel,
+        status,
         createTime,
-        createUserId,
-        isDelete
+        createUser
         )
         VALUES
         (
         #{customerId},
-        #{value},
-        #{label},
-        #{type},
+        #{name},
         #{description},
-        #{sort},
+        #{typeId},
+        #{warnLevel},
+        #{status},
         #{remarks},
         #{createTime},
-        #{createUserId},
-        #{isDelete}
+        #{createUser}
         )
     </insert>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.config.DictPo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectRule">
         select
         *
         FROM
@@ -45,44 +42,40 @@
         WHERE id = #{id} limit 1
     </select>
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.config.DictPo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectRule">
         select * from
         <include refid="tableName"/>
         <where>
             1=1
-
         </where>
         limit #{offset},#{limit}
     </select>
 
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.config.DictPo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectRule">
         update
         <include refid="tableName"/>
         <set>
-            <if test="value != null">
-                value = #{value},
-            </if>
-            <if test="label != null and label!='' ">
-                label = #{label},
-            </if>
-            <if test="type != null and type!='' ">
-                type = #{type},
+            <if test="name != null and name!='' ">
+                name = #{name},
             </if>
             <if test="description != null and description!='' ">
                 description = #{description},
             </if>
-            <if test="sort != null">
-                sort = #{sort},
+            <if test="typeId != null">
+                typeId = #{typeId},
             </if>
-            <if test="remarks != null and remarks != ''">
-                remarks = #{remarks},
+            <if test="warnLevel != null">
+                warnLevel = #{warnLevel},
             </if>
-            <if test="updateUserId != null">
-                updateUserId = #{updateUserId},
+            <if test="status != null">
+                status = #{status},
             </if>
-            <if test="isDelete != null">
-                isDelete = #{isDelete}
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                updateUser = #{updateUser},
             </if>
         </set>
         where
@@ -90,10 +83,6 @@
         and id = #{id}
     </update>
 
-    <select id="selectAll" resultType="com.huanke.iot.base.po.device.DevicePo">
-        select * from
-        <include refid="tableName"/>
-    </select>
 
     <update id="deleteById" parameterType="java.lang.Integer">
         update
@@ -141,13 +130,5 @@
         </if>
         AND customerId = #{dictPo.customerId}
       LIMIT #{start},#{limit}
-    </select>
-
-    <select id="queryDict" resultType="com.huanke.iot.base.resp.QueryDictRsp">
-        select id,label,value from
-        <include refid="tableName"/>
-        where type = #{type}
-        AND customerId = #{customerId}
-        AND isDelete = 0
     </select>
 </mapper>

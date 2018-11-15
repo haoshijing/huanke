@@ -5,8 +5,10 @@ import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.config.DictQueryRequest;
 import com.huanke.iot.base.request.config.DictRequest;
 import com.huanke.iot.base.resp.DictRsp;
+import com.huanke.iot.base.resp.QueryDictRsp;
 import com.huanke.iot.manage.service.config.DictService;
 import com.huanke.iot.manage.vo.request.BaseListRequest;
+import com.huanke.iot.manage.vo.request.BaseRequest;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ public class DictController {
      * @return
      * @throws Exception
      */
-    @ApiOperation("查询客户列表")
+    @ApiOperation("查询字典列表")
     @PostMapping(value = "/selectList")
     public ApiResponse<DictRsp> selectList(@RequestBody DictQueryRequest request) throws Exception {
         DictRsp dictRsp = dictService.selectList(request);
@@ -67,5 +69,12 @@ public class DictController {
         }
         Boolean result = dictService.deleteDict(valueList);
         return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("查字典")
+    @PostMapping(value = "/queryDict")
+    public ApiResponse<List<QueryDictRsp>> queryDict(@RequestBody BaseRequest<String> request) {
+        List<QueryDictRsp> queryDictRspList = dictService.queryDict(request);
+        return new ApiResponse<>(queryDictRspList);
     }
 }
