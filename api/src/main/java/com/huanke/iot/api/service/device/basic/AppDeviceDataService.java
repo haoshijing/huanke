@@ -132,7 +132,7 @@ public class AppDeviceDataService {
                     deviceTeamData.setTeamImages(collect);
                 }else{
                     if(androidSceneImgPos!=null&&androidSceneImgPos.size()>0)
-                    deviceTeamData.setTeamImages(androidSceneImgPos.stream().map(temp->{return temp.getImgVideo();}).collect(Collectors.toList()));
+                    deviceTeamData.setTeamImages(androidSceneImgPos.stream().filter(temp->{return temp.getImgVideoMark() ==1;}).map(temp->{return temp.getImgVideo();}).collect(Collectors.toList()));
                 }
                 if(deviceTeamScenePoVideos != null && deviceTeamScenePoVideos.size() > 0){
                     List<String> collect = deviceTeamScenePoVideos.stream().map(temp -> {
@@ -141,7 +141,7 @@ public class AppDeviceDataService {
                     deviceTeamData.setTeamVideos(collect);
                 }else{
                     if(androidSceneImgPos!=null&&androidSceneImgPos.size()>0)
-                    deviceTeamData.setTeamVideos(androidSceneImgPos.stream().map(temp->{return temp.getImgVideo();}).collect(Collectors.toList()));
+                    deviceTeamData.setTeamVideos(androidSceneImgPos.stream().filter(temp->{return temp.getImgVideoMark() ==2;}).map(temp->{return temp.getImgVideo();}).collect(Collectors.toList()));
                 }
                 String videoCover = deviceTeamPo.getVideoCover();
                 if (StringUtils.isEmpty(videoCover)&&androidScenePo!=null) {
