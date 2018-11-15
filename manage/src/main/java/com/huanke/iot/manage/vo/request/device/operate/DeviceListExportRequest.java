@@ -28,6 +28,8 @@ public class DeviceListExportRequest {
     private Boolean id;
     //设备型号名称
     private Boolean modelName;
+    //型号
+    private Boolean modelNo;
     //注册时间
     private Boolean birthTime;
     //最后上上线时间
