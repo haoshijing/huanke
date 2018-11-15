@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppDeviceListVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
+import com.huanke.iot.api.controller.app.response.AppSceneVo;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.response.*;
@@ -150,8 +151,8 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/getCustomerScene")
-    public ApiResponse<List> getCustomerScene(){
-        List request= appBasicService.getCustomerSceneInfo();
+    public ApiResponse<AppSceneVo> getCustomerScene(){
+        AppSceneVo request= appBasicService.getCustomerSceneInfo();
         return new ApiResponse<>(request);
     }
 }
