@@ -145,11 +145,11 @@ public class DeviceOperateService {
 
 
     private static String[] keys = {"name","mac", "customerName", "bindStatus", "enableStatus", "groupName","userName",
-            "powerStatus", "onlineStatus", "assignStatus","id", "modelName", "birthTime", "lastOnlineTime",
+            "powerStatus", "onlineStatus", "assignStatus","id", "modelName","modelNo","birthTime", "lastOnlineTime",
             "createUserName", "location","manageName"};
 
     private static String[] texts = {"名称", "MAC", "归属", "绑定状态","启用状态","项目名","绑定用户",
-            "工作状态","在线状态","分配状态","设备ID","型号名","创建时间", "最后上上线时间",
+            "工作状态","在线状态","分配状态","设备ID","型号名","型号","创建时间", "最后上上线时间",
             "创建人", "地理位置","管理名称"};
 
     /**
