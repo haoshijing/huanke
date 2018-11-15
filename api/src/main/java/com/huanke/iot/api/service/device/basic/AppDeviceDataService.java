@@ -114,24 +114,12 @@ public class AppDeviceDataService {
                 deviceTeamData.setTeamId(deviceTeamPo.getId());
 
                 String icon = deviceTeamPo.getIcon();
-                if (StringUtils.isEmpty(icon)) {
-                    icon = Constants.DEFAULT_ICON;
+                if (StringUtils.isEmpty(icon)&&androidConfigPo!=null) {
+                    icon = androidConfigPo.getLogo();
                 }
                 String qrcode = deviceTeamPo.getQrcode();
-                if (StringUtils.isEmpty(qrcode)) {
-                    qrcode = "https://idcfota.oss-cn-hangzhou.aliyuncs.com/group/WechatIMG4213.jpeg";
-                }
-                List<String> adImages = Lists.newArrayList();
-                String adImageStr = deviceTeamPo.getAdImages();
-                if (StringUtils.isNotEmpty(adImageStr)) {
-                    String adImageStrArr[] = adImageStr.split(",");
-                    for (String adImage : adImageStrArr) {
-                        if (StringUtils.isNotEmpty(adImage) && adImage.startsWith("http")) {
-                            adImages.add(adImage);
-                        } else {
-                            adImages.add(ossUrl + "/" + adImage);
-                        }
-                    }
+                if (StringUtils.isEmpty(qrcode)&&androidConfigPo!=null) {
+                    qrcode = androidConfigPo.getQrcode();
                 }
                 List<DeviceTeamScenePo> deviceTeamScenePoImgs = deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId(), DeviceTeamConstants.IMAGE_VIDEO_MARK_IMAGE);
                 List<DeviceTeamScenePo> deviceTeamScenePoVideos = deviceTeamSceneMapper.selectImgVideoList(deviceTeamPo.getId(), DeviceTeamConstants.IMAGE_VIDEO_MARK_VIDEO);
@@ -142,32 +130,30 @@ public class AppDeviceDataService {
                         return temp.getImgVideo();
                     }).collect(Collectors.toList());
                     deviceTeamData.setTeamImages(collect);
+                }else{
+                    if(androidSceneImgPos!=null&&androidSceneImgPos.size()>0)
+                    deviceTeamData.setTeamImages(androidSceneImgPos.stream().map(temp->{return temp.getImgVideo();}).collect(Collectors.toList()));
                 }
                 if(deviceTeamScenePoVideos != null && deviceTeamScenePoVideos.size() > 0){
                     List<String> collect = deviceTeamScenePoVideos.stream().map(temp -> {
                         return temp.getImgVideo();
                     }).collect(Collectors.toList());
                     deviceTeamData.setTeamVideos(collect);
+                }else{
+                    if(androidSceneImgPos!=null&&androidSceneImgPos.size()>0)
+                    deviceTeamData.setTeamVideos(androidSceneImgPos.stream().map(temp->{return temp.getImgVideo();}).collect(Collectors.toList()));
                 }
-
-                deviceTeamData.setAdImages(adImages);
-                String videoUrl = deviceTeamPo.getVideoUrl();
-                if (StringUtils.isEmpty(videoUrl)) {
-                    videoUrl = Constants.DEFAULT_VIDEO_URl;
-                }
-
                 String videoCover = deviceTeamPo.getVideoCover();
-                if (StringUtils.isEmpty(videoCover)) {
-                    videoCover = Constants.DEFAULT_COVER;
+                if (StringUtils.isEmpty(videoCover)&&androidScenePo!=null) {
+                    videoCover = androidScenePo.getImgsCover();
                 }
 
                 String memo = deviceTeamPo.getSceneDescription();
-                if (StringUtils.isEmpty(memo)) {
-                    memo = Constants.MEMO;
+                if (StringUtils.isEmpty(memo)&&androidScenePo!=null) {
+                    memo = androidScenePo.getDescription();
                 }
 
                 deviceTeamData.setMemo(memo);
-                deviceTeamData.setVideoUrl(videoUrl);
                 deviceTeamData.setVideoCover(videoCover);
                 deviceTeamData.setIcon(icon);
                 deviceTeamData.setQrcode(qrcode);
