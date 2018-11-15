@@ -173,7 +173,7 @@
     <select id="selectCount" resultType="java.lang.Integer">
         SELECT COUNT(1)
         FROM t_customer_user tcu,t_device_customer_user_relation tcur,t_device td
-        <if test="groupId != null">
+        <if test="param.groupId != null">
             ,t_device_group tdg,t_device_group_item tdgi
         </if>
         LEFT JOIN t_device_type tdt ON td.typeId = tdt.id
