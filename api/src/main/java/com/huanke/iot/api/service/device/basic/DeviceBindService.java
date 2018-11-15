@@ -83,6 +83,7 @@ public class DeviceBindService {
             newCustomerUserPo.setCreateTime(System.currentTimeMillis());
             newCustomerUserPo.setOpenId(openId);
             newCustomerUserPo.setCustomerId(customerId);
+            newCustomerUserPo.setStatus(CommonConstant.STATUS_YES);
             customerUserMapper.insert(newCustomerUserPo);
             userId = newCustomerUserPo.getId();
         }
