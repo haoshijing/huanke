@@ -2,6 +2,7 @@ package com.huanke.iot.api.service.user;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.wechat.WechartUtil;
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.AndroidUserInfoMapper;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
@@ -62,6 +63,7 @@ public class UserService {
             dbCustomerUserPo.setSex(userInfo.getInteger("sex"));
             dbCustomerUserPo.setNickname(userInfo.getString("nickname"));
             dbCustomerUserPo.setCustomerId(customerId);
+            dbCustomerUserPo.setStatus(CommonConstant.STATUS_YES);
             dbCustomerUserPo.setLastVisitTime(System.currentTimeMillis());
             dbCustomerUserPo.setLastUpdateTime(System.currentTimeMillis());
         }
