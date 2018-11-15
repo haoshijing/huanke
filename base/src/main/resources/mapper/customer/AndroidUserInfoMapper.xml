@@ -34,9 +34,8 @@
             <if test="customerId != null  and customerId != '' ">
                 logo = #{customerId},
             </if>
-            <if test="custUserId != null  and custUserId != ''">
-                name = #{custUserId},
-            </if>
+
+            custUserId = #{custUserId},
             <if test="updateTime != null  and updateTime != '' ">
                 logo = #{updateTime},
             </if>
