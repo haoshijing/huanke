@@ -14,6 +14,7 @@ public class DeviceAbilityCreateOrUpdateRequest {
 
     private Integer id;
     private String abilityName;
+    private String abilityCode;
     private String dirValue;
     private String remark;
     private Integer writeStatus; //可写状态

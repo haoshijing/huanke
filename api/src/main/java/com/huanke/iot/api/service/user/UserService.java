@@ -2,9 +2,11 @@ package com.huanke.iot.api.service.user;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.wechat.WechartUtil;
+import com.huanke.iot.base.dao.customer.AndroidUserInfoMapper;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMacMapper;
+import com.huanke.iot.base.po.customer.AndroidUserInfoPo;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceMacPo;
@@ -28,6 +30,9 @@ public class UserService {
 
     @Autowired
     private DeviceMacMapper deviceMacMapper;
+
+    @Autowired
+    private com.huanke.iot.base.dao.customer.AndroidUserInfoMapper AndroidUserInfoMapper;
 
     @Autowired
     private CustomerUserMapper customerUserMapper;
@@ -127,19 +132,18 @@ public class UserService {
 //        }
 //        return deviceMacPo.getAppUserId();
         CustomerPo customerPo = customerMapper.selectByAppId(appid);
-        if(customerPo == null){
-            log.info("APP, appid = {},imei = {} , Customer is null" ,appid,imei);
-            return null;
+        if(customerPo != null){
+            AndroidUserInfoPo androidUserInfoPo = AndroidUserInfoMapper.selectByCustomerAndImei(customerPo.getId(), imei);
+            if(androidUserInfoPo !=null){
+                Integer userId = androidUserInfoPo.getCustUserId();
+                CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
+                if(customerUserPo != null){
+                    return customerUserPo;
+                }
+            }
         }
-        CustomerUserPo customerUserPo = new CustomerUserPo();
-        customerUserPo.setCustomerId(customerPo.getId());
-        customerUserPo.setMac(imei);
-        List<CustomerUserPo> customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
-        if(customerUserPos == null || customerUserPos.size()<1){
-            log.info("APP, appid = {},imei = {} , User is null" ,appid,imei);
-            return null;
-        }
-        return customerUserPos.get(0);
+        log.info("APP, appid = {},imei = {} , User is null" ,appid,imei);
+        return null;
     }
     public CustomerPo getCustomerByOpenId(String openId){
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);

@@ -14,6 +14,7 @@ public class DeviceGroupDetailVo {
     private String introduction;
     private Integer deviceCount;
     private String location;
+    private String mapGps;
     private Long createTime;
     private String createUser;
     private String lastUpdateUser;

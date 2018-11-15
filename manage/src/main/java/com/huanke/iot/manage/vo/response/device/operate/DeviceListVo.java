@@ -1,7 +1,10 @@
 package com.huanke.iot.manage.vo.response.device.operate;
 
+import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import io.swagger.models.auth.In;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class DeviceListVo {
@@ -102,5 +105,7 @@ public class DeviceListVo {
     private Integer lastUpdateUser;
     private String lastUpdateUserName;
     private Long lastUpdateTime;
+
+    List<DeviceModelAbilityVo> deviceModelAbilityVos;
 
 }

@@ -258,7 +258,7 @@
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
         d.`createTime`,d.`lastUpdateTime`,d.`createUser`,d.`lastUpdateUser`
-        ,c.name customerName,t.`name` typeName ,m.`name` modelName
+        ,c.name customerName,t.`name` typeName ,m.`name` modelName,m.`modelNo`,m.`modelCode`
         from
         t_device d
         <if test="param.customerId == null">
@@ -342,6 +342,9 @@
             </if>
             <if test="param.onlineStatus != null">
                 AND d.onlineStatus = #{param.onlineStatus}
+            </if>
+            <if test="param.powerStatus != null">
+                AND d.powerStatus = #{param.powerStatus}
             </if>
             <if test="param.bindStatus != null">
                 AND d.bindStatus = #{param.bindStatus}
@@ -501,6 +504,9 @@
             </if>
             <if test="onlineStatus != null">
                 onlineStatus = #{onlineStatus},
+            </if>
+            <if test="powerStatus != null">
+                powerStatus = #{powerStatus},
             </if>
             <if test="bindStatus != null">
                 bindStatus = #{bindStatus},

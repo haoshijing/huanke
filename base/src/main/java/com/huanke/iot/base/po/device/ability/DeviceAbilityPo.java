@@ -15,6 +15,7 @@ public class DeviceAbilityPo implements Serializable{
 
     private Integer id;
     private String abilityName;
+    private String abilityCode;
     private String dirValue;
     private Integer writeStatus; //可写状态
     private Integer readStatus; //可读状态

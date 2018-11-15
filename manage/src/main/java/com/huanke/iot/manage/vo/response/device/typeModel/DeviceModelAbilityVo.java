@@ -14,6 +14,7 @@ public class DeviceModelAbilityVo {
     private Integer id;
     private Integer modelId;
     private Integer abilityId;
+    private String abilityName;
     private Integer abilityType;
     private String dirValue;
     private String definedName;
@@ -32,12 +33,15 @@ public class DeviceModelAbilityVo {
         private Integer id;
         private Integer abilityOptionId;
         private String optionValue;
+        private String optionName;
         private String definedName;
         private Integer defaultVal;
         private Integer minVal;
         private Integer maxVal;
         private Integer status = CommonConstant.STATUS_YES;
         private Integer updateStatus; // -1 删除，0 正常 ，1-增加,3,禁用
+
+
 
     }
 }

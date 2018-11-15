@@ -25,12 +25,16 @@ public interface DeviceAbilityMapper extends BaseMapper<DeviceAbilityPo> {
 
     List<DeviceAbilityPo> selectDeviceAbilitysByTypeId(Integer typeId);
 
+    List<String> selectAbilityCodeByDeviceId(@Param("deviceId") Integer deviceId);
+
 
     List<String> getDirValuesByDeviceTypeId(Integer deviceTypeId);
 
     List<DeviceAbilityPo> queryLikeByTypeName(@Param("typeName")String typeName);
 
     DeviceAbilityPo selectByDirValue(@Param("dirValue")String dirValue);
+
+    DeviceAbilityPo selectByAbilityCode(@Param("abilityCode")String abilityCode);
 
     void flushCache();
 }

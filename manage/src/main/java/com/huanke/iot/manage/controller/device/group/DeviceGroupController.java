@@ -49,10 +49,13 @@ public class DeviceGroupController {
             return new ApiResponse<>(RetCode.PARAM_ERROR,"客户不可为空");
         }
         //查询设备名称是否存在
-        DeviceQueryRequest.DeviceQueryList device = this.deviceGroupService.queryDeviceByMac(groupCreateOrUpdateRequest.getDeviceQueryRequest());
-        if(null != device){
-            return new ApiResponse<>(RetCode.OK,"所选设备中mac地址 "+device.getMac()+" 不存在或已被删除");
+        if(null!=groupCreateOrUpdateRequest.getDeviceList()&&groupCreateOrUpdateRequest.getDeviceList().size()>0){
+            DeviceQueryRequest.DeviceQueryList device = this.deviceGroupService.queryDeviceByMac(groupCreateOrUpdateRequest);
+            if(null != device){
+                return new ApiResponse<>(RetCode.OK,"所选设备中mac地址 "+device.getMac()+" 不存在或已被删除");
+            }
         }
+
         try {
             return this.deviceGroupService.createOrUpdateGroup(groupCreateOrUpdateRequest);
         } catch (Exception e) {

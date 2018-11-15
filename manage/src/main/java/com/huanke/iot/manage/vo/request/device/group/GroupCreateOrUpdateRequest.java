@@ -31,7 +31,7 @@ public class GroupCreateOrUpdateRequest {
 
     private List<Videos> videosList;
 
-    private DeviceQueryRequest deviceQueryRequest;
+    private List<DeviceQueryRequest.DeviceQueryList> deviceList;
 
     @Data
     public static class Images{

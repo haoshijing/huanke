@@ -52,6 +52,8 @@ public class AppBasicService {
     @Autowired
     private WechartUtil wechartUtil;
     @Autowired
+    AndroidUserInfoMapper androidUserInfoMapper;
+    @Autowired
     private CustomerUserMapper customerUserMapper;
     @Autowired
     private CustomerMapper customerMapper;
@@ -91,16 +93,10 @@ public class AppBasicService {
             log.error("重置iMei，没有该公众号appId={}",appId);
             return new ApiResponse<>(respFlag);
         }
-        CustomerUserPo customerUserPo = new CustomerUserPo();
-        customerUserPo.setMac(iMei);
-        customerUserPo.setCustomerId(customerPo.getId());
-        List<CustomerUserPo> customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
-        if(customerUserPos != null && customerUserPos.size()>0){
-            //清空对应公众号下绑定的用户关系
-            customerUserPos.forEach(customerUserPoTemp ->{
-                customerUserPoTemp.setMac("");
-                customerUserMapper.updateById(customerUserPoTemp);
-            });
+        AndroidUserInfoPo androidUserInfoPo = androidUserInfoMapper.selectByCustomerAndImei(customerPo.getId(), iMei);
+        if(androidUserInfoPo!=null&&StringUtils.isNotEmpty(androidUserInfoPo.getCustUserId().toString())){
+            androidUserInfoPo.setCustUserId(null);
+            androidUserInfoMapper.updateById(androidUserInfoPo);
         }
         log.info("重置iMei，成功，appId={}，iMei={}",appId,iMei);
         respFlag=true;
@@ -114,7 +110,7 @@ public class AppBasicService {
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
         if(customerPo == null){
             log.error("appAddUser,不存在的appId={}",appId);
-            return  new ApiResponse<>(false);
+            return new ApiResponse<>("APP错误，请安装正确的APP！");
         }
         UserRequestContext context = UserRequestContextHolder.get();
         if(context.getCustomerVo() == null){
@@ -125,32 +121,34 @@ public class AppBasicService {
         JSONObject resp = wechartUtil.obtainAuthAccessToken(request.getParameter("code"));
         if(resp == null || StringUtils.isEmpty(resp.get("openid").toString())){
             log.error("appAddUser,获取openId异常，code={}，resp={}",request.getParameter("code"),resp);
-            return  new ApiResponse<>(false);
+            return new ApiResponse<>("微信错误，请重新扫码！");
         }
         String iMei = request.getParameter("iMei");
         String openId = resp.getString("openid");
         log.info("appAddUser,openId={}",openId);
-        CustomerUserPo customerUserPo = new CustomerUserPo();
-        customerUserPo.setMac(iMei);
-        customerUserPo.setCustomerId(customerPo.getId());
-        List<CustomerUserPo> customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
-        while(customerUserPos != null && customerUserPos.size()>0){
-            //清空公众号下现有的imei关联，以及脏数据，理论上不会进来
-            customerUserPos.forEach(customerUserPoTemp ->{
-                customerUserPoTemp.setMac("");
-                customerUserMapper.updateById(customerUserPoTemp);
-            });
-            customerUserPos = customerUserMapper.selectList(customerUserPo, 1000, 0);
-        }
-        customerUserPo = customerUserMapper.selectByOpenId(openId);
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
         if(customerUserPo == null){
             log.info("appAddUser,未注册的openId={}",openId);
-            return  new ApiResponse<>(false);
+            return new ApiResponse<>("请关注公众号！");
         }
-        customerUserPo.setMac(iMei);
-        customerUserMapper.updateById(customerUserPo);
+        AndroidUserInfoPo androidUserInfoPo = new AndroidUserInfoPo();
+        androidUserInfoPo.setImei(iMei);
+        androidUserInfoPo.setCustomerId(customerPo.getId());
+        androidUserInfoPo = androidUserInfoMapper.selectByCustomerAndImei(customerPo.getId(),iMei);
+        if(androidUserInfoPo != null ){
+            androidUserInfoPo.setCustUserId(customerUserPo.getId());
+            androidUserInfoPo.setUpdateTime(System.currentTimeMillis());
+            androidUserInfoMapper.updateById(androidUserInfoPo);
+        }else{
+            androidUserInfoPo = new AndroidUserInfoPo();
+            androidUserInfoPo.setCustomerId(customerPo.getId());
+            androidUserInfoPo.setImei(iMei);
+            androidUserInfoPo .setCustUserId(customerUserPo.getId());
+            androidUserInfoPo .setUpdateTime(System.currentTimeMillis());
+            androidUserInfoMapper.insert(androidUserInfoPo);
+        }
         log.info("appAddUser,绑定成功，openId={}，iMei={}",openId,iMei);
-        return new ApiResponse<>(true);
+        return new ApiResponse<>("绑定成功！");
     }
 
     public Object getQRCode(String appId){
