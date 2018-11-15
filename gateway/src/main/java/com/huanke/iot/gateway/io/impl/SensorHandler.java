@@ -2,6 +2,7 @@ package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceSensorPo;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Slf4j
@@ -27,6 +30,13 @@ public class SensorHandler  extends AbstractHandler {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private DeviceAbilityMapper deviceAbilityMapper;
+
+    private Map<String,Integer> maxValue;
+
+    private Map<String,Integer> minValue;
     @Data
     public static class SensorMessage{
         private String type;
@@ -51,6 +61,11 @@ public class SensorHandler  extends AbstractHandler {
 
     @Override
     public void doHandler(String topic, byte[] payloads) {
+        if(maxValue==null || maxValue.keySet()==null||maxValue.keySet().size()<=0){
+            maxValue = new HashMap<String,Integer>();
+            maxValue.put("150",deviceAbilityMapper.selectByDirValue("150").getMaxVal());//TVOC上限
+            maxValue.put("160",deviceAbilityMapper.selectByDirValue("160").getMaxVal());//甲醛上限
+        }
         SensorHandler.SensorListMessage sensorListMessage = JSON.parseObject(new String(payloads),SensorHandler.SensorListMessage.class);
 
         sensorListMessage.getDatas().forEach(sensorMessage -> {
@@ -75,8 +90,11 @@ public class SensorHandler  extends AbstractHandler {
 
             deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
             try {
-                deviceSensorDataMapper.insert(deviceSensorPo);
-                stringRedisTemplate.opsForHash().put("sensor2." + deviceId, type, String.valueOf(value));
+                //添加最大值限制，目前为甲醛和TVOC
+                if(maxValue.get(type)==null||value.compareTo(maxValue.get(type))<=0) {
+                    deviceSensorDataMapper.insert(deviceSensorPo);
+                    stringRedisTemplate.opsForHash().put("sensor2." + deviceId, type, String.valueOf(value));
+                }
             }catch (Exception e){
                 log.error("",e);
             }
