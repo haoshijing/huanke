@@ -94,7 +94,7 @@ public class AppBasicService {
             return new ApiResponse<>(respFlag);
         }
         AndroidUserInfoPo androidUserInfoPo = androidUserInfoMapper.selectByCustomerAndImei(customerPo.getId(), iMei);
-        if(androidUserInfoPo!=null&&StringUtils.isNotEmpty(androidUserInfoPo.getCustUserId().toString())){
+        if(androidUserInfoPo!=null&&androidUserInfoPo.getCustUserId()!=null){
             androidUserInfoPo.setCustUserId(null);
             androidUserInfoMapper.updateById(androidUserInfoPo);
         }
