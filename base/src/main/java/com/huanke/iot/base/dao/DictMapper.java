@@ -13,6 +13,11 @@ import java.util.List;
  * @create 2018-09-14 下午1:54
  */
 public interface DictMapper extends BaseMapper<DictPo> {
+    /**
+     * 不要用
+     * @param type
+     * @return
+     */
     List<DictPo> selectByType(String type);
 
     Boolean batchDelete(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);

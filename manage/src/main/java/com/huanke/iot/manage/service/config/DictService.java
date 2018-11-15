@@ -7,6 +7,7 @@ import com.huanke.iot.base.request.config.DictQueryRequest;
 import com.huanke.iot.base.request.config.DictRequest;
 import com.huanke.iot.base.resp.DictRsp;
 import com.huanke.iot.base.resp.DictRspPo;
+import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +31,8 @@ public class DictService {
     private UserService userService;
     @Autowired
     private DictMapper dictMapper;
+    @Autowired
+    private CustomerService customerService;
 
     /**
      * 添加或修改
@@ -43,6 +46,7 @@ public class DictService {
         BeanUtils.copyProperties(request, dictPo);
         if (dictPo.getId() == null) {
             //添加
+            dictPo.setCustomerId(customerService.obtainCustomerId(false));
             dictPo.setCreateTime(new Date());
             dictPo.setCreateUserId(user.getId());
             return dictMapper.insert(dictPo) > 0;
@@ -68,12 +72,14 @@ public class DictService {
 
 
     public DictRsp selectList(DictQueryRequest request) {
+        Integer customerId = customerService.obtainCustomerId(false);
         DictRsp dictRsp = new DictRsp();
         Integer limit = request.getLimit();
         Integer currentPage = request.getCurrentPage();
         Integer start = (currentPage - 1) * limit;
 
         DictPo dictPo = new DictPo();
+        dictPo.setCustomerId(customerId);
         BeanUtils.copyProperties(request, dictPo);
         Integer count = dictMapper.selectCount(dictPo);
         dictRsp.setTotalCount(count);

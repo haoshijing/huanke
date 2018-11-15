@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 public class ProjectRule {
     private Integer id;
-    private Integer manageId;
+    private Integer customerId;
     private String name;
     private String description;
     private Integer typeId;

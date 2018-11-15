@@ -15,6 +15,7 @@ public class DictPo {
      * id
      */
     private Integer id;
+    private Integer customerId;
     private Integer value;
     private String label;
     private String type;
