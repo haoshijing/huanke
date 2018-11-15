@@ -153,7 +153,7 @@ public class WxFormatService {
         /*查询当前域名的 客户主键*/
         Integer hostCustomerId = customerService.obtainCustomerId(false);
         //如果 查询条件有客户，则查询该客户的版式，反之，则查询该二级域名的客户的版式,版式类型为3（安卓）的没有权限限制
-        if(request.getType() != 3) {
+        if(request.getType() ==null||request.getType()!= 3) {
             if (StringUtils.isBlank(request.getCustomerIds())) {
                 queryWxFormatPo.setCustomerIds(hostCustomerId == null ? null : hostCustomerId.toString());
             } else {
