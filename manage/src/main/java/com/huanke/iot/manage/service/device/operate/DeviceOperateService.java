@@ -144,10 +144,13 @@ public class DeviceOperateService {
     private MqttSendService mqttSendService;
 
 
-    private static String[] keys = {"name","manageName","mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
-            "powerStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastOnlineTime", "location"};
+    private static String[] keys = {"name","mac", "customerName", "bindStatus", "enableStatus", "groupName","userName",
+            "powerStatus", "onlineStatus", "assignStatus","id", "modelName", "birthTime", "lastOnlineTime",
+            "createUserName", "location","manageName"};
 
-    private static String[] texts = {"名称","管理名称", "MAC", "归属", "类型", "绑定状态", "启用状态", "集群名", "工作状态", "在线状态", "设备型号ID", "设备型号名称", "注册时间", "最后上上线时间", "地理位置"};
+    private static String[] texts = {"名称", "MAC", "归属", "绑定状态","启用状态","项目名","绑定用户",
+            "工作状态","在线状态","分配状态","设备ID","型号名","创建时间", "最后上上线时间",
+            "创建人", "地理位置","管理名称"};
 
     /**
      * 2018-08-15
@@ -536,10 +539,12 @@ public class DeviceOperateService {
             if(null != eachPo.getLastOnlineTime()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 deviceExportVo.setLastOnlineTime(sdf.format(new Date(eachPo.getLastOnlineTime())));
+                deviceExportVo.setBirthTime(sdf.format(new Date(eachPo.getBirthTime())));
             }
             deviceExportVoList.add(deviceExportVo);
         });
         String[] titles = new String[titleNames.size()];
+        log.info("当前条件下需要导出的设备列的表头：{}",titles);
         titleNames.toArray(titles);
         ExcelUtil<DeviceExportVo> deviceListVoExcelUtil = new ExcelUtil<>();
         deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(), response, deviceListExportRequest.getSheetTitle(), titles, deviceExportVoList, filterMap, deviceListVoExcelUtil.EXCEl_FILE_2007);
