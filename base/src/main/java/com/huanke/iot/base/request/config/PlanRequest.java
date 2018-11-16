@@ -1,20 +1,19 @@
-package com.huanke.iot.base.po.project;
+package com.huanke.iot.base.request.config;
 
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述:
- * 任务流程历史表
  *
  * @author onlymark
- * @create 2018-11-14 上午9:48
+ * @create 2018-11-14 下午1:48
  */
 @Data
-public class ProjectPlanInfo {
+public class PlanRequest {
     private Integer id;
-    private Integer customerId;
     private String name;
     private String description;
     private Integer isRule;
@@ -25,10 +24,6 @@ public class ProjectPlanInfo {
     private Date nextExecuteTime;
     private Integer cycleType;
     private Integer overTimeDays;
-    private String enableUsers;
+    private List<Integer> enableUserList;
     private Integer status;
-    private Date createTime;
-    private Date updateTime;
-    private Integer createUser;
-    private Integer updateUser;
 }

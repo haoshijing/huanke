@@ -1,8 +1,8 @@
 package com.huanke.iot.base.dao.project;
 
 import com.huanke.iot.base.dao.BaseMapper;
-import com.huanke.iot.base.po.project.ProjectRule;
-import com.huanke.iot.base.resp.project.RuleRspPo;
+import com.huanke.iot.base.po.project.ProjectPlanInfo;
+import com.huanke.iot.base.resp.project.PlanRspPo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -14,11 +14,11 @@ import java.util.List;
  * @author onlymark
  * @create 2018-11-14 下午5:59
  */
-public interface RuleMapper extends BaseMapper<ProjectRule> {
+public interface PlanMapper extends BaseMapper<ProjectPlanInfo> {
 
     Boolean batchDelete(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
-    List<RuleRspPo> selectPageList(@Param("projectRule") ProjectRule projectRule, @Param("start") int start, @Param("limit") int limit);
+    List<PlanRspPo> selectPageList(@Param("projectPlanInfo") ProjectPlanInfo projectPlanInfo, @Param("start") int start, @Param("limit") int limit);
 
     Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 }

@@ -5,7 +5,7 @@ import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.BaseListRequest;
 import com.huanke.iot.base.request.config.DictQueryRequest;
 import com.huanke.iot.base.request.project.RuleRequest;
-import com.huanke.iot.base.resp.DictRsp;
+import com.huanke.iot.base.resp.project.RuleRsp;
 import com.huanke.iot.manage.service.project.RuleService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -33,33 +33,44 @@ public class RuleController {
 
     @ApiOperation("查询客户列表")
     @PostMapping(value = "/selectList")
-    public ApiResponse<DictRsp> selectList(@RequestBody DictQueryRequest request) throws Exception {
-        DictRsp dictRsp = ruleService.selectList(request);
-        return new ApiResponse<>(dictRsp);
+    public ApiResponse<RuleRsp> selectList(@RequestBody DictQueryRequest request) throws Exception {
+        RuleRsp ruleRsp = ruleService.selectList(request);
+        return new ApiResponse<>(ruleRsp);
     }
 
-    @ApiOperation("添加字典信息")
+    @ApiOperation("添加规则信息")
     @PostMapping(value = "/addRule")
     public ApiResponse<Boolean> addRule(@RequestBody RuleRequest request) {
         Boolean result = ruleService.addOrUpdate(request);
         return new ApiResponse<>(result);
     }
 
-    @ApiOperation("修改字典信息")
-    @PostMapping(value = "/editDict")
+    @ApiOperation("修改规则信息")
+    @PostMapping(value = "/editRule")
     public ApiResponse<Boolean> editRule(@RequestBody RuleRequest request) {
         Boolean result = ruleService.addOrUpdate(request);
         return new ApiResponse<>(result);
     }
 
-    @ApiOperation("删除字典信息")
+    @ApiOperation("批量删除规则")
     @PostMapping(value = "/deleteRule")
     public ApiResponse<Boolean> deleteRule(@RequestBody BaseListRequest<Integer> request) {
         List<Integer> valueList = request.getValueList();
         if(valueList.size() == 0){
-            throw new BusinessException("没有要删除设备信息");
+            throw new BusinessException("没有要删除规则信息");
         }
-        Boolean result = ruleService.deleteDict(valueList);
+        Boolean result = ruleService.deleteRule(valueList);
+        return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("批量禁用规则")
+    @PostMapping(value = "/forbitRule")
+    public ApiResponse<Boolean> forbitRule(@RequestBody BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要禁用规则信息");
+        }
+        Boolean result = ruleService.forbitRule(valueList);
         return new ApiResponse<>(result);
     }
 }

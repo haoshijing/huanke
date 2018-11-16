@@ -5,8 +5,8 @@ import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.config.DictQueryRequest;
 import com.huanke.iot.base.request.project.RuleRequest;
-import com.huanke.iot.base.resp.DictRsp;
-import com.huanke.iot.base.resp.DictRspPo;
+import com.huanke.iot.base.resp.project.RuleRsp;
+import com.huanke.iot.base.resp.project.RuleRspPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +35,9 @@ public class RuleService {
     private CustomerService customerService;
 
 
-    public DictRsp selectList(DictQueryRequest request) {
+    public RuleRsp selectList(DictQueryRequest request) {
         Integer customerId = customerService.obtainCustomerId(false);
-        DictRsp dictRsp = new DictRsp();
+        RuleRsp ruleRsp = new RuleRsp();
         Integer limit = request.getLimit();
         Integer currentPage = request.getCurrentPage();
         Integer start = (currentPage - 1) * limit;
@@ -46,13 +46,13 @@ public class RuleService {
         projectRule.setCustomerId(customerId);
         BeanUtils.copyProperties(request, projectRule);
         Integer count = ruleMapper.selectCount(projectRule);
-        dictRsp.setTotalCount(count);
-        dictRsp.setCurrentPage(currentPage);
-        dictRsp.setCurrentCount(limit);
+        ruleRsp.setTotalCount(count);
+        ruleRsp.setCurrentPage(currentPage);
+        ruleRsp.setCurrentCount(limit);
 
-        List<DictRspPo> dictPoList = ruleMapper.selectPageList(projectRule, start, limit);
-        dictRsp.setDictRspPoList(dictPoList);
-        return dictRsp;
+        List<RuleRspPo> rulePoList = ruleMapper.selectPageList(projectRule, start, limit);
+        ruleRsp.setRuleRspPoList(rulePoList);
+        return ruleRsp;
     }
 
     public Boolean addOrUpdate(RuleRequest request) {
@@ -73,9 +73,15 @@ public class RuleService {
         }
     }
 
-    public Boolean deleteDict(List<Integer> valueList) {
+    public Boolean deleteRule(List<Integer> valueList) {
         Integer userId = userService.getCurrentUser().getId();
         Boolean result = ruleMapper.batchDelete(userId, valueList);
+        return result;
+    }
+
+    public Boolean forbitRule(List<Integer> valueList) {
+        Integer userId = userService.getCurrentUser().getId();
+        Boolean result = ruleMapper.batchForbidden(userId, valueList);
         return result;
     }
 }
