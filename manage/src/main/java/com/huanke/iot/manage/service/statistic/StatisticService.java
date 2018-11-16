@@ -8,7 +8,9 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.dao.statstic.StatsticCustomerUserLiveMapper;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.statstic.StatsticCustomerUserLivePo;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
@@ -23,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -43,6 +46,9 @@ public class StatisticService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private StatsticCustomerUserLiveMapper statsticCustomerUserLiveMapper;
 
     @Autowired
     private CustomerService customerService;
@@ -463,6 +469,10 @@ public class StatisticService {
         return nowLiveUserCount;
     }
 
+    /**
+     * 查询 当前在线设备
+     * @return
+     */
     public DeviceOnlineStatVo queryCurrentOnline(){
         Integer customerId = this.customerService.obtainCustomerId(false);
         DevicePo queryPo =new DevicePo();
@@ -484,6 +494,11 @@ public class StatisticService {
         deviceOnlineStatVo.setOnlinePercent(onLinePercent);
         return deviceOnlineStatVo;
     }
+
+    /**
+     * 查询 地址数量
+     * @return
+     */
     public ApiResponse<DeviceLocationCountVo> queryLocationCount(){
         Integer customerId = customerService.obtainCustomerId(false);
         DevicePo queryDevicePo = new DevicePo();
@@ -547,5 +562,103 @@ public class StatisticService {
         }
         deviceLocationCountVo.setProvinces(provinces);
         return new ApiResponse<>(deviceLocationCountVo);
+    }
+
+    /**
+     * 按 月统计 用户活跃度
+     * @return
+     */
+    public List<CustomerUserVo.CustomerUserMonthLiveCountVo> selectLiveCustomerUserCountPerMonth() {
+        Calendar cal = Calendar.getInstance();
+        int nowYear = cal.get(Calendar.YEAR);
+        List rtnList = new ArrayList();
+        Integer customerId = customerService.obtainCustomerId(false);
+        //今年的用户数据
+        StatsticCustomerUserLivePo queryPo = new StatsticCustomerUserLivePo();
+        queryPo.setCustomerId(customerId);
+        queryPo.setStatisticYear(nowYear);
+        List monthUserConutList = statsticCustomerUserLiveMapper.selectLiveUserCountByMonth(queryPo);
+
+
+        for(int i=1;i<=12;i++){
+            CustomerUserVo.CustomerUserMonthLiveCountVo customerUserMonthLiveCountVo = new CustomerUserVo.CustomerUserMonthLiveCountVo();
+            String nowMonth = i +"月";
+            if(i<10){
+                nowMonth = "0"+i+"月";
+            }
+            //今年某月的用户量
+            BigDecimal liveUserCount = new BigDecimal(0);
+
+            if(monthUserConutList!=null&&monthUserConutList.size()>0){
+                for(int m=0;m<monthUserConutList.size();m++){
+                    Map tempMap = (Map)monthUserConutList.get(m);
+                    int tempMonth = (Integer) tempMap.get("statisticMonth");
+                    BigDecimal tempUserLiveCount = (BigDecimal)tempMap.get("userLiveCount");
+                    if(tempMonth==(i)){
+                        liveUserCount = tempUserLiveCount;
+                        break;
+                    }
+                }
+            }
+
+
+            customerUserMonthLiveCountVo.setMonth(nowMonth);
+            customerUserMonthLiveCountVo.setUserLiveCount(liveUserCount);
+
+            rtnList.add(customerUserMonthLiveCountVo);
+        }
+
+        return rtnList;
+    }
+
+    /**
+     * 按 小时统计 用户活跃度
+     * @return
+     */
+    public List<CustomerUserVo.CustomerUserHourLiveCountVo> selectLiveCustomerUserCountPerHour() {
+        Calendar cal = Calendar.getInstance();
+        int nowYear = cal.get(Calendar.YEAR);
+        // 获得月份
+        int month = cal.get(Calendar.MONTH) + 1;
+        // 获得日期
+        int date = cal.get(Calendar.DATE);
+
+        List rtnList = new ArrayList();
+        Integer customerId = customerService.obtainCustomerId(false);
+        //今年的用户数据
+        StatsticCustomerUserLivePo queryPo = new StatsticCustomerUserLivePo();
+        queryPo.setCustomerId(customerId);
+        queryPo.setStatisticYear(nowYear);
+        queryPo.setStatisticMonth(month);
+        queryPo.setStatisticDay(date);
+        List monthUserConutList = statsticCustomerUserLiveMapper.selectLiveUserCountByHour(queryPo);
+
+
+        for(int i=1;i<=24;i++){
+            CustomerUserVo.CustomerUserHourLiveCountVo customerUserHourLiveCountVo = new CustomerUserVo.CustomerUserHourLiveCountVo();
+            String nowHour = i +"时";
+            //今年某月的用户量
+            BigDecimal liveUserCount = new BigDecimal(0);
+
+            if(monthUserConutList!=null&&monthUserConutList.size()>0){
+                for(int m=0;m<monthUserConutList.size();m++){
+                    Map tempMap = (Map)monthUserConutList.get(m);
+                    int tempHour = (Integer) tempMap.get("statisticHour");
+                    BigDecimal tempUserLiveCount = (BigDecimal)tempMap.get("userLiveCount");
+                    if(tempHour==i){
+                        liveUserCount = tempUserLiveCount;
+                        break;
+                    }
+                }
+            }
+
+
+            customerUserHourLiveCountVo.setHour(nowHour);
+            customerUserHourLiveCountVo.setUserLiveCount(liveUserCount);
+
+            rtnList.add(customerUserHourLiveCountVo);
+        }
+
+        return rtnList;
     }
 }
