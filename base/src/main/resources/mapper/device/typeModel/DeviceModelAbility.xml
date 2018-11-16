@@ -103,6 +103,7 @@
         where t.id = #{deviceId}
         and ma.modelId = t.modelId
         and ma.abilityId = a.id
+        and ma.status = 1
     </select>
 
     <select id = "selectCount" resultType="java.lang.Integer">
