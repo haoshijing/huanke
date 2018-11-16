@@ -615,11 +615,11 @@ public class DeviceOperateService {
             deviceExportVo.setEnableStatus( DeviceConstant.ENABLE_STATUS_YES.equals(eachPo.getEnableStatus())?"启用":"禁用");
             deviceExportVo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES.equals(eachPo.getOnlineStatus())?"在线":"离线");
             deviceExportVo.setPowerStatus(DeviceConstant.POWER_STATUS_YES.equals(eachPo.getPowerStatus())?"开机":"关机");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if(null != eachPo.getLastOnlineTime()) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 deviceExportVo.setLastOnlineTime(sdf.format(new Date(eachPo.getLastOnlineTime())));
-                deviceExportVo.setBirthTime(sdf.format(new Date(eachPo.getBirthTime())));
             }
+            deviceExportVo.setBirthTime(sdf.format(new Date(eachPo.getBirthTime())));
             deviceExportVoList.add(deviceExportVo);
         });
         String[] titles = new String[titleNames.size()];
