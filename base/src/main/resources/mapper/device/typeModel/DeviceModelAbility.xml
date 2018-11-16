@@ -177,4 +177,24 @@
         WHERE 1=1
         limit 1
     </select>
+
+
+    <delete id="deleteByModelId">
+        delete from
+        <include refid="tableName"/>
+        where modelId = #{modelId}
+    </delete>
+
+
+    <update id="updateStatusByModelId" parameterType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo" >
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where modelId = #{modelId}
+    </update>
 </mapper>

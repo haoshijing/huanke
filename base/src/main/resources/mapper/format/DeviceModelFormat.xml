@@ -70,6 +70,7 @@
         </where>
     </update>
 
+
     <select id="obtainAbilityIdsByJoinId" resultType="java.lang.Integer">
         select
         t_device_model_format_item.abilityId
@@ -96,6 +97,17 @@
         AND status = 1
     </select>
 
+    <select id="obtainModelFormatByModelId" resultType="com.huanke.iot.base.po.format.DeviceModelFormatPo">
+        select
+        *
+        FROM
+        t_device_model_format
+        WHERE
+        1=1
+        AND modelId = #{modelId}
+        AND status = 1
+    </select>
+
     <select id="selectByJoinId" resultType="com.huanke.iot.base.po.format.DeviceModelFormatPo">
         select
         *
@@ -107,5 +119,24 @@
 		AND pageId = #{pageId}
         AND status = 1
     </select>
+
+    <update id="updateStatusByModelId" parameterType="com.huanke.iot.base.po.format.DeviceModelFormatPo" >
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where modelId = #{modelId}
+    </update>
+
+    <delete id="deleteByModelId">
+        delete from
+        <include refid="tableName"/>
+        where modelId = #{modelId}
+    </delete>
+
 
 </mapper>
