@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class CustomerUserListVo {
     private Integer id;
-    private String nickName;
+    private String nickname;
     private String province;
     private String city;
     private Integer typeId;

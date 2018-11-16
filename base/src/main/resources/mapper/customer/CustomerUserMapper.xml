@@ -158,7 +158,7 @@
 
     <select id="selectList" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
         SELECT tcu.province,tcu.city,tcu.id,tcu.lastVisitTime,tcu.nickname,tcur.deviceId,
-        tdt.`name` typeName,tdm.`name`
+        tdt.`name` typeName,tdm.`name` modelName
         FROM t_customer_user tcu,t_device_customer_user_relation tcur,t_device td
         <if test="param.groupId != null">
             ,t_device_group tdg,t_device_group_item tdgi
