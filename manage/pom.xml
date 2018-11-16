@@ -100,6 +100,11 @@
             <artifactId>core</artifactId>
             <version>3.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <version>4.1.19.Final</version>
+        </dependency>
 
     </dependencies>
 

@@ -7,6 +7,7 @@ import com.huanke.iot.api.service.user.UserService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +27,8 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
     private UserService userService;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private CustomerUserMapper customerUserMapper;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -37,11 +40,13 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
                 requestContext.setCurrentId(userByTicket.getId());
                 requestContext.setOpenId(openId);
                 CustomerPo customerPo = customerMapper.selectById(userByTicket.getCustomerId());
-
                 UserRequestContext.CustomerVo customerVo = new UserRequestContext.CustomerVo();
                 customerVo.setAppId(customerPo.getAppid());
                 customerVo.setCustomerId(customerPo.getId());
                 requestContext.setCustomerVo(customerVo);
+                //更新用户的最新访问时间
+                userByTicket.setLastVisitTime(System.currentTimeMillis());
+                this.customerUserMapper.updateLastVisitById(userByTicket);
                 return  true;
             }
 

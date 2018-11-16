@@ -14,5 +14,12 @@ import java.util.List;
 @Data
 public class DeviceParamsConfigVoRequest {
     private Integer deviceId;
-    private List<DeviceParamsConfigVo> deviceParamsConfigVoList;
+    private String abilityTypeName;
+    private List<ParamsConfig> paramConfigList;
+
+    @Data
+    public static class ParamsConfig{
+        private Integer sort;
+        private List<String> valuesList;
+    }
 }

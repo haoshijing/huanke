@@ -98,10 +98,12 @@
     </select>
 
     <select id="selectByDeviceId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo">
-        select ma.*
-        from t_device_model_ability ma,t_device t;
+        select ma.*,a.abilityType,a.dirValue
+        from t_device_model_ability ma,t_device t,t_device_ability a
         where t.id = #{deviceId}
         and ma.modelId = t.modelId
+        and ma.abilityId = a.id
+        and ma.status = 1
     </select>
 
     <select id = "selectCount" resultType="java.lang.Integer">

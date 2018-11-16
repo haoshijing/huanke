@@ -277,7 +277,7 @@ public class AppBasicService {
                     map.put(key,value);
                 }else{
                     Float ave = Float.valueOf(map.get(key))/2+Float.valueOf(value)/2;
-                    DecimalFormat df = new DecimalFormat("0.00");
+                    DecimalFormat df = new DecimalFormat("0");
                     map.put(key,df.format(ave));
                 }
 

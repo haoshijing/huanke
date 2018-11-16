@@ -19,6 +19,7 @@
         province,
         city,
         status,
+        lastVisitTime,
         createTime,
         lastUpdateTime,
         mac
@@ -33,6 +34,7 @@
         #{province},
         #{city},
         #{status},
+        #{lastVisitTime},
         #{createTime},
         #{lastUpdateTime},
         #{mac}
@@ -111,7 +113,20 @@
             <if test="mac != null ">
                 mac = #{mac},
             </if>
+            <if test="lastVisitTime != null ">
+                lastVisitTime = #{lastVisitTime},
+            </if>
             lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <update id="updateLastVisitById" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            lastVisitTime = #{lastVisitTime}
         </set>
         where
         id = #{id}
@@ -155,6 +170,12 @@
             <if test="param.customerId != null">
                 AND tcu.customerId = #{param.customerId}
             </if>
+            <if test="param.province != null">
+                AND tcu.province = #{param.province}
+            </if>
+            <if test="param.city != null">
+                AND tcu.city = #{param.city}
+            </if>
             <if test="param.groupId != null">
                 AND tdg.groupId = #{param.groupId}
                 AND tdg.id = tdgi.groupId
@@ -163,7 +184,7 @@
             <if test="param.typeId != null">
                 AND tdt.id = #{param.typeId}
             </if>
-            <if test="param.typeId != null">
+            <if test="param.modelId != null">
                 AND tdm.id = #{param.modelId}
             </if>
         </where>
@@ -183,6 +204,12 @@
             <if test="param.customerId != null">
                 AND tcu.customerId = #{param.customerId}
             </if>
+            <if test="param.province != null">
+                AND tcu.province = #{param.province}
+            </if>
+            <if test="param.city != null">
+                AND tcu.city = #{param.city}
+            </if>
             <if test="param.groupId != null">
                 AND tdg.groupId = #{param.groupId}
                 AND tdg.id = tdgi.groupId
@@ -191,7 +218,7 @@
             <if test="param.typeId != null">
                 AND tdt.id = #{param.typeId}
             </if>
-            <if test="param.typeId != null">
+            <if test="param.modelId != null">
                 AND tdm.id = #{param.modelId}
             </if>
         </where>

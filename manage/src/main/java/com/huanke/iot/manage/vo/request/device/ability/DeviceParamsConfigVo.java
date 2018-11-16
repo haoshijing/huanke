@@ -14,16 +14,17 @@ import java.util.Map;
  */
 @Data
 public class DeviceParamsConfigVo {
-    private Integer abilityId;
-    private String paramDefineName;
-    private String typeName;
+    private String paramName;
+    private String abilityTypeName;
     private Integer sort;
-    private List<String> valuesList;
-    private List<Map<String, MinMaxConfig>> defaultConfig;
+    private List<ConfigValue> configValuesList;
 
     @Data
-    private static class MinMaxConfig {
-        private String minValue;
-        private String maxValue;
+    public static class ConfigValue {
+        private String definedName;
+        private Integer defaultValue;
+        private Integer minValue;
+        private Integer maxValue;
+        private Integer currentValue;
     }
 }
