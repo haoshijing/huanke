@@ -224,46 +224,42 @@ public class DeviceGroupService {
         if(queryPo.getCustomerId()==null){
             queryPo.setCustomerId(customerId);
         }
-        if(null != queryPo.getCustomerId()) {
-            //查询直属于该二级客户下或二级客户所属的三级的客户的所有集群
-            deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo, limit, offset);
-        }else {
-            //否则查询超级管理员下的Group单表，查询所有集群
-            deviceGroupPoList = this.deviceGroupMapper.selectAllList(queryPo,limit,offset);
+        //查询直属于该二级客户下或二级客户所属的三级的客户的所有集群
+        deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo, limit, offset);
+        if(null == deviceGroupPoList || 0 == deviceGroupPoList.size()){
+            return new ApiResponse<>(RetCode.OK,"暂无数据");
         }
-        if (null != deviceGroupPoList) {
-            deviceGroupPoList.stream().forEach(deviceGroupPo -> {
-                DeviceGroupListVo deviceGroupListVo = new DeviceGroupListVo();
-                deviceGroupListVo.setId(deviceGroupPo.getId());
-                deviceGroupListVo.setName(deviceGroupPo.getName());
-                deviceGroupListVo.setIntroduction(deviceGroupPo.getIntroduction());
-                deviceGroupListVo.setRemark(deviceGroupPo.getRemark());
-                deviceGroupListVo.setStatus(deviceGroupPo.getStatus());
-                deviceGroupListVo.setLocation(deviceGroupPo.getLocation());
-                deviceGroupListVo.setCreateUser(this.userService.getUserName(deviceGroupPo.getCreateUser()));
-                deviceGroupListVo.setLastUpdateUser(this.userService.getUserName(deviceGroupPo.getLastUpdateUser()));
-                //查询当前集群的客户信息
-                CustomerPo customerPo = this.customerMapper.selectById(deviceGroupPo.getCustomerId());
-                deviceGroupListVo.setCustomerId(customerPo.getId());
-                deviceGroupListVo.setCustomerName(customerPo.getName());
-                //查询集群下设备
-                List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(deviceGroupPo.getId());
-                if (null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
-                    List<DeviceGroupListVo.DeviceInGroup> deviceInGroupList = new ArrayList<>();
-                    deviceGroupItemPoList.stream().forEach(deviceGroupItemPo -> {
-                        DeviceGroupListVo.DeviceInGroup device = new DeviceGroupListVo.DeviceInGroup();
-                        DevicePo devicePo = this.deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
-                        BeanUtils.copyProperties(devicePo, device);
-                        deviceInGroupList.add(device);
-                    });
-                    deviceGroupListVo.setDeviceList(deviceInGroupList);
-                }
-                //获取当前集群中的设备总量
-                deviceGroupListVo.setDeviceCount(deviceGroupItemPoList.size());
-                deviceGroupListVo.setCreateTime(deviceGroupPo.getCreateTime());
-                deviceGroupListVoList.add(deviceGroupListVo);
-            });
-        }
+        deviceGroupPoList.stream().forEach(deviceGroupPo -> {
+            DeviceGroupListVo deviceGroupListVo = new DeviceGroupListVo();
+            deviceGroupListVo.setId(deviceGroupPo.getId());
+            deviceGroupListVo.setName(deviceGroupPo.getName());
+            deviceGroupListVo.setIntroduction(deviceGroupPo.getIntroduction());
+            deviceGroupListVo.setRemark(deviceGroupPo.getRemark());
+            deviceGroupListVo.setStatus(deviceGroupPo.getStatus());
+            deviceGroupListVo.setLocation(deviceGroupPo.getLocation());
+            deviceGroupListVo.setCreateUser(this.userService.getUserName(deviceGroupPo.getCreateUser()));
+            deviceGroupListVo.setLastUpdateUser(this.userService.getUserName(deviceGroupPo.getLastUpdateUser()));
+            //查询当前集群的客户信息
+            CustomerPo customerPo = this.customerMapper.selectById(deviceGroupPo.getCustomerId());
+            deviceGroupListVo.setCustomerId(customerPo.getId());
+            deviceGroupListVo.setCustomerName(customerPo.getName());
+            //查询集群下设备
+            List<DeviceGroupItemPo> deviceGroupItemPoList = this.deviceGroupItemMapper.selectByGroupId(deviceGroupPo.getId());
+            if (null != deviceGroupItemPoList && 0 < deviceGroupItemPoList.size()) {
+                List<DeviceGroupListVo.DeviceInGroup> deviceInGroupList = new ArrayList<>();
+                deviceGroupItemPoList.stream().forEach(deviceGroupItemPo -> {
+                    DeviceGroupListVo.DeviceInGroup device = new DeviceGroupListVo.DeviceInGroup();
+                    DevicePo devicePo = this.deviceMapper.selectById(deviceGroupItemPo.getDeviceId());
+                    BeanUtils.copyProperties(devicePo, device);
+                    deviceInGroupList.add(device);
+                });
+                deviceGroupListVo.setDeviceList(deviceInGroupList);
+            }
+            //获取当前集群中的设备总量
+            deviceGroupListVo.setDeviceCount(deviceGroupItemPoList.size());
+            deviceGroupListVo.setCreateTime(deviceGroupPo.getCreateTime());
+            deviceGroupListVoList.add(deviceGroupListVo);
+        });
         return new ApiResponse<>(RetCode.OK, "集群查询成功", deviceGroupListVoList);
     }
 
@@ -289,6 +285,24 @@ public class DeviceGroupService {
             groupCount = this.deviceGroupMapper.selectAllCount(deviceGroupPo);
         }
         return new ApiResponse<>(RetCode.OK, "查询集群总数成功", groupCount);
+    }
+
+    public ApiResponse<List<DeviceGroupPo>> queryAllGroup(){
+        Integer offset = 0;
+        Integer limit = 100000;
+        //获取该二级域名客户的主键
+        Integer customerId = customerService.obtainCustomerId(false);
+        DeviceGroupPo queryPo = new DeviceGroupPo();
+        queryPo.setCustomerId(customerId);
+        CustomerPo customerPo = this.customerMapper.selectById(customerId);
+        if(null != customerPo.getParentCustomerId()){
+            queryPo.setParentCustomerId(customerPo.getParentCustomerId());
+        }
+        List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo,limit,offset);
+        if(null == deviceGroupPoList || 0 == deviceGroupPoList.size()){
+            return new ApiResponse<>(RetCode.OK,"暂无数据");
+        }
+        return new ApiResponse<>(RetCode.OK,"查询所有集群成功",deviceGroupPoList);
     }
 
     /**
@@ -433,23 +447,7 @@ public class DeviceGroupService {
         return deviceGroupPo;
     }
 
-    /**
-     * 通过集群名查询集群ID
-     *
-     * @param groupCreateOrUpdateRequest
-     * @return
-     */
-    public DeviceGroupPo queryIdByName(GroupCreateOrUpdateRequest groupCreateOrUpdateRequest) {
-        DeviceGroupPo queryPo = new DeviceGroupPo();
-        queryPo.setName(groupCreateOrUpdateRequest.getName());
-        queryPo.setCustomerId(groupCreateOrUpdateRequest.getCustomerId());
-        DeviceGroupPo deviceGroupPo = deviceGroupMapper.queryByName(queryPo);
-        if (null != deviceGroupPo) {
-            return deviceGroupPo;
-        } else {
-            return null;
-        }
-    }
+
 
     /**
      * 判定设备列表中的设备是否存在集群冲突

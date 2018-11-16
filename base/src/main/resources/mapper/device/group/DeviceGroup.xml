@@ -142,32 +142,6 @@
         </where>
         limit #{limit} offset #{offset}
     </select>
-
-    <select id="selectAllList" resultType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
-        select *
-        from
-        t_device_group
-        <where>
-            1=1
-            <if test = "param.name != null and param.name != ''">
-                AND t_device_group.name = #{param.name}
-            </if>
-            <if test="param.status != null">
-                AND t_device_group.status = #{param.status}
-            </if>
-            <if test = "param.introduction != null and param.introduction != ''">
-                and t_device_group.introduction = #{param.introduction}
-            </if>
-            <if test = "param.remark != null and param.remark != ''">
-                and t_device_group.remark = #{param.remark}
-            </if>
-            <if test = "param.location != null and param.location != ''">
-                and t_device_group.location = #{param.location}
-            </if>
-        </where>
-        limit #{limit} offset #{offset}
-    </select>
-
     <update id="updateById" parameterType="com.huanke.iot.base.po.device.group.DeviceGroupPo">
         update
         <include refid="tableName"/>

@@ -23,6 +23,8 @@ public class DeviceGroupPo {
      */
     private Integer customerId;
 
+    private Integer parentCustomerId;
+
     /**
      * 父openId
      */

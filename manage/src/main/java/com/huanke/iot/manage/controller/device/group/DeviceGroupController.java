@@ -76,6 +76,18 @@ public class DeviceGroupController {
         }
     }
 
+    @ApiOperation("查询所有集群")
+    @RequestMapping(value = "/queryAllGroup",method = RequestMethod.GET)
+    public ApiResponse<List<DeviceGroupPo>> queryAllGroup(){
+        try {
+            return this.deviceGroupService.queryAllGroup();
+
+        }catch (Exception e){
+            log.error("集群所有集群错误 = {}",e);
+            return new ApiResponse<>(RetCode.ERROR,"集群所有集群异常");
+        }
+    }
+
     @ApiOperation("根据id查询集群详情")
     @RequestMapping(value = "/queryGroupById/{id}",method = RequestMethod.POST)
     public ApiResponse<DeviceGroupDetailVo> queryGroupById(@PathVariable("id") Integer groupId){
