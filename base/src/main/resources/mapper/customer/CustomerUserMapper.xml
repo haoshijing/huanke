@@ -155,6 +155,12 @@
             <if test="param.customerId != null">
                 AND tcu.customerId = #{param.customerId}
             </if>
+            <if test="param.province != null">
+                AND tcu.province = #{param.province}
+            </if>
+            <if test="param.city != null">
+                AND tcu.city = #{param.city}
+            </if>
             <if test="param.groupId != null">
                 AND tdg.groupId = #{param.groupId}
                 AND tdg.id = tdgi.groupId
@@ -163,7 +169,7 @@
             <if test="param.typeId != null">
                 AND tdt.id = #{param.typeId}
             </if>
-            <if test="param.typeId != null">
+            <if test="param.modelId != null">
                 AND tdm.id = #{param.modelId}
             </if>
         </where>
@@ -183,6 +189,12 @@
             <if test="param.customerId != null">
                 AND tcu.customerId = #{param.customerId}
             </if>
+            <if test="param.province != null">
+                AND tcu.province = #{param.province}
+            </if>
+            <if test="param.city != null">
+                AND tcu.city = #{param.city}
+            </if>
             <if test="param.groupId != null">
                 AND tdg.groupId = #{param.groupId}
                 AND tdg.id = tdgi.groupId
@@ -191,7 +203,7 @@
             <if test="param.typeId != null">
                 AND tdt.id = #{param.typeId}
             </if>
-            <if test="param.typeId != null">
+            <if test="param.modelId != null">
                 AND tdm.id = #{param.modelId}
             </if>
         </where>
