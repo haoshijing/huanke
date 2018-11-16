@@ -22,4 +22,6 @@ bucketName: idcfota
 skipRemoteHost: pro,dev
 defaultPassWord: 123456
 
+mybatis.configuration.cache-enabled: false
+
 env: idc
