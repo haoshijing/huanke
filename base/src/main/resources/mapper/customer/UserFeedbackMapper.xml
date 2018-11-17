@@ -13,12 +13,14 @@
         userId,
         deviceId,
         feedbackInfo,
+        status,
         createTime
         )
         VALUES (
         #{userId},
         #{deviceId},
         #{feedbackInfo},
+        #{status},
         #{createTime}
         )
     </insert>
@@ -35,6 +37,9 @@
             <if test="feedbackInfo != null  and feedbackInfo != '' ">
                 feedbackInfo = #{feedbackInfo},
             </if>
+            <if test="status != null  and status != '' ">
+                status = #{status},
+            </if>
             <if test="createTime != null  and createTime != '' ">
                 createTime = #{createTime},
             </if>
@@ -48,6 +53,63 @@
         FROM
         <include refid="tableName"/>
         WHERE id = #{id} limit 1
+    </select>
+    <select id="selectList" resultType="com.huanke.iot.base.po.customer.UserFeedbackPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.userId != null and param.userId != ''">
+                AND userId = #{param.userId}
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND deviceId = #{param.deviceId}
+            </if>
+            <if test="param.status != null  ">
+                AND status = #{param.status}
+            </if>
+            <if test="param.createTime != null  ">
+                <![CDATA[and createTime <= #{createTime}]]>
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+        order by createTime desc
+    </select>
+
+    <select id="selectListByPara" resultType="com.huanke.iot.base.po.customer.UserFeedbackPo">
+        select *,cu.nickName userName,CONCAT(cu.province,cu.city) location from
+        <include refid="tableName"/> f
+        LEFT JOIN t_customer_user cu ON cu.id = f.userId
+        <where>
+            1 = 1
+            <if test="param.userId != null and param.userId != ''">
+                AND f.userId = #{param.userId}
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND f.deviceId = #{param.deviceId}
+            </if>
+            <if test="param.status != null">
+                AND f.status = #{param.status}
+            </if>
+            <if test="param.beginTime != null  ">
+                <![CDATA[and f.createTime >= #{param.beginTime}]]>
+            </if>
+            <if test="param.endTime != null  ">
+                <![CDATA[and f.createTime <= #{param.endTime}]]>
+            </if>
+            <if test="param.customerId != null and param.customerId != ''  ">
+                AND cu.customerId = #{param.customerId}
+            </if>
+            <if test="param.userName != null and param.userName != ''  ">
+                AND cu.nickName like CONCAT('%',#{param.userName},'%')
+            </if>
+            <if test="param.location != null and param.location != ''  ">
+                AND (cu.province like CONCAT('%',#{param.location},'%')
+                OR cu.city like CONCAT('%',#{param.location},'%'))
+            </if>
+        </where>
+        order by f.createTime desc
+        limit #{param.limit} offset #{param.offset}
     </select>
 
     <delete id="deleteById">
