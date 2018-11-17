@@ -227,7 +227,7 @@ public class DeviceOperateService {
             ret = deviceMapper.updateById(devicePo) > 0;
 
             /* 发送设备传参指令*/
-            sendParamFunc(deviceUpdateRequest);
+            //sendParamFunc(deviceUpdateRequest);
 
         } else {
             return new ApiResponse<>(RetCode.OK, "该设备不存在！", false);
