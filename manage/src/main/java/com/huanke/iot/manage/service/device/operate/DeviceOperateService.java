@@ -447,6 +447,7 @@ public class DeviceOperateService {
             deviceQueryVo.setSaNo(devicePo.getSaNo());
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
+            deviceQueryVo.setTypeNo(devicePo.getTypeNo());
             deviceQueryVo.setModelId(devicePo.getModelId());
             deviceQueryVo.setModelName(devicePo.getModelName());
             deviceQueryVo.setModelCode(devicePo.getModelCode());
