@@ -34,7 +34,7 @@
     <!-- 根据信息筛选返回数据 -->
     <select id="selectLiveUserCountByMonth" parameterType="com.huanke.iot.base.po.statstic.StatsticCustomerUserLivePo" resultType="java.util.HashMap">
         SELECT statisticMonth,
-        avg(userLiveCount) userLiveCount
+        max(userLiveCount) userLiveCount
         FROM <include refid="tableName"/>
         WHERE 1=1
         <if test="customerId != null ">
@@ -61,7 +61,7 @@
 
     <select id="selectLiveUserCountByHour" parameterType="com.huanke.iot.base.po.statstic.StatsticCustomerUserLivePo" resultType="java.util.HashMap">
         SELECT statisticHour ,
-        avg(userLiveCount) userLiveCount
+        max(userLiveCount) userLiveCount
         FROM <include refid="tableName"/>
         WHERE 1=1
         <if test="customerId != null ">
