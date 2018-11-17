@@ -111,6 +111,39 @@
         order by f.createTime desc
         limit #{param.limit} offset #{param.offset}
     </select>
+    <select id="selectCountByPara" resultType="java.lang.Integer">
+        select count(1) count from
+        <include refid="tableName"/> f
+        LEFT JOIN t_customer_user cu ON cu.id = f.userId
+        <where>
+            1 = 1
+            <if test="param.userId != null and param.userId != ''">
+                AND f.userId = #{param.userId}
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND f.deviceId = #{param.deviceId}
+            </if>
+            <if test="param.status != null">
+                AND f.status = #{param.status}
+            </if>
+            <if test="param.beginTime != null  ">
+                <![CDATA[and f.createTime >= #{param.beginTime}]]>
+            </if>
+            <if test="param.endTime != null  ">
+                <![CDATA[and f.createTime <= #{param.endTime}]]>
+            </if>
+            <if test="param.customerId != null and param.customerId != ''  ">
+                AND cu.customerId = #{param.customerId}
+            </if>
+            <if test="param.userName != null and param.userName != ''  ">
+                AND cu.nickName like CONCAT('%',#{param.userName},'%')
+            </if>
+            <if test="param.location != null and param.location != ''  ">
+                AND (cu.province like CONCAT('%',#{param.location},'%')
+                OR cu.city like CONCAT('%',#{param.location},'%'))
+            </if>
+        </where>
+    </select>
 
     <delete id="deleteById">
         delete from <include refid="tableName"/>

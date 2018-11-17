@@ -9,4 +9,5 @@ import java.util.List;
 public interface UserFeedbackMapper extends BaseMapper<UserFeedbackPo> {
 
     List<UserFeedbackPo> selectListByPara(@Param("param") Object queryBean);
+    Integer selectCountByPara(@Param("param") Object queryBean);
 }

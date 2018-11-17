@@ -23,7 +23,7 @@ public class UserFeedbackInfoController {
     private UserFeedbackInfoService userFeedbackInfoService;
     @ApiOperation("查询用户反馈信息")
     @PostMapping(value = "/selectUserFeedbackInfo")
-    public ApiResponse<List<UserFeedbackInfoVo>> selectUserFeedbackInfo(@RequestBody UserFeedbackInfoVoReq userFeedbackInfoVoReq){
+    public ApiResponse<Object> selectUserFeedbackInfo(@RequestBody UserFeedbackInfoVoReq userFeedbackInfoVoReq){
         return new ApiResponse<>(userFeedbackInfoService.selectList(userFeedbackInfoVoReq));
     }
 
