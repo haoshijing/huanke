@@ -158,7 +158,7 @@
 
     <select id="selectList" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
         SELECT tcu.province,tcu.city,tcu.id,tcu.lastVisitTime,tcu.nickname,tcur.deviceId,
-        tdt.`name` typeName,tdm.`name` modelName
+        tdt.`name` typeName,tdm.`name` modelName,td.`name` deviceName
         FROM t_customer_user tcu,t_device_customer_user_relation tcur,t_device td
         <if test="param.groupId != null">
             ,t_device_group tdg,t_device_group_item tdgi
@@ -188,6 +188,7 @@
                 AND tdm.id = #{param.modelId}
             </if>
         </where>
+        ORDER BY tcu.createTime DESC
         limit #{limit} offset #{offset}
     </select>
 
