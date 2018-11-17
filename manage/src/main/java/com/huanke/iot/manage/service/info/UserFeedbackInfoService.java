@@ -24,7 +24,7 @@ public class UserFeedbackInfoService {
     @Autowired
     private CustomerService customerService;
     public Object selectList(UserFeedbackInfoVoReq userFeedbackInfoVoReq) {
-        Integer customerId = 53;//customerService.obtainCustomerId(false);
+        Integer customerId = customerService.obtainCustomerId(false);
         userFeedbackInfoVoReq.setCustomerId(customerId);
         List<UserFeedbackPo> userFeedbackPos = userFeedbackMapper.selectListByPara(userFeedbackInfoVoReq);
         Integer count = userFeedbackMapper.selectCountByPara(userFeedbackInfoVoReq);
