@@ -10,10 +10,7 @@ import com.huanke.iot.manage.service.project.PlanService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,10 +28,17 @@ public class PlanController {
     @Autowired
     private PlanService planService;
 
-    @ApiOperation("查询客户列表")
+    @ApiOperation("查询计划列表")
     @PostMapping(value = "/selectList")
     public ApiResponse<PlanRsp> selectList(@RequestBody PlanQueryRequest request) throws Exception {
         PlanRsp dictRsp = planService.selectList(request);
+        return new ApiResponse<>(dictRsp);
+    }
+
+    @ApiOperation("查询单个客户")
+    @PostMapping(value = "/select/{planId}")
+    public ApiResponse<PlanRsp> selectPlan(@PathVariable("planId") Integer planId) throws Exception {
+        PlanRsp dictRsp = planService.selectById(planId);
         return new ApiResponse<>(dictRsp);
     }
 
