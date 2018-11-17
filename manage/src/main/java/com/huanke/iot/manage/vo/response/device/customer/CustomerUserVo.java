@@ -28,6 +28,6 @@ public class CustomerUserVo {
     @Data
     public static class CustomerUserHourLiveCountVo {
         private String hour;
-        private BigDecimal userLiveCount;
+        private Integer userLiveCount;
     }
 }
