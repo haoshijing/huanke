@@ -30,7 +30,7 @@ public class UserFeedbackService {
             userFeedbackMapper.insert(userFeedbackPo);
             stringRedisTemplate.opsForValue().set("userFeedback."+userId, "1");
             stringRedisTemplate.expire("userFeedback."+userId, 60, TimeUnit.SECONDS);
-            return "感谢您提供的宝贵意见，我们......！";
+            return "感谢您提供的宝贵意见！";
         }else{
             return "您的手机卡了，请稍后重新填写，感谢您的支持！";
         }
