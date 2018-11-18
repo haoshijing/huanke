@@ -587,13 +587,13 @@ public class StatisticService {
                 nowMonth = "0"+i+"月";
             }
             //今年某月的用户量
-            BigDecimal liveUserCount = new BigDecimal(0);
+            Integer liveUserCount = new Integer(0);
 
             if(monthUserConutList!=null&&monthUserConutList.size()>0){
                 for(int m=0;m<monthUserConutList.size();m++){
                     Map tempMap = (Map)monthUserConutList.get(m);
                     int tempMonth = (Integer) tempMap.get("statisticMonth");
-                    BigDecimal tempUserLiveCount = (BigDecimal)tempMap.get("userLiveCount");
+                    Integer tempUserLiveCount = (Integer)tempMap.get("userLiveCount");
                     if(tempMonth==(i)){
                         liveUserCount = tempUserLiveCount;
                         break;

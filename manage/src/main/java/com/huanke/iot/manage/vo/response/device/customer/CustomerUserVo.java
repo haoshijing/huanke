@@ -22,7 +22,7 @@ public class CustomerUserVo {
     @Data
     public static class CustomerUserMonthLiveCountVo {
         private String month;
-        private BigDecimal userLiveCount;
+        private Integer userLiveCount;
     }
 
     @Data
