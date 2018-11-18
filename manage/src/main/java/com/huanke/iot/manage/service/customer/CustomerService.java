@@ -495,6 +495,7 @@ public class CustomerService {
                                     }
                                     ).collect(Collectors.toList());
                             //设置 场景图片列表
+                            if(androidSceneImgVoList == null)androidSceneImgVoList = new ArrayList<>();
                             androidSceneVo.setAndroidSceneImgList(androidSceneImgVoList);
                             List<CustomerVo.AndroidSceneImg> androidSceneVideoVoList = androidSceneImgPoList.stream()
                                     .filter(androidSceneImgPo->{return androidSceneImgPo.getImgVideoMark()==2;})
@@ -506,6 +507,7 @@ public class CustomerService {
                                             }
                                     ).collect(Collectors.toList());
                             //设置 场景图片列表
+                            if(androidSceneVideoVoList == null)androidSceneVideoVoList = new ArrayList<>();
                             androidSceneVo.setAndroidSceneVideoList(androidSceneVideoVoList);
                         }
 
