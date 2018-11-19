@@ -4,8 +4,8 @@ import com.huanke.iot.base.dao.project.PlanMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.po.user.User;
-import com.huanke.iot.base.request.config.PlanQueryRequest;
-import com.huanke.iot.base.request.config.PlanRequest;
+import com.huanke.iot.base.request.project.PlanQueryRequest;
+import com.huanke.iot.base.request.project.PlanRequest;
 import com.huanke.iot.base.resp.project.PlanRsp;
 import com.huanke.iot.base.resp.project.PlanRspPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
@@ -97,5 +97,10 @@ public class PlanService {
         Integer userId = userService.getCurrentUser().getId();
         Boolean result = planMapper.batchForbidden(userId, valueList);
         return result;
+    }
+
+    public ProjectPlanInfo selectById(Integer planId) {
+        ProjectPlanInfo projectPlanInfo = planMapper.selectById(planId);
+        return projectPlanInfo;
     }
 }

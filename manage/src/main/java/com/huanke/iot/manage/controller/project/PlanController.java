@@ -2,9 +2,10 @@ package com.huanke.iot.manage.controller.project;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
+import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.request.BaseListRequest;
-import com.huanke.iot.base.request.config.PlanQueryRequest;
-import com.huanke.iot.base.request.config.PlanRequest;
+import com.huanke.iot.base.request.project.PlanQueryRequest;
+import com.huanke.iot.base.request.project.PlanRequest;
 import com.huanke.iot.base.resp.project.PlanRsp;
 import com.huanke.iot.manage.service.project.PlanService;
 import io.swagger.annotations.ApiOperation;
@@ -36,10 +37,10 @@ public class PlanController {
     }
 
     @ApiOperation("查询单个客户")
-    @PostMapping(value = "/select/{planId}")
-    public ApiResponse<PlanRsp> selectPlan(@PathVariable("planId") Integer planId) throws Exception {
-        PlanRsp dictRsp = planService.selectById(planId);
-        return new ApiResponse<>(dictRsp);
+    @GetMapping(value = "/select/{planId}")
+    public ApiResponse<ProjectPlanInfo> selectPlan(@PathVariable("planId") Integer planId) {
+        ProjectPlanInfo projectPlanInfo = planService.selectById(planId);
+        return new ApiResponse<>(projectPlanInfo);
     }
 
     @ApiOperation("添加计划信息")

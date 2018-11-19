@@ -1,55 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.project.PlanMapper">
+<mapper namespace="com.huanke.iot.base.dao.project.JobMapper">
 
     <sql id="tableName">
-        t_project_plan_info
+        t_project_job_info
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectJobInfo">
         INSERT INTO
         <include refid="tableName"/>
         (
         customerId,
+        type,
+        linkDeviceId,
+        linkProjectId,
         name,
         description,
         isRule,
         ruleId,
-        linkType,
-        linkDeviceId,
-        linkProjectId,
-        warnDate,
-        nextExecuteTime,
-        cycleType,
-        overTimeDays,
+        warnLevel,
+        sourceType,
+        finalTime,
+        imgList,
         enableUsers,
-        status,
+        warnStatus,
+        flowStatus,
+        status
         createTime,
         createUser
         )
         VALUES
         (
         #{customerId},
+        #{type},
+        #{linkDeviceId},
+        #{linkProjectId},
         #{name},
         #{description},
         #{isRule},
         #{ruleId},
-        #{linkType},
-        #{linkDeviceId},
-        #{linkProjectId},
-        #{warnDate},
-        #{nextExecuteTime},
-        #{cycleType},
-        #{overTimeDays},
+        #{warnLevel},
+        #{sourceType},
+        #{finalTime},
+        #{imgList},
         #{enableUsers},
+        #{warnStatus},
+        #{flowStatus},
         #{status},
         #{createTime},
         #{createUser}
         )
     </insert>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
         select
         *
         FROM
@@ -57,7 +61,7 @@
         WHERE id = #{id} limit 1
     </select>
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
         select * from
         <include refid="tableName"/>
         <where>
@@ -67,13 +71,11 @@
     </select>
 
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <!--暂时未使用-->
+    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectJobInfo">
         update
         <include refid="tableName"/>
         <set>
-            <if test="customerId != null">
-                customerId = #{customerId},
-            </if>
             <if test="name != null and name!='' ">
                 name = #{name},
             </if>
@@ -163,18 +165,30 @@
         <!--<if test="param.type != null and param.type!='' ">
             AND type = #{param.type}
         </if>-->
-        AND customerId = #{param.customerId}
+        AND customerId = #{projectJobInfo.customerId}
+        AND find_in_set(#{userId}, enableUsers)
     </select>
 
     <!--返回当前列表集合-->
-    <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
-      FROM t_project_plan_info ppi left join t_user u on ppi.createUser = u.id left join t_user u1 on  ppi.updateUser = u1.id
+    <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.JobRspPo">
+      SELECT pji.id, pji.name, pji.description, pji.linkType, pji.isRule, pji.ruleId, pji.sourceType, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName
+      FROM t_project_job_info pji left join t_user u on pji.createUser = u.id left join t_user u1 on  pji.updateUser = u1.id
       WHERE 1=1
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>-->
-        AND customerId = #{projectPlanInfo.customerId}
+      AND pji.customerId = #{projectPlanInfo.customerId}
+      AND find_in_set(#{userId}, pji.enableUsers)
       LIMIT #{start},#{limit}
     </select>
+
+    <update id="batchFlow">
+        UPDATE <include refid="tableName"/>
+        SET flowStatus = #{flowStatus}
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
 </mapper>

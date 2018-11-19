@@ -11,21 +11,16 @@ import java.util.Date;
  * @create 2018-11-16 上午9:42
  */
 @Data
-public class PlanRspPo {
+public class JobRspPo {
     private Integer id;
     private String name;
     private String description;
-    private Integer linkType; // 关联类型：0-不关联；1-关联设备；2-关联工程
     private Integer isRule;
     private Integer ruleId;
-    private Integer linkDeviceId;
-    private Integer linkProjectId;
     private Integer warnLevel;
-    private Integer cycleType;
-    private Date warnDate;
+    private Integer sourceType;
     private Integer overTimeDays;
-    private String enableUsers;
-    private Integer status;
+    private Integer flowStatus;
     private Date createTime;
     private Date updateTime;
     private String createName;
