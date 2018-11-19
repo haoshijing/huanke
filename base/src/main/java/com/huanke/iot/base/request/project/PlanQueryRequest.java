@@ -1,4 +1,4 @@
-package com.huanke.iot.base.request.config;
+package com.huanke.iot.base.request.project;
 
 import lombok.Data;
 
