@@ -8,6 +8,7 @@ import com.huanke.iot.base.request.project.PlanQueryRequest;
 import com.huanke.iot.base.request.project.PlanRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
 import com.huanke.iot.base.resp.project.PlanRsp;
+import com.huanke.iot.manage.service.project.PlanService;
 import com.huanke.iot.manage.service.project.ProjectService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,9 @@ import java.util.List;
 public class ProjectController {
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private PlanService planService;
 
     @ApiOperation("查询计划列表")
     @PostMapping(value = "/selectList")
