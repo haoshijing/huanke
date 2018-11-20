@@ -125,7 +125,6 @@ public class JobService {
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_DEAL:
-                projectJobInfo.setEnableUsers(jobLogMapper.selectLastByJobId(jobId).getCreateUser().toString());
                 projectJobInfo.setEnableUsers(userId.toString());
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
                 break;
