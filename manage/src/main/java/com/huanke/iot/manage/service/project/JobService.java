@@ -182,17 +182,18 @@ public class JobService {
         } else if (type == 2 && jobDetailRsp.getLinkProjectId() != null) {
             //关联工程
         }
-
-        //关联规则信息
-        ProjectRule projectRule = ruleMapper.selectById(projectJobInfo.getRuleId());
-        jobDetailRsp.setRuleName(projectRule.getName());
-        jobDetailRsp.setRuleDescription(projectRule.getDescription());
-
+        if (projectJobInfo.getIsRule()==1) {
+            //关联规则信息
+            ProjectRule projectRule = ruleMapper.selectById(projectJobInfo.getRuleId());
+            jobDetailRsp.setRuleName(projectRule.getName());
+            jobDetailRsp.setRuleDescription(projectRule.getDescription());
+        }
         //任务历史记录信息
         List<JobHistoryDataDto> jobHistoryDataDtos = jobLogMapper.selectByJobId(jobId);
         List<JobDetailRsp.HistoryData> historyDataList = new ArrayList<>();
         for (JobHistoryDataDto jobHistoryDataDto : jobHistoryDataDtos) {
             JobDetailRsp.HistoryData historyData = new JobDetailRsp.HistoryData();
+            historyData.setUserName(userService.getUserName(jobHistoryDataDto.getCreateUser()));
             BeanUtils.copyProperties(jobHistoryDataDto, historyData);
             if(jobHistoryDataDto.getImgListStr() != null){
                 String imgListStr = jobHistoryDataDto.getImgListStr();
