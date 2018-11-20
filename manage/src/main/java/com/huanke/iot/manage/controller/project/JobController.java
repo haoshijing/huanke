@@ -23,7 +23,7 @@ import java.util.List;
  * @create 2018-11-16 上午9:33
  */
 @RestController
-@RequestMapping("/api/plan")
+@RequestMapping("/api/job")
 @Slf4j
 public class JobController {
     @Autowired

@@ -165,20 +165,54 @@
         <!--<if test="param.type != null and param.type!='' ">
             AND type = #{param.type}
         </if>-->
+        <if test = "projectJobInfo.name != null and projectJobInfo.name != ''">
+            AND name LIKE CONCAT('%',#{projectJobInfo.name},'%')
+        </if>
+        <if test = "projectJobInfo.isRule != null and projectJobInfo.isRule != ''">
+            AND isRule = #{projectJobInfo.isRule}
+        </if>
+        <if test = "projectJobInfo.warnLevel != null and projectJobInfo.warnLevel != ''">
+            AND warnLevel = #{projectJobInfo.warnLevel}
+        </if>
+        <if test = "projectJobInfo.flowStatus != null and projectJobInfo.flowStatus != ''">
+            AND flowStatus = #{projectJobInfo.flowStatus}
+        </if>
+        <if test = "projectJobInfo.createTime != null">
+            AND  createTime >= #{projectJobInfo.createTime}
+        </if>
         AND customerId = #{projectJobInfo.customerId}
-        AND find_in_set(#{userId}, enableUsers)
+        AND (find_in_set(#{userId}, enableUsers)
+        OR enableUsers is null)
     </select>
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.JobRspPo">
-      SELECT pji.id, pji.name, pji.description, pji.linkType, pji.isRule, pji.ruleId, pji.sourceType, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName
-      FROM t_project_job_info pji left join t_user u on pji.createUser = u.id left join t_user u1 on  pji.updateUser = u1.id
+      SELECT pji.id, pji.name, pji.description, pji.isRule, pji.ruleId, pji.sourceType,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName
+      FROM t_project_job_info pji
+      left join t_user u on pji.createUser = u.id
+      left join t_user u1 on  pji.updateUser = u1.id
       WHERE 1=1
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>-->
-      AND pji.customerId = #{projectPlanInfo.customerId}
-      AND find_in_set(#{userId}, pji.enableUsers)
+        <if test = "projectJobInfo.name != null and projectJobInfo.name != ''">
+            AND pji.name LIKE CONCAT('%',#{projectJobInfo.name},'%')
+        </if>
+        <if test = "projectJobInfo.isRule != null and projectJobInfo.isRule != ''">
+            AND pji.isRule = #{projectJobInfo.isRule}
+        </if>
+        <if test = "projectJobInfo.warnLevel != null and projectJobInfo.warnLevel != ''">
+            AND pji.warnLevel = #{projectJobInfo.warnLevel}
+        </if>
+        <if test = "projectJobInfo.flowStatus != null and projectJobInfo.flowStatus != ''">
+            AND pji.flowStatus = #{projectJobInfo.flowStatus}
+        </if>
+        <if test = "projectJobInfo.createTime != null">
+            AND pji.createTime >= #{projectJobInfo.createTime}
+        </if>
+      AND pji.customerId = #{projectJobInfo.customerId}
+      AND (find_in_set(#{userId}, pji.enableUsers)
+        OR pji.enableUsers is null)
       LIMIT #{start},#{limit}
     </select>
 

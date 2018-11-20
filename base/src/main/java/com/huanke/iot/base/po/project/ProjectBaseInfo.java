@@ -17,7 +17,7 @@ public class ProjectBaseInfo {
     private Integer customerId;
     private String projectNo;
     private String name;
-    private String description;\
+    private String description;
     private Date buildTime;
     private String buildAddress;
     private String gps;
