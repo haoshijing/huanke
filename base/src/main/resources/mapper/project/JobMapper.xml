@@ -26,7 +26,6 @@
         enableUsers,
         warnStatus,
         flowStatus,
-        status
         createTime,
         createUser
         )
@@ -47,7 +46,6 @@
         #{enableUsers},
         #{warnStatus},
         #{flowStatus},
-        #{status},
         #{createTime},
         #{createUser}
         )
@@ -88,8 +86,8 @@
             <if test="ruleId != null">
                 ruleId = #{ruleId},
             </if>
-            <if test="linkType != null">
-                linkType = #{linkType},
+            <if test="type != null">
+                type = #{type},
             </if>
             <if test="linkDeviceId != null">
                 linkDeviceId = #{linkDeviceId},
@@ -97,23 +95,17 @@
             <if test="linkProjectId != null">
                 linkProjectId = #{linkProjectId},
             </if>
-            <if test="warnDate != null">
-                warnDate = #{warnDate},
-            </if>
-            <if test="nextExecuteTime != null">
-                nextExecuteTime = #{nextExecuteTime},
-            </if>
-            <if test="cycleType != null">
-                cycleType = #{cycleType},
-            </if>
-            <if test="overTimeDays != null">
-                overTimeDays = #{overTimeDays},
+            <if test="finalTime != null">
+                finalTime = #{finalTime},
             </if>
             <if test="enableUsers != null">
                 enableUsers = #{enableUsers},
             </if>
-            <if test="status != null">
-                status = #{status},
+            <if test="warnStatus != null">
+                warnStatus = #{warnStatus},
+            </if>
+            <if test="flowStatus != null">
+                flowStatus = #{flowStatus},
             </if>
             <if test="updateTime != null">
                 updateTime = #{updateTime},

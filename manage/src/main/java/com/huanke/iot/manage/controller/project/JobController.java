@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.controller.project;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.project.JobFlowStatusRequest;
 import com.huanke.iot.base.request.project.JobQueryRequest;
@@ -10,6 +11,7 @@ import com.huanke.iot.base.resp.project.JobRsp;
 import com.huanke.iot.manage.service.project.JobService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +48,17 @@ public class JobController {
     @ApiOperation("添加任务信息")
     @PostMapping(value = "/addJob")
     public ApiResponse<Boolean> addJob(@RequestBody JobRequest request) {
+        request.setSourceType(1);
         Boolean result = jobService.addOrUpdate(request);
+        return new ApiResponse<>(result);
+    }
+    @ApiOperation("添加任务流转")
+    @PostMapping(value = "/jobFlow")
+    public ApiResponse<String> jobFlow(@RequestBody JobFlowStatusRequest request) {
+        if(StringUtils.isEmpty(request.getOperateType().toString())){
+            new ApiResponse<>(RetCode.PARAM_ERROR,"错误的流转操作！",false);
+        }
+        String result = jobService.jobFlow(request);
         return new ApiResponse<>(result);
     }
 
