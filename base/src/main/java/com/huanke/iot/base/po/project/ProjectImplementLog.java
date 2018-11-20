@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 public class ProjectImplementLog {
     private Integer id;
-    private String projectNo;
+    private Integer projectId;
     private Integer typeId;
     private String description;
     private Date implTime;

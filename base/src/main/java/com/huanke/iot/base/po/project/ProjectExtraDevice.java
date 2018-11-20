@@ -15,7 +15,7 @@ import java.util.Date;
 public class ProjectExtraDevice {
     private Integer id;
     private String deviceNo;
-    private String projectNo;
+    private Integer projectId;
     private String name;
     private String model;
     private String factory;
