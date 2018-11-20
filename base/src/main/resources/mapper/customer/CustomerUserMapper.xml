@@ -19,6 +19,7 @@
         province,
         city,
         status,
+        lastVisitTime,
         createTime,
         lastUpdateTime,
         mac
@@ -33,6 +34,7 @@
         #{province},
         #{city},
         #{status},
+        #{lastVisitTime},
         #{createTime},
         #{lastUpdateTime},
         #{mac}
@@ -111,7 +113,20 @@
             <if test="mac != null ">
                 mac = #{mac},
             </if>
+            <if test="lastVisitTime != null ">
+                lastVisitTime = #{lastVisitTime},
+            </if>
             lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <update id="updateLastVisitById" parameterType="com.huanke.iot.base.po.customer.CustomerUserPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            lastVisitTime = #{lastVisitTime}
         </set>
         where
         id = #{id}
@@ -142,55 +157,73 @@
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.customer.CustomerUserPo">
-        select * from
-        <include refid="tableName"/>
+        SELECT tcu.province,tcu.city,tcu.id,tcu.lastVisitTime,tcu.nickname,tcur.deviceId,
+        tdt.`name` typeName,tdm.`name` modelName,td.`name` deviceName
+        FROM t_customer_user tcu,t_device_customer_user_relation tcur,t_device td
+        <if test="param.groupId != null">
+            ,t_device_group tdg,t_device_group_item tdgi
+        </if>
+        LEFT JOIN t_device_type tdt ON td.typeId = tdt.id
+        LEFT JOIN t_device_model tdm ON td.modelId = tdm.id
         <where>
-            <if test = "param.id != null and param.id != ''">
-                AND id = #{param.id}
-            </if>
+            tcu.openId = tcur.openId and td.id = tcur.deviceId
             <if test="param.customerId != null">
-                AND customerId = #{param.customerId}
+                AND tcu.customerId = #{param.customerId}
             </if>
-            <if test = "param.openId != null">
-                and openId = #{param.openId}
+            <if test="param.province != null">
+                AND tcu.province = #{param.province}
             </if>
-            <if test = "param.nickname != null and param.nickname != ''">
-                and nickname = #{param.nickname}
+            <if test="param.city != null">
+                AND tcu.city = #{param.city}
             </if>
-            <if test = "param.unionid != null and param.unionid != ''">
-                and unionid = #{param.unionid}
+            <if test="param.groupId != null">
+                AND tdg.groupId = #{param.groupId}
+                AND tdg.id = tdgi.groupId
+                AND tdgi.deviceId = td.id
             </if>
-            <if test = "param.headimgurl != null and param.headimgurl != ''">
-                and headimgurl = #{param.headimgurl}
+            <if test="param.typeId != null">
+                AND tdt.id = #{param.typeId}
             </if>
-            <if test = "param.sex != null and param.sex != ''">
-                and sex = #{param.sex}
-            </if>
-            <if test = "param.province != null and param.province != ''">
-                and province = #{param.province}
-            </if>
-            <if test = "param.city != null and param.city != ''">
-                and city = #{param.city}
-            </if>
-            <if test = "param.status != null and param.status != ''">
-                and status = #{param.status}
-            </if>
-            <if test = "param.createTime != null and param.createTime != ''">
-                and createTime = #{param.createTime}
-            </if>
-            <if test = "param.lastUpdateTime != null and param.lastUpdateTime != ''">
-                and lastUpdateTime = #{param.lastUpdateTime}
-            </if>
-            <if test = "param.lastVisitTime != null and param.lastVisitTime != ''">
-                and lastVisitTime = #{param.lastVisitTime}
-            </if>
-            <if test = "param.mac != null and param.mac != ''">
-                and mac = #{param.mac}
+            <if test="param.modelId != null">
+                AND tdm.id = #{param.modelId}
             </if>
         </where>
+        ORDER BY tcu.createTime DESC
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_customer_user tcu,t_device_customer_user_relation tcur,t_device td
+        <if test="param.groupId != null">
+            ,t_device_group tdg,t_device_group_item tdgi
+        </if>
+        LEFT JOIN t_device_type tdt ON td.typeId = tdt.id
+        LEFT JOIN t_device_model tdm ON td.modelId = tdm.id
+        <where>
+            tcu.openId = tcur.openId and td.id = tcur.deviceId
+            <if test="param.customerId != null">
+                AND tcu.customerId = #{param.customerId}
+            </if>
+            <if test="param.province != null">
+                AND tcu.province = #{param.province}
+            </if>
+            <if test="param.city != null">
+                AND tcu.city = #{param.city}
+            </if>
+            <if test="param.groupId != null">
+                AND tdg.groupId = #{param.groupId}
+                AND tdg.id = tdgi.groupId
+                AND tdgi.deviceId = td.id
+            </if>
+            <if test="param.typeId != null">
+                AND tdt.id = #{param.typeId}
+            </if>
+            <if test="param.modelId != null">
+                AND tdm.id = #{param.modelId}
+            </if>
+        </where>
+    </select>
 
     <select id="selectUserCountByTime" resultType="java.lang.Integer">
         select count(1) from

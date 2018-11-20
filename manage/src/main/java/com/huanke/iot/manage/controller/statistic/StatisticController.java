@@ -43,6 +43,24 @@ public class StatisticController {
         return new ApiResponse<>(deviceTypePercentList);
     }
 
+    @ApiOperation("每月活跃用户统计")
+    @GetMapping(value = "/selectLiveCustomerUserCountPerMonth")
+    public ApiResponse<List<CustomerUserVo.CustomerUserMonthLiveCountVo>> selectLiveCustomerUserCountPerMonth() {
+        List<CustomerUserVo.CustomerUserMonthLiveCountVo>
+        customerUserMonthLiveCountVos = statisticService.selectLiveCustomerUserCountPerMonth();
+
+        return new ApiResponse<>(customerUserMonthLiveCountVos);
+    }
+
+    @ApiOperation("每天活跃用户统计")
+    @GetMapping(value = "/selectLiveCustomerUserCountPerHour")
+    public ApiResponse<List<CustomerUserVo.CustomerUserHourLiveCountVo>> selectLiveCustomerUserCountPerHour() {
+        List<CustomerUserVo.CustomerUserHourLiveCountVo>
+                customerUserHourLiveCountVos = statisticService.selectLiveCustomerUserCountPerHour();
+
+        return new ApiResponse<>(customerUserHourLiveCountVos);
+    }
+
     @ApiOperation("设备类型统计")
     @GetMapping(value = "/typePercent")
     public ApiResponse<List<DeviceTypeVo.DeviceTypePercent>> typePercent() {

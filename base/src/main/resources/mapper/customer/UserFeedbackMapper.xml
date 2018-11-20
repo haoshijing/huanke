@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.customer.UserFeedbackMapper">
+
+    <sql id="tableName">
+        t_user_feedback
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.customer.UserFeedbackPo">
+        INSERT INTO <include refid="tableName"/>
+        (
+        userId,
+        deviceId,
+        feedbackInfo,
+        status,
+        createTime
+        )
+        VALUES (
+        #{userId},
+        #{deviceId},
+        #{feedbackInfo},
+        #{status},
+        #{createTime}
+        )
+    </insert>
+    <update id="updateById" parameterType="com.huanke.iot.base.po.customer.UserFeedbackPo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="userId != null and userId != ''">
+                userId = #{userId},
+            </if>
+            <if test="deviceId != null  and deviceId != ''">
+                deviceId = #{deviceId},
+            </if>
+            <if test="feedbackInfo != null  and feedbackInfo != '' ">
+                feedbackInfo = #{feedbackInfo},
+            </if>
+            <if test="status != null  and status != '' ">
+                status = #{status},
+            </if>
+            <if test="createTime != null  and createTime != '' ">
+                createTime = #{createTime},
+            </if>
+        </set>
+        where
+        id = #{id}
+    </update>
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.customer.UserFeedbackPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+    <select id="selectList" resultType="com.huanke.iot.base.po.customer.UserFeedbackPo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1 = 1
+            <if test="param.userId != null and param.userId != ''">
+                AND userId = #{param.userId}
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND deviceId = #{param.deviceId}
+            </if>
+            <if test="param.status != null  ">
+                AND status = #{param.status}
+            </if>
+            <if test="param.createTime != null  ">
+                <![CDATA[and createTime <= #{createTime}]]>
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+        order by createTime desc
+    </select>
+
+    <select id="selectListByPara" resultType="com.huanke.iot.base.po.customer.UserFeedbackPo">
+        select *,cu.nickName userName,CONCAT(cu.province,cu.city) location from
+        <include refid="tableName"/> f
+        LEFT JOIN t_customer_user cu ON cu.id = f.userId
+        <where>
+            1 = 1
+            <if test="param.userId != null and param.userId != ''">
+                AND f.userId = #{param.userId}
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND f.deviceId = #{param.deviceId}
+            </if>
+            <if test="param.status != null">
+                AND f.status = #{param.status}
+            </if>
+            <if test="param.beginTime != null  ">
+                <![CDATA[and f.createTime >= #{param.beginTime}]]>
+            </if>
+            <if test="param.endTime != null  ">
+                <![CDATA[and f.createTime <= #{param.endTime}]]>
+            </if>
+            <if test="param.customerId != null and param.customerId != ''  ">
+                AND cu.customerId = #{param.customerId}
+            </if>
+            <if test="param.userName != null and param.userName != ''  ">
+                AND cu.nickName like CONCAT('%',#{param.userName},'%')
+            </if>
+            <if test="param.location != null and param.location != ''  ">
+                AND (cu.province like CONCAT('%',#{param.location},'%')
+                OR cu.city like CONCAT('%',#{param.location},'%'))
+            </if>
+        </where>
+        order by f.createTime desc
+        limit #{param.limit} offset #{param.offset}
+    </select>
+    <select id="selectCountByPara" resultType="java.lang.Integer">
+        select count(1) count from
+        <include refid="tableName"/> f
+        LEFT JOIN t_customer_user cu ON cu.id = f.userId
+        <where>
+            1 = 1
+            <if test="param.userId != null and param.userId != ''">
+                AND f.userId = #{param.userId}
+            </if>
+            <if test="param.deviceId != null and param.deviceId != ''">
+                AND f.deviceId = #{param.deviceId}
+            </if>
+            <if test="param.status != null">
+                AND f.status = #{param.status}
+            </if>
+            <if test="param.beginTime != null  ">
+                <![CDATA[and f.createTime >= #{param.beginTime}]]>
+            </if>
+            <if test="param.endTime != null  ">
+                <![CDATA[and f.createTime <= #{param.endTime}]]>
+            </if>
+            <if test="param.customerId != null and param.customerId != ''  ">
+                AND cu.customerId = #{param.customerId}
+            </if>
+            <if test="param.userName != null and param.userName != ''  ">
+                AND cu.nickName like CONCAT('%',#{param.userName},'%')
+            </if>
+            <if test="param.location != null and param.location != ''  ">
+                AND (cu.province like CONCAT('%',#{param.location},'%')
+                OR cu.city like CONCAT('%',#{param.location},'%'))
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteById">
+        delete from <include refid="tableName"/>
+        where id = #{id}
+    </delete>
+</mapper>

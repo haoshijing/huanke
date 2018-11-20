@@ -53,4 +53,13 @@ public class MqttSendService {
             }
         }
     }
+    public void sendMessage(String topic,byte[] datas){
+        if(mqttClient != null){
+            try {
+                mqttClient.publish(topic, new MqttMessage(datas));
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
+    }
 }

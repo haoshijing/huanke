@@ -32,12 +32,12 @@
                 imei = #{imei},
             </if>
             <if test="customerId != null  and customerId != '' ">
-                logo = #{customerId},
+                customerId = #{customerId},
             </if>
 
             custUserId = #{custUserId},
             <if test="updateTime != null  and updateTime != '' ">
-                logo = #{updateTime},
+                updateTime = #{updateTime},
             </if>
         </set>
         where

@@ -15,6 +15,7 @@
         name,
         imgsCover,
         description,
+        status,
         createTime
         )
         VALUES (
@@ -23,6 +24,7 @@
         #{name},
         #{imgsCover},
         #{description},
+        #{status},
         #{createTime}
         )
     </insert>
@@ -78,14 +80,12 @@
         where id = #{id}
     </delete>
 
-    <select id="selectListByConfigId"  resultType="com.huanke.iot.base.po.customer.AndroidScenePo">
+    <select id="selectByConfigId"  resultType="com.huanke.iot.base.po.customer.AndroidScenePo">
         select
         *
         FROM <include refid="tableName"/>
         WHERE configId = #{configId}
-        <if test="status != null  ">
-            AND status = #{status}
-        </if>
+            AND status = 1
     </select>
 
 </mapper>

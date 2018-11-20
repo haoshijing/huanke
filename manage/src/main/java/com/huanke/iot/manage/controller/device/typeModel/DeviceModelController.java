@@ -173,7 +173,7 @@ public class DeviceModelController {
     public ApiResponse<Boolean> deleteModelByIdForce(@PathVariable("id") Integer modelId) throws Exception {
         Boolean ret = null;
         try {
-            return deviceModelService.deleteModelOption(modelId);
+            return deviceModelService.deleteModelByIdForce(modelId);
         } catch (Exception e) {
             log.error("删除设备型号失败={}", e);
             return new ApiResponse<>(RetCode.ERROR, StringUtils.isNotBlank(e.getMessage())?e.getMessage():"删除设备型号失败");

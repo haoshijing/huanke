@@ -16,6 +16,7 @@
         name,
         imgVideo,
         description,
+        imgVideoMark,
         status,
         createTime
         )
@@ -26,6 +27,7 @@
         #{name},
         #{imgVideo},
         #{description},
+        #{imgVideoMark},
         #{status},
         #{createTime}
         )
@@ -50,6 +52,9 @@
             <if test="description != null  and description != '' ">
                 description = #{description},
             </if>
+            <if test="imgVideoMark != null  ">
+                imgVideoMark = #{imgVideoMark},
+            </if>
             <if test="status != null  ">
                 status = #{status},
             </if>
@@ -69,6 +74,8 @@
         name,
         imgVideo,
         description,
+        imgVideoMark,
+        status,
         createTime,
         lastUpdateTime
         )
@@ -81,6 +88,8 @@
             #{item.name},
             #{item.imgVideo},
             #{item.description},
+            #{item.imgVideoMark},
+            #{item.status},
             #{item.createTime},
             #{item.lastUpdateTime}
             )
@@ -93,8 +102,6 @@
         *
         FROM <include refid="tableName"/>
         WHERE androidSceneId = #{androidSceneId}
-        <if test="status != null  ">
-            AND status = #{status}
-        </if>
+            AND status = 1
     </select>
 </mapper>

@@ -98,4 +98,23 @@
         AND status = 1
         limit 1
     </select>
+
+
+    <delete id="deleteByModelFormatId">
+        delete from
+        <include refid="tableName"/>
+        where modelFormatId = #{modelFormatId}
+    </delete>
+
+    <update id="updateStatusByModelFormatId" parameterType="com.huanke.iot.base.po.format.DeviceModelFormatItemPo" >
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            lastUpdateTime = #{lastUpdateTime}
+        </set>
+        where modelFormatId = #{modelFormatId}
+    </update>
 </mapper>

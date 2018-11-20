@@ -20,10 +20,7 @@ import com.huanke.iot.base.enums.SensorTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
-import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
-import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
-import com.huanke.iot.base.po.device.DeviceIdPoolPo;
-import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.*;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
@@ -58,6 +55,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -141,13 +139,19 @@ public class DeviceOperateService {
     private LocationUtils locationUtils;
 
     @Autowired
+    private DeviceParamsMapper deviceParamsMapper;
+
+    @Autowired
     private MqttSendService mqttSendService;
 
 
-    private static String[] keys = {"name","manageName","mac", "customerName", "deviceType", "bindStatus", "enableStatus", "groupName",
-            "powerStatus", "onlineStatus", "modelId", "modelName", "birthTime", "lastOnlineTime", "location"};
+    private static String[] keys = {"name","mac", "customerName", "bindStatus", "enableStatus", "groupName","userName",
+            "powerStatus", "onlineStatus", "assignStatus","id", "modelName","modelCode","birthTime", "lastOnlineTime",
+            "createUserName", "location","manageName"};
 
-    private static String[] texts = {"名称","管理名称", "MAC", "归属", "类型", "绑定状态", "启用状态", "集群名", "工作状态", "在线状态", "设备型号ID", "设备型号名称", "注册时间", "最后上上线时间", "地理位置"};
+    private static String[] texts = {"名称", "MAC", "归属", "绑定状态","启用状态","项目名","绑定用户",
+            "工作状态","在线状态","分配状态","设备ID","型号名","型号","创建时间", "最后上上线时间",
+            "创建人", "地理位置","管理名称"};
 
     /**
      * 2018-08-15
@@ -221,11 +225,89 @@ public class DeviceOperateService {
             devicePo.setLastUpdateTime(System.currentTimeMillis());
 
             ret = deviceMapper.updateById(devicePo) > 0;
+
+            /* 发送设备传参指令*/
+            //sendParamFunc(deviceUpdateRequest);
+
         } else {
             return new ApiResponse<>(RetCode.OK, "该设备不存在！", false);
         }
 
         return new ApiResponse<>(RetCode.OK, "修改成功", ret);
+    }
+
+    /**
+     * 发送设备传参指令
+     * @param deviceUpdateRequest
+     * @return
+     */
+    @Transactional
+    public String sendParamFunc(DeviceUpdateRequest deviceUpdateRequest) {
+        User user = userService.getCurrentUser();
+        Map<Integer, List<String>> configMap = new HashMap<>();
+        List<DeviceUpdateRequest.ParamConfig> paramConfigList = deviceUpdateRequest.getParamConfigList();
+        for (DeviceUpdateRequest.ParamConfig paramConfig : paramConfigList) {
+            Integer sort = paramConfig.getSort();
+            List<String> valuesList = paramConfig.getValuesList();
+            String values = String.join(",", valuesList);
+            DeviceParamsPo deviceParamsPo = new DeviceParamsPo();
+            DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectByDirValue(deviceUpdateRequest.getAbilityDirValue() + "." + sort);
+            deviceParamsPo.setDeviceId(deviceUpdateRequest.getId());
+            deviceParamsPo.setAbilityId(deviceAbilityPo.getId());
+            deviceParamsPo.setTypeName(deviceUpdateRequest.getAbilityDirValue());
+            deviceParamsPo.setStatus(CommonConstant.STATUS_YES);
+            deviceParamsPo.setSort(sort);
+
+
+            DeviceParamsPo oldDeviceParamsPo = deviceParamsMapper.selectList(deviceParamsPo);
+            if(oldDeviceParamsPo == null){
+                deviceParamsPo.setValue(values);
+                deviceParamsPo.setUpdateWay(DeviceConstant.DEVICE_OPERATE_SYS_BACKEND);//添加渠道：3-后台
+                deviceParamsPo.setCreateUserId(user.getId());
+                deviceParamsPo.setCreateTime(System.currentTimeMillis());
+
+                deviceParamsMapper.insert(deviceParamsPo);
+            }else{
+                oldDeviceParamsPo.setValue(values);
+                oldDeviceParamsPo.setUpdateWay(DeviceConstant.DEVICE_OPERATE_SYS_BACKEND);//添加渠道：3-后台
+
+                deviceParamsPo.setUpdateUserId(user.getId());
+                deviceParamsPo.setLastUpdateTime(System.currentTimeMillis());
+                deviceParamsMapper.updateById(oldDeviceParamsPo);
+            }
+            configMap.put(sort, valuesList);
+        }
+        //发送指令给设备
+        String requestId = sendFuncToDevice(user.getId(), deviceUpdateRequest.getId(), deviceUpdateRequest.getAbilityDirValue(), configMap, 1);
+        return requestId;
+    }
+
+    private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityDirValue, Map<Integer, List<String>> configMap, int operType) {
+        List<DeviceUpdateRequest.ConfigFuncMessage> configFuncMessages = new ArrayList<>();
+        String topic = "/down2/cfgC/" + deviceId;
+        String requestId = UUID.randomUUID().toString().replace("-", "");
+        DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
+        deviceOperLogPo.setFuncId(abilityDirValue);
+        deviceOperLogPo.setDeviceId(deviceId);
+        deviceOperLogPo.setOperType(operType);
+        deviceOperLogPo.setOperUserId(userId);
+        deviceOperLogPo.setFuncValue(configMap.toString());
+        deviceOperLogPo.setRequestId(requestId);
+        deviceOperLogPo.setCreateTime(System.currentTimeMillis());
+        deviceOperLogMapper.insert(deviceOperLogPo);
+        //发送指令
+        for (Map.Entry<Integer, List<String>> entry : configMap.entrySet()) {
+            Integer sort = entry.getKey();
+            List<String> values = entry.getValue();
+            DeviceUpdateRequest.ConfigFuncMessage configFuncMessage = new DeviceUpdateRequest.ConfigFuncMessage();
+            configFuncMessage.setType(abilityDirValue + "." + sort);
+            configFuncMessage.setValue(values);
+            configFuncMessages.add(configFuncMessage);
+        }
+        Map<String, List> req = new HashMap<String, List>();
+        req.put("datas", configFuncMessages);
+        mqttSendService.sendMessage(topic, JSON.toJSONString(req));
+        return requestId;
     }
 
     /**
@@ -365,6 +447,7 @@ public class DeviceOperateService {
             deviceQueryVo.setSaNo(devicePo.getSaNo());
 
             deviceQueryVo.setTypeId(devicePo.getTypeId());
+            deviceQueryVo.setTypeNo(devicePo.getTypeNo());
             deviceQueryVo.setModelId(devicePo.getModelId());
             deviceQueryVo.setModelName(devicePo.getModelName());
             deviceQueryVo.setModelCode(devicePo.getModelCode());
@@ -533,13 +616,15 @@ public class DeviceOperateService {
             deviceExportVo.setEnableStatus( DeviceConstant.ENABLE_STATUS_YES.equals(eachPo.getEnableStatus())?"启用":"禁用");
             deviceExportVo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES.equals(eachPo.getOnlineStatus())?"在线":"离线");
             deviceExportVo.setPowerStatus(DeviceConstant.POWER_STATUS_YES.equals(eachPo.getPowerStatus())?"开机":"关机");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if(null != eachPo.getLastOnlineTime()) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 deviceExportVo.setLastOnlineTime(sdf.format(new Date(eachPo.getLastOnlineTime())));
             }
+            deviceExportVo.setBirthTime(sdf.format(new Date(eachPo.getBirthTime())));
             deviceExportVoList.add(deviceExportVo);
         });
         String[] titles = new String[titleNames.size()];
+        log.info("当前条件下需要导出的设备列的表头：{}",titles);
         titleNames.toArray(titles);
         ExcelUtil<DeviceExportVo> deviceListVoExcelUtil = new ExcelUtil<>();
         deviceListVoExcelUtil.exportExcel(deviceListExportRequest.getFileName(), response, deviceListExportRequest.getSheetTitle(), titles, deviceExportVoList, filterMap, deviceListVoExcelUtil.EXCEl_FILE_2007);

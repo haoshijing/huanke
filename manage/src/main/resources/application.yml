@@ -23,3 +23,5 @@ skipRemoteHost: pro
 defaultPassWord: 123456
 
 env: dev
+mybatis.configuration.cache-enabled: false
+

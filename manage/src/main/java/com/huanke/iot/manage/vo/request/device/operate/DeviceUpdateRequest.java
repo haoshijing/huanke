@@ -32,4 +32,23 @@ public class DeviceUpdateRequest {
      */
     private String ip;
 
+    /**
+     * 设备发送指令的设置
+     */
+    private String abilityDirValue;
+    private List<ParamConfig> paramConfigList;
+
+    @Data
+    public static class ParamConfig{
+        private Integer sort;
+        private List<String> valuesList;
+    }
+
+
+    @Data
+    public static class ConfigFuncMessage {
+        private String type;
+        private List<String> value;
+    }
+
 }

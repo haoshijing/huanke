@@ -16,6 +16,7 @@ public class AndroidSceneImgPo {
     private String name;    //图片名称
     private String imgVideo;    //图片或视频
     private String description;    //描述介绍
+    private Integer imgVideoMark; //1-图片，2-视频
     private Integer status = CommonConstant.STATUS_YES;    //状态
     private Long createTime;
     private Long lastUpdateTime;

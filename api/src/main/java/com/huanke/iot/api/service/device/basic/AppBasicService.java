@@ -94,7 +94,7 @@ public class AppBasicService {
             return new ApiResponse<>(respFlag);
         }
         AndroidUserInfoPo androidUserInfoPo = androidUserInfoMapper.selectByCustomerAndImei(customerPo.getId(), iMei);
-        if(androidUserInfoPo!=null&&StringUtils.isNotEmpty(androidUserInfoPo.getCustUserId().toString())){
+        if(androidUserInfoPo!=null&&androidUserInfoPo.getCustUserId()!=null){
             androidUserInfoPo.setCustUserId(null);
             androidUserInfoMapper.updateById(androidUserInfoPo);
         }
@@ -277,7 +277,7 @@ public class AppBasicService {
                     map.put(key,value);
                 }else{
                     Float ave = Float.valueOf(map.get(key))/2+Float.valueOf(value)/2;
-                    DecimalFormat df = new DecimalFormat("0.00");
+                    DecimalFormat df = new DecimalFormat("0");
                     map.put(key,df.format(ave));
                 }
 
@@ -321,51 +321,45 @@ public class AppBasicService {
         return "1188";
     }
 
-    public List getCustomerSceneInfo(){
+    public AppSceneVo getCustomerSceneInfo(){
         UserRequestContext context = UserRequestContextHolder.get();
         Integer customerId = context.getCustomerVo().getCustomerId();
         AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerId);
         if(androidConfig != null){
-            AndroidScenePo androidScenePo = new AndroidScenePo();
-            androidScenePo.setConfigId(androidConfig.getId());
-            List<AndroidScenePo> androidScenePos = androidSceneMapper.selectListByConfigId(androidScenePo);
-            if(androidScenePos != null && androidScenePos.size()>0){
-                List appSceneVos = new ArrayList<AppSceneVo>();
-                for(AndroidScenePo sceneTemp : androidScenePos){
-                    AppSceneVo appSceneVo = new AppSceneVo();
-                    appSceneVo.setId(sceneTemp.getId());
-                    appSceneVo.setCustomerId(sceneTemp.getConfigId());
-                    appSceneVo.setName(sceneTemp.getName());
-                    appSceneVo.setImgsCover(sceneTemp.getImgsCover());
-                    appSceneVo.setDescription(sceneTemp.getDescription());
-                    appSceneVo.setStatus(sceneTemp.getStatus());
-                    appSceneVo.setCreateTime(sceneTemp.getCreateTime());
-                    appSceneVo.setLastUpdateTime(sceneTemp.getLastUpdateTime());
+            AndroidScenePo androidScenePo = androidSceneMapper.selectByConfigId(androidConfig.getId());
+            if(androidScenePo != null){
+                AppSceneVo appSceneVo = new AppSceneVo();
+                appSceneVo.setId(androidScenePo.getId());
+                appSceneVo.setCustomerId(androidScenePo.getConfigId());
+                appSceneVo.setName(androidScenePo.getName());
+                appSceneVo.setImgsCover(androidScenePo.getImgsCover());
+                appSceneVo.setDescription(androidScenePo.getDescription());
+                appSceneVo.setStatus(androidScenePo.getStatus());
+                appSceneVo.setCreateTime(androidScenePo.getCreateTime());
+                appSceneVo.setLastUpdateTime(androidScenePo.getLastUpdateTime());
 
-                    AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
-                    androidSceneImgPo.setAndroidSceneId(sceneTemp.getId());
-                    List<AndroidSceneImgPo> androidSceneImgPos = androidSceneImgMapper.selectListBySceneId(androidSceneImgPo);
-                    if(androidSceneImgPos != null && androidSceneImgPos.size()>0){
-                        List androidSceneImgs = new ArrayList<AppSceneVo.AndroidSceneImgVo>();
-                        for(AndroidSceneImgPo androidSceneImgPoTemp : androidSceneImgPos) {
-                            AppSceneVo.AndroidSceneImgVo androidSceneImgVo = new AppSceneVo.AndroidSceneImgVo();
-                            androidSceneImgVo.setId(androidSceneImgPoTemp.getId());
-                            androidSceneImgVo.setAndroidSceneId(androidSceneImgPoTemp.getAndroidSceneId());
-                            androidSceneImgVo.setCreateTime(androidSceneImgPoTemp.getCreateTime());
-                            androidSceneImgVo.setCustomerId(androidSceneImgPoTemp.getCustomerId());
-                            androidSceneImgVo.setDescription(androidSceneImgPoTemp.getDescription());
-                            androidSceneImgVo.setImgVideo(androidSceneImgPoTemp.getImgVideo());
-                            androidSceneImgVo.setLastUpdateTime(androidSceneImgPoTemp.getLastUpdateTime());
-                            androidSceneImgVo.setName(androidSceneImgPoTemp.getName());
-                            androidSceneImgVo.setStatus(androidSceneImgPoTemp.getStatus());
+                AndroidSceneImgPo androidSceneImgPo = new AndroidSceneImgPo();
+                androidSceneImgPo.setAndroidSceneId(androidScenePo.getId());
+                List<AndroidSceneImgPo> androidSceneImgPos = androidSceneImgMapper.selectListBySceneId(androidScenePo.getId());
+                if(androidSceneImgPos != null && androidSceneImgPos.size()>0){
+                    List androidSceneImgs = new ArrayList<AppSceneVo.AndroidSceneImgVo>();
+                    for(AndroidSceneImgPo androidSceneImgPoTemp : androidSceneImgPos) {
+                        AppSceneVo.AndroidSceneImgVo androidSceneImgVo = new AppSceneVo.AndroidSceneImgVo();
+                        androidSceneImgVo.setId(androidSceneImgPoTemp.getId());
+                        androidSceneImgVo.setAndroidSceneId(androidSceneImgPoTemp.getAndroidSceneId());
+                        androidSceneImgVo.setCreateTime(androidSceneImgPoTemp.getCreateTime());
+                        androidSceneImgVo.setCustomerId(androidSceneImgPoTemp.getCustomerId());
+                        androidSceneImgVo.setDescription(androidSceneImgPoTemp.getDescription());
+                        androidSceneImgVo.setImgVideo(androidSceneImgPoTemp.getImgVideo());
+                        androidSceneImgVo.setLastUpdateTime(androidSceneImgPoTemp.getLastUpdateTime());
+                        androidSceneImgVo.setName(androidSceneImgPoTemp.getName());
+                        androidSceneImgVo.setStatus(androidSceneImgPoTemp.getStatus());
 
-                            androidSceneImgs.add(androidSceneImgVo);
-                        }
-                        appSceneVo.setAndroidSceneImgs(androidSceneImgs);
-                    };
-                    appSceneVos.add(appSceneVo);
-                }
-                return appSceneVos;
+                        androidSceneImgs.add(androidSceneImgVo);
+                    }
+                    appSceneVo.setAndroidSceneImgs(androidSceneImgs);
+                };
+                return appSceneVo;
             }
         }
         return null;

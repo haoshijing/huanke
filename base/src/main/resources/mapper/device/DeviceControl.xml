@@ -23,4 +23,10 @@
         )
     </insert>
 
+    <delete id="clearData">
+        delete from <include refid="tableName"/> where    <![CDATA[
+         createTime <= #{lastTime}
+           ]]>
+    </delete>
+
 </mapper>

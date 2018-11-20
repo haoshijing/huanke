@@ -749,6 +749,46 @@ public class DeviceModelService {
         delModel.setLastUpdateTime(System.currentTimeMillis());
         deviceModelMapper.updateStatusById(delModel);
 
+        /*删除型号版式、版式配置项*/
+        List<DeviceModelFormatPo> deviceModelFormatPages = deviceModelFormatMapper.obtainModelFormatByModelId(modelId);
+        if(deviceModelFormatPages!=null&&deviceModelFormatPages.size()>0){
+            deviceModelFormatPages.stream().forEach(
+                    deviceModelFormatPo -> {
+                        DeviceModelFormatItemPo delItemPo = new DeviceModelFormatItemPo();
+
+                        delItemPo.setModelFormatId(deviceModelFormatPo.getId());
+                        delItemPo.setLastUpdateTime(System.currentTimeMillis());
+                        delItemPo.setStatus(CommonConstant.STATUS_DEL);
+                        deviceModelFormatItemMapper.updateStatusByModelFormatId(delItemPo);
+                    }
+            );
+        }
+        DeviceModelFormatPo delFormatPo = new DeviceModelFormatPo();
+        delFormatPo.setModelId(modelId);
+        delFormatPo.setLastUpdateTime(System.currentTimeMillis());
+        delFormatPo.setStatus(CommonConstant.STATUS_DEL);
+        deviceModelFormatMapper.updateStatusByModelId(delFormatPo);
+
+        /*删除 型号的功能项及功能项选项*/
+        List<DeviceModelAbilityPo> deviceModelAbilityPos = deviceModelAbilityMapper.selectByModelId(modelId);
+        if(deviceModelAbilityPos!=null&&deviceModelAbilityPos.size()>0){
+            deviceModelAbilityPos.stream().forEach(
+                    deviceModelAbilityPo -> {
+                        DeviceModelAbilityOptionPo delOptionPo = new DeviceModelAbilityOptionPo();
+                        delOptionPo.setModelAbilityId(deviceModelAbilityPo.getId());
+                        delOptionPo.setLastUpdateTime(System.currentTimeMillis());
+                        delOptionPo.setStatus(CommonConstant.STATUS_DEL);
+                        deviceModelAbilityOptionMapper.updateStatusByModelAbilityId(delOptionPo);
+                    }
+            );
+        }
+
+        DeviceModelAbilityPo delAbilityPo = new DeviceModelAbilityPo();
+        delAbilityPo.setModelId(modelId);
+        delAbilityPo.setLastUpdateTime(System.currentTimeMillis());
+        delAbilityPo.setStatus(CommonConstant.STATUS_DEL);
+        deviceModelAbilityMapper.updateStatusByModelId(delAbilityPo);
+
         return new ApiResponse<>(RetCode.OK, "删除成功");
     }
 
@@ -758,7 +798,7 @@ public class DeviceModelService {
      * @param modelId
      * @return
      */
-    public ApiResponse<Boolean> deleteModelOption(Integer modelId) throws Exception {
+    public ApiResponse<Boolean> deleteModelByIdForce(Integer modelId) throws Exception {
 
         List<DevicePo> devicePos = deviceMapper.selectByModelId(modelId);
         if (devicePos != null && devicePos.size() > 0) {
@@ -769,11 +809,51 @@ public class DeviceModelService {
             }
         }
         /*逻辑删除型号*/
-        DeviceModelPo delModel = new DeviceModelPo();
-        delModel.setId(modelId);
+        DeviceModelPo delModel = deviceModelMapper.selectById(modelId);
         delModel.setStatus(CommonConstant.STATUS_DEL);
         delModel.setLastUpdateTime(System.currentTimeMillis());
         deviceModelMapper.updateStatusById(delModel);
+
+        /*删除型号版式、版式配置项*/
+        List<DeviceModelFormatPo> deviceModelFormatPages = deviceModelFormatMapper.obtainModelFormatByModelId(modelId);
+        if(deviceModelFormatPages!=null&&deviceModelFormatPages.size()>0){
+            deviceModelFormatPages.stream().forEach(
+                    deviceModelFormatPo -> {
+                        DeviceModelFormatItemPo delItemPo = new DeviceModelFormatItemPo();
+
+                        delItemPo.setModelFormatId(deviceModelFormatPo.getId());
+                        delItemPo.setLastUpdateTime(System.currentTimeMillis());
+                        delItemPo.setStatus(CommonConstant.STATUS_DEL);
+                        deviceModelFormatItemMapper.updateStatusByModelFormatId(delItemPo);
+                    }
+            );
+        }
+        DeviceModelFormatPo delFormatPo = new DeviceModelFormatPo();
+        delFormatPo.setModelId(modelId);
+        delFormatPo.setLastUpdateTime(System.currentTimeMillis());
+        delFormatPo.setStatus(CommonConstant.STATUS_DEL);
+        deviceModelFormatMapper.updateStatusByModelId(delFormatPo);
+
+        /*删除 型号的功能项及功能项选项*/
+        List<DeviceModelAbilityPo> deviceModelAbilityPos = deviceModelAbilityMapper.selectByModelId(modelId);
+        if(deviceModelAbilityPos!=null&&deviceModelAbilityPos.size()>0){
+            deviceModelAbilityPos.stream().forEach(
+                    deviceModelAbilityPo -> {
+                        DeviceModelAbilityOptionPo delOptionPo = new DeviceModelAbilityOptionPo();
+                        delOptionPo.setModelAbilityId(deviceModelAbilityPo.getId());
+                        delOptionPo.setLastUpdateTime(System.currentTimeMillis());
+                        delOptionPo.setStatus(CommonConstant.STATUS_DEL);
+                        deviceModelAbilityOptionMapper.updateStatusByModelAbilityId(delOptionPo);
+                    }
+            );
+        }
+
+        DeviceModelAbilityPo delAbilityPo = new DeviceModelAbilityPo();
+        delAbilityPo.setModelId(modelId);
+        delAbilityPo.setLastUpdateTime(System.currentTimeMillis());
+        delAbilityPo.setStatus(CommonConstant.STATUS_DEL);
+        deviceModelAbilityMapper.updateStatusByModelId(delAbilityPo);
+
 
         return new ApiResponse<>(RetCode.OK, "删除成功");
     }
