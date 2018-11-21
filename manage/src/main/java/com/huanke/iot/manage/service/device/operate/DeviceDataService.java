@@ -99,7 +99,7 @@ public class DeviceDataService {
             FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(deviceOperLogVo.getFuncId());
             //设置操作名称名称
             deviceOperLogVo.setFuncName(funcTypeEnums.getMark());
-            if(!funcTypeEnums.getRange().equals("")){
+            if(!funcTypeEnums.getRange().equals("") && null != funcTypeEnums.getRange()){
                 String[] ranges = funcTypeEnums.getRange().split(",");
                 Integer valueIndex = Integer.parseInt(deviceOperLogPo.getFuncValue());
                 if(null != deviceOperLogPo.getFuncValue() && valueIndex < ranges.length) {

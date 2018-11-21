@@ -15,9 +15,22 @@ import java.util.Random;
  * @create 2018-10-26 下午4:15
  */
 public class UniNoCreateUtils {
+    /**
+     * 类型
+     */
     private static final String PRE_TYPE = "HTY";
+    /**
+     * 模型
+     */
     private static final String PRE_MODEL = "HMD";
+    /**
+     * 设备
+     */
     private static final String PRE_DEVICE = "HDE";
+    /**
+     * 设备
+     */
+    private static final String PRE_EXTRADEVICE = "EDE";
 
     public static String createNo(Integer type) {
         StringBuilder sb = new StringBuilder();
@@ -30,6 +43,9 @@ public class UniNoCreateUtils {
                 break;
             case DeviceConstant.DEVICE_UNI_NO_DEVICE:
                 sb.append(PRE_DEVICE).append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append(randomStr(4));
+                break;
+            case DeviceConstant.DEVICE_UNI_NO_EXTRADEVICE:
+                sb.append(PRE_EXTRADEVICE).append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append(randomStr(4));
                 break;
                 default:
                     break;

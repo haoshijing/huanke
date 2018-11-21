@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.project.ProjectMapper">
+
+    <sql id="tableName">
+        t_project_base_info
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectBaseInfo">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        customerId,
+        projectNo,
+        name,
+        description,
+        buildTime,
+        buildAddress,
+        gps,
+        groupIds,
+        status,
+        createTime,
+        createUser
+        )
+        VALUES
+        (
+        #{customerId},
+        #{projectNo},
+        #{name},
+        #{description},
+        #{buildTime},
+        #{buildAddress},
+        #{gps},
+        #{groupIds},
+        #{status},
+        #{createTime},
+        #{createUser}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectBaseInfo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectBaseInfo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1=1
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectBaseInfo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="projectNo != null and projectNo!='' ">
+                projectNo = #{projectNo},
+            </if>
+            <if test="name != null and name!='' ">
+                name = #{name},
+            </if>
+            <if test="description != null and description!='' ">
+                description = #{description},
+            </if>
+            <if test="buildTime != null">
+                buildTime = #{buildTime},
+            </if>
+            <if test="buildAddress != null and buildAddress!='' ">
+                buildAddress = #{buildAddress},
+            </if>
+            <if test="gps != null and gps!='' ">
+                gps = #{gps},
+            </if>
+            <if test="groupIds != null and groupIds!='' ">
+                groupIds = #{groupIds},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                updateUser = #{updateUser},
+            </if>
+        </set>
+        where
+        1= 1
+        and id = #{id}
+    </update>
+
+
+    <update id="deleteById" parameterType="java.lang.Integer">
+        update
+        <include refid="tableName"/>
+        <set>
+            isDelete = 1
+        </set>
+        WHERE id  = #{id}
+    </update>
+
+    <update id="batchDelete">
+        UPDATE <include refid="tableName"/>
+        SET status = 2
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <update id="batchForbidden">
+        UPDATE <include refid="tableName"/>
+        SET status = 3
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <!--列表总条数-->
+    <select id="selectCount"  resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where 1=1
+        AND customerId = #{param.customerId}
+    </select>
+
+    <!--返回当前列表集合-->
+    <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.ProjectRspPo">
+      SELECT pbi.id, pbi.projectNo, pbi.name, pbi.description, pbi.buildTime, pbi.buildAddress, pbi.groupIds, pbi.status, pbi.createTime, pbi.updateTime      , u.nickName createName,u1.nickName updateName, count(ped.id) deviceCount
+      FROM t_project_base_info pbi left join t_user u on pbi.createUser = u.id left join t_user u1 on  pbi.updateUser = u1.id left join t_project_extra_device ped on pbi.id = ped.projectId
+      WHERE 1=1
+        <!--<if test = "dictPo.type != null and dictPo.type != ''">
+            AND d.type = #{dictPo.type}
+        </if>-->
+      AND customerId = #{projectBaseInfo.customerId}
+      group by pbi.id
+      LIMIT #{start},#{limit}
+    </select>
+
+    <select id="selectByProjectId" resultType="com.huanke.iot.base.request.project.ProjectRequest">
+        select id, projectNo, name, description, buildTime, buildAddress, gps, groupIds, status from
+        <include refid="tableName"/>
+        where id = #{projectId}
+    </select>
+
+
+</mapper>
