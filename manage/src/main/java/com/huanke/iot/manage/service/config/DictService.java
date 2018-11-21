@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.service.config;
 
 import com.huanke.iot.base.dao.DictMapper;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.config.DictPo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.config.DictQueryRequest;
@@ -46,14 +47,23 @@ public class DictService {
         User user = userService.getCurrentUser();
         DictPo dictPo = new DictPo();
         BeanUtils.copyProperties(request, dictPo);
+        dictPo.setCustomerId(customerService.obtainCustomerId(false));
         if (dictPo.getId() == null) {
             //添加
-            dictPo.setCustomerId(customerService.obtainCustomerId(false));
+            //判断不能重复
+            Integer count = dictMapper.confirmAdd(dictPo);
+            if(count > 0){
+                throw new BusinessException("已存在当前类型的该值");
+            }
             dictPo.setCreateTime(new Date());
             dictPo.setCreateUserId(user.getId());
             return dictMapper.insert(dictPo) > 0;
         } else {
             //修改
+            Integer count = dictMapper.confirmUpdate(dictPo);
+            if(count > 1){
+                throw new BusinessException("已存在当前类型的该值");
+            }
             dictPo.setUpdateTime(new Date());
             dictPo.setUpdateUserId(user.getId());
             return dictMapper.updateById(dictPo) > 0;

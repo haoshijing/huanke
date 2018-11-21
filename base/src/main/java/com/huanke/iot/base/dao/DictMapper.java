@@ -26,4 +26,8 @@ public interface DictMapper extends BaseMapper<DictPo> {
     List<DictRspPo> selectPageList(@Param("dictPo") DictPo dictPo, @Param("start") int start, @Param("limit") int limit);
 
     List<QueryDictRsp> queryDict(@Param("customerId") Integer customerId, @Param("type") String type);
+
+    Integer confirmAdd(DictPo dictPo);
+
+    Integer confirmUpdate(DictPo dictPo);
 }
