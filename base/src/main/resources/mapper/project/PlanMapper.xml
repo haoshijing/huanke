@@ -177,4 +177,20 @@
         AND customerId = #{projectPlanInfo.customerId}
       LIMIT #{start},#{limit}
     </select>
+
+    <select id="selectMaintenanceCount" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where linkProjectId = #{projectId}
+    </select>
+
+    <select id="maintenance" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
+        SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+        FROM t_project_plan_info ppi left join t_user u on ppi.createUser = u.id left join t_user u1 on  ppi.updateUser = u1.id
+        WHERE 1=1
+        <!--<if test = "dictPo.type != null and dictPo.type != ''">
+            AND d.type = #{dictPo.type}
+        </if>-->
+        AND customerId = #{projectPlanInfo.customerId}
+    </select>
 </mapper>

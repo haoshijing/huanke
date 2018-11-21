@@ -4,7 +4,7 @@
 <mapper namespace="com.huanke.iot.base.dao.project.MateriaMapper">
 
     <sql id="tableName">
-        t_project_plan_info
+        t_project_material_info
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectMaterialInfo">
@@ -53,6 +53,9 @@
         update
         <include refid="tableName"/>
         <set>
+            <if test="type != null">
+                type = #{type},
+            </if>
             <if test="name != null and name!='' ">
                 name = #{name},
             </if>
@@ -90,5 +93,19 @@
             #{ids}
         </foreach>
     </update>
+
+    <select id="selectExistIds" resultType="java.lang.Integer">
+        SELECT id
+        FROM <include refid="tableName"/>
+        WHERE projectId = #{projectId}
+        AND status = 1
+    </select>
+
+    <select id="selectMaterialInfoByProjectId" resultType="com.huanke.iot.base.po.project.ProjectMaterialInfo">
+        SELECT *
+        FROM <include refid="tableName"/>
+        WHERE projectId = #{projectId}
+        AND status = 1
+    </select>
     
 </mapper>

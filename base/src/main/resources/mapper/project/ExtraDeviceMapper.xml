@@ -4,7 +4,7 @@
 <mapper namespace="com.huanke.iot.base.dao.project.ExtraDeviceMapper">
 
     <sql id="tableName">
-        t_project_plan_info
+        t_project_extra_device
     </sql>
     <!-- 插入一条记录 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectExtraDevice">
@@ -69,24 +69,6 @@
             <if test="direction != null and direction!='' ">
                 direction = #{direction},
             </if>
-            <if test="description != null and description!='' ">
-                description = #{description},
-            </if>
-            <if test="isRule != null">
-                isRule = #{isRule},
-            </if>
-            <if test="ruleId != null">
-                ruleId = #{ruleId},
-            </if>
-            <if test="linkType != null">
-                linkType = #{linkType},
-            </if>
-            <if test="linkDeviceId != null">
-                linkDeviceId = #{linkDeviceId},
-            </if>
-            <if test="linkProjectId != null">
-                linkProjectId = #{linkProjectId},
-            </if>
             <if test="updateTime != null">
                 updateTime = #{updateTime},
             </if>
@@ -118,5 +100,19 @@
             #{ids}
         </foreach>
     </update>
+
+    <select id="selectExistIds" resultType="java.lang.Integer">
+        SELECT id
+        FROM <include refid="tableName"/>
+        WHERE projectId = #{projectId}
+        AND status = 1
+    </select>
+
+    <select id="selectExtraDeviceByProjectId" resultType="com.huanke.iot.base.po.project.ProjectExtraDevice">
+        SELECT *
+        FROM <include refid="tableName"/>
+        WHERE projectId = #{projectId}
+        AND status = 1
+    </select>
     
 </mapper>

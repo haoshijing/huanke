@@ -2,12 +2,10 @@ package com.huanke.iot.manage.controller.project;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
-import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.request.BaseListRequest;
-import com.huanke.iot.base.request.project.PlanQueryRequest;
-import com.huanke.iot.base.request.project.PlanRequest;
+import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
-import com.huanke.iot.base.resp.project.PlanRsp;
+import com.huanke.iot.base.resp.project.ProjectRsp;
 import com.huanke.iot.manage.service.project.ProjectService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,18 +28,18 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @ApiOperation("查询计划列表")
+    @ApiOperation("查询工程列表")
     @PostMapping(value = "/selectList")
-    public ApiResponse<PlanRsp> selectList(@RequestBody PlanQueryRequest request) throws Exception {
-        PlanRsp dictRsp = planService.selectList(request);
-        return new ApiResponse<>(dictRsp);
+    public ApiResponse<ProjectRsp> selectList(@RequestBody ProjectQueryRequest request) throws Exception {
+        ProjectRsp projectRsp = projectService.selectList(request);
+        return new ApiResponse<>(projectRsp);
     }
 
-    @ApiOperation("查询单个客户")
-    @GetMapping(value = "/select/{planId}")
-    public ApiResponse<ProjectPlanInfo> selectPlan(@PathVariable("planId") Integer planId) {
-        ProjectPlanInfo projectPlanInfo = planService.selectById(planId);
-        return new ApiResponse<>(projectPlanInfo);
+    @ApiOperation("查询单个工程")
+    @GetMapping(value = "/select/{projectId}")
+    public ApiResponse<ProjectRequest> selectProject(@PathVariable("projectId") Integer projectId) {
+        ProjectRequest projectRequest = projectService.selectById(projectId);
+        return new ApiResponse<>(projectRequest);
     }
 
     @ApiOperation("添加工程信息")
@@ -52,31 +50,20 @@ public class ProjectController {
     }
 
     @ApiOperation("修改计划信息")
-    @PostMapping(value = "/editPlan")
-    public ApiResponse<Boolean> editPlan(@RequestBody PlanRequest request) {
-        Boolean result = planService.addOrUpdate(request);
+    @PostMapping(value = "/editProject")
+    public ApiResponse<Boolean> editPlan(@RequestBody ProjectRequest request) {
+        Boolean result = projectService.addOrUpdate(request);
         return new ApiResponse<>(result);
     }
 
-    @ApiOperation("删除计划信息")
-    @PostMapping(value = "/deletePlan")
-    public ApiResponse<Boolean> deletePlan(@RequestBody BaseListRequest<Integer> request) {
+    @ApiOperation("删除工程信息")
+    @PostMapping(value = "/deleteProject")
+    public ApiResponse<Boolean> deleteProject(@RequestBody BaseListRequest<Integer> request) {
         List<Integer> valueList = request.getValueList();
         if(valueList.size() == 0){
             throw new BusinessException("没有要删除设备信息");
         }
-        Boolean result = planService.deletePlan(valueList);
-        return new ApiResponse<>(result);
-    }
-
-    @ApiOperation("批量禁用计划")
-    @PostMapping(value = "/forbitPlan")
-    public ApiResponse<Boolean> forbitPlan(@RequestBody BaseListRequest<Integer> request) {
-        List<Integer> valueList = request.getValueList();
-        if(valueList.size() == 0){
-            throw new BusinessException("没有要禁用规则信息");
-        }
-        Boolean result = planService.forbitPlan(valueList);
+        Boolean result = projectService.deleteProject(valueList);
         return new ApiResponse<>(result);
     }
 }

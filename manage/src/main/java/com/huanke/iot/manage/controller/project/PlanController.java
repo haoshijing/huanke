@@ -4,6 +4,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.request.BaseListRequest;
+import com.huanke.iot.base.request.project.MaintenanceRequest;
 import com.huanke.iot.base.request.project.PlanQueryRequest;
 import com.huanke.iot.base.request.project.PlanRequest;
 import com.huanke.iot.base.resp.project.PlanRsp;
@@ -32,8 +33,8 @@ public class PlanController {
     @ApiOperation("查询计划列表")
     @PostMapping(value = "/selectList")
     public ApiResponse<PlanRsp> selectList(@RequestBody PlanQueryRequest request) throws Exception {
-        PlanRsp dictRsp = planService.selectList(request);
-        return new ApiResponse<>(dictRsp);
+        PlanRsp planRsp = planService.selectList(request);
+        return new ApiResponse<>(planRsp);
     }
 
     @ApiOperation("查询单个客户")
@@ -77,5 +78,12 @@ public class PlanController {
         }
         Boolean result = planService.forbitPlan(valueList);
         return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("查工程维保")
+    @PostMapping(value = "/maintenance")
+    public ApiResponse<PlanRsp> maintenance(@RequestBody MaintenanceRequest request) {
+        PlanRsp planRsp = planService.maintenance(request);
+        return new ApiResponse<>(planRsp);
     }
 }

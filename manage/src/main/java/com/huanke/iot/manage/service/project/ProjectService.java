@@ -6,12 +6,11 @@ import com.huanke.iot.base.dao.project.*;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.project.ProjectExtraDevice;
 import com.huanke.iot.base.po.project.ProjectMaterialInfo;
-import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.po.user.User;
-import com.huanke.iot.base.request.project.PlanQueryRequest;
+import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
-import com.huanke.iot.base.resp.project.PlanRsp;
-import com.huanke.iot.base.resp.project.PlanRspPo;
+import com.huanke.iot.base.resp.project.ProjectRsp;
+import com.huanke.iot.base.resp.project.ProjectRspPo;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
@@ -21,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,29 +51,30 @@ public class ProjectService {
     private CustomerService customerService;
 
 
-    public PlanRsp selectList(PlanQueryRequest request) {
+    public ProjectRsp selectList(ProjectQueryRequest request) {
         Integer customerId = customerService.obtainCustomerId(false);
-        PlanRsp planRsp = new PlanRsp();
+        ProjectRsp projectRsp = new ProjectRsp();
         Integer limit = request.getLimit();
         Integer currentPage = request.getCurrentPage();
         Integer start = (currentPage - 1) * limit;
 
-        ProjectPlanInfo projectPlan = new ProjectPlanInfo();
-        projectPlan.setCustomerId(customerId);
-        BeanUtils.copyProperties(request, projectPlan);
-        Integer count = planMapper.selectCount(projectPlan);
-        planRsp.setTotalCount(count);
-        planRsp.setCurrentPage(currentPage);
-        planRsp.setCurrentCount(limit);
+        ProjectBaseInfo projectInfo = new ProjectBaseInfo();
+        projectInfo.setCustomerId(customerId);
+        BeanUtils.copyProperties(request, projectInfo);
 
-        List<PlanRspPo> planPoList = planMapper.selectPageList(projectPlan, start, limit);
-        for (PlanRspPo planRspPo : planPoList) {
-            if (planRspPo.getIsRule() == 1) {
-                planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
-            }
+        Integer count = projectMapper.selectCount(projectInfo);
+        projectRsp.setTotalCount(count);
+        projectRsp.setCurrentPage(currentPage);
+        projectRsp.setCurrentCount(limit);
+
+        List<ProjectRspPo> projectPoList = projectMapper.selectPageList(projectInfo, start, limit);
+        //核算项目数量、设备数量
+        for (ProjectRspPo projectRspPo : projectPoList) {
+            String[] projectArray = projectRspPo.getGroupIds().split(",");
+            projectRspPo.setProjectCount(projectArray.length);
         }
-        planRsp.setPlanRspPoList(planPoList);
-        return planRsp;
+        projectRsp.setProjectRspPoList(projectPoList);
+        return projectRsp;
     }
 
     /**
@@ -118,7 +119,7 @@ public class ProjectService {
                 materiaMapper.insert(projectMaterialInfo);
             }
 
-        }else {
+        } else {
             //修改
             projectBaseInfo.setUpdateTime(new Date());
             projectBaseInfo.setUpdateUser(user.getId());
@@ -126,27 +127,95 @@ public class ProjectService {
 
             //修改第三方设备信息
             List<ProjectRequest.ExtraDevice> extraDeviceList = request.getExtraDeviceList();
-            List<Integer> idList = extraDeviceList.stream().map(e -> e.getId()).collect(Collectors.toList());
-            
+            List<Integer> extraDeviceIddList = extraDeviceList.stream().filter(e -> e.getId() != null).map(e -> e.getId()).collect(Collectors.toList());
+            List<Integer> existIdList = extraDeviceMapper.selectExistIds(request.getId());
 
+            extraDeviceList.stream().forEach(e -> {
+                Integer eId = e.getId();
+                if (eId == null) {//修改过程新添加的设备
+                    ProjectExtraDevice projectExtraDevice = new ProjectExtraDevice();
+                    BeanUtils.copyProperties(e, projectExtraDevice);
+                    projectExtraDevice.setStatus(CommonConstant.STATUS_YES);
+                    projectExtraDevice.setCreateTime(new Date());
+                    projectExtraDevice.setCreateUser(user.getId());
+                    projectExtraDevice.setProjectId(projectBaseInfo.getId());
+                    projectExtraDevice.setDeviceNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_EXTRADEVICE));
+                    extraDeviceMapper.insert(projectExtraDevice);
+                } else {//已存在ID，说明是修改的设备
+                    ProjectExtraDevice projectExtraDevice = extraDeviceMapper.selectById(eId);
+                    BeanUtils.copyProperties(e, projectExtraDevice);
+                    projectExtraDevice.setStatus(CommonConstant.STATUS_YES);
+                    projectExtraDevice.setUpdateUser(user.getId());
+                    projectExtraDevice.setUpdateTime(new Date());
+                    extraDeviceMapper.updateById(projectExtraDevice);
+                }
+            });
+            List<Integer> deleteIds = existIdList.stream().filter(e -> !extraDeviceIddList.contains(e)).collect(Collectors.toList());
+            if (deleteIds.size() != 0) {
+                extraDeviceMapper.batchDelete(user.getId(), deleteIds);//删除修改中已删除的设备
+
+            }
             //修改材料信息
+            List<ProjectRequest.MaterialInfo> materialInfoList = request.getMaterialInfoList();
+
+
+            List<Integer> materialIdList = materialInfoList.stream().filter(e -> e.getId() != null).map(e -> e.getId()).collect(Collectors.toList());
+            List<Integer> existMaterialIdList = materiaMapper.selectExistIds(request.getId());
+            materialInfoList.stream().forEach(e -> {
+                Integer eId = e.getId();
+                if (eId == null) {//修改过程新添加的材料
+                    ProjectMaterialInfo projectMaterialInfo = new ProjectMaterialInfo();
+                    BeanUtils.copyProperties(e, projectMaterialInfo);
+                    projectMaterialInfo.setStatus(CommonConstant.STATUS_YES);
+                    projectMaterialInfo.setCreateTime(new Date());
+                    projectMaterialInfo.setCreateUser(user.getId());
+                    projectMaterialInfo.setProjectId(projectBaseInfo.getId());
+                    materiaMapper.insert(projectMaterialInfo);
+                } else {//已存在ID，说明是修改的材料
+                    ProjectMaterialInfo projectMaterialInfo = materiaMapper.selectById(eId);
+                    BeanUtils.copyProperties(e, projectMaterialInfo);
+                    projectMaterialInfo.setStatus(CommonConstant.STATUS_YES);
+                    projectMaterialInfo.setUpdateUser(user.getId());
+                    projectMaterialInfo.setUpdateTime(new Date());
+                    materiaMapper.updateById(projectMaterialInfo);
+                }
+            });
+            List<Integer> deleteMaterialIds = existMaterialIdList.stream().filter(e -> !materialIdList.contains(e)).collect(Collectors.toList());
+            if (deleteMaterialIds.size() != 0) {
+                materiaMapper.batchDelete(user.getId(), deleteMaterialIds);//删除修改中已删除的材料
+            }
         }
+        return true;
     }
 
-    public Boolean deletePlan(List<Integer> valueList) {
+    public Boolean deleteProject(List<Integer> valueList) {
         Integer userId = userService.getCurrentUser().getId();
-        Boolean result = planMapper.batchDelete(userId, valueList);
+        Boolean result = projectMapper.batchDelete(userId, valueList);
         return result;
     }
 
-    public Boolean forbitPlan(List<Integer> valueList) {
-        Integer userId = userService.getCurrentUser().getId();
-        Boolean result = planMapper.batchForbidden(userId, valueList);
-        return result;
-    }
 
-    public ProjectPlanInfo selectById(Integer planId) {
-        ProjectPlanInfo projectPlanInfo = planMapper.selectById(planId);
-        return projectPlanInfo;
+    public ProjectRequest selectById(Integer projectId) {
+        ProjectRequest projectRequest = projectMapper.selectByProjectId(projectId);
+        //查关联其他设备
+        List<ProjectRequest.ExtraDevice> extraDeviceList = new ArrayList<>();
+        List<ProjectExtraDevice> projectExtraDeviceList = extraDeviceMapper.selectExtraDeviceByProjectId(projectId);
+        for (ProjectExtraDevice projectExtraDevice : projectExtraDeviceList) {
+            ProjectRequest.ExtraDevice extraDevice = new ProjectRequest.ExtraDevice();
+            BeanUtils.copyProperties(projectExtraDevice, extraDevice);
+            extraDeviceList.add(extraDevice);
+        }
+        projectRequest.setExtraDeviceList(extraDeviceList);
+        //查关联材料信息
+        List<ProjectRequest.MaterialInfo> materialList = new ArrayList<>();
+        List<ProjectMaterialInfo> projectMaterialInfoList = materiaMapper.selectMaterialInfoByProjectId(projectId);
+        for (ProjectMaterialInfo projectMaterialInfo : projectMaterialInfoList) {
+            ProjectRequest.MaterialInfo materialInfo = new ProjectRequest.MaterialInfo();
+            BeanUtils.copyProperties(projectMaterialInfo, materialInfo);
+            materialList.add(materialInfo);
+        }
+        projectRequest.setMaterialInfoList(materialList);
+
+        return projectRequest;
     }
 }

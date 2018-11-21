@@ -21,4 +21,8 @@ public interface PlanMapper extends BaseMapper<ProjectPlanInfo> {
     List<PlanRspPo> selectPageList(@Param("projectPlanInfo") ProjectPlanInfo projectPlanInfo, @Param("start") int start, @Param("limit") int limit);
 
     Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
+
+    List<PlanRspPo> maintenance(@Param("projectId") Integer projectId, @Param("start") int start, @Param("limit") int limit);
+
+    Integer selectMaintenanceCount(@Param("projectId")Integer projectId);
 }

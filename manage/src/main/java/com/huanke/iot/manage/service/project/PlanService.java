@@ -4,6 +4,7 @@ import com.huanke.iot.base.dao.project.PlanMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.request.project.MaintenanceRequest;
 import com.huanke.iot.base.request.project.PlanQueryRequest;
 import com.huanke.iot.base.request.project.PlanRequest;
 import com.huanke.iot.base.resp.project.PlanRsp;
@@ -102,5 +103,28 @@ public class PlanService {
     public ProjectPlanInfo selectById(Integer planId) {
         ProjectPlanInfo projectPlanInfo = planMapper.selectById(planId);
         return projectPlanInfo;
+    }
+
+    public PlanRsp maintenance(MaintenanceRequest request) {
+        Integer projectId = request.getProjectId();
+
+        PlanRsp planRsp = new PlanRsp();
+        Integer limit = request.getLimit();
+        Integer currentPage = request.getCurrentPage();
+        Integer start = (currentPage - 1) * limit;
+
+        Integer count = planMapper.selectMaintenanceCount(projectId);
+        planRsp.setTotalCount(count);
+        planRsp.setCurrentPage(currentPage);
+        planRsp.setCurrentCount(limit);
+
+        List<PlanRspPo> planPoList = planMapper.maintenance(projectId, start, limit);
+        for (PlanRspPo planRspPo : planPoList) {
+            if(planRspPo.getIsRule() == 1){
+                planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
+            }
+        }
+        planRsp.setPlanRspPoList(planPoList);
+        return planRsp;
     }
 }
