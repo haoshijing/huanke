@@ -15,7 +15,7 @@ import java.util.Date;
 public class ProjectJobInfo {
     private Integer id;
     private Integer customerId;
-    private Integer type;
+    private Integer type;//关联类型：1-设备；2-工程
     private Integer linkDeviceId;//关联设备id
     private Integer linkProjectId;//关联工程id
     private String name;

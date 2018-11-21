@@ -17,4 +17,6 @@ import java.util.List;
 public interface JobLogMapper extends BaseMapper<ProjectJobLog> {
 
     List<JobHistoryDataDto> selectByJobId(@Param("jobId") Integer jobId);
+
+    JobHistoryDataDto selectLastByJobId(@Param("jobId") Integer jobId);
 }

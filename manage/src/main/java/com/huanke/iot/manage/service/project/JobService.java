@@ -20,6 +20,7 @@ import com.huanke.iot.base.resp.project.JobRspPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -82,6 +83,7 @@ public class JobService {
     }
 
     public Boolean addOrUpdate(JobRequest request) {
+        //只在这里新建。job的详细内容不允许修改，只允许状态流转。
         User user = userService.getCurrentUser();
         ProjectJobInfo projectJobInfo = new ProjectJobInfo();
         BeanUtils.copyProperties(request, projectJobInfo);
@@ -104,6 +106,63 @@ public class JobService {
         }
     }
 
+    @Transactional
+    public String jobFlow(JobFlowStatusRequest request) {
+        Integer jobId = request.getJobId();
+        Integer userId = userService.getCurrentUser().getId();
+        ProjectJobInfo projectJobInfo = jobMapper.selectById(jobId);
+        if(StringUtils.isNotEmpty(projectJobInfo.getEnableUsers())&&projectJobInfo.getEnableUsers().indexOf(userId.toString())<0){
+            return "无权操作该任务，请刷新重新获取任务！";
+        }
+        List<Integer> targetUsers = request.getTargetUsers();
+        List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+        String targetUserStr = String.join(",", targetUserStrList);
+        projectJobInfo.setEnableUsers(targetUserStr);
+        Integer operateType = request.getOperateType();
+        int flowStatus = 0;
+        switch (operateType) {
+            case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
+                break;
+            case JobFlowStatusConstants.OPERATE_TYPE_DEAL:
+                projectJobInfo.setEnableUsers(userId.toString());
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
+                break;
+            case JobFlowStatusConstants.OPERATE_TYPE_COMMIT:
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_COMMITED;
+                break;
+            case JobFlowStatusConstants.OPERATE_TYPE_PASS:
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_FINISH;
+                break;
+            case JobFlowStatusConstants.OPERATE_TYPE_BACK:
+                projectJobInfo.setEnableUsers(jobLogMapper.selectLastByJobId(jobId).getCreateUser().toString());
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
+                break;
+            case JobFlowStatusConstants.OPERATE_TYPE_IGNORE:
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_IGNORED;
+                break;
+            default:
+                break;
+        }
+        if(flowStatus == projectJobInfo.getFlowStatus()){
+            return "错误的操作，任务状态已被更改，请刷新！";
+        }
+        String description = request.getDescription();
+        List<Integer> valueList = request.getValueList();
+        String imgListStr = String.join(",", request.getImgList());
+        projectJobInfo.setFlowStatus(flowStatus);
+        jobMapper.updateById(projectJobInfo);
+        //日志处理
+        ProjectJobLog projectJobLog = new ProjectJobLog();
+        projectJobLog.setJobId(jobId);
+        projectJobLog.setDescription(description);
+        projectJobLog.setCreateUser(userId);
+        projectJobLog.setImgList(imgListStr);
+        projectJobLog.setCreateTime(new Date());
+        projectJobLog.setOperateType(operateType);
+        jobLogMapper.insert(projectJobLog);
+        return "操作成功！";
+    }
 
     public JobDetailRsp selectById(Integer jobId) {
         JobDetailRsp jobDetailRsp = new JobDetailRsp();
@@ -123,17 +182,18 @@ public class JobService {
         } else if (type == 2 && jobDetailRsp.getLinkProjectId() != null) {
             //关联工程
         }
-
-        //关联规则信息
-        ProjectRule projectRule = ruleMapper.selectById(projectJobInfo.getRuleId());
-        jobDetailRsp.setRuleName(projectRule.getName());
-        jobDetailRsp.setRuleDescription(projectRule.getDescription());
-
+        if (projectJobInfo.getIsRule()==1) {
+            //关联规则信息
+            ProjectRule projectRule = ruleMapper.selectById(projectJobInfo.getRuleId());
+            jobDetailRsp.setRuleName(projectRule.getName());
+            jobDetailRsp.setRuleDescription(projectRule.getDescription());
+        }
         //任务历史记录信息
         List<JobHistoryDataDto> jobHistoryDataDtos = jobLogMapper.selectByJobId(jobId);
         List<JobDetailRsp.HistoryData> historyDataList = new ArrayList<>();
         for (JobHistoryDataDto jobHistoryDataDto : jobHistoryDataDtos) {
             JobDetailRsp.HistoryData historyData = new JobDetailRsp.HistoryData();
+            historyData.setUserName(userService.getUserName(jobHistoryDataDto.getCreateUser()));
             BeanUtils.copyProperties(jobHistoryDataDto, historyData);
             if(jobHistoryDataDto.getImgListStr() != null){
                 String imgListStr = jobHistoryDataDto.getImgListStr();

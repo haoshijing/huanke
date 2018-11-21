@@ -30,11 +30,18 @@
     </insert>
 
     <select id="selectByJobId" resultType="com.huanke.iot.base.dto.project.JobHistoryDataDto">
-        SELECT pjl.createTime, pjl.oprateType, pjl.description, pjl.imgList imgListStr, u.nickName userName  FROM t_project_job_log pjl
+        SELECT pjl.createTime, pjl.operateType, pjl.description, pjl.imgList imgListStr, u.nickName userName  FROM t_project_job_log pjl
         left join t_user u on pjl.createUser = u.id
         WHERE pjl.jobId = #{jobId}
         ORDER BY pjl.id DESC
     </select>
 
+    <select id="selectLastByJobId" resultType="com.huanke.iot.base.dto.project.JobHistoryDataDto">
+        SELECT pjl.createTime, pjl.operateType, pjl.description, pjl.imgList imgListStr, u.nickName userName ,pjl.createUser FROM t_project_job_log pjl
+        left join t_user u on pjl.createUser = u.id
+        WHERE pjl.jobId = #{jobId}
+        ORDER BY pjl.createTime DESC
+        limit 1
+    </select>
 
 </mapper>

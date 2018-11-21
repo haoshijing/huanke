@@ -27,6 +27,7 @@ public class JobDetailRsp {
     private Integer warnLevel;
     private Integer sourceType;//来源类型：1-计划维保；2-H5端反馈；3-设备告警
     private Date finalTime;
+    private Integer warnStatus;//1-正常；2-告警
     private Integer flowStatus;//1-待处理；2-处理中；3-待审核；4-已完成；5-已忽略
     private List<LinkDevice> deviceList;
     private List<HistoryData> historyDataList;

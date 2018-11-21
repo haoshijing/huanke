@@ -18,4 +18,5 @@ public class JobHistoryDataDto {
     private Integer operateType;
     private String description;
     private String imgListStr;
+    private Integer createUser;
 }
