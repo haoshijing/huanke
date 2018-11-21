@@ -2,6 +2,8 @@ package com.huanke.iot.base.request.project;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 描述:
  * 字典请求类
@@ -11,6 +13,13 @@ import lombok.Data;
  */
 @Data
 public class PlanQueryRequest {
+
+    private String name;
+    private Integer isRule;
+    private Integer warnLevel;
+    private Integer status;
+    private Date createTime;
+
     private Integer currentPage = 1;
     private Integer limit = 10;
 

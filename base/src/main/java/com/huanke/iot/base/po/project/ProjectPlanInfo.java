@@ -32,4 +32,7 @@ public class ProjectPlanInfo {
     private Date updateTime;
     private Integer createUser;
     private Integer updateUser;
+
+
+    private Integer warnLevel;
 }
