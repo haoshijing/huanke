@@ -130,16 +130,18 @@
             AND type = #{param.type}
         </if>
         AND customerId = #{param.customerId}
+        AND isDelete = 0
     </select>
 
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.DictRspPo">
-      SELECT d.id, d.label, d.description, d.createTime, d.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT d.id, d.label, d.description, d.createTime, d.updateTime, d.value, u.nickName createName,u1.nickName updateName
       FROM t_dict d left join t_user u on d.createUserId = u.id left join t_user u1 on  d.updateUserId = u1.id
       WHERE 1=1
         <if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>
         AND customerId = #{dictPo.customerId}
+        AND isDelete = 0
       LIMIT #{start},#{limit}
     </select>
 
