@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.project.PlanMapper">
+
+    <sql id="tableName">
+        t_project_plan_info
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        customerId,
+        name,
+        description,
+        isRule,
+        ruleId,
+        linkType,
+        linkDeviceId,
+        linkProjectId,
+        warnDate,
+        nextExecuteTime,
+        cycleType,
+        overTimeDays,
+        enableUsers,
+        status,
+        createTime,
+        createUser
+        )
+        VALUES
+        (
+        #{customerId},
+        #{name},
+        #{description},
+        #{isRule},
+        #{ruleId},
+        #{linkType},
+        #{linkDeviceId},
+        #{linkProjectId},
+        #{warnDate},
+        #{nextExecuteTime},
+        #{cycleType},
+        #{overTimeDays},
+        #{enableUsers},
+        #{status},
+        #{createTime},
+        #{createUser}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1=1
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="customerId != null">
+                customerId = #{customerId},
+            </if>
+            <if test="name != null and name!='' ">
+                name = #{name},
+            </if>
+            <if test="description != null and description!='' ">
+                description = #{description},
+            </if>
+            <if test="isRule != null">
+                isRule = #{isRule},
+            </if>
+            <if test="ruleId != null">
+                ruleId = #{ruleId},
+            </if>
+            <if test="linkType != null">
+                linkType = #{linkType},
+            </if>
+            <if test="linkDeviceId != null">
+                linkDeviceId = #{linkDeviceId},
+            </if>
+            <if test="linkProjectId != null">
+                linkProjectId = #{linkProjectId},
+            </if>
+            <if test="warnDate != null">
+                warnDate = #{warnDate},
+            </if>
+            <if test="nextExecuteTime != null">
+                nextExecuteTime = #{nextExecuteTime},
+            </if>
+            <if test="cycleType != null">
+                cycleType = #{cycleType},
+            </if>
+            <if test="overTimeDays != null">
+                overTimeDays = #{overTimeDays},
+            </if>
+            <if test="enableUsers != null">
+                enableUsers = #{enableUsers},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                updateUser = #{updateUser},
+            </if>
+        </set>
+        where
+        1= 1
+        and id = #{id}
+    </update>
+
+
+    <update id="deleteById" parameterType="java.lang.Integer">
+        update
+        <include refid="tableName"/>
+        <set>
+            isDelete = 1
+        </set>
+        WHERE id  = #{id}
+    </update>
+
+    <update id="batchDelete">
+        UPDATE <include refid="tableName"/>
+        SET status = 2
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <update id="batchForbidden">
+        UPDATE <include refid="tableName"/>
+        SET status = 3
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <!--列表总条数-->
+    <select id="selectCount"  resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where 1=1
+        <!--<if test="param.type != null and param.type!='' ">
+            AND type = #{param.type}
+        </if>-->
+        AND customerId = #{param.customerId}
+    </select>
+
+    <!--返回当前列表集合-->
+    <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
+      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+      FROM t_project_plan_info ppi left join t_user u on ppi.createUser = u.id left join t_user u1 on  ppi.updateUser = u1.id
+      WHERE 1=1
+        <!--<if test = "dictPo.type != null and dictPo.type != ''">
+            AND d.type = #{dictPo.type}
+        </if>-->
+        AND customerId = #{projectPlanInfo.customerId}
+      LIMIT #{start},#{limit}
+    </select>
+
+    <select id="selectMaintenanceCount" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where linkProjectId = #{projectId}
+    </select>
+
+    <select id="maintenance" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
+        SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+        FROM t_project_plan_info ppi left join t_user u on ppi.createUser = u.id left join t_user u1 on  ppi.updateUser = u1.id
+        WHERE 1=1
+        <!--<if test = "dictPo.type != null and dictPo.type != ''">
+            AND d.type = #{dictPo.type}
+        </if>-->
+        AND customerId = #{projectPlanInfo.customerId}
+    </select>
+</mapper>

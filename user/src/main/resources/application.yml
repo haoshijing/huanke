@@ -25,3 +25,4 @@ logging:
 saltEncrypt: 123
 serverConfigHost:
 skipRemoteHost: dev
+env: dev

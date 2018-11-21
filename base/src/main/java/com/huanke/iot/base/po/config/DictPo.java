@@ -15,14 +15,13 @@ public class DictPo {
      * id
      */
     private Integer id;
+    private Integer customerId;
     private Integer value;
     private String label;
     private String type;
     private String description;
     private Integer sort;
     private String remarks;
-    private Integer operationUserId;
-
     private Date createTime;
     private Date updateTime;
     private Integer createUserId;

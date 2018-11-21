@@ -19,9 +19,9 @@ accessKeyId: LTAIceTyFAv3wFbS
 accessKeySecret: k6DqH7zUE0JFyjuroCasU2dIDI1Fxl
 bucketUrl: oss-cn-hangzhou.aliyuncs.com
 bucketName: idcfota
-skipRemoteHost: pro,dev
+skipRemoteHost: pro
 defaultPassWord: 123456
 
+env: dev
 mybatis.configuration.cache-enabled: false
 
-env: idc

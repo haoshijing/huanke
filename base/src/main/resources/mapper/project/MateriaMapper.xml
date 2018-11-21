@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.project.MateriaMapper">
+
+    <sql id="tableName">
+        t_project_material_info
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectMaterialInfo">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        type,
+        projectId,
+        name,
+        nums,
+        status,
+        createTime,
+        createUser
+        )
+        VALUES
+        (
+        #{type},
+        #{projectId},
+        #{name},
+        #{nums},
+        #{status},
+        #{createTime},
+        #{createUser}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectMaterialInfo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectMaterialInfo">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            1=1
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectMaterialInfo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="name != null and name!='' ">
+                name = #{name},
+            </if>
+            <if test="nums != null">
+                nums = #{nums},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                updateUser = #{updateUser},
+            </if>
+        </set>
+        where
+        1= 1
+        and id = #{id}
+    </update>
+
+
+    <update id="deleteById" parameterType="java.lang.Integer">
+        update
+        <include refid="tableName"/>
+        <set>
+            isDelete = 1
+        </set>
+        WHERE id  = #{id}
+    </update>
+
+    <update id="batchDelete">
+        UPDATE <include refid="tableName"/>
+        SET status = 2
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <select id="selectExistIds" resultType="java.lang.Integer">
+        SELECT id
+        FROM <include refid="tableName"/>
+        WHERE projectId = #{projectId}
+        AND status = 1
+    </select>
+
+    <select id="selectMaterialInfoByProjectId" resultType="com.huanke.iot.base.po.project.ProjectMaterialInfo">
+        SELECT *
+        FROM <include refid="tableName"/>
+        WHERE projectId = #{projectId}
+        AND status = 1
+    </select>
+    
+</mapper>
