@@ -26,13 +26,13 @@ public class ClearDataJob {
 
     @Scheduled(cron = "0 5 2 * * ?")
     public void clearControlData(){
-        long lastFiveTime = new Date().getTime() - (5 * 60 * 1000);
+        long lastFiveTime = new Date().getTime() - (120 * 60 * 1000);
         deviceControlMapper.clearData(lastFiveTime);
     }
 
     @Scheduled(cron = "0 5 3 * * ?")
     public void clearSensorData(){
-        long lastFiveTime = new Date().getTime() - (5 * 60 * 1000);
+        long lastFiveTime = new Date().getTime() - (180 * 60 * 1000);
         deviceSensorDataMapper.clearData(lastFiveTime);
     }
 }
