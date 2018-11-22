@@ -8,6 +8,7 @@ import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.base.resp.device.DeviceSelectRsp;
 import com.huanke.iot.manage.service.device.operate.DeviceDataService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
@@ -710,4 +711,16 @@ public class DeviceOperateController {
 //            }
 //        }
 //    }
+
+    @ApiOperation("型号查设备（工程用）")
+    @GetMapping("/selectByModelId/{modelId}")
+    public ApiResponse<List<DeviceSelectRsp>> selectByModelId(@PathVariable("modelId") Integer modelId) {
+        try {
+            List<DeviceSelectRsp> deviceSelectRspList = this.deviceService.selectByModelId(modelId);
+            return new ApiResponse<>(deviceSelectRspList);
+        }catch (Exception e){
+            log.error("model查设备 异常 ={}",e);
+            return new ApiResponse<>(RetCode.ERROR,"model查设备 异常");
+        }
+    }
 }
