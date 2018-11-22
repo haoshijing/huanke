@@ -27,7 +27,7 @@ public class ProjectPlanInfo {
     private Integer cycleType;
     private Integer overTimeDays;
     private String enableUsers;
-    private Integer status;
+    private Integer status = 1;
     private Date createTime;
     private Date updateTime;
     private Integer createUser;
