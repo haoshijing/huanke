@@ -158,23 +158,57 @@
     <!--列表总条数-->
     <select id="selectCount"  resultType="java.lang.Integer">
         select count(1) from
-        <include refid="tableName"/>
+        <include refid="tableName"/> ppi
+        LEFT JOIN t_project_rule r on ppi.ruleId = r.id
         where 1=1
+        <if test = "param.name != null and param.name != ''">
+            AND ppi.name LIKE CONCAT('%',#{param.name},'%')
+        </if>
+        <if test = "param.isRule != null">
+            AND ppi.isRule = #{param.isRule}
+        </if>
+        <if test = "param.warnLevel != null">
+            AND r.warnLevel = #{param.warnLevel}
+        </if>
+        <if test = "param.status != null ">
+            AND ppi.status = #{param.status}
+        </if>
+        <if test = "param.createTime != null">
+            AND ppi.createTime >= #{param.createTime}
+        </if>
         <!--<if test="param.type != null and param.type!='' ">
             AND type = #{param.type}
         </if>-->
-        AND customerId = #{param.customerId}
+        AND ppi.customerId = #{param.customerId}
     </select>
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
       SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
-      FROM t_project_plan_info ppi left join t_user u on ppi.createUser = u.id left join t_user u1 on  ppi.updateUser = u1.id
+      FROM t_project_plan_info ppi
+      left join t_user u on ppi.createUser = u.id
+      left join t_user u1 on  ppi.updateUser = u1.id
+      LEFT JOIN t_project_rule r on ppi.ruleId = r.id
       WHERE 1=1
-        <!--<if test = "dictPo.type != null and dictPo.type != ''">
-            AND d.type = #{dictPo.type}
+        <if test = "projectPlanInfo.name != null and projectPlanInfo.name != ''">
+            AND ppi.name LIKE CONCAT('%',#{projectPlanInfo.name},'%')
+        </if>
+        <if test = "projectPlanInfo.isRule != null">
+            AND ppi.isRule = #{projectPlanInfo.isRule}
+        </if>
+        <if test = "projectPlanInfo.warnLevel != null">
+            AND r.warnLevel = #{projectPlanInfo.warnLevel}
+        </if>
+        <if test = "projectPlanInfo.status != null ">
+            AND ppi.status = #{projectPlanInfo.status}
+        </if>
+        <if test = "projectPlanInfo.createTime != null">
+            AND ppi.createTime >= #{projectPlanInfo.createTime}
+        </if>
+        <!--<if test = "projectPlanInfo.type != null and projectPlanInfo.type != ''">
+            AND d.type = #{projectPlanInfo.type}
         </if>-->
-        AND customerId = #{projectPlanInfo.customerId}
+        AND ppi.customerId = #{projectPlanInfo.customerId}
       LIMIT #{start},#{limit}
     </select>
 
