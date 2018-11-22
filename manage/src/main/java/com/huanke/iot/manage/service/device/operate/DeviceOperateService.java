@@ -278,7 +278,7 @@ public class DeviceOperateService {
             configMap.put(sort, valuesList);
         }
         //发送指令给设备
-        String requestId = sendFuncToDevice(user.getId(), deviceUpdateRequest.getId(), deviceUpdateRequest.getAbilityDirValue(), configMap, 1);
+        String requestId = sendFuncToDevice(user.getId(), deviceUpdateRequest.getId(), deviceUpdateRequest.getAbilityDirValue(), configMap, 3);
         return requestId;
     }
 

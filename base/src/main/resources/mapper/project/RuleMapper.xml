@@ -117,20 +117,32 @@
         select count(1) from
         <include refid="tableName"/>
         where 1=1
-        <!--<if test="param.type != null and param.type!='' ">
-            AND type = #{param.type}
-        </if>-->
+        <if test="param.name != null and param.name!='' ">
+            AND name like CONCAT('%',CONCAT(#{param.name},'%'))
+        </if>
+        <if test="param.status != null">
+            AND status = #{param.status}
+        </if>
+        <if test="param.warnLevel != null">
+            AND warnLevel = #{param.warnLevel}
+        </if>
         AND customerId = #{param.customerId}
     </select>
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.RuleRspPo">
-      SELECT pr.id, pr.name, pr.description, pr.warnLevel, pr.createTime, pr.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT pr.id, pr.name, pr.description, pr.warnLevel, pr.createTime, pr.updateTime, pr.status, u.nickName createName,u1.nickName updateName
       FROM t_project_rule pr left join t_user u on pr.createUser = u.id left join t_user u1 on  pr.updateUser = u1.id
       WHERE 1=1
-        <!--<if test = "dictPo.type != null and dictPo.type != ''">
-            AND d.type = #{dictPo.type}
-        </if>-->
+        <if test="projectRule.name != null and projectRule.name!='' ">
+            AND name like CONCAT('%',CONCAT(#{projectRule.name},'%'))
+        </if>
+        <if test="projectRule.status != null">
+            AND status = #{projectRule.status}
+        </if>
+        <if test="projectRule.warnLevel != null">
+            AND warnLevel = #{projectRule.warnLevel}
+        </if>
         AND customerId = #{projectRule.customerId}
       LIMIT #{start},#{limit}
     </select>

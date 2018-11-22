@@ -11,7 +11,9 @@ import lombok.Data;
  */
 @Data
 public class DictQueryRequest {
+    private String name;
     private String type;
+    private Integer status;
     private Integer currentPage = 1;
     private Integer limit = 10;
 
