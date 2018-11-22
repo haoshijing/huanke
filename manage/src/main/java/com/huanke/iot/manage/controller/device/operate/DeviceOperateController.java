@@ -713,7 +713,7 @@ public class DeviceOperateController {
 //    }
 
     @ApiOperation("型号查设备（工程用）")
-    @PutMapping("/selectByModelId/{modelId}")
+    @GetMapping("/selectByModelId/{modelId}")
     public ApiResponse<List<DeviceSelectRsp>> selectByModelId(@PathVariable("modelId") Integer modelId) {
         try {
             List<DeviceSelectRsp> deviceSelectRspList = this.deviceService.selectByModelId(modelId);

@@ -249,7 +249,7 @@ public class DeviceModelController {
 //    }
 
     @ApiOperation("查客户下模型（工程用）")
-    @PostMapping(value = "/selectModelDict")
+    @GetMapping(value = "/selectModelDict")
     public ApiResponse<List<ModelProjectRsp>> selectModelDict() {
         try {
             List<ModelProjectRsp> modelProjectRspList = deviceModelService.selectModelDict();
