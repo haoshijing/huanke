@@ -16,6 +16,7 @@ public class DictRspPo {
     private String label;
     private String description;
     private Integer value;
+    private Integer sort;
     private Date createTime;
     private Date updateTime;
     private String createName;
