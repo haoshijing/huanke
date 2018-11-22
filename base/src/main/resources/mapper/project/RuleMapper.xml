@@ -137,6 +137,7 @@
             AND warnLevel = #{param.warnLevel}
         </if>
         AND customerId = #{param.customerId}
+        AND status != 2
     </select>
 
     <!--返回当前列表集合-->
@@ -154,6 +155,7 @@
             AND warnLevel = #{projectRule.warnLevel}
         </if>
         AND customerId = #{projectRule.customerId}
+        AND status != 2
       LIMIT #{start},#{limit}
     </select>
 </mapper>
