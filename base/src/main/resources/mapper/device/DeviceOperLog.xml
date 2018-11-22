@@ -137,7 +137,7 @@
         limit 1
     </select>
 
-    <select id="selectOnlineCount" resultType="java.lang.Integer">
+    <select id="selectWorkDataCount" resultType="java.lang.Integer">
         select count(1) from
         <include refid="tableName"/>
         <where>
@@ -145,7 +145,7 @@
             <if test="param.deviceId != null">
                 AND deviceId = #{param.deviceId}
             </if>
-            AND funId = '410'
+            AND (funcId = '210' OR funcId = '410')
         </where>
     </select>
 

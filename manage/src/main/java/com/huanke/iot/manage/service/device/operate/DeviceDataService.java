@@ -126,7 +126,7 @@ public class DeviceDataService {
         if (operLogRtn != null && operLogRtn.getCode() != RetCode.OK) {
             return new ApiResponse<>(RetCode.ERROR, operLogRtn.getMsg());
         }
-        Integer totalCount = this.deviceOperLogMapper.selectCount(queryPo);
+        Integer totalCount = this.deviceOperLogMapper.selectOperCount(queryPo);
         baseListVo.setDataList(operLogRtn.getData());
         baseListVo.setTotalCount(totalCount);
         return new ApiResponse<>(RetCode.OK,"查询设备操作日志与总数成功",baseListVo);
@@ -227,7 +227,7 @@ public class DeviceDataService {
         }
         Integer powerCount = this.deviceOperLogMapper.selectCount(queryPo);
         queryPo.setFuncId("410");
-        Integer onLineOffLineCount = this.deviceOperLogMapper.selectCount(queryPo);
+        Integer onLineOffLineCount = this.deviceOperLogMapper.selectWorkDataCount(queryPo);
         baseListVo.setDataList(workLogRtn.getData());
         baseListVo.setTotalCount(powerCount+onLineOffLineCount);
         return new ApiResponse<>(RetCode.OK,"查询设备操作日志与总数成功",baseListVo);

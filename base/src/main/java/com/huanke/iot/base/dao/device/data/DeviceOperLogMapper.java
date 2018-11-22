@@ -21,6 +21,10 @@ public interface DeviceOperLogMapper extends BaseMapper<DeviceOperLogPo> {
 
     List<DeviceOperLogPo> queryAllPowerByCreateTime();
 
+    Integer selectWorkDataCount(@Param("param") DeviceOperLogPo deviceOperLogPo);
+
+    Integer selectOperCount(@Param("param") DeviceOperLogPo deviceOperLogPo);
+
     List<DeviceOperLogPo> queryAllOnlineByCreateTime();
 
     DeviceOperLogPo queryByRequestId(String requestId);
