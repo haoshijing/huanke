@@ -144,8 +144,8 @@
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>-->
-      AND customerId = #{projectBaseInfo.customerId}
-      AND status != 2
+      AND pbi.customerId = #{projectBaseInfo.customerId}
+      AND pbi.status != 2
       group by pbi.id
       LIMIT #{start},#{limit}
     </select>

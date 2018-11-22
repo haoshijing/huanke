@@ -204,7 +204,7 @@
             AND pji.createTime >= #{projectJobInfo.createTime}
         </if>
       AND pji.customerId = #{projectJobInfo.customerId}
-      AND status != 2
+      AND pji.status != 2
       AND (find_in_set(#{userId}, pji.enableUsers)
         OR pji.enableUsers is null)
       LIMIT #{start},#{limit}

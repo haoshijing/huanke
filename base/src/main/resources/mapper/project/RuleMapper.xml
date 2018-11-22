@@ -146,16 +146,16 @@
       FROM t_project_rule pr left join t_user u on pr.createUser = u.id left join t_user u1 on  pr.updateUser = u1.id
       WHERE 1=1
         <if test="projectRule.name != null and projectRule.name!='' ">
-            AND name like CONCAT('%',CONCAT(#{projectRule.name},'%'))
+            AND pr.name like CONCAT('%',CONCAT(#{projectRule.name},'%'))
         </if>
         <if test="projectRule.status != null">
-            AND status = #{projectRule.status}
+            AND pr.status = #{projectRule.status}
         </if>
         <if test="projectRule.warnLevel != null">
-            AND warnLevel = #{projectRule.warnLevel}
+            AND pr.warnLevel = #{projectRule.warnLevel}
         </if>
-        AND customerId = #{projectRule.customerId}
-        AND status != 2
+        AND pr.customerId = #{projectRule.customerId}
+        AND pr.status != 2
       LIMIT #{start},#{limit}
     </select>
 </mapper>
