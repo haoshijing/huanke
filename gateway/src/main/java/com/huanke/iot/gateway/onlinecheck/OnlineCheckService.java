@@ -79,20 +79,19 @@ public class OnlineCheckService {
     }
 
     public void resetOnline(Integer id){
-       OnlineCheckData data =   idMap.get(id);
-       boolean needUpdateDd  =false;
-       if(data == null){
-           data = new OnlineCheckData();
-       }
-       data.setFailCount(0);
-        data.setLastUpdateTime(System.currentTimeMillis());
-        data.setOnline(true);
-        DevicePo devicePo = this.deviceMapper.selectById(id);
-        log.info("当前设备状态:",devicePo.getOnlineStatus());
-        //上次记录为离线时才更新状态
-        if(DeviceConstant.ONLINE_STATUS_NO == devicePo.getOnlineStatus()) {
+        OnlineCheckData data = idMap.get(id);
+        boolean needUpdateDd  = false;
+        if(data == null){
+            data = new OnlineCheckData();
+            needUpdateDd = true;
+        }else if(!data.isOnline()){
             needUpdateDd = true;
         }
+        data.setFailCount(0);
+        data.setLastUpdateTime(System.currentTimeMillis());
+        data.setOnline(true);
+        log.debug("当前设备状态:",data.isOnline());
+        //上次记录为离线时才更新状态
         data.setId(id);
         idMap.put(id,data);
        if(needUpdateDd){
