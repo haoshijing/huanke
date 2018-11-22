@@ -31,6 +31,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.resp.device.DeviceSelectRsp;
 import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
@@ -2125,4 +2126,9 @@ public class DeviceOperateService {
         return deviceModelAbilityVos;
 
     }
-}
+
+    public List<DeviceSelectRsp> selectByModelId(Integer modelId) {
+        Integer customerId = customerService.obtainCustomerId(false);
+        return deviceMapper.selectProjectByModelId(customerId, modelId);
+    }
+    }

@@ -2,14 +2,12 @@ package com.huanke.iot.manage.controller.device.typeModel;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
-import com.huanke.iot.base.dao.device.DeviceMapper;
-import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.resp.device.ModelProjectRsp;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
 import com.huanke.iot.manage.vo.request.device.operate.DevicePoolRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest;
-import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -249,4 +247,16 @@ public class DeviceModelController {
 //        ApiResponse<Boolean> result =  deviceModelService.createDeviceModelAbility(modelAbilityRequest);
 //        return result;
 //    }
+
+    @ApiOperation("查客户下模型（工程用）")
+    @PostMapping(value = "/selectModelDict")
+    public ApiResponse<List<ModelProjectRsp>> selectModelDict() {
+        try {
+            List<ModelProjectRsp> modelProjectRspList = deviceModelService.selectModelDict();
+            return new ApiResponse<>(modelProjectRspList);
+        } catch (Exception e) {
+            log.error("查询失败", e);
+            return new ApiResponse<>(RetCode.ERROR, "查询失败");
+        }
+    }
 }

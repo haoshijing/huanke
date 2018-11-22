@@ -23,6 +23,7 @@ public class PlanRspPo {
     private Integer linkProjectId;
     private Integer warnLevel;
     private Integer cycleType;
+    private Integer cycleNums;
     private Date warnDate;
     private Integer overTimeDays;
     private String enableUsers;
