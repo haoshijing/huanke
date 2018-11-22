@@ -133,6 +133,7 @@
         <include refid="tableName"/>
         where 1=1
         AND customerId = #{param.customerId}
+        AND status != 2
     </select>
 
     <!--返回当前列表集合-->
@@ -144,6 +145,7 @@
             AND d.type = #{dictPo.type}
         </if>-->
       AND customerId = #{projectBaseInfo.customerId}
+      AND status != 2
       group by pbi.id
       LIMIT #{start},#{limit}
     </select>
