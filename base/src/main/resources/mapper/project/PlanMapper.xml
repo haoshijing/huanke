@@ -180,7 +180,7 @@
             AND type = #{param.type}
         </if>-->
         AND ppi.customerId = #{param.customerId}
-        AND status != 2
+        AND ppi.status != 2
     </select>
 
     <!--返回当前列表集合-->
