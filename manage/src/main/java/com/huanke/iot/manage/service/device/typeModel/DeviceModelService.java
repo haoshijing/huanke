@@ -22,7 +22,6 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DeviceIdPoolPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
-import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
@@ -32,6 +31,7 @@ import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.resp.device.ModelProjectRsp;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
@@ -53,7 +53,6 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -1022,5 +1021,12 @@ public class DeviceModelService {
     }
 
 
-
+    /**
+     * 工程查model类型用
+     * @return
+     */
+    public List<ModelProjectRsp> selectModelDict() {
+        Integer customerId = customerService.obtainCustomerId(false);
+        return deviceModelMapper.selectProjectRspByCustomerId(customerId);
+    }
 }

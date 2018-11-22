@@ -271,4 +271,10 @@
         WHERE 1=1
         limit 1
     </select>
+
+    <select id="selectProjectRspByCustomerId" resultType="com.huanke.iot.base.resp.device.ModelProjectRsp">
+        select id, name from
+        <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+    </select>
 </mapper>

@@ -52,6 +52,17 @@ public class RuleController {
         return new ApiResponse<>(result);
     }
 
+    @ApiOperation("批量启用规则")
+    @PostMapping(value = "/reverseRule")
+    public ApiResponse<Boolean> reverseRule(@RequestBody BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要恢复规则信息");
+        }
+        Boolean result = ruleService.reverseRule(valueList);
+        return new ApiResponse<>(result);
+    }
+
     @ApiOperation("批量删除规则")
     @PostMapping(value = "/deleteRule")
     public ApiResponse<Boolean> deleteRule(@RequestBody BaseListRequest<Integer> request) {

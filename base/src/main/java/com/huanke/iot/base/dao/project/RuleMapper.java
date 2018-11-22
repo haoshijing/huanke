@@ -21,4 +21,6 @@ public interface RuleMapper extends BaseMapper<ProjectRule> {
     List<RuleRspPo> selectPageList(@Param("projectRule") ProjectRule projectRule, @Param("start") int start, @Param("limit") int limit);
 
     Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
+
+    Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 }
