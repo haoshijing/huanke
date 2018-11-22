@@ -14,6 +14,7 @@ import java.util.Date;
 public class RuleRspPo {
     private Integer id;
     private String name;
+    private Integer typeId;
     private String description;
     private Integer warnLevel;
     private Integer status;
