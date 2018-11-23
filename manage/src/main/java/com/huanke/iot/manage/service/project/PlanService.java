@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,6 +110,12 @@ public class PlanService {
 
     public PlanInfoRsp selectById(Integer planId) {
         PlanInfoRsp planInfoRsp = planMapper.selectPlanInfoById(planId);
+        String enableUsers = planInfoRsp.getEnableUsers();
+        if(enableUsers != null){
+            List<String> enableUserListStr = Arrays.asList(enableUsers.split(","));
+            List<Integer> enableUserList = enableUserListStr.stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
+            planInfoRsp.setEnableUserList(enableUserList);
+        }
         return planInfoRsp;
     }
 
