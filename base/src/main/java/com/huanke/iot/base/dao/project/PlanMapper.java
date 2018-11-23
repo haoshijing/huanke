@@ -23,6 +23,8 @@ public interface PlanMapper extends BaseMapper<ProjectPlanInfo> {
 
     Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
+    Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
+
     List<PlanRspPo> maintenance(@Param("projectId") Integer projectId, @Param("start") int start, @Param("limit") int limit);
 
     Integer selectMaintenanceCount(@Param("projectId")Integer projectId);

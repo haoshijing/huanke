@@ -80,6 +80,17 @@ public class PlanController {
         return new ApiResponse<>(result);
     }
 
+    @ApiOperation("批量启用计划")
+    @PostMapping(value = "/reversePlan")
+    public ApiResponse<Boolean> reversePlan(@RequestBody BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要启用规则信息");
+        }
+        Boolean result = planService.reversePlan(valueList);
+        return new ApiResponse<>(result);
+    }
+
     @ApiOperation("查工程维保")
     @PostMapping(value = "/maintenance")
     public ApiResponse<PlanRsp> maintenance(@RequestBody MaintenanceRequest request) {
