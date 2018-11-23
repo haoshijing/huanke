@@ -108,6 +108,12 @@ public class PlanService {
         return result;
     }
 
+    public Boolean reversePlan(List<Integer> valueList) {
+        Integer userId = userService.getCurrentUser().getId();
+        Boolean result = planMapper.batchReverse(userId, valueList);
+        return result;
+    }
+
     public PlanInfoRsp selectById(Integer planId) {
         PlanInfoRsp planInfoRsp = planMapper.selectPlanInfoById(planId);
         String enableUsers = planInfoRsp.getEnableUsers();

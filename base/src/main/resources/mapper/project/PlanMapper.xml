@@ -170,6 +170,16 @@
         </foreach>
     </update>
 
+    <update id="batchReverse">
+        UPDATE <include refid="tableName"/>
+        SET status = 1
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
     <!--列表总条数-->
     <select id="selectCount"  resultType="java.lang.Integer">
         select count(1) from
