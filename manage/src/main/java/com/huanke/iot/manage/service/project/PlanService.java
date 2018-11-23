@@ -8,6 +8,7 @@ import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.MaintenanceRequest;
 import com.huanke.iot.base.request.project.PlanQueryRequest;
 import com.huanke.iot.base.request.project.PlanRequest;
+import com.huanke.iot.base.resp.project.PlanInfoRsp;
 import com.huanke.iot.base.resp.project.PlanRsp;
 import com.huanke.iot.base.resp.project.PlanRspPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
@@ -106,9 +107,9 @@ public class PlanService {
         return result;
     }
 
-    public ProjectPlanInfo selectById(Integer planId) {
-        ProjectPlanInfo projectPlanInfo = planMapper.selectById(planId);
-        return projectPlanInfo;
+    public PlanInfoRsp selectById(Integer planId) {
+        PlanInfoRsp planInfoRsp = planMapper.selectPlanInfoById(planId);
+        return planInfoRsp;
     }
 
     public PlanRsp maintenance(MaintenanceRequest request) {
