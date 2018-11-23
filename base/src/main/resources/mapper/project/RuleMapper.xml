@@ -158,4 +158,11 @@
         AND pr.status != 2
       LIMIT #{start},#{limit}
     </select>
+
+    <select id="selectRuleDict" resultType="com.huanke.iot.base.resp.project.RuleDictRsp">
+        select id, name from
+        <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+        AND status = 1
+    </select>
 </mapper>
