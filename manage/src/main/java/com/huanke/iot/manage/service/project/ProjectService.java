@@ -9,8 +9,10 @@ import com.huanke.iot.base.po.project.ProjectMaterialInfo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
+import com.huanke.iot.base.resp.project.ProjectDictRsp;
 import com.huanke.iot.base.resp.project.ProjectRsp;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
+import com.huanke.iot.base.resp.project.RuleDictRsp;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
@@ -217,5 +219,11 @@ public class ProjectService {
         projectRequest.setMaterialInfoList(materialList);
 
         return projectRequest;
+    }
+
+    public List<ProjectDictRsp> selectProjectDict() {
+
+        Integer customerId = customerService.obtainCustomerId(false);
+        return projectMapper.selectProjectDict(customerId);
     }
 }

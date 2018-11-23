@@ -3,6 +3,7 @@ package com.huanke.iot.manage.service.project;
 import com.huanke.iot.base.dao.project.PlanMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
+import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.MaintenanceRequest;
 import com.huanke.iot.base.request.project.PlanQueryRequest;
@@ -74,6 +75,11 @@ public class PlanService {
         List<String> enableUserStrList = enableUserList.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
         String enableUsers = String.join(",", enableUserStrList);
         projectPlan.setEnableUsers(enableUsers);
+        //关联规则名称
+        if(projectPlan.getRuleId() != null){
+            ProjectRule projectRule = ruleMapper.selectById(projectPlan.getRuleId());
+            projectPlan.setWarnLevel(projectRule.getWarnLevel());
+        }
         if (projectPlan.getId() == null) {
             //添加
             projectPlan.setCustomerId(customerService.obtainCustomerId(false));
