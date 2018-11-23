@@ -73,6 +73,12 @@ public class RuleService {
         }
     }
 
+    public Boolean reverseRule(List<Integer> valueList) {
+        Integer userId = userService.getCurrentUser().getId();
+        Boolean result = ruleMapper.batchReverse(userId, valueList);
+        return result;
+    }
+
     public Boolean deleteRule(List<Integer> valueList) {
         Integer userId = userService.getCurrentUser().getId();
         Boolean result = ruleMapper.batchDelete(userId, valueList);

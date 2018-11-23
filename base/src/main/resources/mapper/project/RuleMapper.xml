@@ -92,6 +92,16 @@
         WHERE id  = #{id}
     </update>
 
+    <update id="batchReverse">
+        UPDATE <include refid="tableName"/>
+        SET status = 1
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
     <update id="batchDelete">
         UPDATE <include refid="tableName"/>
         SET status = 2
@@ -127,23 +137,25 @@
             AND warnLevel = #{param.warnLevel}
         </if>
         AND customerId = #{param.customerId}
+        AND status != 2
     </select>
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.RuleRspPo">
-      SELECT pr.id, pr.name, pr.description, pr.warnLevel, pr.createTime, pr.updateTime, pr.status, u.nickName createName,u1.nickName updateName
+      SELECT pr.id, pr.name, pr.description, pr.warnLevel, pr.createTime, pr.updateTime, pr.typeId, pr.status, u.nickName createName,u1.nickName updateName
       FROM t_project_rule pr left join t_user u on pr.createUser = u.id left join t_user u1 on  pr.updateUser = u1.id
       WHERE 1=1
         <if test="projectRule.name != null and projectRule.name!='' ">
-            AND name like CONCAT('%',CONCAT(#{projectRule.name},'%'))
+            AND pr.name like CONCAT('%',CONCAT(#{projectRule.name},'%'))
         </if>
         <if test="projectRule.status != null">
-            AND status = #{projectRule.status}
+            AND pr.status = #{projectRule.status}
         </if>
         <if test="projectRule.warnLevel != null">
-            AND warnLevel = #{projectRule.warnLevel}
+            AND pr.warnLevel = #{projectRule.warnLevel}
         </if>
-        AND customerId = #{projectRule.customerId}
+        AND pr.customerId = #{projectRule.customerId}
+        AND pr.status != 2
       LIMIT #{start},#{limit}
     </select>
 </mapper>

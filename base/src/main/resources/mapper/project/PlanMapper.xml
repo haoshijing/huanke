@@ -22,6 +22,7 @@
         warnDate,
         nextExecuteTime,
         cycleType,
+        cycleNums,
         overTimeDays,
         enableUsers,
         status,
@@ -41,6 +42,7 @@
         #{warnDate},
         #{nextExecuteTime},
         #{cycleType},
+        #{cycleNums},
         #{overTimeDays},
         #{enableUsers},
         #{status},
@@ -103,6 +105,9 @@
             </if>
             <if test="cycleType != null">
                 cycleType = #{cycleType},
+            </if>
+            <if test="cycleNums != null">
+                cycleNums = #{cycleNums},
             </if>
             <if test="overTimeDays != null">
                 overTimeDays = #{overTimeDays},
@@ -180,6 +185,7 @@
             AND type = #{param.type}
         </if>-->
         AND ppi.customerId = #{param.customerId}
+        AND ppi.status != 2
     </select>
 
     <!--返回当前列表集合-->
@@ -209,6 +215,7 @@
             AND d.type = #{projectPlanInfo.type}
         </if>-->
         AND ppi.customerId = #{projectPlanInfo.customerId}
+        AND ppi.status != 2
       LIMIT #{start},#{limit}
     </select>
 

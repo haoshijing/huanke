@@ -879,4 +879,11 @@
         and status = 1
     </select>
 
+    <select id="selectProjectByModelId" resultType="com.huanke.iot.base.resp.device.DeviceSelectRsp">
+        select id,name from
+        <include refid="tableName"/>
+        where customerId = #{customerId}
+        AND modelId = #{modelId}
+    </select>
+
 </mapper>

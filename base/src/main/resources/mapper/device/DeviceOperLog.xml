@@ -157,7 +157,7 @@
             <if test="param.deviceId != null">
                 AND deviceId = #{param.deviceId}
             </if>
-            AND funId != '410'
+            AND funcId != '410'
         </where>
     </select>
 </mapper>

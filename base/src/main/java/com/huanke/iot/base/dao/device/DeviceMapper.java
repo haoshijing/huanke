@@ -3,6 +3,7 @@ package com.huanke.iot.base.dao.device;
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.dto.DeviceListDto;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.resp.device.DeviceSelectRsp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -70,4 +71,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     DeviceListDto queryDeviceList(@Param("deviceId")Integer deviceId);
 
     Integer queryCustomerCount(@Param("customerId")Integer id);
+
+    List<DeviceSelectRsp> selectProjectByModelId(@Param("customerId") Integer customerId, @Param("modelId") Integer modelId);
 }

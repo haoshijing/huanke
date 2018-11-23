@@ -25,6 +25,7 @@ public class ProjectPlanInfo {
     private Date warnDate;
     private Date nextExecuteTime;
     private Integer cycleType;
+    private Integer cycleNums;
     private Integer overTimeDays;
     private String enableUsers;
     private Integer status = 1;
