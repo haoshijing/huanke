@@ -14,6 +14,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.format.WxFormatPo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -119,8 +120,10 @@ public class DeviceHighService {
             Integer modelId = devicePo.getModelId();
             DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
             Integer typeId = deviceModelPo.getTypeId();
-            WxFormatPo wxFormatPo = wxFormatMapper.selectById(deviceModelPo.getFormatId());
-            childDeviceVo.setFormatName(wxFormatPo.getName());
+            if(StringUtils.isNotEmpty(deviceModelPo.getFormatId().toString())) {
+                WxFormatPo wxFormatPo = wxFormatMapper.selectById(deviceModelPo.getFormatId());
+                childDeviceVo.setFormatName(wxFormatPo.getName());
+            }
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
             childDeviceVo.setDeviceTypeName(deviceTypePo.getName());
         }
