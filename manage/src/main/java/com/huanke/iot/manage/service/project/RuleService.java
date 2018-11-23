@@ -5,6 +5,7 @@ import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.config.DictQueryRequest;
 import com.huanke.iot.base.request.project.RuleRequest;
+import com.huanke.iot.base.resp.project.RuleDictRsp;
 import com.huanke.iot.base.resp.project.RuleRsp;
 import com.huanke.iot.base.resp.project.RuleRspPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
@@ -89,5 +90,10 @@ public class RuleService {
         Integer userId = userService.getCurrentUser().getId();
         Boolean result = ruleMapper.batchForbidden(userId, valueList);
         return result;
+    }
+
+    public List<RuleDictRsp> selectRuleDict() {
+        Integer customerId = customerService.obtainCustomerId(false);
+        return ruleMapper.selectRuleDict(customerId);
     }
 }
