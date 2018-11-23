@@ -5,6 +5,7 @@ import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.BaseListRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
+import com.huanke.iot.base.resp.project.ProjectDictRsp;
 import com.huanke.iot.base.resp.project.ProjectRsp;
 import com.huanke.iot.manage.service.project.ProjectService;
 import io.swagger.annotations.ApiOperation;
@@ -65,5 +66,12 @@ public class ProjectController {
         }
         Boolean result = projectService.deleteProject(valueList);
         return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("查工程字典")
+    @GetMapping(value = "/selectProjectDict")
+    public ApiResponse<List<ProjectDictRsp>> selectProjectDict() {
+        List<ProjectDictRsp> projectDictRspList = projectService.selectProjectDict();
+        return new ApiResponse<>(projectDictRspList);
     }
 }

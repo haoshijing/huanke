@@ -5,15 +5,13 @@ import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.BaseListRequest;
 import com.huanke.iot.base.request.config.DictQueryRequest;
 import com.huanke.iot.base.request.project.RuleRequest;
+import com.huanke.iot.base.resp.project.RuleDictRsp;
 import com.huanke.iot.base.resp.project.RuleRsp;
 import com.huanke.iot.manage.service.project.RuleService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -83,5 +81,12 @@ public class RuleController {
         }
         Boolean result = ruleService.forbitRule(valueList);
         return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("查规则字典")
+    @GetMapping(value = "/selectRuleDict")
+    public ApiResponse<List<RuleDictRsp>> selectRuleDict() {
+        List<RuleDictRsp> ruleDictRspList = ruleService.selectRuleDict();
+        return new ApiResponse<>(ruleDictRspList);
     }
 }
