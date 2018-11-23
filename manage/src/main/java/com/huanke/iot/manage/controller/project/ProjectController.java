@@ -57,6 +57,17 @@ public class ProjectController {
         return new ApiResponse<>(result);
     }
 
+    @ApiOperation("启用工程信息")
+    @PostMapping(value = "/reverseProject")
+    public ApiResponse<Boolean> reverseProject(@RequestBody BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要启用设备信息");
+        }
+        Boolean result = projectService.reverseProject(valueList);
+        return new ApiResponse<>(result);
+    }
+
     @ApiOperation("删除工程信息")
     @PostMapping(value = "/deleteProject")
     public ApiResponse<Boolean> deleteProject(@RequestBody BaseListRequest<Integer> request) {
