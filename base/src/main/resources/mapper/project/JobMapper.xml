@@ -98,7 +98,7 @@
             <if test="finalTime != null">
                 finalTime = #{finalTime},
             </if>
-            <if test="enableUsers != null">
+            <if test="enableUsers != null and enableUsers!='' ">
                 enableUsers = #{enableUsers},
             </if>
             <if test="warnStatus != null">
