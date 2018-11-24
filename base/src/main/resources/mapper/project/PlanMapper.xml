@@ -210,7 +210,7 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.enableUsers, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
       FROM t_project_plan_info ppi
       left join t_user u on ppi.createUser = u.id
       left join t_user u1 on  ppi.updateUser = u1.id
