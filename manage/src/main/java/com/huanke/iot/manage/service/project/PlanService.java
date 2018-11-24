@@ -63,7 +63,7 @@ public class PlanService {
             if(planRspPo.getIsRule() == 1){
                 planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
             }
-            if(planRspPo.getEnableUsers() != null){
+            if(planRspPo.getEnableUsers() != null && !planRspPo.getEnableUsers().equals("")){
                 List<String> enableUserListStr = Arrays.asList(planRspPo.getEnableUsers().split(","));
                 List<Integer> enableUserList = enableUserListStr.stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
                 planRspPo.setEnableUserList(enableUserList);
