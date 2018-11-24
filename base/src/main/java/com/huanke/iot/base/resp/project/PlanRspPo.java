@@ -3,6 +3,7 @@ package com.huanke.iot.base.resp.project;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述:
@@ -32,4 +33,5 @@ public class PlanRspPo {
     private Date updateTime;
     private String createName;
     private String updateName;
+    private List<Integer> enableUserList;
 }
