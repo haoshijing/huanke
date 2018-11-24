@@ -2,11 +2,11 @@ package com.huanke.iot.manage.controller.project;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
-import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.request.BaseListRequest;
 import com.huanke.iot.base.request.project.MaintenanceRequest;
 import com.huanke.iot.base.request.project.PlanQueryRequest;
 import com.huanke.iot.base.request.project.PlanRequest;
+import com.huanke.iot.base.resp.project.PlanInfoRsp;
 import com.huanke.iot.base.resp.project.PlanRsp;
 import com.huanke.iot.manage.service.project.PlanService;
 import io.swagger.annotations.ApiOperation;
@@ -37,11 +37,11 @@ public class PlanController {
         return new ApiResponse<>(planRsp);
     }
 
-    @ApiOperation("查询单个客户")
+    @ApiOperation("查询单个计划")
     @GetMapping(value = "/select/{planId}")
-    public ApiResponse<ProjectPlanInfo> selectPlan(@PathVariable("planId") Integer planId) {
-        ProjectPlanInfo projectPlanInfo = planService.selectById(planId);
-        return new ApiResponse<>(projectPlanInfo);
+    public ApiResponse<PlanInfoRsp> selectPlan(@PathVariable("planId") Integer planId) {
+        PlanInfoRsp planInfoRsp = planService.selectById(planId);
+        return new ApiResponse<>(planInfoRsp);
     }
 
     @ApiOperation("添加计划信息")
@@ -77,6 +77,17 @@ public class PlanController {
             throw new BusinessException("没有要禁用规则信息");
         }
         Boolean result = planService.forbitPlan(valueList);
+        return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("批量启用计划")
+    @PostMapping(value = "/reversePlan")
+    public ApiResponse<Boolean> reversePlan(@RequestBody BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要启用规则信息");
+        }
+        Boolean result = planService.reversePlan(valueList);
         return new ApiResponse<>(result);
     }
 

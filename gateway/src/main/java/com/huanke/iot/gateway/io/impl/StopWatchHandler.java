@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import com.huanke.iot.gateway.mqttlistener.MqttService;
@@ -51,19 +52,20 @@ public class StopWatchHandler extends AbstractHandler {
         int flag = 1;
         Map<Integer, String> mMap = new HashMap<>();
         for (Integer childDeviceId : childIds) {
-            String childId = deviceMapper.selectById(childDeviceId).getChildId();
+            DevicePo devicePo = deviceMapper.selectById(childDeviceId);
+            String childId = devicePo.getChildId();
             childIdList.add(childId);
-            Integer modelId = deviceMapper.selectById(childDeviceId).getModelId();
-            if(mMap.containsKey(modelId)){
-                String mValue = mMap.get(modelId);
-                mbMap.put(childId, mValue);
+            Integer modelId = devicePo.getModelId();
+            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            if(mMap.containsKey(typeId)){
+                String mName = mMap.get(typeId);
+                mbMap.put(childId, mName);
                 continue;
             }
-            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
             String stopWatch = deviceTypePo.getStopWatch();
             String mName = "m" + flag;
-            mMap.put(modelId, mName);
+            mMap.put(typeId, mName);
             mbMap.put(mName, JSONObject.parseObject(stopWatch));
             flag++;
             mbMap.put(childId, mName);

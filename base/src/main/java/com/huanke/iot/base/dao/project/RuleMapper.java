@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.project;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.project.ProjectRule;
+import com.huanke.iot.base.resp.project.RuleDictRsp;
 import com.huanke.iot.base.resp.project.RuleRspPo;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,4 +24,6 @@ public interface RuleMapper extends BaseMapper<ProjectRule> {
     Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
     Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
+
+    List<RuleDictRsp> selectRuleDict(@Param("customerId") Integer customerId);
 }

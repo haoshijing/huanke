@@ -276,5 +276,6 @@
         select id, name from
         <include refid="tableName"/>
         WHERE customerId = #{customerId}
+        AND status = 1
     </select>
 </mapper>

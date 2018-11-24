@@ -117,6 +117,16 @@
         </foreach>
     </update>
 
+    <update id="batchReverse">
+    UPDATE <include refid="tableName"/>
+    SET status = 1
+    ,updateUser = #{userId}
+    WHERE id IN
+    <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+        #{ids}
+    </foreach>
+</update>
+
     <update id="batchForbidden">
         UPDATE <include refid="tableName"/>
         SET status = 3
@@ -156,5 +166,11 @@
         where id = #{projectId}
     </select>
 
+    <select id="selectProjectDict" resultType="com.huanke.iot.base.resp.project.ProjectDictRsp">
+        select id, name from
+        <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+        AND status = 1
+    </select>
 
 </mapper>

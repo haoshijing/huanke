@@ -59,6 +59,16 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectPlanInfoById" resultType="com.huanke.iot.base.resp.project.PlanInfoRsp">
+        select ppi.*, d.name linkDeviceName, d.modelId linkDeviceModelId, dm.name linkDeviceModelName
+        FROM t_project_plan_info ppi LEFT JOIN t_device d
+        ON ppi.linkDeviceId = d.id
+        LEFT JOIN t_device_model dm
+        ON d.modelId = dm.id
+        WHERE ppi.id = #{planId}
+        limit 1
+    </select>
+
     <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
         select * from
         <include refid="tableName"/>
@@ -153,6 +163,16 @@
     <update id="batchForbidden">
         UPDATE <include refid="tableName"/>
         SET status = 3
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <update id="batchReverse">
+        UPDATE <include refid="tableName"/>
+        SET status = 1
         ,updateUser = #{userId}
         WHERE id IN
         <foreach item="ids" collection="valueList" open="(" separator="," close=")">

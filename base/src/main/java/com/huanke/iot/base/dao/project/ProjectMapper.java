@@ -3,6 +3,7 @@ package com.huanke.iot.base.dao.project;
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.request.project.ProjectRequest;
+import com.huanke.iot.base.resp.project.ProjectDictRsp;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,4 +25,8 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
     Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
     ProjectRequest selectByProjectId(@Param("projectId") Integer projectId);
+
+    List<ProjectDictRsp> selectProjectDict(@Param("customerId") Integer customerId);
+
+    Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 }

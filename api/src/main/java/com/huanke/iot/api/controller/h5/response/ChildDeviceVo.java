@@ -14,4 +14,5 @@ public class ChildDeviceVo {
     private String deviceName;
     private String childId;
     private String deviceTypeName;
+    private String formatName;
 }

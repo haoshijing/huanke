@@ -9,6 +9,7 @@ import com.huanke.iot.base.po.project.ProjectMaterialInfo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
+import com.huanke.iot.base.resp.project.ProjectDictRsp;
 import com.huanke.iot.base.resp.project.ProjectRsp;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import com.huanke.iot.base.util.UniNoCreateUtils;
@@ -188,6 +189,12 @@ public class ProjectService {
         return true;
     }
 
+    public Boolean reverseProject(List<Integer> valueList) {
+        Integer userId = userService.getCurrentUser().getId();
+        Boolean result = projectMapper.batchReverse(userId, valueList);
+        return result;
+    }
+
     public Boolean deleteProject(List<Integer> valueList) {
         Integer userId = userService.getCurrentUser().getId();
         Boolean result = projectMapper.batchDelete(userId, valueList);
@@ -217,5 +224,11 @@ public class ProjectService {
         projectRequest.setMaterialInfoList(materialList);
 
         return projectRequest;
+    }
+
+    public List<ProjectDictRsp> selectProjectDict() {
+
+        Integer customerId = customerService.obtainCustomerId(false);
+        return projectMapper.selectProjectDict(customerId);
     }
 }

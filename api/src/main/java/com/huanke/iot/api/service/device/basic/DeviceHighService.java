@@ -7,10 +7,14 @@ import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
+import com.huanke.iot.base.dao.format.WxFormatMapper;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
+import com.huanke.iot.base.po.format.WxFormatPo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -40,6 +44,9 @@ public class DeviceHighService {
     private DeviceModelMapper deviceModelMapper;
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private WxFormatMapper wxFormatMapper;
 
     public String getHighToken(Integer customerId, String password) throws Exception {
         WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(customerId, password);
@@ -111,7 +118,12 @@ public class DeviceHighService {
             childDeviceVo.setChildId(devicePo.getChildId());
             childDeviceVos.add(childDeviceVo);
             Integer modelId = devicePo.getModelId();
-            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
+            Integer typeId = deviceModelPo.getTypeId();
+            if(StringUtils.isNotEmpty(deviceModelPo.getFormatId().toString())) {
+                WxFormatPo wxFormatPo = wxFormatMapper.selectById(deviceModelPo.getFormatId());
+                childDeviceVo.setFormatName(wxFormatPo.getName());
+            }
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
             childDeviceVo.setDeviceTypeName(deviceTypePo.getName());
         }

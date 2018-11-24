@@ -3,10 +3,12 @@ package com.huanke.iot.manage.service.project;
 import com.huanke.iot.base.dao.project.PlanMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
+import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.MaintenanceRequest;
 import com.huanke.iot.base.request.project.PlanQueryRequest;
 import com.huanke.iot.base.request.project.PlanRequest;
+import com.huanke.iot.base.resp.project.PlanInfoRsp;
 import com.huanke.iot.base.resp.project.PlanRsp;
 import com.huanke.iot.base.resp.project.PlanRspPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
@@ -16,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,6 +77,11 @@ public class PlanService {
         List<String> enableUserStrList = enableUserList.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
         String enableUsers = String.join(",", enableUserStrList);
         projectPlan.setEnableUsers(enableUsers);
+        //关联规则名称
+        if(projectPlan.getRuleId() != null){
+            ProjectRule projectRule = ruleMapper.selectById(projectPlan.getRuleId());
+            projectPlan.setWarnLevel(projectRule.getWarnLevel());
+        }
         if (projectPlan.getId() == null) {
             //添加
             projectPlan.setCustomerId(customerService.obtainCustomerId(false));
@@ -100,9 +108,21 @@ public class PlanService {
         return result;
     }
 
-    public ProjectPlanInfo selectById(Integer planId) {
-        ProjectPlanInfo projectPlanInfo = planMapper.selectById(planId);
-        return projectPlanInfo;
+    public Boolean reversePlan(List<Integer> valueList) {
+        Integer userId = userService.getCurrentUser().getId();
+        Boolean result = planMapper.batchReverse(userId, valueList);
+        return result;
+    }
+
+    public PlanInfoRsp selectById(Integer planId) {
+        PlanInfoRsp planInfoRsp = planMapper.selectPlanInfoById(planId);
+        String enableUsers = planInfoRsp.getEnableUsers();
+        if(enableUsers != null){
+            List<String> enableUserListStr = Arrays.asList(enableUsers.split(","));
+            List<Integer> enableUserList = enableUserListStr.stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
+            planInfoRsp.setEnableUserList(enableUserList);
+        }
+        return planInfoRsp;
     }
 
     public PlanRsp maintenance(MaintenanceRequest request) {
