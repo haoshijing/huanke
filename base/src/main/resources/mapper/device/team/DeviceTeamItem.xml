@@ -86,6 +86,7 @@
         FROM
         <include refid="tableName"/>
         WHERE deviceId = #{deviceId}
+        AND  linkAgeStatus = 1
     </select>
 
     <select id="selectLinkDevice" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo"
