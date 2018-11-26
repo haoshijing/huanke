@@ -1,7 +1,10 @@
 package com.huanke.iot.manage.service.project;
 
+import com.huanke.iot.base.constant.JobFlowStatusConstants;
+import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.PlanMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
+import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +45,8 @@ public class PlanService {
     private RuleMapper ruleMapper;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private JobMapper jobMapper;
 
 
     public PlanRsp selectList(PlanQueryRequest request) {
@@ -63,6 +69,12 @@ public class PlanService {
             if(planRspPo.getIsRule() == 1){
                 planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
             }
+            String enableUsers = planRspPo.getEnableUsers();
+            if(!enableUsers.isEmpty()){
+                List<String> enableUserListStr = Arrays.asList(enableUsers.split(","));
+                List<Integer> enableUserList = enableUserListStr.stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
+                planRspPo.setEnableUserList(enableUserList);
+            }
         }
         planRsp.setPlanRspPoList(planPoList);
         return planRsp;
@@ -77,6 +89,8 @@ public class PlanService {
         List<String> enableUserStrList = enableUserList.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
         String enableUsers = String.join(",", enableUserStrList);
         projectPlan.setEnableUsers(enableUsers);
+
+        Integer isRightExcute = request.getIsRightExcute();
         //关联规则名称
         if(projectPlan.getRuleId() != null){
             ProjectRule projectRule = ruleMapper.selectById(projectPlan.getRuleId());
@@ -87,12 +101,45 @@ public class PlanService {
             projectPlan.setCustomerId(customerService.obtainCustomerId(false));
             projectPlan.setCreateTime(new Date());
             projectPlan.setCreateUser(user.getId());
+            //是否立即执行
+            excuteRight(request, projectPlan, enableUsers, isRightExcute);
             return planMapper.insert(projectPlan) > 0;
         } else {
             //修改
             projectPlan.setUpdateTime(new Date());
             projectPlan.setUpdateUser(user.getId());
+            //是否立即执行
+            excuteRight(request, projectPlan, enableUsers, isRightExcute);
             return planMapper.updateById(projectPlan) > 0;
+        }
+
+
+    }
+
+    private void excuteRight(PlanRequest request, ProjectPlanInfo projectPlan, String enableUsers, Integer isRightExcute) {
+        if(isRightExcute == 1){
+            ProjectJobInfo projectJobInfo = new ProjectJobInfo();
+            projectJobInfo.setCustomerId(customerService.obtainCustomerId(false));
+            projectJobInfo.setType(request.getLinkType());
+            projectJobInfo.setLinkDeviceId(request.getLinkDeviceId());
+            projectJobInfo.setLinkProjectId(request.getLinkProjectId());
+            projectJobInfo.setName(request.getName());
+            projectJobInfo.setDescription(request.getDescription());
+            projectJobInfo.setIsRule(request.getIsRule());
+            projectJobInfo.setRuleId(request.getRuleId());
+            ProjectRule projectRule = ruleMapper.selectById(request.getRuleId());
+            projectJobInfo.setWarnLevel(projectRule.getWarnLevel());
+            projectJobInfo.setSourceType(1);
+            projectJobInfo.setPlanId(projectPlan.getId());
+            //到期日期
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.add(Calendar.DATE, request.getOverTimeDays());
+            projectJobInfo.setFinalTime(calendar1.getTime());
+            projectJobInfo.setEnableUsers(enableUsers);
+            projectJobInfo.setWarnStatus(1);
+            projectJobInfo.setFlowStatus(JobFlowStatusConstants.FLOW_STATUS_CREATED);
+            projectJobInfo.setCreateTime(new Date());
+            jobMapper.insert(projectJobInfo);
         }
     }
 

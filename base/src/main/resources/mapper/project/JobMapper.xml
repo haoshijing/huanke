@@ -98,7 +98,7 @@
             <if test="finalTime != null">
                 finalTime = #{finalTime},
             </if>
-            <if test="enableUsers != null">
+            <if test="enableUsers != null and enableUsers!='' ">
                 enableUsers = #{enableUsers},
             </if>
             <if test="warnStatus != null">
@@ -180,7 +180,7 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.JobRspPo">
-      SELECT pji.id, pji.name, pji.description, pji.isRule, pji.ruleId, pji.sourceType,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT pji.id, pji.name, pji.description, pji.isRule, pji.ruleId, pji.sourceType,pji.finalTime,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName
       FROM t_project_job_info pji
       left join t_user u on pji.createUser = u.id
       left join t_user u1 on  pji.updateUser = u1.id
