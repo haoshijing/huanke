@@ -235,12 +235,17 @@ public class StatisticService {
                     deviceTypePercents.add(deviceTypePercent);
                 }
             }
-            if(deviceTypePercents.size()>6) {
+            int needNum = 4;
+            if(deviceTypePercents.size()>needNum) {
                 deviceTypePercents.sort((x, y) -> Long.compare(y.getDeviceCount(), x.getDeviceCount()));
-                deviceTypePercents = deviceTypePercents.subList(0, 5);
+                deviceTypePercents = deviceTypePercents.subList(0, needNum-1);
                 DeviceModelVo.DeviceModelPercent other = new DeviceModelVo.DeviceModelPercent();
                 other.setModelName("其他");
-                other.setDeviceCount(deviceTotal - deviceTypePercents.get(0).getDeviceCount() - deviceTypePercents.get(1).getDeviceCount() - deviceTypePercents.get(2).getDeviceCount() - deviceTypePercents.get(3).getDeviceCount() - deviceTypePercents.get(4).getDeviceCount());
+                long dc = 0;
+                for (DeviceModelVo.DeviceModelPercent temp :deviceTypePercents) {
+                    dc+=temp.getDeviceCount();
+                }
+                other.setDeviceCount(deviceTotal - dc);
                 DecimalFormat df = new DecimalFormat();
                 df.setMaximumFractionDigits(2);
                 df.setMinimumFractionDigits(2);
