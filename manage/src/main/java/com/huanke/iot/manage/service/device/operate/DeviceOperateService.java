@@ -418,6 +418,7 @@ public class DeviceOperateService {
         List<DeviceModelAbilityVo> finalList = deviceModelAbilityVos.stream().filter(distinctByKey(DeviceModelAbilityVo::getAbilityId)).collect(Collectors.toList());
         log.info("去重后的deviceModelAbilityVo：{}",finalList);
         deviceQueryVo.setDeviceModelAbilityVos(finalList);
+        //todo 将deviceModelFormat放在此项中
         return deviceQueryVo;
     }
 
@@ -2020,13 +2021,36 @@ public class DeviceOperateService {
     }
 
 
+    public ApiResponse<Boolean> sendFuncs(DeviceFuncRequest deviceFuncVo, Integer operType){
+        //获取当前登录的用户
+        DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
+        if(null != devicePo){
+            //查询当前设备是否为联动设备
+            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
+            if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
+                List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
+                for (DeviceTeamItemPo eachPo : deviceTeamItemPoList) {
+                    DeviceFuncRequest deviceFuncRequest = new DeviceFuncRequest();
+                    deviceFuncRequest.setDeviceId(eachPo.getDeviceId());
+                    deviceFuncRequest.setFuncId(deviceFuncVo.getFuncId());
+                    deviceFuncRequest.setValue(deviceFuncVo.getValue());
+                    String requestId = sendFunc(deviceFuncRequest, operType);
+                }
+            }else {
+                sendFunc(deviceFuncVo,operType);
+            }
+            return new ApiResponse<>(RetCode.OK,"指令发送成功",true);
+        }
+        return new ApiResponse<>(RetCode.ERROR,"指令发送失败",false);
+    }
+
     /**
      * 设备操作指令
      * @param deviceFuncVo
      * @param operType
      * @return
      */
-    public ApiResponse<String> sendFunc (DeviceFuncRequest deviceFuncVo, Integer operType) {
+    public String sendFunc (DeviceFuncRequest deviceFuncVo, Integer operType) {
 
         //获取当前登录的用户
         User user = this.userService.getCurrentUser();
@@ -2056,9 +2080,9 @@ public class DeviceOperateService {
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
             stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
-            return new ApiResponse<>(RetCode.OK,"设备开/设备关成功",requestId);
+            return requestId;
         }else{
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"该设备不存在");
+            return "该设备不存在";
         }
 
 

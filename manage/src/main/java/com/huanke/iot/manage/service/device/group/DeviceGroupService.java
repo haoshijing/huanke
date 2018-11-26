@@ -394,7 +394,7 @@ public class DeviceGroupService {
             deviceFuncRequest.setValue(value);
             String requestId = sendFunc(deviceFuncRequest, user.getId(), operType);
         }
-        return new ApiResponse<>(RetCode.OK,"群开/群关成功",true);
+        return new ApiResponse<>(RetCode.OK,"/群关成功",true);
     }
 
 
