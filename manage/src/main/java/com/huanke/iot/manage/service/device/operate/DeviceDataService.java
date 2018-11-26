@@ -151,12 +151,6 @@ public class DeviceDataService {
         if(null == abilityCodeList || 0 == abilityCodeList.size()){
             return new ApiResponse<>(RetCode.OK,"该设备尚未配备传感器功能");
         }
-        //若该设备为联动设备，查询其组中其余设备的功能项
-        DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(deviceDataQueryRequest.getDeviceId());
-        log.info("当前的设备联动状态：{}",deviceTeamItemPo.getLinkAgeStatus());
-        if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
-            //查询改组中的其他
-        }
         List<String> tempList = new ArrayList<>();
         //利用反射筛选不需要复制的属性
         Class cls = deviceSensorStatPo.getClass();

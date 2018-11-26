@@ -588,18 +588,18 @@ public class DeviceOperateController {
 
     @ApiOperation("单设备操作")
     @PostMapping("/sendFunc")
-    public ApiResponse<String> sendFuc(@RequestBody DeviceFuncRequest deviceFuncVo){
+    public ApiResponse<Boolean> sendFuc(@RequestBody DeviceFuncRequest deviceFuncVo){
         log.debug("发送指令："+deviceFuncVo.toString());
         String funcId = deviceFuncVo.getFuncId();
         if(deviceFuncVo.getDeviceId()!=null){
             if(StringUtils.isNotBlank(deviceFuncVo.getFuncId())&&StringUtils.isNotBlank(deviceFuncVo.getValue())){
-                return deviceService.sendFunc(deviceFuncVo, DeviceConstant.DEVICE_OPERATE_SYS_BACKEND);
+                return deviceService.sendFuncs(deviceFuncVo, DeviceConstant.DEVICE_OPERATE_SYS_BACKEND);
             }else {
-                return new ApiResponse<>(RetCode.PARAM_ERROR,"指令不可为空");
+                return new ApiResponse<>(RetCode.PARAM_ERROR,"指令不可为空",false);
             }
 
         }else {
-            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备主键不可为空");
+            return new ApiResponse<>(RetCode.PARAM_ERROR,"设备主键不可为空",false);
         }
     }
 
