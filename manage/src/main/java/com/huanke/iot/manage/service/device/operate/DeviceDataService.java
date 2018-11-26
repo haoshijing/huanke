@@ -5,6 +5,7 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.stat.DeviceSensorStatMapper;
@@ -16,6 +17,7 @@ import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
+import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
@@ -59,6 +61,9 @@ public class DeviceDataService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private DeviceTeamItemMapper deviceTeamItemMapper;
 
 
     public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceDataQueryRequest request) throws Exception{
@@ -145,6 +150,12 @@ public class DeviceDataService {
         List<String> abilityCodeList = this.deviceAbilityMapper.selectAbilityCodeByDeviceId(deviceDataQueryRequest.getDeviceId());
         if(null == abilityCodeList || 0 == abilityCodeList.size()){
             return new ApiResponse<>(RetCode.OK,"该设备尚未配备传感器功能");
+        }
+        //若该设备为联动设备，查询其组中其余设备的功能项
+        DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(deviceDataQueryRequest.getDeviceId());
+        log.info("当前的设备联动状态：{}",deviceTeamItemPo.getLinkAgeStatus());
+        if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
+            //查询改组中的其他
         }
         List<String> tempList = new ArrayList<>();
         //利用反射筛选不需要复制的属性

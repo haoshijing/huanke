@@ -56,7 +56,7 @@ public class DeviceTeamPo {
 
     //组状态，1-普通终端组，2-托管组
     private Integer teamStatus;
-    //组类型，1-用户组，2-联动组，3-自成组
+    //组类型，1-用户组，2-，3-自成组
     private Integer teamType;
     /**
      * 二维码链接

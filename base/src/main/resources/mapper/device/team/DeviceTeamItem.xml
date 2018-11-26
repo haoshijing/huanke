@@ -88,6 +88,16 @@
         WHERE deviceId = #{deviceId}
     </select>
 
+    <select id="selectLinkDevice" parameterType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo"
+            resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE teamId = #{teamId}
+        AND deviceId != #{deviceId}
+    </select>
+
     <select id="selectByDeviceMac" parameterType="java.lang.String"
             resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select

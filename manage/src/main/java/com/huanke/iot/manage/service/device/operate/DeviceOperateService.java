@@ -2,7 +2,9 @@ package com.huanke.iot.manage.service.device.operate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.*;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
@@ -66,6 +68,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Repository
@@ -402,11 +405,25 @@ public class DeviceOperateService {
 
         /*查询设备的 阈值类与传参类功能项*/
         List<DeviceModelAbilityVo> deviceModelAbilityVos = getModelVo(deviceId);
+        //查询当前设备是否为联动设备
+        DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(deviceId);
+        if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
+            //为联动设备，则查询其联动设备的功能项
+            List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
+            for(DeviceTeamItemPo eachPo : deviceTeamItemPoList){
+                deviceModelAbilityVos.addAll(getModelVo(eachPo.getDeviceId()));
+            }
+        }
+        //去重
+        deviceModelAbilityVos.stream().filter(distinctByKey(DeviceModelAbilityVo::getAbilityId));
         deviceQueryVo.setDeviceModelAbilityVos(deviceModelAbilityVos);
-
         return deviceQueryVo;
     }
 
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
 
     /**
      * 2018-08-15
