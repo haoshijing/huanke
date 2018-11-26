@@ -27,6 +27,8 @@ public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
     List<DeviceTeamItemPo> selectItemsByDeviceId(Integer deviceId);
 
+    List<DeviceTeamItemPo> selectLinkDevice(DeviceTeamItemPo deviceTeamItemPo);
+
     List<DeviceTeamItemPo> selectByTeamId(Integer teamId);
 
     Integer deleteBatch(List<DeviceTeamItemPo> deviceTeamItemPoList);

@@ -24,6 +24,7 @@ public class ProjectJobInfo {
     private Integer ruleId;
     private Integer warnLevel;
     private Integer sourceType;//来源类型：1-计划维保；2-H5端反馈；3-设备告警
+    private Integer planId;
     private Date finalTime;
     private String imgList;//图册
     private String enableUsers;

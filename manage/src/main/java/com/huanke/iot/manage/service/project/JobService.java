@@ -115,9 +115,11 @@ public class JobService {
             return "无权操作该任务，请刷新重新获取任务！";
         }
         List<Integer> targetUsers = request.getTargetUsers();
-        List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
-        String targetUserStr = String.join(",", targetUserStrList);
-        projectJobInfo.setEnableUsers(targetUserStr);
+        if(targetUsers != null && !targetUsers.isEmpty()){
+            List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+            String targetUserStr = String.join(",", targetUserStrList);
+            projectJobInfo.setEnableUsers(targetUserStr);
+        }
         Integer operateType = request.getOperateType();
         int flowStatus = 0;
         switch (operateType) {
@@ -149,7 +151,6 @@ public class JobService {
         }
         String description = request.getDescription();
         List<Integer> valueList = request.getValueList();
-        String imgListStr = String.join(",", request.getImgList());
         projectJobInfo.setFlowStatus(flowStatus);
         jobMapper.updateById(projectJobInfo);
         //日志处理
@@ -157,7 +158,11 @@ public class JobService {
         projectJobLog.setJobId(jobId);
         projectJobLog.setDescription(description);
         projectJobLog.setCreateUser(userId);
-        projectJobLog.setImgList(imgListStr);
+        List<String> imgList = request.getImgList();
+        if(imgList != null){
+            String imgListStr = String.join(",", imgList);
+            projectJobLog.setImgList(imgListStr);
+        }
         projectJobLog.setCreateTime(new Date());
         projectJobLog.setOperateType(operateType);
         jobLogMapper.insert(projectJobLog);

@@ -117,6 +117,16 @@
         </foreach>
     </update>
 
+    <update id="batchReverse">
+    UPDATE <include refid="tableName"/>
+    SET status = 1
+    ,updateUser = #{userId}
+    WHERE id IN
+    <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+        #{ids}
+    </foreach>
+</update>
+
     <update id="batchForbidden">
         UPDATE <include refid="tableName"/>
         SET status = 3

@@ -59,6 +59,16 @@
         WHERE id = #{id} limit 1
     </select>
 
+    <select id="selectPlanInfoById" resultType="com.huanke.iot.base.resp.project.PlanInfoRsp">
+        select ppi.*, d.name linkDeviceName, d.modelId linkDeviceModelId, dm.name linkDeviceModelName
+        FROM t_project_plan_info ppi LEFT JOIN t_device d
+        ON ppi.linkDeviceId = d.id
+        LEFT JOIN t_device_model dm
+        ON d.modelId = dm.id
+        WHERE ppi.id = #{planId}
+        limit 1
+    </select>
+
     <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
         select * from
         <include refid="tableName"/>
@@ -160,6 +170,16 @@
         </foreach>
     </update>
 
+    <update id="batchReverse">
+        UPDATE <include refid="tableName"/>
+        SET status = 1
+        ,updateUser = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
     <!--列表总条数-->
     <select id="selectCount"  resultType="java.lang.Integer">
         select count(1) from
@@ -190,7 +210,7 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.enableUsers, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
       FROM t_project_plan_info ppi
       left join t_user u on ppi.createUser = u.id
       left join t_user u1 on  ppi.updateUser = u1.id

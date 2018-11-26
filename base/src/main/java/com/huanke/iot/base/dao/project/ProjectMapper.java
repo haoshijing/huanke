@@ -27,4 +27,6 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
     ProjectRequest selectByProjectId(@Param("projectId") Integer projectId);
 
     List<ProjectDictRsp> selectProjectDict(@Param("customerId") Integer customerId);
+
+    Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 }

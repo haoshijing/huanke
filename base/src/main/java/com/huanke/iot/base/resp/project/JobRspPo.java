@@ -19,7 +19,7 @@ public class JobRspPo {
     private Integer ruleId;
     private Integer warnLevel;
     private Integer sourceType;
-    private Integer overTimeDays;
+    private Date finalTime;
     private Integer flowStatus;
     private Date createTime;
     private Date updateTime;
