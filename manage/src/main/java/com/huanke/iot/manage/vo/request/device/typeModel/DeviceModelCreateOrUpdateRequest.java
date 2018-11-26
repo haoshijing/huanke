@@ -57,6 +57,7 @@ public class DeviceModelCreateOrUpdateRequest {
 
         private Integer id;
         private Integer abilityOptionId;
+        private String actualOptionValue;
         private String definedName;
         private Integer defaultVal;
         private Integer minVal;

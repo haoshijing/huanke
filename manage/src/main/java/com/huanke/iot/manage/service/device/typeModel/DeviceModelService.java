@@ -297,6 +297,7 @@ public class DeviceModelService {
                         DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = new DeviceModelAbilityOptionPo();
                         deviceModelAbilityOptionPo.setModelAbilityId(deviceModelAbilityPo.getId());
                         deviceModelAbilityOptionPo.setAbilityOptionId(deviceModelAbilityOptionRequest.getAbilityOptionId());
+                        deviceModelAbilityOptionPo.setActualOptionValue(deviceModelAbilityOptionRequest.getActualOptionValue());
                         deviceModelAbilityOptionPo.setDefinedName(deviceModelAbilityOptionRequest.getDefinedName());
                         deviceModelAbilityOptionPo.setDefaultValue(deviceModelAbilityOptionRequest.getDefaultVal());
                         deviceModelAbilityOptionPo.setMinVal(deviceModelAbilityOptionRequest.getMinVal());
