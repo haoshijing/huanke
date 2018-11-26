@@ -34,6 +34,7 @@ public class DeviceModelAbilityVo {
         private Integer abilityOptionId;
         private String optionValue;
         private String optionName;
+        private String actualOptionValue;
         private String definedName;
         private Integer defaultVal;
         private Integer minVal;

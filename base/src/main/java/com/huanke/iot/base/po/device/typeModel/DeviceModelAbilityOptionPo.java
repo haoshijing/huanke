@@ -17,6 +17,7 @@ public class DeviceModelAbilityOptionPo implements Serializable{
     private Integer id;
     private Integer modelAbilityId;
     private Integer abilityOptionId;
+    private String actualOptionValue;
     private String definedName;
     private Integer defaultValue;
     private Integer minVal;

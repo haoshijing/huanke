@@ -12,6 +12,7 @@
         (
         modelAbilityId,
         abilityOptionId,
+        actualOptionValue,
         definedName,
         defaultValue,
         minVal,
@@ -22,6 +23,7 @@
         VALUES (
         #{modelAbilityId},
         #{abilityOptionId},
+        #{actualOptionValue},
         #{definedName},
         #{defaultValue},
         #{minVal},
@@ -38,6 +40,9 @@
             </if>
             <if test = "abilityOptionId != null">
                 abilityOptionId = #{abilityOptionId},
+            </if>
+            <if test = "actualOptionValue != null">
+                actualOptionValue = #{actualOptionValue},
             </if>
             <if test = "definedName != null and definedName != ''  ">
                 definedName = #{definedName},
