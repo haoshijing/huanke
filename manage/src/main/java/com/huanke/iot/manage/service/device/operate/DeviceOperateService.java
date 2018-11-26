@@ -415,8 +415,9 @@ public class DeviceOperateService {
             }
         }
         //去重
-        deviceModelAbilityVos.stream().filter(distinctByKey(DeviceModelAbilityVo::getAbilityId));
-        deviceQueryVo.setDeviceModelAbilityVos(deviceModelAbilityVos);
+        List<DeviceModelAbilityVo> finalList = deviceModelAbilityVos.stream().filter(distinctByKey(DeviceModelAbilityVo::getAbilityId)).collect(Collectors.toList());
+        log.info("去重后的deviceModelAbilityVo：{}",finalList);
+        deviceQueryVo.setDeviceModelAbilityVos(finalList);
         return deviceQueryVo;
     }
 
