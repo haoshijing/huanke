@@ -48,6 +48,7 @@ import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.Data;
@@ -61,6 +62,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -755,6 +757,28 @@ public class DeviceDataService {
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
         DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
         if (devicePo != null) {
+            List<DeviceAbilityPo> deviceAbilityPos = deviceModelAbilityMapper.selectActiveByModelId(devicePo.getModelId());
+            List<DeviceAbilityOptionPo> deviceAbilityOptionPos = new ArrayList<>();
+            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = new ArrayList<>();
+            deviceAbilityPos.stream().filter(temp ->{return temp.getDirValue().equals(deviceFuncVo.getFuncId());}).forEach(deviceAbilityPo-> {
+                deviceAbilityOptionPos.addAll(deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(deviceAbilityPo.getId()));
+                deviceModelAbilityOptionPos.addAll(deviceModelAbilityOptionMapper.queryByModelIdAbilityId(devicePo.getModelId(), deviceAbilityPo.getId()));
+            });
+            Integer optionId = null;
+            for (DeviceAbilityOptionPo temp : deviceAbilityOptionPos){
+                if (deviceFuncVo.getValue().equals(temp.getOptionValue())){
+                    optionId = temp.getId();
+                    break;
+                }
+            }
+            for (DeviceModelAbilityOptionPo temp : deviceModelAbilityOptionPos){
+                if (temp.getAbilityOptionId().equals(optionId)&&StringUtils.isNotEmpty(temp.getActualOptionValue())){
+                    deviceFuncVo.setValue(temp.getActualOptionValue());
+                    break;
+                }
+            }
+
+
             Integer deviceId = devicePo.getId();
             String topic = "/down2/control/" + deviceId;
             String requestId = UUID.randomUUID().toString().replace("-", "");
