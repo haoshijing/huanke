@@ -235,8 +235,20 @@ public class StatisticService {
                     deviceTypePercents.add(deviceTypePercent);
                 }
             }
+            if(deviceTypePercents.size()>6) {
+                deviceTypePercents.sort((x, y) -> Long.compare(y.getDeviceCount(), x.getDeviceCount()));
+                deviceTypePercents = deviceTypePercents.subList(0, 5);
+                DeviceModelVo.DeviceModelPercent other = new DeviceModelVo.DeviceModelPercent();
+                other.setModelName("其他");
+                other.setDeviceCount(deviceTotal - deviceTypePercents.get(0).getDeviceCount() - deviceTypePercents.get(1).getDeviceCount() - deviceTypePercents.get(2).getDeviceCount() - deviceTypePercents.get(3).getDeviceCount() - deviceTypePercents.get(4).getDeviceCount());
+                DecimalFormat df = new DecimalFormat();
+                df.setMaximumFractionDigits(2);
+                df.setMinimumFractionDigits(2);
+                String modelPercent = df.format(other.getDeviceCount() * 100.00 / deviceTotal) + "%";
+                other.setModelPercent(modelPercent);
+                deviceTypePercents.add(other);
+            }
         }
-
         return deviceTypePercents;
 
     }
