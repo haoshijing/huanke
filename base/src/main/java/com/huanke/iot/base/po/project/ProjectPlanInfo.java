@@ -24,6 +24,8 @@ public class ProjectPlanInfo {
     private Integer linkProjectId;
     private Date warnDate;
     private Date nextExecuteTime;
+    private Integer month;
+    private Integer day;
     private Integer cycleType;
     private Integer cycleNums;
     private Integer overTimeDays;
