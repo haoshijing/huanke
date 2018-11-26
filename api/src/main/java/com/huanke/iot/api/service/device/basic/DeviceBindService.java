@@ -137,6 +137,7 @@ public class DeviceBindService {
             if (deviceTeamItemPoList.size() > 0 && deviceTeamItemPoList.get(0).getStatus().equals(CommonConstant.STATUS_DEL)) {
                 DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemPoList.get(0);
                 deviceTeamItemPo.setTeamId(teamId);
+                deviceTeamItemPo.setLinkAgeStatus(DeviceTeamConstants.DEVICE_TEAM_LINKAGE_NO);
                 deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
                 deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
                 deviceTeamItemMapper.updateById(deviceTeamItemPo);
@@ -145,6 +146,7 @@ public class DeviceBindService {
                 deviceTeamItemPo.setUserId(userId);
                 deviceTeamItemPo.setDeviceId(devicePo.getId());
                 deviceTeamItemPo.setTeamId(teamId);
+                deviceTeamItemPo.setLinkAgeStatus(DeviceTeamConstants.DEVICE_TEAM_LINKAGE_NO);
                 deviceTeamItemPo.setCreateTime(System.currentTimeMillis());
                 deviceTeamItemPo.setStatus(1);
                 deviceTeamItemMapper.insert(deviceTeamItemPo);
