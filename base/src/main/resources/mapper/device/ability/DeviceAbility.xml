@@ -202,6 +202,20 @@
         AND t_device_ability.abilityType = #{abilityType}
     </select>
 
+
+    <select id="selectByModelId"  resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        SELECT
+          a.*
+        FROM
+        t_device_ability a,
+        t_device_model_ability m
+        WHERE
+        m.abilityId = a.id
+        AND m.status = 1
+        AND a.status = 1
+        AND m.modelId = #{modelId}
+    </select>
+
     <select id="getDirValuesByDeviceTypeId" resultType="java.lang.String">
         select dirValue from <include refid="tableName"/>
         where id IN
