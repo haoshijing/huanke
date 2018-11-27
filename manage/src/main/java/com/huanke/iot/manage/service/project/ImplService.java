@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,10 @@ public class ImplService {
         User user = userService.getCurrentUser();
         ProjectImplementLog projectImplementLog = new ProjectImplementLog();
         BeanUtils.copyProperties(request, projectImplementLog);
+        //处理图册
+        List<String> imgList = request.getImgList();
+        String imgListStr = String.join(",", imgList);
+        projectImplementLog.setImgList(imgListStr);
         projectImplementLog.setFileList(JSONObject.toJSONString(request.getFileMap()));
         projectImplementLog.setCreateUser(user.getId());
         projectImplementLog.setCreateTime(new Date());
@@ -46,6 +51,9 @@ public class ImplService {
         for (ImplementRsp implementRsp : implementRspList) {
             String fileList = implementRsp.getFileList();
             implementRsp.setFileMap((Map<Integer, List<String>>) JSONObject.parse(fileList));
+
+            String imgListStr = implementRsp.getImgListStr();
+            implementRsp.setImgList(Arrays.asList(imgListStr.split(",")));
         }
         return implementRspList;
     }
