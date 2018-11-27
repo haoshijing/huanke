@@ -30,7 +30,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
 //        String token = request.getHeader(TOKEN);
         boolean preLogin = true;
-        if(isPassUrl(request)) {
+        if(!isPassUrl(request)) {
             User user = (User) SecurityUtils.getSubject().getSession().getAttribute("user");
             if (user == null || user.getUserName() == null) {
                 //throw new BusinessException("登录超时失效，请重新登录！");
