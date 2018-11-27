@@ -61,16 +61,15 @@ public class ProjectJob {
                     break;
                 case ProjectPlanCycleTypeConstants.CYCLE_TYPE_YEAR:
                     executeCreateJob(projectPlanInfo, 2);
-                    int i = 28;
                     Calendar calYear = Calendar.getInstance();
                     calYear.setTime(nextExecuteTime);
                     int month = calYear.get(Calendar.MONTH) + 1;
                     calYear.add(Calendar.YEAR,1);
                     if(month == 2){
-                        if(i>28){
+                        if(day>28){
                             calYear.set(Calendar.DATE, calYear.getActualMaximum(Calendar.DATE));
                         }else{
-                            calYear.set(Calendar.DAY_OF_MONTH, i);
+                            calYear.set(Calendar.DAY_OF_MONTH, day);
                         }
                     }
                     projectPlanInfo.setNextExecuteTime(calYear.getTime());
