@@ -18,7 +18,8 @@ public class ImplementRsp {
     private String typeName;
     private String description;
     private String implTime;
-    private String imgList;
+    private String imgListStr;
+    private List<String> imgList;
     private String fileList;
     private Map<Integer, List<String>> fileMap;
 }

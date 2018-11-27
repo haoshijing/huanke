@@ -254,4 +254,10 @@
         </if>-->
         AND customerId = #{projectPlanInfo.customerId}
     </select>
+
+    <select id="selectAllExist" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+        select * from
+        <include refid="tableName"/>
+        where to_days(nextExecuteTime) = to_days(now())
+    </select>
 </mapper>
