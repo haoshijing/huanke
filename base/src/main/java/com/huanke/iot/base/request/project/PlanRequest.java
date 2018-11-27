@@ -22,6 +22,8 @@ public class PlanRequest {
     private Integer linkDeviceId;
     private Integer linkProjectId;
     private Date nextExecuteTime;
+    private Integer month;
+    private Integer day;
     private Integer cycleType;
     private Integer cycleNums;//多少年 多少月
     private Integer isRightExcute;//是否立即执行
