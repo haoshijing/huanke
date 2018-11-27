@@ -757,6 +757,7 @@ public class DeviceDataService {
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
         DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
         if (devicePo != null) {
+            //对设备实际的指令值进行映射
             List<DeviceAbilityPo> deviceAbilityPos = deviceModelAbilityMapper.selectActiveByModelId(devicePo.getModelId());
             List<DeviceAbilityOptionPo> deviceAbilityOptionPos = new ArrayList<>();
             List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = new ArrayList<>();
@@ -765,6 +766,7 @@ public class DeviceDataService {
                 deviceModelAbilityOptionPos.addAll(deviceModelAbilityOptionMapper.queryByModelIdAbilityId(devicePo.getModelId(), deviceAbilityPo.getId()));
             });
             Integer optionId = null;
+            String actualValue = deviceFuncVo.getValue();
             for (DeviceAbilityOptionPo temp : deviceAbilityOptionPos){
                 if (deviceFuncVo.getValue().equals(temp.getOptionValue())){
                     optionId = temp.getId();
@@ -773,11 +775,11 @@ public class DeviceDataService {
             }
             for (DeviceModelAbilityOptionPo temp : deviceModelAbilityOptionPos){
                 if (temp.getAbilityOptionId().equals(optionId)&&StringUtils.isNotEmpty(temp.getActualOptionValue())){
-                    deviceFuncVo.setValue(temp.getActualOptionValue());
+                    actualValue = temp.getActualOptionValue();
                     break;
                 }
             }
-
+            //映射结束
 
             Integer deviceId = devicePo.getId();
             String topic = "/down2/control/" + deviceId;
@@ -796,7 +798,7 @@ public class DeviceDataService {
             funcListMessage.setMsg_id(requestId);
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(deviceFuncVo.getFuncId());
-            funcItemMessage.setValue(deviceFuncVo.getValue());
+            funcItemMessage.setValue(actualValue);
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
             stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
