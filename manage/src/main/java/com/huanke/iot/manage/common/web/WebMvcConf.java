@@ -35,11 +35,11 @@ public class WebMvcConf extends WebMvcConfigurerAdapter {
         registry.addInterceptor(processInterceptor)
                 .addPathPatterns("/**")
                 .addPathPatterns("/api/device/*");
-        registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/**").
-                excludePathPatterns("/api/device/otaDevice").
-                excludePathPatterns("/api/device/updateDeviceId").
-                excludePathPatterns("/api/device/resetPid").
-                excludePathPatterns("/api/device/upload", "/api/upload","/swagger-ui.html/*","/swagger-ui.html");
+//        registry.addInterceptor(authInterceptor)
+//                .addPathPatterns("/**").
+//                excludePathPatterns("/api/device/otaDevice").
+//                excludePathPatterns("/api/device/updateDeviceId").
+//                excludePathPatterns("/api/device/resetPid").
+//                excludePathPatterns("/api/device/upload", "/api/upload","/swagger-ui.html/*","/swagger-ui.html");
     }
 }
