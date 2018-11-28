@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.project;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.JobFlowStatusConstants;
 import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.PlanMapper;
@@ -101,6 +102,7 @@ public class PlanService {
             projectPlan.setCustomerId(customerService.obtainCustomerId(false));
             projectPlan.setCreateTime(new Date());
             projectPlan.setCreateUser(user.getId());
+            projectPlan.setStatus(CommonConstant.STATUS_YES);
             //是否立即执行
             excuteRight(request, projectPlan, enableUsers, isRightExcute);
             return planMapper.insert(projectPlan) > 0;

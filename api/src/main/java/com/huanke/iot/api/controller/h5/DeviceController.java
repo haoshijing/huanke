@@ -207,10 +207,10 @@ public class DeviceController extends BaseController {
     }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<String> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
+    public ApiResponse<Boolean> sendFunc(@RequestBody DeviceFuncVo deviceFuncVo) {
         String funcId = deviceFuncVo.getFuncId();
-        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserId(),1);
-        return new ApiResponse<>(requestId);
+        Boolean ret = deviceDataService.sendFuncs(deviceFuncVo,getCurrentUserId(),1);
+        return new ApiResponse<>(ret);
     }
 
     @RequestMapping("/setSpeedConfig")

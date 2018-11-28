@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.project;
 
+import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
@@ -65,6 +66,7 @@ public class RuleService {
             projectRule.setCustomerId(customerService.obtainCustomerId(false));
             projectRule.setCreateTime(new Date());
             projectRule.setCreateUser(user.getId());
+            projectRule.setStatus(CommonConstant.STATUS_YES);
             return ruleMapper.insert(projectRule) > 0;
         } else {
             //修改
