@@ -41,6 +41,7 @@ public class ProjectJob {
         List<ProjectPlanInfo> projectPlanInfoList = planMapper.selectAllExist();
         for (ProjectPlanInfo projectPlanInfo : projectPlanInfoList) {
             Integer cycleType = projectPlanInfo.getCycleType();
+            Integer cycleNum = projectPlanInfo.getCycleNums();
             Date nextExecuteTime = projectPlanInfo.getNextExecuteTime();
             Integer day = projectPlanInfo.getDay();
             switch (cycleType) {
@@ -48,9 +49,10 @@ public class ProjectJob {
                     break;
                 case ProjectPlanCycleTypeConstants.CYCLE_TYPE_MONTH:
                     executeCreateJob(projectPlanInfo, 1);
+
                     Calendar calMonth = Calendar.getInstance();
                     calMonth.setTime(nextExecuteTime);
-                    calMonth.add(Calendar.MONTH,1);
+                    calMonth.add(Calendar.MONTH,cycleNum);
                     if(day > calMonth.getActualMaximum(Calendar.DATE)){
                         calMonth.set(Calendar.DATE, calMonth.getActualMaximum(Calendar.DATE));
                     }else{
@@ -64,7 +66,7 @@ public class ProjectJob {
                     Calendar calYear = Calendar.getInstance();
                     calYear.setTime(nextExecuteTime);
                     int month = calYear.get(Calendar.MONTH) + 1;
-                    calYear.add(Calendar.YEAR,1);
+                    calYear.add(Calendar.YEAR,cycleNum);
                     if(month == 2){
                         if(day>28){
                             calYear.set(Calendar.DATE, calYear.getActualMaximum(Calendar.DATE));
