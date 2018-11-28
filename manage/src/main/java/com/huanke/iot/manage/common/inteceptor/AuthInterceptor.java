@@ -47,6 +47,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 //        }
         if(!preLogin){
             response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+            response.setCharacterEncoding("UTF-8");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code",-1);
             jsonObject.put("msg","你的登录已失效,请重新登录！");
