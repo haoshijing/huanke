@@ -29,7 +29,7 @@ public final class CommonUtil {
     public  String obtainSecondHost() {
 
         String requestHost =  httpServletRequest.getHeader("Host");
-        if(requestHost.equals("127.0.0.1")){
+        if(requestHost.startsWith("127.0.0.1")){
             return "dev";
         }
         log.info("当前域名是：{}",requestHost);

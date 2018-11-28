@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class ProjectRequest {
     private Integer id;
-    private Integer projectId;  //工程id
+    private String projectNo;  //工程No
     private String name;
     private String description;
     private Date buildTime;     //工程建设实践
