@@ -2,11 +2,10 @@ package com.huanke.iot.manage.common.inteceptor;
 
 
 import com.google.common.collect.Lists;
-//import com.huanke.iot.manage.service.AdminAuthCacheService;
+import com.huanke.iot.base.po.user.User;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -25,12 +24,19 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     /**
      * This implementation always returns {@code true}.
      */
-//    @Override
-//    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-//            throws Exception {
-//
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+
 //        String token = request.getHeader(TOKEN);
-//        boolean preLogin = true;
+        boolean preLogin = true;
+        if(!isPassUrl(request)) {
+            User user = (User) SecurityUtils.getSubject().getSession().getAttribute("user");
+            if (user == null || user.getUserName() == null) {
+                //throw new BusinessException("登录超时失效，请重新登录！");
+                preLogin = false;
+            }
+        }
 //        if(StringUtils.isEmpty(token)){
 //            preLogin = isPassUrl(request);
 //        }else {
@@ -39,15 +45,15 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 //                preLogin = false;
 //            }
 //        }
-//        if(!preLogin){
-//            response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("code",-1);
-//            jsonObject.put("msg","你的登录已失效");
-//            response.getWriter().print(jsonObject);
-//        }
-//        return preLogin;
-//    }
+        if(!preLogin){
+            response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code",-1);
+            jsonObject.put("msg","你的登录已失效,请重新登录！");
+            response.getWriter().print(jsonObject);
+        }
+        return preLogin;
+    }
 
     private boolean isPassUrl(HttpServletRequest request){
         String requestUri = request.getRequestURI();

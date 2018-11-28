@@ -797,6 +797,7 @@ public class CustomerService {
 
         String customerId;
         String userHost = commonUtil.obtainSecondHost();
+        System.out.println("userHost->" + userHost);
         if (StringUtils.isNotBlank(userHost)) {
             if (!StringUtils.contains(skipRemoteHost, userHost)) {
                 String customerKey = CUSTOMERID_PREIX + userHost;

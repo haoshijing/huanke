@@ -12,7 +12,7 @@
         <include refid="tableName"/>
         (
         customerId,
-        projectNo,
+        projectId,
         name,
         description,
         buildTime,
@@ -26,7 +26,7 @@
         VALUES
         (
         #{customerId},
-        #{projectNo},
+        #{projectId},
         #{name},
         #{description},
         #{buildTime},
@@ -61,8 +61,8 @@
         update
         <include refid="tableName"/>
         <set>
-            <if test="projectNo != null and projectNo!='' ">
-                projectNo = #{projectNo},
+            <if test="projectId != null">
+                projectId = #{projectId},
             </if>
             <if test="name != null and name!='' ">
                 name = #{name},
@@ -148,7 +148,7 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.ProjectRspPo">
-      SELECT pbi.id, pbi.projectNo, pbi.name, pbi.description, pbi.buildTime, pbi.buildAddress, pbi.groupIds, pbi.status, pbi.createTime, pbi.updateTime      , u.nickName createName,u1.nickName updateName, count(ped.id) deviceCount
+      SELECT pbi.id, pbi.projectId, pbi.name, pbi.description, pbi.buildTime, pbi.buildAddress, pbi.groupIds, pbi.status, pbi.createTime, pbi.updateTime      , u.nickName createName,u1.nickName updateName, count(ped.id) deviceCount
       FROM t_project_base_info pbi left join t_user u on pbi.createUser = u.id left join t_user u1 on  pbi.updateUser = u1.id left join t_project_extra_device ped on pbi.id = ped.projectId
       WHERE 1=1
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
@@ -161,7 +161,7 @@
     </select>
 
     <select id="selectByProjectId" resultType="com.huanke.iot.base.request.project.ProjectRequest">
-        select id, projectNo, name, description, buildTime, buildAddress, gps, groupIds, status from
+        select id, projectId, name, description, buildTime, buildAddress, gps, groupIds, status from
         <include refid="tableName"/>
         where id = #{projectId}
     </select>

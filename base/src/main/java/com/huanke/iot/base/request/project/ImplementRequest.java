@@ -18,6 +18,6 @@ public class ImplementRequest {
     private Integer typeId;
     private String description;
     private String implTime;
-    private String imgList;
+    private List<String> imgList;
     private Map<Integer, List<String>> fileMap;
 }

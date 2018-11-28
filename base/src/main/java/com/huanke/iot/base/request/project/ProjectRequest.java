@@ -14,16 +14,16 @@ import java.util.List;
 @Data
 public class ProjectRequest {
     private Integer id;
-    private String projectNo;
+    private Integer projectId;  //工程id
     private String name;
     private String description;
-    private Date buildTime;
-    private String buildAddress;
-    private String gps;
-    private String groupIds;
+    private Date buildTime;     //工程建设实践
+    private String buildAddress;    //工程建设地址（各字段用"，"拼接）
+    private String gps;     //工程建设经纬度（各字段用"，"拼接）
+    private String groupIds;    //关联设备项目ids
     private Integer status;
-    private List<ExtraDevice> extraDeviceList;
-    private List<MaterialInfo> materialInfoList;
+    private List<ExtraDevice> extraDeviceList;      //第三方设备list
+    private List<MaterialInfo> materialInfoList;    //实施信息list
 
     @Data
     public static class ExtraDevice{

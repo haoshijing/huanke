@@ -15,7 +15,7 @@ import java.util.Date;
 public class ProjectBaseInfo {
     private Integer id;
     private Integer customerId;
-    private String projectNo;
+    private Integer projectId;
     private String name;
     private String description;
     private Date buildTime;

@@ -10,15 +10,22 @@ import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupSceneMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.group.DeviceGroupScenePo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.po.user.UserPo;
@@ -37,6 +44,7 @@ import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +107,15 @@ public class DeviceGroupService {
 
     @Autowired
     private UserManagerMapper userManagerMapper;
+
+    @Autowired
+    private DeviceAbilityOptionMapper deviceAbilityOptionMapper;
+
+    @Autowired
+    private DeviceModelAbilityMapper deviceModelAbilityMapper;
+
+    @Autowired
+    private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
 
     /**
      * 2018-08-18
@@ -401,6 +418,30 @@ public class DeviceGroupService {
     public String sendFunc(DeviceFuncRequest deviceFuncRequest, Integer userId, Integer operType) {
         DevicePo devicePo = deviceMapper.selectById(deviceFuncRequest.getDeviceId());
         if (devicePo != null) {
+            //对设备实际的指令值进行映射
+            List<DeviceAbilityPo> deviceAbilityPos = deviceModelAbilityMapper.selectActiveByModelId(devicePo.getModelId());
+            List<DeviceAbilityOptionPo> deviceAbilityOptionPos = new ArrayList<>();
+            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = new ArrayList<>();
+            deviceAbilityPos.stream().filter(temp ->{return temp.getDirValue().equals(deviceFuncRequest.getFuncId());}).forEach(deviceAbilityPo-> {
+                deviceAbilityOptionPos.addAll(deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(deviceAbilityPo.getId()));
+                deviceModelAbilityOptionPos.addAll(deviceModelAbilityOptionMapper.queryByModelIdAbilityId(devicePo.getModelId(), deviceAbilityPo.getId()));
+            });
+            Integer optionId = null;
+            String actualValue = deviceFuncRequest.getValue();
+            for (DeviceAbilityOptionPo temp : deviceAbilityOptionPos){
+                if (deviceFuncRequest.getValue().equals(temp.getOptionValue())){
+                    optionId = temp.getId();
+                    break;
+                }
+            }
+            for (DeviceModelAbilityOptionPo temp : deviceModelAbilityOptionPos){
+                if (temp.getAbilityOptionId().equals(optionId)&& StringUtils.isNotEmpty(temp.getActualOptionValue())){
+                    actualValue = temp.getActualOptionValue();
+                    break;
+                }
+            }
+            //映射结束
+
             Integer deviceId = devicePo.getId();
             String topic = "/down2/control/" + deviceId;
             String requestId = UUID.randomUUID().toString().replace("-", "");
@@ -418,7 +459,7 @@ public class DeviceGroupService {
             funcListMessage.setMsg_id(requestId);
             FuncListMessage.FuncItemMessage funcItemMessage = new FuncListMessage.FuncItemMessage();
             funcItemMessage.setType(deviceFuncRequest.getFuncId());
-            funcItemMessage.setValue(deviceFuncRequest.getValue());
+            funcItemMessage.setValue(actualValue);
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
             stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
