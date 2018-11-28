@@ -95,6 +95,7 @@ public class ProjectService {
             projectBaseInfo.setCustomerId(customerService.obtainCustomerId(false));
             projectBaseInfo.setCreateTime(new Date());
             projectBaseInfo.setCreateUser(user.getId());
+            projectBaseInfo.setStatus(CommonConstant.STATUS_YES);
             projectMapper.insert(projectBaseInfo);
             //添加第三方设备
             List<ProjectRequest.ExtraDevice> extraDeviceList = request.getExtraDeviceList();
@@ -230,5 +231,10 @@ public class ProjectService {
 
         Integer customerId = customerService.obtainCustomerId(false);
         return projectMapper.selectProjectDict(customerId);
+    }
+
+    public Boolean existProjectNo(String projectNo) {
+        Integer customerId = customerService.obtainCustomerId(false);
+        return projectMapper.existProjectNo(customerId, projectNo) > 0;
     }
 }
