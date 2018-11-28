@@ -405,26 +405,7 @@ public class DeviceOperateService {
 
         /*查询设备的 阈值类与传参类功能项*/
         List<DeviceModelAbilityVo> deviceModelAbilityVos = getModelVo(deviceId);
-        //查询当前设备是否为联动设备
-        DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(deviceId);
-        if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
-            //为联动设备，则查询其联动设备的功能项
-            List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
-            for(DeviceTeamItemPo eachPo : deviceTeamItemPoList){
-                deviceModelAbilityVos.addAll(getModelVo(eachPo.getDeviceId()));
-            }
-        }
-        //去重
-        List<DeviceModelAbilityVo> finalList = deviceModelAbilityVos.stream().filter(distinctByKey(DeviceModelAbilityVo::getAbilityId)).collect(Collectors.toList());
-        log.info("去重后的deviceModelAbilityVo：{}",finalList);
-        deviceQueryVo.setDeviceModelAbilityVos(finalList);
-        //todo 将deviceModelFormat放在此项中
         return deviceQueryVo;
-    }
-
-    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
     }
 
     /**
@@ -2025,9 +2006,12 @@ public class DeviceOperateService {
         //获取当前登录的用户
         DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
         if(null != devicePo){
+            //对当前设备发送指令
+            sendFunc(deviceFuncVo,operType);
             //查询当前设备是否为联动设备
             DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
             if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
+                //对其他联动设备发送指令
                 List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
                 for (DeviceTeamItemPo eachPo : deviceTeamItemPoList) {
                     DeviceFuncRequest deviceFuncRequest = new DeviceFuncRequest();
@@ -2036,8 +2020,6 @@ public class DeviceOperateService {
                     deviceFuncRequest.setValue(deviceFuncVo.getValue());
                     String requestId = sendFunc(deviceFuncRequest, operType);
                 }
-            }else {
-                sendFunc(deviceFuncVo,operType);
             }
             return new ApiResponse<>(RetCode.OK,"指令发送成功",true);
         }
