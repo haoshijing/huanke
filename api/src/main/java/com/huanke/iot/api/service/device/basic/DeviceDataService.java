@@ -754,6 +754,30 @@ public class DeviceDataService {
         }
     }
 
+    public Boolean sendFuncs(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType){
+        //获取当前登录的用户
+        DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
+        if(null != devicePo){
+            //对当前设备发送指令
+            sendFunc(deviceFuncVo,userId,operType);
+            //查询当前设备是否为联动设备
+            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(devicePo.getId());
+            if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
+                //对其他联动设备发送指令
+                List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
+                for (DeviceTeamItemPo eachPo : deviceTeamItemPoList) {
+                    DeviceFuncVo linkDeviceFuncVo = new DeviceFuncVo();
+                    linkDeviceFuncVo.setDeviceId(eachPo.getDeviceId());
+                    linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
+                    linkDeviceFuncVo.setValue(deviceFuncVo.getValue());
+                    String requestId = sendFunc(linkDeviceFuncVo,userId, operType);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public String sendFunc(DeviceFuncVo deviceFuncVo, Integer userId, Integer operType) {
         DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
         if (devicePo != null) {
