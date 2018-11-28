@@ -95,6 +95,7 @@ public class ProjectService {
             projectBaseInfo.setCustomerId(customerService.obtainCustomerId(false));
             projectBaseInfo.setCreateTime(new Date());
             projectBaseInfo.setCreateUser(user.getId());
+            projectBaseInfo.setStatus(CommonConstant.STATUS_YES);
             projectMapper.insert(projectBaseInfo);
             //添加第三方设备
             List<ProjectRequest.ExtraDevice> extraDeviceList = request.getExtraDeviceList();
