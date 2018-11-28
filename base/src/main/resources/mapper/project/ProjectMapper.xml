@@ -166,13 +166,21 @@
     <select id="selectByProjectId" resultType="com.huanke.iot.base.request.project.ProjectRequest">
         select id, projectNo, name, description, buildTime, buildAddress, gps, groupIds, status from
         <include refid="tableName"/>
-        where id = #{projectNo}
+        where id = #{projectId}
     </select>
 
     <select id="selectProjectDict" resultType="com.huanke.iot.base.resp.project.ProjectDictRsp">
         select id, name from
         <include refid="tableName"/>
         WHERE customerId = #{customerId}
+        AND status = 1
+    </select>
+
+    <select id="existProjectNo" resultType="java.lang.Integer">
+        SELECT count(1) FROM
+        <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+        AND projectNo = #{projectNo}
         AND status = 1
     </select>
 

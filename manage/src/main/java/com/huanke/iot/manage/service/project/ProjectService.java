@@ -232,4 +232,9 @@ public class ProjectService {
         Integer customerId = customerService.obtainCustomerId(false);
         return projectMapper.selectProjectDict(customerId);
     }
+
+    public Boolean existProjectNo(String projectNo) {
+        Integer customerId = customerService.obtainCustomerId(false);
+        return projectMapper.existProjectNo(customerId, projectNo) > 0;
+    }
 }
