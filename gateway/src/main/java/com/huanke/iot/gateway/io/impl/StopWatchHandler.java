@@ -65,8 +65,12 @@ public class StopWatchHandler extends AbstractHandler {
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
             String stopWatch = deviceTypePo.getStopWatch();
             String mName = "m" + flag;
+            try{
+                mbMap.put(mName, JSONObject.parseObject(stopWatch));
+            }catch (Exception e){
+                mbMap.put(mName, stopWatch);
+            }
             mMap.put(typeId, mName);
-            mbMap.put(mName, stopWatch);
             flag++;
             mbMap.put(childId, mName);
         }
