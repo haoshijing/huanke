@@ -805,12 +805,12 @@ public class DeviceDataService {
             }
             //映射结束
 
-            Integer deviceId = devicePo.getId();
-            String topic = "/down2/control/" + deviceId;
+            Integer hostDeviceId = StringUtils.isEmpty(devicePo.getHostDeviceId().toString())?devicePo.getId():devicePo.getHostDeviceId();
+            String topic = "/down2/control/" + hostDeviceId;
             String requestId = UUID.randomUUID().toString().replace("-", "");
             DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
             deviceOperLogPo.setFuncId(deviceFuncVo.getFuncId());
-            deviceOperLogPo.setDeviceId(deviceId);
+            deviceOperLogPo.setDeviceId(devicePo.getId());
             deviceOperLogPo.setOperType(operType);
             deviceOperLogPo.setOperUserId(userId);
             deviceOperLogPo.setFuncValue(deviceFuncVo.getValue());
@@ -823,9 +823,10 @@ public class DeviceDataService {
             FuncItemMessage funcItemMessage = new FuncItemMessage();
             funcItemMessage.setType(deviceFuncVo.getFuncId());
             funcItemMessage.setValue(actualValue);
+            funcItemMessage.setChildid(devicePo.getChildId());
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
             mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
-            stringRedisTemplate.opsForHash().put("control2." + deviceId, funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
+            stringRedisTemplate.opsForHash().put("control2." + devicePo.getId(), funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             return requestId;
         }
         return "";

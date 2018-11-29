@@ -141,11 +141,11 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<String> sendFuc(@RequestBody DeviceFuncVo deviceFuncVo){
+    public ApiResponse<Boolean> sendFuc(@RequestBody DeviceFuncVo deviceFuncVo){
         log.debug("发送指令："+deviceFuncVo.toString());
         String funcId = deviceFuncVo.getFuncId();
-        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),2);
-        return new ApiResponse<>(requestId);
+        Boolean request = deviceDataService.sendFuncs(deviceFuncVo,getCurrentUserIdForApp(),2);
+        return new ApiResponse<>(request);
     }
 
     @RequestMapping("/getAppPassword")
