@@ -111,13 +111,13 @@ public class AppBasicService {
     }
 
     @Transactional
-    public ApiResponse<Object> addUserAppInfo(HttpServletRequest request){
+    public String addUserAppInfo(HttpServletRequest request){
         log.info("appAddUser,appId={},iMei={}",request.getParameter("appId"),request.getParameter("iMei"));
         String appId = request.getParameter("appId");
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
         if(customerPo == null){
             log.error("appAddUser,不存在的appId={}",appId);
-            return new ApiResponse<>("APP错误，请安装正确的APP！");
+            return "APP错误，请安装正确的APP！";
         }
         UserRequestContext context = UserRequestContextHolder.get();
         if(context.getCustomerVo() == null){
@@ -128,7 +128,7 @@ public class AppBasicService {
         JSONObject resp = wechartUtil.obtainAuthAccessToken(request.getParameter("code"));
         if(resp == null || StringUtils.isEmpty(resp.get("openid").toString())){
             log.error("appAddUser,获取openId异常，code={}，resp={}",request.getParameter("code"),resp);
-            return new ApiResponse<>("微信错误，请重新扫码！");
+            return "微信错误，请重新扫码！";
         }
         String iMei = request.getParameter("iMei");
         String openId = resp.getString("openid");
@@ -136,7 +136,7 @@ public class AppBasicService {
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
         if(customerUserPo == null){
             log.info("appAddUser,未注册的openId={}",openId);
-            return new ApiResponse<>("请关注公众号！");
+            return "请关注公众号！";
         }
         AndroidUserInfoPo androidUserInfoPo = new AndroidUserInfoPo();
         androidUserInfoPo.setImei(iMei);
@@ -155,7 +155,7 @@ public class AppBasicService {
             androidUserInfoMapper.insert(androidUserInfoPo);
         }
         log.info("appAddUser,绑定成功，openId={}，iMei={}",openId,iMei);
-        return new ApiResponse<>("绑定成功！");
+        return "绑定成功！";
     }
 
     public Object getQRCode(String appId){

@@ -15,6 +15,7 @@ import com.huanke.iot.api.service.device.basic.AppBasicService;
 import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +61,11 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/setApkInfo")
-    public ApiResponse<Object> setApkInfo(HttpServletRequest request) {
-        return appBasicService.addUserAppInfo(request);
+    public void setApkInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String objectApiResponse = appBasicService.addUserAppInfo(request);
+        response.setContentType(ContentType.TEXT_HTML.getMimeType());
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().print("<span style='font-size:55px'>"+objectApiResponse+"</span>");
     }
 
     @RequestMapping("/getQRCode")
