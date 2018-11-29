@@ -77,7 +77,6 @@ public class PowerCheckService {
         data.setLastUpdateTime(System.currentTimeMillis());
         data.setPowerOn(true);
         DevicePo devicePo = this.deviceMapper.selectById(id);
-        log.info("当前设备开关机:",devicePo.getPowerStatus());
         //上次记录为关机时才更新状态
         if(DeviceConstant.POWER_STATUS__NO == devicePo.getPowerStatus()) {
             needUpdateDd = true;
