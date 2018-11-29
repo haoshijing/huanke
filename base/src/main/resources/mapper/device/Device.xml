@@ -886,4 +886,13 @@
         AND modelId = #{modelId}
     </select>
 
+    <select id="selectByGroupId" resultType="com.huanke.iot.base.resp.project.LinkGroupDeviceRspPo">
+        SELECT td.*, tc.name belongTo FROM t_device td
+        LEFT JOIN t_device_group_item tdgi ON td.id = tdgi.deviceId
+        LEFT JOIN t_customer tc ON td.customerId = tc.id
+        WHERE td.status = 1
+        AND tdgi.groupId = #{groupId}
+        AND tdgi.status = 1
+    </select>
+
 </mapper>

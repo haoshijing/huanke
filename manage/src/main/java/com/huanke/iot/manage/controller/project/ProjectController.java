@@ -7,6 +7,7 @@ import com.huanke.iot.base.request.BaseRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
 import com.huanke.iot.base.resp.project.ProjectDictRsp;
+import com.huanke.iot.base.resp.project.ProjectGroupsRsp;
 import com.huanke.iot.base.resp.project.ProjectRsp;
 import com.huanke.iot.manage.service.project.ProjectService;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +43,13 @@ public class ProjectController {
     public ApiResponse<ProjectRequest> selectProject(@PathVariable("projectId") Integer projectId) {
         ProjectRequest projectRequest = projectService.selectById(projectId);
         return new ApiResponse<>(projectRequest);
+    }
+
+    @ApiOperation("查询单个工程设备项目信息")
+    @PostMapping(value = "/selectGroups")
+    public ApiResponse<List<ProjectGroupsRsp>> selectGroups(@RequestBody BaseListRequest<Integer> request) {
+        List<ProjectGroupsRsp> projectGroupsRsps = projectService.selectGroups(request);
+        return new ApiResponse<>(projectGroupsRsps);
     }
 
     @ApiOperation("添加工程信息")

@@ -2,16 +2,16 @@ package com.huanke.iot.manage.service.project;
 
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.*;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.project.ProjectExtraDevice;
 import com.huanke.iot.base.po.project.ProjectMaterialInfo;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.request.BaseListRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
-import com.huanke.iot.base.resp.project.ProjectDictRsp;
-import com.huanke.iot.base.resp.project.ProjectRsp;
-import com.huanke.iot.base.resp.project.ProjectRspPo;
+import com.huanke.iot.base.resp.project.*;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
@@ -50,6 +50,8 @@ public class ProjectService {
     private MateriaMapper materiaMapper;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private DeviceMapper deviceMapper;
 
 
     public ProjectRsp selectList(ProjectQueryRequest request) {
@@ -236,5 +238,15 @@ public class ProjectService {
     public Boolean existProjectNo(String projectNo) {
         Integer customerId = customerService.obtainCustomerId(false);
         return projectMapper.existProjectNo(customerId, projectNo) > 0;
+    }
+
+    public List<ProjectGroupsRsp> selectGroups(BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        List<ProjectGroupsRsp> projectGroupsRspList = projectMapper.selectGroups(valueList);
+        for (ProjectGroupsRsp projectGroupsRsp : projectGroupsRspList) {
+            List<LinkGroupDeviceRspPo> devicePoList = deviceMapper.selectByGroupId(projectGroupsRsp.getId());
+            projectGroupsRsp.setDeviceList(devicePoList);
+        }
+        return projectGroupsRspList;
     }
 }
