@@ -19,5 +19,5 @@ public class ImplementRequest {
     private String description;
     private String implTime;
     private List<String> imgList;
-    private Map<Integer, List<String>> fileMap;
+    private Map<String, List<String>> fileMap;
 }
