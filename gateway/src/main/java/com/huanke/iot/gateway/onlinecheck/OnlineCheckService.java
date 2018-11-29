@@ -98,6 +98,7 @@ public class OnlineCheckService {
            DevicePo updatePo = new DevicePo();
            updatePo.setId(id);
            updatePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES);
+           updatePo.setLastOnlineTime(System.currentTimeMillis());
            deviceMapper.updateById(updatePo);
            //记录离线后的首次上线时间
            DeviceOperLogPo deviceOperLogPo= new DeviceOperLogPo();
