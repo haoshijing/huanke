@@ -833,6 +833,8 @@ public class DeviceDataService {
     }
 
     public void flushCache() {
+        customerMapper.flushCache();
+        //customerUserMapper.flushCache();//暂时只在api里有插入修改动作，无需接口刷新缓存。暂时未开启缓存。
         deviceAbilityMapper.flushCache();
         deviceAbilityOptionMapper.flushCache();
         deviceModelMapper.flushCache();

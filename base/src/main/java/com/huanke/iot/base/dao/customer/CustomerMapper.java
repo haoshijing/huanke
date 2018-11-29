@@ -12,6 +12,8 @@ import java.util.List;
  **/
 public interface CustomerMapper extends BaseMapper<CustomerPo>{
 
+     void flushCache();
+
      CustomerPo selectBySLD(String SLD);
 
      CustomerPo selectByTeamId(Integer teamId);

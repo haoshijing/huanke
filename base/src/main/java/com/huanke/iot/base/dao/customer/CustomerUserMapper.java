@@ -12,6 +12,7 @@ import java.util.List;
  **/
 public interface CustomerUserMapper extends BaseMapper<CustomerUserPo>{
 
+     void flushCache();
      CustomerUserPo selectByOpenId(String openId);
      CustomerUserPo selectByUserId(Integer userId);
      CustomerUserPo selectByMac(String mac);

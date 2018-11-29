@@ -1,5 +1,7 @@
 package com.huanke.iot.base.inteceptor;
 
+import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
@@ -39,7 +41,8 @@ public class DbInterceptor implements Interceptor {
      * 监听的表范围
      */
     public static final List<Class<?>> CLASS_LIST = Stream.of(DeviceAbilityPo.class, DeviceAbilityOptionPo.class,
-            DeviceModelPo.class, DeviceModelAbilityPo.class, DeviceModelAbilityOptionPo.class)
+            DeviceModelPo.class, DeviceModelAbilityPo.class, DeviceModelAbilityOptionPo.class, CustomerPo.class,
+            CustomerUserPo.class)
             .collect(Collectors.toList());
 
     @Override
