@@ -261,13 +261,13 @@ public class AppBasicService {
                         value = deviceSensorPo.getTem().toString();
                         break;
                     case HCHO_IN:
-                        value = deviceSensorPo.getHcho().toString();
+                        value = FloatDataUtil.getFloat(deviceSensorPo.getHcho());
                         break;
                     case PM25_IN:
                         value = deviceSensorPo.getPm().toString();
                         break;
                     case TVOC_IN:
-                        value = deviceSensorPo.getTvoc().toString();
+                        value = FloatDataUtil.getFloat(deviceSensorPo.getTvoc());
                         break;
                         default:
                             value = "";
@@ -276,7 +276,7 @@ public class AppBasicService {
                 if(map.get(key)==null){
                     map.put(key,value);
                 }else{
-                    map.put(key,new DecimalFormat("0").format(Float.valueOf(map.get(key))/2+Float.valueOf(value)/2));
+                    map.put(key,new DecimalFormat("0.00").format(Float.valueOf(map.get(key))/2+Float.valueOf(value)/2));
                 }
             }
             sensorDataVo.setXdata(new ArrayList<>(map.keySet()));
