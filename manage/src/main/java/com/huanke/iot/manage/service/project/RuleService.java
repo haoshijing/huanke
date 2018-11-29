@@ -4,7 +4,7 @@ import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
-import com.huanke.iot.base.request.config.DictQueryRequest;
+import com.huanke.iot.base.request.project.RuleQueryRequest;
 import com.huanke.iot.base.request.project.RuleRequest;
 import com.huanke.iot.base.resp.project.RuleDictRsp;
 import com.huanke.iot.base.resp.project.RuleRsp;
@@ -37,7 +37,7 @@ public class RuleService {
     private CustomerService customerService;
 
 
-    public RuleRsp selectList(DictQueryRequest request) {
+    public RuleRsp selectList(RuleQueryRequest request) {
         Integer customerId = customerService.obtainCustomerId(false);
         RuleRsp ruleRsp = new RuleRsp();
         Integer limit = request.getLimit();

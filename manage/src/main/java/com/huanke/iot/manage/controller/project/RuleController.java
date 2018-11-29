@@ -3,7 +3,7 @@ package com.huanke.iot.manage.controller.project;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.BaseListRequest;
-import com.huanke.iot.base.request.config.DictQueryRequest;
+import com.huanke.iot.base.request.project.RuleQueryRequest;
 import com.huanke.iot.base.request.project.RuleRequest;
 import com.huanke.iot.base.resp.project.RuleDictRsp;
 import com.huanke.iot.base.resp.project.RuleRsp;
@@ -31,7 +31,7 @@ public class RuleController {
 
     @ApiOperation("查询客户列表")
     @PostMapping(value = "/selectList")
-    public ApiResponse<RuleRsp> selectList(@RequestBody DictQueryRequest request) throws Exception {
+    public ApiResponse<RuleRsp> selectList(@RequestBody RuleQueryRequest request) throws Exception {
         RuleRsp ruleRsp = ruleService.selectList(request);
         return new ApiResponse<>(ruleRsp);
     }
