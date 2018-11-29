@@ -21,5 +21,5 @@ public class ImplementRsp {
     private String imgListStr;
     private List<String> imgList;
     private String fileList;
-    private Map<Integer, List<String>> fileMap;
+    private Map<String, List<String>> fileMap;
 }

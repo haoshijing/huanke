@@ -49,11 +49,14 @@ public class ImplService {
     public List<ImplementRsp> selectImplements(Integer projectId) {
         List<ImplementRsp> implementRspList = implMapper.selectByProjectId(projectId);
         for (ImplementRsp implementRsp : implementRspList) {
+
             String fileList = implementRsp.getFileList();
-            implementRsp.setFileMap((Map<Integer, List<String>>) JSONObject.parse(fileList));
+            implementRsp.setFileMap((Map<String, List<String>>) JSONObject.parse(fileList));
 
             String imgListStr = implementRsp.getImgListStr();
             implementRsp.setImgList(Arrays.asList(imgListStr.split(",")));
+            implementRsp.setFileList(null);
+            implementRsp.setImgListStr(null);
         }
         return implementRspList;
     }
