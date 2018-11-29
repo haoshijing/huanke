@@ -90,5 +90,6 @@ public class DevicePo {
     private Long createTime;
     private Integer lastUpdateUser;
     private Long lastUpdateTime;
+    private Long lastOnlineTime;
 
 }

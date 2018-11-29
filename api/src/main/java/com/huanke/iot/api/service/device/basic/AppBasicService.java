@@ -82,6 +82,13 @@ public class AppBasicService {
     @Autowired
     private AndroidSceneImgMapper androidSceneImgMapper;
 
+    List<String> needValues = new ArrayList<>(Arrays.asList(
+            SensorTypeEnums.TEMPERATURE_IN.getCode(),
+            SensorTypeEnums.HUMIDITY_IN.getCode(),
+            SensorTypeEnums.PM25_IN.getCode(),
+            SensorTypeEnums.CO2_IN.getCode(),
+            SensorTypeEnums.HCHO_IN.getCode(),
+            SensorTypeEnums.TVOC_IN.getCode()));
     @Transactional
     public ApiResponse<Object> removeIMeiInfo(HttpServletRequest request){
         String appId = request.getParameter("appId");
@@ -104,13 +111,13 @@ public class AppBasicService {
     }
 
     @Transactional
-    public ApiResponse<Object> addUserAppInfo(HttpServletRequest request){
+    public String addUserAppInfo(HttpServletRequest request){
         log.info("appAddUser,appId={},iMei={}",request.getParameter("appId"),request.getParameter("iMei"));
         String appId = request.getParameter("appId");
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
         if(customerPo == null){
             log.error("appAddUser,不存在的appId={}",appId);
-            return new ApiResponse<>("APP错误，请安装正确的APP！");
+            return "APP错误，请安装正确的APP！";
         }
         UserRequestContext context = UserRequestContextHolder.get();
         if(context.getCustomerVo() == null){
@@ -121,7 +128,7 @@ public class AppBasicService {
         JSONObject resp = wechartUtil.obtainAuthAccessToken(request.getParameter("code"));
         if(resp == null || StringUtils.isEmpty(resp.get("openid").toString())){
             log.error("appAddUser,获取openId异常，code={}，resp={}",request.getParameter("code"),resp);
-            return new ApiResponse<>("微信错误，请重新扫码！");
+            return "微信错误，请重新扫码！";
         }
         String iMei = request.getParameter("iMei");
         String openId = resp.getString("openid");
@@ -129,7 +136,7 @@ public class AppBasicService {
         CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(openId);
         if(customerUserPo == null){
             log.info("appAddUser,未注册的openId={}",openId);
-            return new ApiResponse<>("请关注公众号！");
+            return "请关注公众号！";
         }
         AndroidUserInfoPo androidUserInfoPo = new AndroidUserInfoPo();
         androidUserInfoPo.setImei(iMei);
@@ -148,7 +155,7 @@ public class AppBasicService {
             androidUserInfoMapper.insert(androidUserInfoPo);
         }
         log.info("appAddUser,绑定成功，openId={}，iMei={}",openId,iMei);
-        return new ApiResponse<>("绑定成功！");
+        return "绑定成功！";
     }
 
     public Object getQRCode(String appId){
@@ -222,10 +229,8 @@ public class AppBasicService {
         return deviceModelVo;
     }
     public List<SensorDataVo> getHistoryData(Integer deviceId, Integer type) {
-
         Long startTimestamp = new DateTime().plusDays(-1).getMillis();
         Long endTimeStamp = System.currentTimeMillis();
-
         List<SensorDataVo> sensorDataVos = Lists.newArrayList();
         DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
@@ -236,63 +241,48 @@ public class AppBasicService {
         List<String> dirValues = deviceAbilityPos.stream().map(deviceAbilityPo -> deviceAbilityPo.getDirValue()).collect(Collectors.toList());
         List<DeviceSensorStatPo> deviceSensorPos = deviceSensorStatMapper.selectData(devicePo.getId(), startTimestamp, endTimeStamp);
         for (String sensorType : dirValues) {
+            if(!needValues.contains(sensorType))continue;
             SensorDataVo sensorDataVo = new SensorDataVo();
             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(sensorType);
-            if (sensorTypeEnums == null) {
-                continue;
-            }
             sensorDataVo.setName(sensorTypeEnums.getMark());
             sensorDataVo.setUnit(sensorTypeEnums.getUnit());
             sensorDataVo.setType(sensorType);
-            List<String> xdata = Lists.newArrayList();
-            List<String> ydata = Lists.newArrayList();
-            Map<String,String> map = new LinkedHashMap<String,String>();
+            Map<String,String> map = new LinkedHashMap<>();
             for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
-                if (deviceSensorPo.getPm() == null) {
-                    continue;
-                }
                 String value;
-                if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.CO2_IN.getCode())) {
-                    value = deviceSensorPo.getCo2().toString();
-                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.HUMIDITY_IN.getCode())) {
-                    value = deviceSensorPo.getHum().toString();
-                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.TEMPERATURE_IN.getCode())) {
-                    value = deviceSensorPo.getTem().toString();
-                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.HCHO_IN.getCode())) {
-                    value = FloatDataUtil.getFloat(deviceSensorPo.getHcho());
-                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.PM25_IN.getCode())) {
-                    if (deviceSensorPo.getPm() != null) {
+                switch (sensorTypeEnums){
+                    case CO2_IN:
+                        value = deviceSensorPo.getCo2().toString();
+                        break;
+                    case HUMIDITY_IN:
+                        value = deviceSensorPo.getHum().toString();
+                        break;
+                    case TEMPERATURE_IN:
+                        value = deviceSensorPo.getTem().toString();
+                        break;
+                    case HCHO_IN:
+                        value = deviceSensorPo.getHcho().toString();
+                        break;
+                    case PM25_IN:
                         value = deviceSensorPo.getPm().toString();
-                    } else {
-                        value = "";
-                    }
-                } else if (org.apache.commons.lang3.StringUtils.equals(sensorType, SensorTypeEnums.TVOC_IN.getCode())) {
-
-                    value = FloatDataUtil.getFloat(deviceSensorPo.getTvoc());
-                } else {
-                    continue;
+                        break;
+                    case TVOC_IN:
+                        value = deviceSensorPo.getTvoc().toString();
+                        break;
+                        default:
+                            value = "";
                 }
                 String key = new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:00:00");
                 if(map.get(key)==null){
                     map.put(key,value);
                 }else{
-                    Float ave = Float.valueOf(map.get(key))/2+Float.valueOf(value)/2;
-                    DecimalFormat df = new DecimalFormat("0");
-                    map.put(key,df.format(ave));
+                    map.put(key,new DecimalFormat("0").format(Float.valueOf(map.get(key))/2+Float.valueOf(value)/2));
                 }
-
             }
-            for(String key : map.keySet()){
-                xdata.add(key);
-                ydata.add(map.get(key));
-            }
-            sensorDataVo.setXdata(xdata);
-            sensorDataVo.setYdata(ydata);
-            if (!ydata.isEmpty()) {
-                sensorDataVos.add(sensorDataVo);
-            }
+            sensorDataVo.setXdata(new ArrayList<>(map.keySet()));
+            sensorDataVo.setYdata(new ArrayList<>(map.values()));
+            sensorDataVos.add(sensorDataVo);
         }
-
         return sensorDataVos;
     }
 
