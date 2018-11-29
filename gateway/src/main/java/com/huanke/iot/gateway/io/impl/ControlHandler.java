@@ -61,7 +61,7 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setFuncId(funcItemMessage.getType());
             deviceControlData.setFuncValue(funcItemMessage.getValue());
             deviceControlData.setCreateTime(System.currentTimeMillis());
-            deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
+            deviceControlData.setDeviceId(deviceId);
             try {
                 //上报指令为210且值为1,重置开机状态
                 if(deviceControlData.getFuncId().equals("210") && deviceControlData.getFuncValue().equals(1)){

@@ -88,7 +88,7 @@ public class SensorHandler  extends AbstractHandler {
             deviceSensorPo.setCreateTime(System.currentTimeMillis());
 
 
-            deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
+            deviceSensorPo.setDeviceId(deviceId);
             try {
                 //添加最大值限制，目前为甲醛和TVOC
                 if(maxValue.get(type)==null||value.compareTo(maxValue.get(type))<=0) {
