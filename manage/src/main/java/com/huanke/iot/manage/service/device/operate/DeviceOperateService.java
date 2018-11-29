@@ -2048,7 +2048,7 @@ public class DeviceOperateService {
             }
             //映射结束
 
-            Integer hostDeviceId = StringUtils.isEmpty(devicePo.getHostDeviceId().toString())?devicePo.getId():devicePo.getHostDeviceId();
+            Integer hostDeviceId = devicePo.getHostDeviceId()==null||devicePo.getHostDeviceId()==0?devicePo.getId():devicePo.getHostDeviceId();
             String topic = "/down2/control/" + hostDeviceId;
             String requestId = UUID.randomUUID().toString().replace("-", "");
             /*操作日志*/
