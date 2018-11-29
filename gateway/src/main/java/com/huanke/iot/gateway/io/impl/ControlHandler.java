@@ -63,7 +63,8 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setCreateTime(System.currentTimeMillis());
             deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
             try {
-                if(deviceControlData.getFuncId().equals("210")){
+                //上报指令为210且值为1,重置开机状态
+                if(deviceControlData.getFuncId().equals("210") && deviceControlData.getFuncValue().equals(1)){
                     this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
                 }
                 deviceControlMapper.insert(deviceControlData);
