@@ -180,8 +180,22 @@
         SELECT count(1) FROM
         <include refid="tableName"/>
         WHERE customerId = #{customerId}
+        <if test="projectId != null">
+            AND  id = #{projectId}
+        </if>
         AND projectNo = #{projectNo}
         AND status = 1
+    </select>
+
+    <select id="selectGroups" resultType="com.huanke.iot.base.resp.project.ProjectGroupsRsp">
+        SELECT tdg.*, tc.name belongTo FROM t_device_group tdg
+        LEFT JOIN t_customer tc ON tdg.customerId = tc.id
+        WHERE tdg.status = 1
+        AND tc.status = 1
+        AND tdg.id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
     </select>
 
 </mapper>

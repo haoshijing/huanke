@@ -393,14 +393,8 @@ public class DeviceOperateService {
             deviceQueryVo.setUserOpenId(deviceCustomerUserRelationPo.getOpenId());
             deviceQueryVo.setUserName(deviceCustomerUserRelationPo.getNickname());
         }
-        String funcValue = deviceOperLogMapper.queryPowerByDeviceId(deviceId);
-
-        if (null != funcValue && StringUtils.isNotEmpty(funcValue)) {
-            //0-关机 1-开机
-            deviceQueryVo.setPowerStatus(funcValue.equals("0") ? 0 : 1);
-        } else {
-            deviceQueryVo.setPowerStatus(0);
-        }
+        deviceQueryVo.setPowerStatus(devicePo.getPowerStatus());
+        deviceQueryVo.setLastOnlineTime(devicePo.getLastOnlineTime());
         deviceQueryVo.setLocation(devicePo.getLocation());
 
         /*查询设备的 阈值类与传参类功能项*/
@@ -437,9 +431,6 @@ public class DeviceOperateService {
         if (null == devicePos || 0 == devicePos.size()) {
             return new ApiResponse<>(RetCode.OK, "暂无设备", null);
         }
-        List<DeviceOperLogPo> deviceOnlinePos = deviceOperLogMapper.queryAllOnlineByCreateTime();
-        Map<String,Long> onlineValues = new HashMap<String,Long>();
-        deviceOnlinePos.stream().forEach(temp ->{onlineValues.put(temp.getDeviceId().toString(),temp.getCreateTime());});
         List<DeviceListVo> deviceQueryVos = devicePos.stream().map(devicePo -> {
             DeviceListVo deviceQueryVo = new DeviceListVo();
             deviceQueryVo.setName(devicePo.getName());
@@ -471,13 +462,7 @@ public class DeviceOperateService {
             deviceQueryVo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceQueryVo.setStatus(devicePo.getStatus());
             //最后上线时间
-            DeviceOperLogPo deviceOnlinePo = new DeviceOperLogPo();
-            deviceOnlinePo.setCreateTime(onlineValues.get(devicePo.getId().toString()));
-            if (null != deviceOnlinePo && null != deviceOnlinePo.getCreateTime()) {
-                deviceQueryVo.setLastOnlineTime(deviceOnlinePo.getCreateTime());
-            } else {
-                deviceQueryVo.setLastOnlineTime(null);
-            }
+            deviceQueryVo.setLastOnlineTime(devicePo.getLastOnlineTime());
             //获取主从相关的信息
             deviceQueryVo.setHostStatus(devicePo.getHostStatus());
             Integer childCount = this.deviceMapper.queryChildDeviceCount(devicePo.getId());
