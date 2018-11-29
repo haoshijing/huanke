@@ -2,6 +2,7 @@ package com.huanke.iot.base.resp.project;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class ImplementRsp {
     private Integer projectId;
     private String typeName;
     private String description;
-    private String implTime;
+    private Date implTime;
     private String imgListStr;
     private List<String> imgList;
     private String fileList;
