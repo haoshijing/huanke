@@ -70,7 +70,7 @@ public class SensorHandler  extends AbstractHandler {
 
         sensorListMessage.getDatas().forEach(sensorMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
-            if(sensorMessage.getChildid() != null){
+            if(sensorMessage.getChildid() != null && !sensorMessage.getChildid().equals("0")){
                 DevicePo childDevice = deviceMapper.getChildDevice(deviceId, sensorMessage.getChildid());
                 deviceId = childDevice.getId();
             }

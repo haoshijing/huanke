@@ -53,7 +53,7 @@ public class ControlHandler extends AbstractHandler {
 
         funcListMessage.getDatas().forEach(funcItemMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
-            if(funcItemMessage.getChildid() != null){
+            if(funcItemMessage.getChildid() != null && !funcItemMessage.getChildid().equals("0")){
                 DevicePo childDevice = deviceMapper.getChildDevice(deviceId, funcItemMessage.getChildid());
                 deviceId = childDevice.getId();
             }
