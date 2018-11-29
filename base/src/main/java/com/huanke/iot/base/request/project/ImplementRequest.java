@@ -2,6 +2,7 @@ package com.huanke.iot.base.request.project;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class ImplementRequest {
     private Integer projectId;
     private Integer typeId;
     private String description;
-    private String implTime;
+    private Date implTime;
     private List<String> imgList;
     private Map<String, List<String>> fileMap;
 }
