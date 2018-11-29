@@ -9,6 +9,7 @@ import com.huanke.iot.base.po.project.ProjectExtraDevice;
 import com.huanke.iot.base.po.project.ProjectMaterialInfo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.BaseListRequest;
+import com.huanke.iot.base.request.project.ExistProjectNoRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
 import com.huanke.iot.base.resp.project.*;
@@ -235,9 +236,14 @@ public class ProjectService {
         return projectMapper.selectProjectDict(customerId);
     }
 
-    public Boolean existProjectNo(String projectNo) {
+    public Boolean existProjectNo(ExistProjectNoRequest request) {
+        Integer projectId = request.getProjectId();
+        String projectNo = request.getValue();
         Integer customerId = customerService.obtainCustomerId(false);
-        return projectMapper.existProjectNo(customerId, projectNo) > 0;
+        if(projectId != null){
+            return projectMapper.existProjectNo(customerId, projectId, projectNo) > 1;
+        }
+        return projectMapper.existProjectNo(customerId, projectId, projectNo) > 0;
     }
 
     public List<ProjectGroupsRsp> selectGroups(BaseListRequest<Integer> request) {

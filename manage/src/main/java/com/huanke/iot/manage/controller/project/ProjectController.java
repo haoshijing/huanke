@@ -3,7 +3,7 @@ package com.huanke.iot.manage.controller.project;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.BaseListRequest;
-import com.huanke.iot.base.request.BaseRequest;
+import com.huanke.iot.base.request.project.ExistProjectNoRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
 import com.huanke.iot.base.resp.project.ProjectDictRsp;
@@ -97,12 +97,12 @@ public class ProjectController {
 
     @ApiOperation("查工程编号是否重复")
     @PostMapping(value = "/existProjectNo")
-    public ApiResponse<Boolean> existProjectNo(@RequestBody BaseRequest<String> request) {
+    public ApiResponse<Boolean> existProjectNo(@RequestBody ExistProjectNoRequest request) {
         String value = request.getValue();
         if(value.isEmpty()){
             throw new BusinessException("参数错误");
         }
-        Boolean result = projectService.existProjectNo(value);
+        Boolean result = projectService.existProjectNo(request);
         return new ApiResponse<>(result);
     }
 }

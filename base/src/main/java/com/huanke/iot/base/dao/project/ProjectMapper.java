@@ -31,7 +31,7 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
 
     Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
-    Integer existProjectNo(@Param("customerId") Integer customerId, @Param("projectNo") String projectNo);
+    Integer existProjectNo(@Param("customerId") Integer customerId, @Param("projectId") Integer projectId, @Param("projectNo") String projectNo);
 
     List<ProjectGroupsRsp> selectGroups(@Param("valueList") List<Integer> valueList);
 }

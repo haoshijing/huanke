@@ -14,4 +14,5 @@ public class LinkGroupDeviceRspPo {
     private String mac;
     private Integer workStatus;
     private String belongTo;
+    private Long lastOnlineTime;
 }

@@ -180,6 +180,9 @@
         SELECT count(1) FROM
         <include refid="tableName"/>
         WHERE customerId = #{customerId}
+        <if test="projectId != null">
+            AND  id = #{projectId}
+        </if>
         AND projectNo = #{projectNo}
         AND status = 1
     </select>
