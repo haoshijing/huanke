@@ -27,6 +27,7 @@
         enableUsers,
         warnStatus,
         flowStatus,
+        status,
         createTime,
         createUser
         )
@@ -48,6 +49,7 @@
         #{enableUsers},
         #{warnStatus},
         #{flowStatus},
+        #{status},
         #{createTime},
         #{createUser}
         )
