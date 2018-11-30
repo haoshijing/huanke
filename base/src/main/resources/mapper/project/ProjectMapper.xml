@@ -154,6 +154,18 @@
         left join t_user u1 on  pbi.updateUser = u1.id
         left join t_project_extra_device ped on pbi.id = ped.projectId
       WHERE 1=1
+        <if test = "projectBaseInfo.name != null and projectBaseInfo.name != ''">
+            AND pbi.name LIKE CONCAT('%',#{projectBaseInfo.name},'%')
+        </if>
+        <if test = "projectBaseInfo.projectNo != null and projectBaseInfo.projectNo != ''">
+            AND pbi.projectNo =#{projectBaseInfo.projectNo}
+        </if>
+        <if test = "projectBaseInfo.buildAddress != null and projectBaseInfo.buildAddress != ''">
+            AND pbi.buildAddress LIKE CONCAT('%',#{projectBaseInfo.buildAddress},'%')
+        </if>
+        <if test = "projectBaseInfo.createTime != null">
+            AND pbi.createTime >= #{projectBaseInfo.createTime}
+        </if>
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>-->
