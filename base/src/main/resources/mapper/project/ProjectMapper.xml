@@ -52,6 +52,9 @@
         <include refid="tableName"/>
         <where>
             1=1
+            <if test="param.status != null and param.status!='' ">
+               AND status = #{param.status}
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>
@@ -216,5 +219,10 @@
         WHERE projectNo = #{projectNo}
         AND id != #{projectId}
     </select>
-
+    <select id="getAfterTime" resultType="com.huanke.iot.base.po.project.ProjectBaseInfo">
+        SELECT * FROM <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+        AND createTime >= #{createTime}
+        AND status = 1
+    </select>
 </mapper>

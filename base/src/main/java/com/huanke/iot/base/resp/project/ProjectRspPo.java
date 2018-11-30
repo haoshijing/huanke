@@ -26,4 +26,16 @@ public class ProjectRspPo {
     private Date updateTime;
     private String createName;
     private String updateName;
+
+    @Data
+    public static class ProjectPercent{
+        private String buildAddress;
+        private Long projectCount;
+        private String projectPercent;
+    }
+    @Data
+    public static class ProjectCountVo {
+        private String date;
+        private Long projectCount;
+    }
 }

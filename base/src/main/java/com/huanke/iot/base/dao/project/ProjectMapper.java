@@ -8,6 +8,7 @@ import com.huanke.iot.base.resp.project.ProjectGroupsRsp;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,4 +37,6 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
     List<ProjectGroupsRsp> selectGroups(@Param("valueList") List<Integer> valueList);
 
     Integer editIfExist(@Param("projectNo") String projectNo, @Param("projectId") Integer id);
+
+    List<ProjectBaseInfo> getAfterTime(@Param("customerId") Integer customerId,@Param("createTime") Date createTime);
 }
