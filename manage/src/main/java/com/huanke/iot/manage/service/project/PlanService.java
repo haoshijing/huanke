@@ -198,7 +198,7 @@ public class PlanService {
     public PlanInfoRsp selectById(Integer planId) {
         PlanInfoRsp planInfoRsp = planMapper.selectPlanInfoById(planId);
         String enableUsers = planInfoRsp.getEnableUsers();
-        if(enableUsers != null){
+        if(enableUsers != null && !enableUsers.equals("")){
             List<String> enableUserListStr = Arrays.asList(enableUsers.split(","));
             List<Integer> enableUserList = enableUserListStr.stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
             planInfoRsp.setEnableUserList(enableUserList);
