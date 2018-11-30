@@ -61,6 +61,8 @@ public class ProjectStatisticService {
             projectPercent.setProjectPercent(percent);
             projectPercents.add(projectPercent);
         }
+        projectPercents.sort((x, y) -> Long.compare(y.getProjectCount(), x.getProjectCount()));
+        projectPercents = projectPercents.subList(0,5);
         return new ApiResponse<>(projectPercents);
     }
     public List<ProjectRspPo.ProjectCountVo> queryProjectTrendCount(){
