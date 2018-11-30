@@ -21,6 +21,8 @@
         linkProjectId,
         warnDate,
         nextExecuteTime,
+        month,
+        day,
         cycleType,
         cycleNums,
         overTimeDays,
@@ -41,6 +43,8 @@
         #{linkProjectId},
         #{warnDate},
         #{nextExecuteTime},
+        #{monoth},
+        #{day},
         #{cycleType},
         #{cycleNums},
         #{overTimeDays},
@@ -112,6 +116,12 @@
             </if>
             <if test="nextExecuteTime != null">
                 nextExecuteTime = #{nextExecuteTime},
+            </if>
+            <if test="month != null">
+                month = #{month},
+            </if>
+            <if test="day != null">
+                day = #{day},
             </if>
             <if test="cycleType != null">
                 cycleType = #{cycleType},
@@ -262,5 +272,7 @@
         select * from
         <include refid="tableName"/>
         where to_days(nextExecuteTime) = to_days(now())
+        AND cycleType != 0
+        AND status = 1
     </select>
 </mapper>

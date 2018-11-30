@@ -36,13 +36,16 @@ public class ProjectJob {
     private RuleMapper ruleMapper;
 
     @Transactional
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
+    //@Scheduled(cron = "0 0 1 * * ?")
     public void createJob() {
+        System.out.println("测试生成任务");
         List<ProjectPlanInfo> projectPlanInfoList = planMapper.selectAllExist();
         for (ProjectPlanInfo projectPlanInfo : projectPlanInfoList) {
             Integer cycleType = projectPlanInfo.getCycleType();
             Integer cycleNum = projectPlanInfo.getCycleNums();
             Date nextExecuteTime = projectPlanInfo.getNextExecuteTime();
+            Integer month = projectPlanInfo.getMonth();
             Integer day = projectPlanInfo.getDay();
             switch (cycleType) {
                 case ProjectPlanCycleTypeConstants.CYCLE_TYPE_ONCE:
@@ -65,8 +68,8 @@ public class ProjectJob {
                     executeCreateJob(projectPlanInfo, 2);
                     Calendar calYear = Calendar.getInstance();
                     calYear.setTime(nextExecuteTime);
-                    int month = calYear.get(Calendar.MONTH) + 1;
                     calYear.add(Calendar.YEAR,cycleNum);
+                    calYear.set(Calendar.MONTH, month);
                     if(month == 2){
                         if(day>28){
                             calYear.set(Calendar.DATE, calYear.getActualMaximum(Calendar.DATE));

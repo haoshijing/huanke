@@ -2,6 +2,7 @@ package com.huanke.iot.manage.service.project;
 
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.JobFlowStatusConstants;
+import com.huanke.iot.base.constant.ProjectPlanCycleTypeConstants;
 import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.PlanMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
@@ -85,6 +86,35 @@ public class PlanService {
         User user = userService.getCurrentUser();
         ProjectPlanInfo projectPlan = new ProjectPlanInfo();
         BeanUtils.copyProperties(request, projectPlan);
+        //计算下次执行时间
+        Integer cycleType = request.getCycleType();
+        Integer cycleNums = request.getCycleNums();
+        Integer month = request.getMonth();
+        Integer day = request.getDay();
+        if(cycleType == ProjectPlanCycleTypeConstants.CYCLE_TYPE_MONTH){
+            Calendar calMonth = Calendar.getInstance();
+            calMonth.setTime(new Date());
+            calMonth.add(Calendar.MONTH, cycleNums);
+            if(request.getDay() > calMonth.getActualMaximum(Calendar.DATE)){
+                calMonth.set(Calendar.DATE, calMonth.getActualMaximum(Calendar.DATE));
+            }else{
+                calMonth.set(Calendar.DAY_OF_MONTH, request.getDay());
+            }
+            projectPlan.setNextExecuteTime(calMonth.getTime());
+        }else if(cycleType == ProjectPlanCycleTypeConstants.CYCLE_TYPE_YEAR){
+            Calendar calYear = Calendar.getInstance();
+            calYear.setTime(new Date());
+            calYear.add(Calendar.YEAR,cycleNums);
+            calYear.set(Calendar.MONTH, month);
+            if(month == 2){
+                if(day>28){
+                    calYear.set(Calendar.DATE, calYear.getActualMaximum(Calendar.DATE));
+                }else{
+                    calYear.set(Calendar.DAY_OF_MONTH, day);
+                }
+            }
+            projectPlan.setNextExecuteTime(calYear.getTime());
+        }
         //特殊参数处理
         List<Integer> enableUserList = request.getEnableUserList();
         List<String> enableUserStrList = enableUserList.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
@@ -104,8 +134,10 @@ public class PlanService {
             projectPlan.setCreateUser(user.getId());
             projectPlan.setStatus(CommonConstant.STATUS_YES);
             //是否立即执行
+            Boolean result = planMapper.insert(projectPlan) > 0;
             excuteRight(request, projectPlan, enableUsers, isRightExcute);
-            return planMapper.insert(projectPlan) > 0;
+            return result;
+
         } else {
             //修改
             projectPlan.setUpdateTime(new Date());

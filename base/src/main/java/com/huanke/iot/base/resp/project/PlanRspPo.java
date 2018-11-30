@@ -26,6 +26,9 @@ public class PlanRspPo {
     private Integer cycleType;
     private Integer cycleNums;
     private Date warnDate;
+    private Date nextExecuteTime;
+    private Integer month;
+    private Integer day;
     private Integer overTimeDays;
     private String enableUsers;
     private Integer status;
