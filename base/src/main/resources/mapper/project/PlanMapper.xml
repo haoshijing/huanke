@@ -43,7 +43,7 @@
         #{linkProjectId},
         #{warnDate},
         #{nextExecuteTime},
-        #{monoth},
+        #{month},
         #{day},
         #{cycleType},
         #{cycleNums},
