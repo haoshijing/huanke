@@ -53,7 +53,7 @@ public class ControlHandler extends AbstractHandler {
 
         funcListMessage.getDatas().forEach(funcItemMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
-            if(funcItemMessage.getChildid() != null){
+            if(funcItemMessage.getChildid() != null && !funcItemMessage.getChildid().equals("0")){
                 DevicePo childDevice = deviceMapper.getChildDevice(deviceId, funcItemMessage.getChildid());
                 deviceId = childDevice.getId();
             }
@@ -61,7 +61,7 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setFuncId(funcItemMessage.getType());
             deviceControlData.setFuncValue(funcItemMessage.getValue());
             deviceControlData.setCreateTime(System.currentTimeMillis());
-            deviceControlData.setDeviceId(getDeviceIdFromTopic(topic));
+            deviceControlData.setDeviceId(deviceId);
             try {
                 //上报指令为210且值为1,重置开机状态
                 if(deviceControlData.getFuncId().equals("210") && deviceControlData.getFuncValue().equals(1)){
