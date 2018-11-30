@@ -30,6 +30,7 @@ public class ProjectRspPo {
     @Data
     public static class ProjectPercent{
         private String buildAddress;
+        private String distance;
         private Long projectCount;
         private String projectPercent;
     }

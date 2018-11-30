@@ -7,6 +7,7 @@ import com.huanke.iot.base.resp.project.ProjectRspPo;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -41,7 +42,10 @@ public class ProjectStatisticService {
                 temps = temp.getBuildAddress().split(",");
             }
             if(temps.length>=3) {
-                String location = temps[0] + temps[1] + "|" + temps[2];
+                if(StringUtils.isEmpty(temps[1])){
+                    temps[1] = "市辖区";
+                }
+                String location = temps[0] + "-" + temps[1] + "-" + temps[2];
                 if (locationCountMap.get(location) == null) {
                     locationCountMap.put(location, Long.valueOf(1));
                 } else {
@@ -55,12 +59,16 @@ public class ProjectStatisticService {
         List<ProjectRspPo.ProjectPercent> projectPercents = new ArrayList<>();
         for (String temp : locationCountMap.keySet()){
             ProjectRspPo.ProjectPercent projectPercent = new ProjectRspPo.ProjectPercent();
-            projectPercent.setBuildAddress(temp.split("\\|")[1]);
+            projectPercent.setBuildAddress(temp);
+            projectPercent.setDistance(temp.split("-")[2]);
             projectPercent.setProjectCount(locationCountMap.get(temp));
             String percent = df.format(locationCountMap.get(temp) * 100.00 / totalProjectCount) + "%";
             projectPercent.setProjectPercent(percent);
             projectPercents.add(projectPercent);
         }
+        projectPercents.sort((x, y) -> Long.compare(y.getProjectCount(), x.getProjectCount()));
+        if(projectPercents.size()>5)
+            projectPercents = projectPercents.subList(0,5);
         return new ApiResponse<>(projectPercents);
     }
     public List<ProjectRspPo.ProjectCountVo> queryProjectTrendCount(){
@@ -87,6 +95,7 @@ public class ProjectStatisticService {
             projectCount.setProjectCount(projectCountMap.get(key));
             projectCounts.add(projectCount);
         }
+        projectCounts.sort((x, y) -> Long.compare(y.getProjectCount(), x.getProjectCount()));
         return projectCounts;
     }
 }
