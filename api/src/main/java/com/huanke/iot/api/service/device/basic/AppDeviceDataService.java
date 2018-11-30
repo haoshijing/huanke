@@ -238,7 +238,8 @@ public class AppDeviceDataService {
             deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
             deviceItemPo.setLocation(devicePo.getLocation());
             Integer modelId = devicePo.getModelId();
-            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
+            Integer typeId = deviceModelPo.getTypeId();
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
             deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
             deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
@@ -246,6 +247,12 @@ public class AppDeviceDataService {
             if (deviceTypePo != null) {
                 deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                 deviceItemPo.setIcon(deviceTypePo.getIcon());
+            }
+            Integer androidFormatId = deviceModelPo.getAndroidFormatId();
+            if(androidFormatId != null) {
+                WxFormatPo wxFormatPo = wxFormatMapper.selectById(androidFormatId);
+                deviceItemPo.setAndroidFormatId(wxFormatPo.getVersion());
+                deviceItemPo.setAndroidFormatName(wxFormatPo.getName());
             }
             Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
             deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
