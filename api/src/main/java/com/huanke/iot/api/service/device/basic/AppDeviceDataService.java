@@ -229,7 +229,35 @@ public class AppDeviceDataService {
         return deviceListVo;
     }
 
-
+    public List<AppDeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId) {
+        List<AppDeviceListVo.DeviceItemPo> childDevicePos = new ArrayList<>();
+        List<DevicePo> devicePoList = deviceMapper.queryChildDevice(hostDeviceId);
+        for (DevicePo devicePo : devicePoList) {
+            AppDeviceListVo.DeviceItemPo deviceItemPo = new AppDeviceListVo.DeviceItemPo();
+            deviceItemPo.setDeviceId(devicePo.getId());
+            deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
+            deviceItemPo.setLocation(devicePo.getLocation());
+            Integer modelId = devicePo.getModelId();
+            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+            deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
+            deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
+            deviceItemPo.setOnlineStatus(devicePo.getOnlineStatus());
+            if (deviceTypePo != null) {
+                deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
+                deviceItemPo.setIcon(deviceTypePo.getIcon());
+            }
+            Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
+            deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
+            deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
+            deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
+            deviceItemPo.setTem(getData(data, SensorTypeEnums.TEMPERATURE_IN.getCode()));
+            deviceItemPo.setHcho(getData(data, SensorTypeEnums.HCHO_IN.getCode()));
+            deviceItemPo.setTvoc(getData(data, SensorTypeEnums.TVOC_IN.getCode()));
+            childDevicePos.add(deviceItemPo);
+        }
+        return childDevicePos;
+    }
     public List<AppDeviceDataVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds){
         Integer modelId = deviceMapper.selectById(deviceId).getModelId();
         List<AppDeviceDataVo> deviceAbilitysVoList = new ArrayList<>();
