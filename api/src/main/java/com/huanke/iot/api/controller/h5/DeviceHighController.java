@@ -133,7 +133,7 @@ public class DeviceHighController extends BaseController{
     public Object delChildDevice(@PathVariable("childDeviceId") Integer childDeviceId){
         Integer userId = getCurrentUserId();
         log.info("删除从设备：childDeviceId={}", childDeviceId);
-        deviceService.deleteById(childDeviceId);
+        deviceHighService.deleteById(childDeviceId);
         return new ApiResponse<>();
     }
 

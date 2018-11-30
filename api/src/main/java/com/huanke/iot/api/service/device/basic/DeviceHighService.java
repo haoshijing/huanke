@@ -1,7 +1,10 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
+import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
@@ -20,9 +23,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,6 +48,9 @@ public class DeviceHighService {
 
     @Autowired
     private WxFormatMapper wxFormatMapper;
+
+    @Autowired
+    private MqttSendService mqttSendService;
 
     public String getHighToken(Integer customerId, String password) throws Exception {
         WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(customerId, password);
@@ -88,6 +92,7 @@ public class DeviceHighService {
         devicePo.setLastUpdateTime(System.currentTimeMillis());
         devicePo.setStatus(CommonConstant.STATUS_YES);
         Integer childDeviceId = addOrUpdate(devicePo);
+        sendMb(hostDeviceId);
         return childDeviceId;
     }
 
@@ -101,7 +106,12 @@ public class DeviceHighService {
         }
         return devicePo.getId();
     }
-
+    public void deleteById(Integer childDeviceId) {
+        DevicePo devicePo = deviceMapper.selectById(childDeviceId);
+        Integer hostDeviceId = devicePo.getHostDeviceId();
+        deviceMapper.deleteById(childDeviceId);
+        sendMb(hostDeviceId);
+    }
     /**
      * 从设备列表
      *
@@ -135,5 +145,42 @@ public class DeviceHighService {
         devicePo.setId(deviceId);
         devicePo.setManageName(manageName);
         return deviceMapper.updateById(devicePo) > 0;
+    }
+    public Boolean sendMb(Integer deviceId){
+        List<Integer> childIds = deviceMapper.queryChildDeviceIds(deviceId);
+        //拼接码表
+        JSONObject mb = new JSONObject();
+        Map<String, Object> mbMap = new HashMap<>();
+        List<String> childIdList = new ArrayList<>();
+        int flag = 1;
+        Map<Integer, String> mMap = new HashMap<>();
+        for (Integer childDeviceId : childIds) {
+            DevicePo devicePo = deviceMapper.selectById(childDeviceId);
+            String childId = devicePo.getChildId();
+            childIdList.add(childId);
+            Integer modelId = devicePo.getModelId();
+            Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
+            if(mMap.containsKey(typeId)){
+                String mName = mMap.get(typeId);
+                mbMap.put(childId, mName);
+                continue;
+            }
+            DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
+            String stopWatch = deviceTypePo.getStopWatch();
+            String mName = "m" + flag;
+            try{
+                mbMap.put(mName, JSONObject.parseObject(stopWatch));
+            }catch (Exception e){
+                mbMap.put(mName, stopWatch);
+            }
+            mMap.put(typeId, mName);
+            flag++;
+            mbMap.put(childId, mName);
+        }
+        mbMap.put("n", childIdList);
+        mb.put("mb", mbMap);
+        String topic = "/down2/stopWatch/" + deviceId;
+        mqttSendService.sendMessage(topic, mb.toString());
+        return true;
     }
 }
