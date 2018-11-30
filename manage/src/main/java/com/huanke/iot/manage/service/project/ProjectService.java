@@ -4,6 +4,7 @@ import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.*;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.project.ProjectExtraDevice;
 import com.huanke.iot.base.po.project.ProjectMaterialInfo;
@@ -126,6 +127,11 @@ public class ProjectService {
 
         } else {
             //修改
+            //判断projectNo是否重复
+            if(projectMapper.editIfExist(projectBaseInfo.getProjectNo(), projectBaseInfo.getId()) > 0){
+                throw new BusinessException("projectNo已存在，请重新输入");
+            }
+
             projectBaseInfo.setUpdateTime(new Date());
             projectBaseInfo.setUpdateUser(user.getId());
             projectMapper.updateById(projectBaseInfo);

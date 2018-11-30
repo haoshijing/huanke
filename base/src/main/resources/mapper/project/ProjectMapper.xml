@@ -210,4 +210,11 @@
         </foreach>
     </select>
 
+    <select id="editIfExist" resultType="java.lang.Integer">
+        SELECT count(1) FROM
+        <include refid="tableName"/>
+        WHERE projectNo = #{projectNo}
+        AND id != #{projectId}
+    </select>
+
 </mapper>

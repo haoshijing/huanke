@@ -34,4 +34,6 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
     Integer existProjectNo(@Param("customerId") Integer customerId, @Param("projectId") Integer projectId, @Param("projectNo") String projectNo);
 
     List<ProjectGroupsRsp> selectGroups(@Param("valueList") List<Integer> valueList);
+
+    Integer editIfExist(@Param("projectNo") String projectNo, @Param("projectId") Integer id);
 }
