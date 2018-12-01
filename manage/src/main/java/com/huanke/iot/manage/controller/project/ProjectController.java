@@ -6,6 +6,7 @@ import com.huanke.iot.base.request.BaseListRequest;
 import com.huanke.iot.base.request.project.ExistProjectNoRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
+import com.huanke.iot.base.resp.project.ProjectAnalysisRsp;
 import com.huanke.iot.base.resp.project.ProjectDictRsp;
 import com.huanke.iot.base.resp.project.ProjectGroupsRsp;
 import com.huanke.iot.base.resp.project.ProjectRsp;
@@ -104,5 +105,13 @@ public class ProjectController {
         }
         Boolean result = projectService.existProjectNo(request);
         return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("工程分析")
+    @GetMapping(value = "/projectAnalysis/{projectId}")
+    public ApiResponse<ProjectAnalysisRsp> projectAnalysis(@PathVariable("projectId") Integer projectId) {
+
+        ProjectAnalysisRsp projectAnalysisRsp = projectService.projectAnalysis(projectId);
+        return new ApiResponse<>(projectAnalysisRsp);
     }
 }

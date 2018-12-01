@@ -42,7 +42,7 @@
     <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectBaseInfo">
         select
         *
-        FROM
+        FROME
         <include refid="tableName"/>
         WHERE id = #{id} limit 1
     </select>

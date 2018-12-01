@@ -25,4 +25,6 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
     Boolean batchFlow(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList, @Param("targetUserStr") String targetUserStr, @Param("flowStatus") Integer flowStatus);
 
     Integer selectCount(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("userId") Integer userId);
+
+    Integer selectMaintenanceCountByProjectId(@Param("projectId") Integer projectId);
 }

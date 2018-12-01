@@ -107,4 +107,9 @@
         </where>
     </select>
 
+    <select id="selectByGroupIds" resultType="com.huanke.iot.base.po.device.DevicePo">
+        SELECT * FROM t_device td
+        LEFT JOIN t_device_group_item tdgi ON td.id = tdgi.deviceId
+        WHERE tdgi.groupId IN (${groupIds})
+    </select>
 </mapper>

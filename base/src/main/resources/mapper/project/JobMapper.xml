@@ -223,4 +223,10 @@
             #{ids}
         </foreach>
     </update>
+
+    <select id="selectMaintenanceCountByProjectId" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_project_job_info tpji
+        LEFT JOIN t_project_plan_info tppi ON tpji.planId = tppi.id
+        WHERE tppi.linkProjectId = #{projectId}
+    </select>
 </mapper>
