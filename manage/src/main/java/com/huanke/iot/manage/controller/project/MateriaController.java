@@ -48,7 +48,7 @@ public class MateriaController {
         return new ApiResponse<>(jobMateriaList);
     }
 
-    @ApiOperation("查询任务待审核状态下材料情况")
+    @ApiOperation("查询材料状态日志")
     @GetMapping(value = "/queryJobMateriaLog/{materialId}")
     public ApiResponse<List<ProjectMaterialLog>> queryJobMateriaLog(@PathVariable("materialId") Integer materialId) {
         List<ProjectMaterialLog> projectMaterialLogList = materiaService.queryJobMateriaLog(materialId);
