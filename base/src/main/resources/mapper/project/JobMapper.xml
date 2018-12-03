@@ -289,4 +289,22 @@
           LEFT JOIN t_project_base_info tpbi ON tppi.linkProjectId = tpbi.id
           WHERE tpji.id = #{jobId} and tpbi.id is not null
     </select>
+
+    <select id="selectAllToWarn" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
+        SELECT * from
+        <include refid="tableName"/>
+        where to_days(finalTime) &lt; to_days(now())
+        AND sourceType = 1
+        AND warnStatus = 1
+        AND status = 1
+    </select>
+
+    <select id="queryWarnJob" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
+        SELECT * from
+        <include refid="tableName"/>
+        where customerId = #{customerId}
+        AND warnStatus = 2
+        AND flowStatus NOT IN (4,5)
+        AND status = 1
+    </select>
 </mapper>

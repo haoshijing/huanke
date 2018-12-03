@@ -32,4 +32,8 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
     Map<Object, Object> ifExistMateria(@Param("jobId") Integer jobId);
 
     List<ProjectJobInfo> selectListJob(@Param("projectJobInfo") ProjectJobInfo projectJobInfo);
+
+    List<ProjectJobInfo> selectAllToWarn();
+
+    List<ProjectJobInfo> queryWarnJob(@Param("customerId") Integer customerId);
 }

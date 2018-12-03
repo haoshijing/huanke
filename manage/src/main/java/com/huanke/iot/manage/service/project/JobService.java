@@ -277,4 +277,9 @@ public class JobService {
         result = result && jobMapper.batchFlow(userId, valueList, targetUserStr, flowStatus);
         return result;
     }
+
+    public List<ProjectJobInfo> queryWarnJob() {
+        Integer customerId = customerService.obtainCustomerId(false);
+        return jobMapper.queryWarnJob(customerId);
+    }
 }

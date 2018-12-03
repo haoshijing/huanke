@@ -118,4 +118,14 @@ public class ProjectJob {
         projectJobInfo.setCreateTime(new Date());
         jobMapper.insert(projectJobInfo);
     }
+
+    @Transactional
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void warnJob() {
+        List<ProjectJobInfo> projectJobInfoList = jobMapper.selectAllToWarn();
+        for (ProjectJobInfo projectJobInfo : projectJobInfoList) {
+            projectJobInfo.setWarnStatus(2);
+            jobMapper.updateById(projectJobInfo);
+        }
+    }
 }

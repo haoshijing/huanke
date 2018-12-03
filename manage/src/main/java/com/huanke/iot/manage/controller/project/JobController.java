@@ -3,6 +3,7 @@ package com.huanke.iot.manage.controller.project;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.exception.BusinessException;
+import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.request.project.JobFlowStatusRequest;
 import com.huanke.iot.base.request.project.JobQueryRequest;
 import com.huanke.iot.base.request.project.JobRequest;
@@ -89,5 +90,12 @@ public class JobController {
         }
         Boolean result = jobService.flowJob(request);
         return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("查询报警任务")
+    @PostMapping(value = "/queryWarnJob")
+    public ApiResponse<List<ProjectJobInfo>> queryWarnJob() {
+        List<ProjectJobInfo> warnJobList= jobService.queryWarnJob();
+        return new ApiResponse<>(warnJobList);
     }
 }
