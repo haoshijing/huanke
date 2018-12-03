@@ -41,8 +41,7 @@ public class DbInterceptor implements Interceptor {
      * 监听的表范围
      */
     public static final List<Class<?>> CLASS_LIST = Stream.of(DeviceAbilityPo.class, DeviceAbilityOptionPo.class,
-            DeviceModelPo.class, DeviceModelAbilityPo.class, DeviceModelAbilityOptionPo.class, CustomerPo.class,
-            CustomerUserPo.class)
+            DeviceModelPo.class, DeviceModelAbilityPo.class, DeviceModelAbilityOptionPo.class, CustomerPo.class)
             .collect(Collectors.toList());
 
     @Override

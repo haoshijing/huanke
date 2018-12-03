@@ -30,4 +30,6 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
     Integer selectMaintenanceCountByProjectId(@Param("projectId") Integer projectId);
 
     Map<Object, Object> ifExistMateria(@Param("jobId") Integer jobId);
+
+    List<ProjectJobInfo> selectListJob(@Param("projectJobInfo") ProjectJobInfo projectJobInfo);
 }

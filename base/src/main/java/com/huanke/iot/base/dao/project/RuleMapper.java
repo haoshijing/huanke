@@ -26,4 +26,6 @@ public interface RuleMapper extends BaseMapper<ProjectRule> {
     Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
     List<RuleDictRsp> selectRuleDict(@Param("customerId") Integer customerId);
+
+    List<RuleRspPo> selectAllRules(@Param("customerId") Integer customerId,@Param("typeId") Integer typeId);
 }

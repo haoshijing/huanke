@@ -12,6 +12,7 @@
         <include refid="tableName"/>
         (
         customerId,
+        reportCustUserId,
         type,
         linkDeviceId,
         linkProjectId,
@@ -34,6 +35,7 @@
         VALUES
         (
         #{customerId},
+        #{reportCustUserId},
         #{type},
         #{linkDeviceId},
         #{linkProjectId},
@@ -61,6 +63,57 @@
         FROM
         <include refid="tableName"/>
         WHERE id = #{id} limit 1
+    </select>
+
+    <select id="selectListJob" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE 1=1
+        <if test="projectJobInfo.customerId != null and projectJobInfo.customerId!='' ">
+            AND customerId = #{projectJobInfo.customerId}
+        </if>
+        <if test="projectJobInfo.reportCustUserId != null and projectJobInfo.reportCustUserId!='' ">
+            AND reportCustUserId = #{projectJobInfo.reportCustUserId}
+        </if>
+        <if test="projectJobInfo.type != null and projectJobInfo.type!='' ">
+            AND type = #{projectJobInfo.type}
+        </if>
+        <if test="projectJobInfo.linkDeviceId != null and projectJobInfo.linkDeviceId!='' ">
+            AND linkDeviceId = #{projectJobInfo.linkDeviceId}
+        </if>
+        <if test="projectJobInfo.linkProjectId != null and projectJobInfo.linkProjectId!='' ">
+            AND linkProjectId = #{projectJobInfo.linkProjectId}
+        </if>
+        <if test="projectJobInfo.isRule != null and projectJobInfo.isRule!='' ">
+            AND isRule = #{projectJobInfo.isRule}
+        </if>
+        <if test="projectJobInfo.ruleId != null and projectJobInfo.ruleId!='' ">
+            AND ruleId = #{projectJobInfo.ruleId}
+        </if>
+        <if test="projectJobInfo.warnLevel != null and projectJobInfo.warnLevel!='' ">
+            AND warnLevel = #{projectJobInfo.warnLevel}
+        </if>
+        <if test="projectJobInfo.sourceType != null and projectJobInfo.sourceType!='' ">
+            AND sourceType = #{projectJobInfo.sourceType}
+        </if>
+        <if test="projectJobInfo.planId != null and projectJobInfo.planId!='' ">
+            AND planId = #{projectJobInfo.planId}
+        </if>
+        <if test="projectJobInfo.warnStatus != null and projectJobInfo.warnStatus!='' ">
+            AND warnStatus = #{projectJobInfo.warnStatus}
+        </if>
+        <if test="projectJobInfo.flowStatus != null and projectJobInfo.flowStatus!='' ">
+            AND flowStatus = #{projectJobInfo.flowStatus}
+        </if>
+        <if test="projectJobInfo.status != null and projectJobInfo.status!='' ">
+            AND status = #{projectJobInfo.status}
+        </if>
+        <if test="projectJobInfo.enableUsers != null and projectJobInfo.enableUsers!='' ">
+            AND (find_in_set(#{projectJobInfo.enableUsers}, enableUsers)
+            OR enableUsers is null)
+        </if>
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
