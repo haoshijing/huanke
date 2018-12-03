@@ -18,6 +18,7 @@ public class JobDetailRsp {
     private Integer type;//关联类型：0-不关联；1-关联设备；2-关联工程
     private Integer linkDeviceId;//关联设备id
     private Integer linkProjectId;//关联工程id
+    private String linkProjectName;//关联工程名称
     private String name;
     private String description;
     private Integer isRule;

@@ -4,9 +4,11 @@ import com.huanke.iot.base.constant.JobFlowStatusConstants;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.JobLogMapper;
 import com.huanke.iot.base.dao.project.JobMapper;
+import com.huanke.iot.base.dao.project.ProjectMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.dto.project.JobHistoryDataDto;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.po.project.ProjectJobLog;
 import com.huanke.iot.base.po.project.ProjectRule;
@@ -57,6 +59,8 @@ public class JobService {
     private CustomerService customerService;
     @Autowired
     private MateriaService materiaService;
+    @Autowired
+    private ProjectMapper projectMapper;
 
 
     public JobRsp selectList(JobQueryRequest request) {
@@ -196,6 +200,9 @@ public class JobService {
             jobDetailRsp.setDeviceList(deviceList);
         } else if (type == 2 && jobDetailRsp.getLinkProjectId() != null) {
             //关联工程
+            Integer linkProjectId = jobDetailRsp.getLinkProjectId();
+            ProjectBaseInfo projectBaseInfo = projectMapper.selectById(linkProjectId);
+            jobDetailRsp.setLinkProjectName(projectBaseInfo.getName());
         }
         if (projectJobInfo.getIsRule() == 1) {
             //关联规则信息
