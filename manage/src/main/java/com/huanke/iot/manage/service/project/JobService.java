@@ -201,7 +201,7 @@ public class JobService {
         } else if (type == 2 && jobDetailRsp.getLinkProjectId() != null) {
             //关联工程
             Integer linkProjectId = jobDetailRsp.getLinkProjectId();
-            ProjectBaseInfo projectBaseInfo = projectMapper.selectById(linkProjectId);
+            ProjectBaseInfo projectBaseInfo = projectMapper.selectById(linkProjectId) ;
             jobDetailRsp.setLinkProjectName(projectBaseInfo.getName());
         }
         if (projectJobInfo.getIsRule() == 1) {

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -310,13 +310,9 @@ public class ProjectService {
             projectAnalysisRsp.setDeviceNum(totalDeviceCount);
             long onlineDeviceCount = devicePoList.stream().filter(e -> e.getOnlineStatus() == 1).count();
             long powerDeviceCount = devicePoList.stream().filter(e -> e.getPowerStatus() != null && e.getPowerStatus() == 1).count();
-            NumberFormat format = NumberFormat.getPercentInstance();// 获取格式化类实例
-            format.setMinimumFractionDigits(2);// 设置小数位
-            //设置百分比
-            projectAnalysisRsp.setOnlineDeviceProportion(format.format(onlineDeviceCount / totalDeviceCount) + "%");
-            projectAnalysisRsp.setPowerDeviceProportion(format.format(powerDeviceCount / totalDeviceCount) + "%");
-            System.out.println(format.format(onlineDeviceCount / totalDeviceCount));
-            System.out.println(format.format(powerDeviceCount / totalDeviceCount));
+            DecimalFormat df=new DecimalFormat("0.00");//设置保留位数
+            projectAnalysisRsp.setOnlineDeviceProportion(df.format((float)onlineDeviceCount/totalDeviceCount));
+            projectAnalysisRsp.setPowerDeviceProportion(df.format((float)powerDeviceCount/totalDeviceCount));
         } else {
             projectAnalysisRsp.setProjectGroupNum(0);
             projectAnalysisRsp.setDeviceNum(0);
