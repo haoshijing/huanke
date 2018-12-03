@@ -36,8 +36,8 @@ public class ProjectJob {
     private RuleMapper ruleMapper;
 
     @Transactional
-    @Scheduled(cron = "0 0/1 * * * ?")
-    //@Scheduled(cron = "0 0 1 * * ?")
+    //@Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void createJob() {
         System.out.println("测试生成任务");
         List<ProjectPlanInfo> projectPlanInfoList = planMapper.selectAllExist();
@@ -49,6 +49,7 @@ public class ProjectJob {
             Integer day = projectPlanInfo.getDay();
             switch (cycleType) {
                 case ProjectPlanCycleTypeConstants.CYCLE_TYPE_ONCE:
+                    executeCreateJob(projectPlanInfo, 0);
                     break;
                 case ProjectPlanCycleTypeConstants.CYCLE_TYPE_MONTH:
                     executeCreateJob(projectPlanInfo, 1);

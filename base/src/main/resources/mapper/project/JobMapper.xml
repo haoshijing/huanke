@@ -229,4 +229,11 @@
         LEFT JOIN t_project_plan_info tppi ON tpji.planId = tppi.id
         WHERE tppi.linkProjectId = #{projectId}
     </select>
+
+    <select id="ifExistMateria" resultType="java.util.Map">
+        SELECT tpbi.id projectId FROM t_project_job_info tpji
+          LEFT JOIN t_project_plan_info tppi ON tpji.planId = tppi.id
+          LEFT JOIN t_project_base_info tpbi ON tppi.linkProjectId = tpbi.id
+          WHERE tpji.id = #{jobId} and tpbi.id is not null
+    </select>
 </mapper>

@@ -2,6 +2,8 @@ package com.huanke.iot.base.resp.project;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 描述:
  * 工程任务流转材料rsp
@@ -12,5 +14,5 @@ import lombok.Data;
 @Data
 public class ProjectJobMateriaRsp {
     private Boolean ifExist;
-    
+    private List<JobMateria> jobMateriaList;
 }

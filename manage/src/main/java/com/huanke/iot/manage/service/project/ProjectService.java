@@ -309,7 +309,7 @@ public class ProjectService {
             //工程设备数量
             projectAnalysisRsp.setDeviceNum(totalDeviceCount);
             long onlineDeviceCount = devicePoList.stream().filter(e -> e.getOnlineStatus() == 1).count();
-            long powerDeviceCount = devicePoList.stream().filter(e -> e.getPowerStatus() == 1).count();
+            long powerDeviceCount = devicePoList.stream().filter(e -> e.getPowerStatus() != null && e.getPowerStatus() == 1).count();
             NumberFormat format = NumberFormat.getPercentInstance();// 获取格式化类实例
             format.setMinimumFractionDigits(2);// 设置小数位
             //设置百分比
