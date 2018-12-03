@@ -30,6 +30,7 @@ public class ProjectJobInfo {
     private String enableUsers;
     private Integer warnStatus;//1-正常；2-告警
     private Integer flowStatus;//1-待处理；2-处理中；3-待审核；4-已完成；5-已忽略
+    private Integer status;
     private Date createTime;
     private Date updateTime;
     private Integer createUser;

@@ -172,6 +172,7 @@ public class PlanService {
             projectJobInfo.setEnableUsers(enableUsers);
             projectJobInfo.setWarnStatus(1);
             projectJobInfo.setFlowStatus(JobFlowStatusConstants.FLOW_STATUS_CREATED);
+            projectJobInfo.setStatus(CommonConstant.STATUS_YES);
             projectJobInfo.setCreateTime(new Date());
             jobMapper.insert(projectJobInfo);
         }
