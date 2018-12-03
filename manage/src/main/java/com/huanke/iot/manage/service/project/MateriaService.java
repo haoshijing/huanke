@@ -104,4 +104,8 @@ public class MateriaService {
         List<JobMateria>  jobMateriaList = materiaMapper.queryJobMateria(jobId);
         return jobMateriaList;
     }
+
+    public List<ProjectMaterialLog> queryJobMateriaLog(Integer materialId) {
+        return materiaLogMapper.selectByMaterialInfoId(materialId);
+    }
 }

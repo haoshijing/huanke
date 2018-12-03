@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.controller.project;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.po.project.ProjectMaterialLog;
 import com.huanke.iot.base.request.project.MateriaUpdateRequest;
 import com.huanke.iot.base.resp.project.JobMateria;
 import com.huanke.iot.base.resp.project.ProjectJobMateriaRsp;
@@ -42,9 +43,16 @@ public class MateriaController {
 
     @ApiOperation("查询任务待审核状态下材料情况")
     @GetMapping(value = "/queryJobMateria/{jobId}")
-    public ApiResponse<List<JobMateria>> queryJobMateria(@PathVariable Integer jobId) {
+    public ApiResponse<List<JobMateria>> queryJobMateria(@PathVariable("jobId") Integer jobId) {
         List<JobMateria> jobMateriaList = materiaService.queryJobMateria(jobId);
         return new ApiResponse<>(jobMateriaList);
+    }
+
+    @ApiOperation("查询任务待审核状态下材料情况")
+    @GetMapping(value = "/queryJobMateriaLog/{materialId}")
+    public ApiResponse<List<ProjectMaterialLog>> queryJobMateriaLog(@PathVariable("materialId") Integer materialId) {
+        List<ProjectMaterialLog> projectMaterialLogList = materiaService.queryJobMateriaLog(materialId);
+        return new ApiResponse<>(projectMaterialLogList);
     }
 
 

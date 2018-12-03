@@ -73,5 +73,12 @@
         </where>
         limit #{offset},#{limit}
     </select>
+
+    <select id="selectByMaterialInfoId" resultType="com.huanke.iot.base.po.project.ProjectMaterialLog">
+        select * from
+        <include refid="tableName"/>
+        WHERE materialId = #{materialId}
+        ORDER BY id DESC
+    </select>
     
 </mapper>

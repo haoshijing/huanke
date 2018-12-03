@@ -2,6 +2,9 @@ package com.huanke.iot.base.dao.project;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.project.ProjectMaterialLog;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 描述:
@@ -12,4 +15,5 @@ import com.huanke.iot.base.po.project.ProjectMaterialLog;
  */
 public interface MateriaLogMapper extends BaseMapper<ProjectMaterialLog> {
 
+    List<ProjectMaterialLog> selectByMaterialInfoId(@Param("materialId") Integer materialId);
 }
