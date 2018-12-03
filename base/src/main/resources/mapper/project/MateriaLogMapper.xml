@@ -12,6 +12,7 @@
         <include refid="tableName"/>
         (
         type,
+        jobLogId,
         materialId,
         handerNums,
         currentNums,
@@ -23,6 +24,7 @@
         VALUES
         (
         #{type},
+        #{jobLogId},
         #{materialId},
         #{handerNums},
         #{currentNums},
