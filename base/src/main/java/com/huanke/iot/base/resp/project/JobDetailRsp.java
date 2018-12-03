@@ -46,5 +46,6 @@ public class JobDetailRsp {
         private Integer operateType;
         private String description;
         private List<String> imgList;
+        private List<JobMateria> jobMateriaList;
     }
 }

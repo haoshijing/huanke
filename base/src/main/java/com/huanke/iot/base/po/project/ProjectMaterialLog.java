@@ -15,6 +15,7 @@ import java.util.Date;
 public class ProjectMaterialLog {
     private Integer id;
     private Integer type;//1-创建；2-追加；3-维保使用
+    private Integer jobLogId;
     private Integer materialId;//'材料表id'
     private Integer handerNums;//'操作数量'
     private Integer currentNums;//'操作后数量'

@@ -173,7 +173,7 @@ public class JobService {
         List<MateriaUpdateRequest> materiaUpdateRequestList = request.getMateriaUpdateRequestList();
         if (materiaUpdateRequestList != null) {
             for (MateriaUpdateRequest materiaUpdateRequest : materiaUpdateRequestList) {
-                Boolean result = materiaService.updateMateria(materiaUpdateRequest);
+                Boolean result = materiaService.updateMateria(materiaUpdateRequest, projectJobLog.getId());
             }
         }
         return "操作成功！";

@@ -43,7 +43,7 @@ public class MateriaService {
     private JobMapper jobMapper;
 
     @Transactional
-    public Boolean updateMateria(MateriaUpdateRequest request) {
+    public Boolean updateMateria(MateriaUpdateRequest request, Integer jobLogId) {
         User user = userService.getCurrentUser();
         //修改
         ProjectMaterialInfo projectMaterialInfo = materiaMapper.selectById(request.getId());
@@ -70,6 +70,9 @@ public class MateriaService {
         projectMaterialLog.setCurrentNums(projectMaterialInfo.getNums());
         projectMaterialLog.setCreateTime(new Date());
         projectMaterialLog.setCreateUser(user.getId());
+        if(jobLogId != null){
+            projectMaterialLog.setJobLogId(jobLogId);
+        }
         return materiaLogMapper.insert(projectMaterialLog) > 0;
 
     }
@@ -95,5 +98,10 @@ public class MateriaService {
         }
         projectJobMateriaRsp.setJobMateriaList(jobMateriaList);
         return  projectJobMateriaRsp;
+    }
+
+    public List<JobMateria> queryJobMateria(Integer jobId) {
+        List<JobMateria>  jobMateriaList = materiaMapper.queryJobMateria(jobId);
+        return jobMateriaList;
     }
 }

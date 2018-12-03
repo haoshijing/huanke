@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.project;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.project.ProjectMaterialInfo;
+import com.huanke.iot.base.resp.project.JobMateria;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface MateriaMapper extends BaseMapper<ProjectMaterialInfo> {
     Boolean batchDelete(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
     List<ProjectMaterialInfo> selectMaterialInfoByProjectId(Integer projectId);
+
+    List<JobMateria> queryJobMateria(@Param("jobId") Integer jobId);
 }

@@ -12,6 +12,7 @@
         <include refid="tableName"/>
         (
         type,
+        jobLogId,
         projectId,
         name,
         nums,
@@ -22,6 +23,7 @@
         VALUES
         (
         #{type},
+        #{jobLogId},
         #{projectId},
         #{name},
         #{nums},
@@ -106,6 +108,15 @@
         FROM <include refid="tableName"/>
         WHERE projectId = #{projectId}
         AND status = 1
+    </select>
+
+    <select id="queryJobMateria" resultType="com.huanke.iot.base.resp.project.JobMateria">
+        select tpmi.name name, tpml.type type, tpml.handerNums nums
+        from t_project_material_info tpmi
+        left join t_project_material_log tpml on tpmi.id = tpml.materialId
+        where tpml.jobLogId =
+        (select id from t_project_job_log where jobId=#{jobId} order by id desc limit 1)
+        and tpml.type = 5
     </select>
     
 </mapper>
