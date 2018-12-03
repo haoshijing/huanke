@@ -165,4 +165,17 @@
         WHERE customerId = #{customerId}
         AND status = 1
     </select>
+
+    <select id="selectAllRules" resultType="com.huanke.iot.base.resp.project.RuleRspPo">
+        SELECT *
+        FROM <include refid="tableName"/>
+        WHERE 1=1
+        <if test="customerId != null and customerId!='' ">
+            AND customerId = #{customerId}
+        </if>
+        <if test="typeId != null">
+            AND typeId = #{typeId}
+        </if>
+        AND status = 1
+    </select>
 </mapper>
