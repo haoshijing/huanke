@@ -36,8 +36,8 @@
     <select id="selectByProjectId" resultType="com.huanke.iot.base.resp.project.ImplementRsp">
         select pil.description, pil.implTime, pil.imgList imgListStr, pil.fileList, d.label typeName FROM t_project_implement_log pil
         LEFT JOIN t_dict d ON pil.typeId = d.id
-        where id = #{projectId}
-        ORDER BY id DESC
+        where pil.projectId = #{projectId}
+        ORDER BY pil.id DESC
     </select>
 
 </mapper>

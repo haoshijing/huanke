@@ -21,11 +21,13 @@
         ruleId,
         warnLevel,
         sourceType,
+        planId,
         finalTime,
         imgList,
         enableUsers,
         warnStatus,
         flowStatus,
+        status,
         createTime,
         createUser
         )
@@ -41,11 +43,13 @@
         #{ruleId},
         #{warnLevel},
         #{sourceType},
+        #{planId},
         #{finalTime},
         #{imgList},
         #{enableUsers},
         #{warnStatus},
         #{flowStatus},
+        #{status},
         #{createTime},
         #{createUser}
         )
@@ -219,4 +223,17 @@
             #{ids}
         </foreach>
     </update>
+
+    <select id="selectMaintenanceCountByProjectId" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_project_job_info tpji
+        LEFT JOIN t_project_plan_info tppi ON tpji.planId = tppi.id
+        WHERE tppi.linkProjectId = #{projectId}
+    </select>
+
+    <select id="ifExistMateria" resultType="java.util.Map">
+        SELECT tpbi.id projectId FROM t_project_job_info tpji
+          LEFT JOIN t_project_plan_info tppi ON tpji.planId = tppi.id
+          LEFT JOIN t_project_base_info tpbi ON tppi.linkProjectId = tpbi.id
+          WHERE tpji.id = #{jobId} and tpbi.id is not null
+    </select>
 </mapper>

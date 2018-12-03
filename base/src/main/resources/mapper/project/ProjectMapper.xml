@@ -52,6 +52,9 @@
         <include refid="tableName"/>
         <where>
             1=1
+            <if test="param.status != null and param.status!='' ">
+               AND status = #{param.status}
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>
@@ -154,6 +157,18 @@
         left join t_user u1 on  pbi.updateUser = u1.id
         left join t_project_extra_device ped on pbi.id = ped.projectId
       WHERE 1=1
+        <if test = "projectBaseInfo.name != null and projectBaseInfo.name != ''">
+            AND pbi.name LIKE CONCAT('%',#{projectBaseInfo.name},'%')
+        </if>
+        <if test = "projectBaseInfo.projectNo != null and projectBaseInfo.projectNo != ''">
+            AND pbi.projectNo =#{projectBaseInfo.projectNo}
+        </if>
+        <if test = "projectBaseInfo.buildAddress != null and projectBaseInfo.buildAddress != ''">
+            AND pbi.buildAddress LIKE CONCAT('%',#{projectBaseInfo.buildAddress},'%')
+        </if>
+        <if test = "projectBaseInfo.createTime != null">
+            AND pbi.createTime >= #{projectBaseInfo.createTime}
+        </if>
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>-->
@@ -180,8 +195,34 @@
         SELECT count(1) FROM
         <include refid="tableName"/>
         WHERE customerId = #{customerId}
+        <if test="projectId != null">
+            AND  id = #{projectId}
+        </if>
         AND projectNo = #{projectNo}
         AND status = 1
     </select>
 
+    <select id="selectGroups" resultType="com.huanke.iot.base.resp.project.ProjectGroupsRsp">
+        SELECT tdg.*, tc.name belongTo FROM t_device_group tdg
+        LEFT JOIN t_customer tc ON tdg.customerId = tc.id
+        WHERE tdg.status = 1
+        AND tc.status = 1
+        AND tdg.id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </select>
+
+    <select id="editIfExist" resultType="java.lang.Integer">
+        SELECT count(1) FROM
+        <include refid="tableName"/>
+        WHERE projectNo = #{projectNo}
+        AND id != #{projectId}
+    </select>
+    <select id="getAfterTime" resultType="com.huanke.iot.base.po.project.ProjectBaseInfo">
+        SELECT * FROM <include refid="tableName"/>
+        WHERE customerId = #{customerId}
+        AND createTime >= #{createTime}
+        AND status = 1
+    </select>
 </mapper>

@@ -152,4 +152,8 @@ public class UserService {
         CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
         return customerPo;
     }
+    public CustomerPo getCustomerById(Integer id){
+        CustomerPo customerPo = customerMapper.selectById(id);
+        return customerPo;
+    }
 }

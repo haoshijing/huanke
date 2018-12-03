@@ -70,7 +70,7 @@ public class SensorHandler  extends AbstractHandler {
 
         sensorListMessage.getDatas().forEach(sensorMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
-            if(sensorMessage.getChildid() != null){
+            if(sensorMessage.getChildid() != null && !sensorMessage.getChildid().equals("0")){
                 DevicePo childDevice = deviceMapper.getChildDevice(deviceId, sensorMessage.getChildid());
                 deviceId = childDevice.getId();
             }
@@ -88,7 +88,7 @@ public class SensorHandler  extends AbstractHandler {
             deviceSensorPo.setCreateTime(System.currentTimeMillis());
 
 
-            deviceSensorPo.setDeviceId(getDeviceIdFromTopic(topic));
+            deviceSensorPo.setDeviceId(deviceId);
             try {
                 //添加最大值限制，目前为甲醛和TVOC
                 if(maxValue.get(type)==null||value.compareTo(maxValue.get(type))<=0) {

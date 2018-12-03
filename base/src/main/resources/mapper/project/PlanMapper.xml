@@ -21,6 +21,8 @@
         linkProjectId,
         warnDate,
         nextExecuteTime,
+        month,
+        day,
         cycleType,
         cycleNums,
         overTimeDays,
@@ -41,6 +43,8 @@
         #{linkProjectId},
         #{warnDate},
         #{nextExecuteTime},
+        #{month},
+        #{day},
         #{cycleType},
         #{cycleNums},
         #{overTimeDays},
@@ -112,6 +116,12 @@
             </if>
             <if test="nextExecuteTime != null">
                 nextExecuteTime = #{nextExecuteTime},
+            </if>
+            <if test="month != null">
+                month = #{month},
+            </if>
+            <if test="day != null">
+                day = #{day},
             </if>
             <if test="cycleType != null">
                 cycleType = #{cycleType},
@@ -246,18 +256,23 @@
     </select>
 
     <select id="maintenance" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-        SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
-        FROM t_project_plan_info ppi left join t_user u on ppi.createUser = u.id left join t_user u1 on  ppi.updateUser = u1.id
-        WHERE 1=1
+        SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, pr.name ruleName, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+        FROM t_project_plan_info ppi
+        LEFT JOIN t_user u on ppi.createUser = u.id
+        LEFT JOIN t_user u1 on  ppi.updateUser = u1.id
+        LEFT JOIN t_project_rule pr on ppi.ruleId = pr.id
+        WHERE ppi.status = 1
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>-->
-        AND customerId = #{projectPlanInfo.customerId}
+        AND ppi.linkProjectId = #{projectId}
     </select>
 
     <select id="selectAllExist" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
         select * from
         <include refid="tableName"/>
         where to_days(nextExecuteTime) = to_days(now())
+        AND cycleType != 0
+        AND status = 1
     </select>
 </mapper>

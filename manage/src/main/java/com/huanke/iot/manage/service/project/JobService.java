@@ -14,6 +14,7 @@ import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.JobFlowStatusRequest;
 import com.huanke.iot.base.request.project.JobQueryRequest;
 import com.huanke.iot.base.request.project.JobRequest;
+import com.huanke.iot.base.request.project.MateriaUpdateRequest;
 import com.huanke.iot.base.resp.project.JobDetailRsp;
 import com.huanke.iot.base.resp.project.JobRsp;
 import com.huanke.iot.base.resp.project.JobRspPo;
@@ -54,6 +55,8 @@ public class JobService {
     private DeviceMapper deviceMapper;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private MateriaService materiaService;
 
 
     public JobRsp selectList(JobQueryRequest request) {
@@ -111,11 +114,11 @@ public class JobService {
         Integer jobId = request.getJobId();
         Integer userId = userService.getCurrentUser().getId();
         ProjectJobInfo projectJobInfo = jobMapper.selectById(jobId);
-        if(StringUtils.isNotEmpty(projectJobInfo.getEnableUsers())&&projectJobInfo.getEnableUsers().indexOf(userId.toString())<0){
+        if (StringUtils.isNotEmpty(projectJobInfo.getEnableUsers()) && projectJobInfo.getEnableUsers().indexOf(userId.toString()) < 0) {
             return "无权操作该任务，请刷新重新获取任务！";
         }
         List<Integer> targetUsers = request.getTargetUsers();
-        if(targetUsers != null && !targetUsers.isEmpty()){
+        if (targetUsers != null && !targetUsers.isEmpty()) {
             List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
             String targetUserStr = String.join(",", targetUserStrList);
             projectJobInfo.setEnableUsers(targetUserStr);
@@ -146,7 +149,7 @@ public class JobService {
             default:
                 break;
         }
-        if(flowStatus == projectJobInfo.getFlowStatus()){
+        if (flowStatus == projectJobInfo.getFlowStatus()) {
             return "错误的操作，任务状态已被更改，请刷新！";
         }
         String description = request.getDescription();
@@ -159,13 +162,20 @@ public class JobService {
         projectJobLog.setDescription(description);
         projectJobLog.setCreateUser(userId);
         List<String> imgList = request.getImgList();
-        if(imgList != null){
+        if (imgList != null) {
             String imgListStr = String.join(",", imgList);
             projectJobLog.setImgList(imgListStr);
         }
         projectJobLog.setCreateTime(new Date());
         projectJobLog.setOperateType(operateType);
         jobLogMapper.insert(projectJobLog);
+        //处理材料
+        List<MateriaUpdateRequest> materiaUpdateRequestList = request.getMateriaUpdateRequestList();
+        if (materiaUpdateRequestList != null) {
+            for (MateriaUpdateRequest materiaUpdateRequest : materiaUpdateRequestList) {
+                Boolean result = materiaService.updateMateria(materiaUpdateRequest);
+            }
+        }
         return "操作成功！";
     }
 
@@ -187,7 +197,7 @@ public class JobService {
         } else if (type == 2 && jobDetailRsp.getLinkProjectId() != null) {
             //关联工程
         }
-        if (projectJobInfo.getIsRule()==1) {
+        if (projectJobInfo.getIsRule() == 1) {
             //关联规则信息
             ProjectRule projectRule = ruleMapper.selectById(projectJobInfo.getRuleId());
             jobDetailRsp.setRuleName(projectRule.getName());
@@ -200,7 +210,7 @@ public class JobService {
             JobDetailRsp.HistoryData historyData = new JobDetailRsp.HistoryData();
             historyData.setUserName(userService.getUserName(jobHistoryDataDto.getCreateUser()));
             BeanUtils.copyProperties(jobHistoryDataDto, historyData);
-            if(jobHistoryDataDto.getImgListStr() != null){
+            if (jobHistoryDataDto.getImgListStr() != null) {
                 String imgListStr = jobHistoryDataDto.getImgListStr();
                 List<String> imgList = Arrays.asList(imgListStr.split(","));
                 historyData.setImgList(imgList);
@@ -213,6 +223,7 @@ public class JobService {
 
     @Transactional
     public Boolean flowJob(JobFlowStatusRequest request) {
+        Boolean result = null;
         Integer jobId = request.getJobId();
         Integer operateType = request.getOperateType();
         String description = request.getDescription();
@@ -255,7 +266,8 @@ public class JobService {
             default:
                 break;
         }
-        Boolean result = jobMapper.batchFlow(userId, valueList, targetUserStr, flowStatus);
+
+        result = result && jobMapper.batchFlow(userId, valueList, targetUserStr, flowStatus);
         return result;
     }
 }

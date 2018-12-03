@@ -2,16 +2,22 @@ package com.huanke.iot.manage.service.project;
 
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
+import com.huanke.iot.base.constant.ProjectMateriaLogContants;
+import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.*;
+import com.huanke.iot.base.exception.BusinessException;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.project.ProjectExtraDevice;
 import com.huanke.iot.base.po.project.ProjectMaterialInfo;
+import com.huanke.iot.base.po.project.ProjectMaterialLog;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.request.BaseListRequest;
+import com.huanke.iot.base.request.project.ExistProjectNoRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
-import com.huanke.iot.base.resp.project.ProjectDictRsp;
-import com.huanke.iot.base.resp.project.ProjectRsp;
-import com.huanke.iot.base.resp.project.ProjectRspPo;
+import com.huanke.iot.base.resp.project.*;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
@@ -21,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,6 +58,14 @@ public class ProjectService {
     private MateriaMapper materiaMapper;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private DeviceMapper deviceMapper;
+    @Autowired
+    private DeviceGroupItemMapper deviceGroupItemMapper;
+    @Autowired
+    private JobMapper jobMapper;
+    @Autowired
+    private MateriaLogMapper materiaLogMapper;
 
 
     public ProjectRsp selectList(ProjectQueryRequest request) {
@@ -87,6 +103,7 @@ public class ProjectService {
     @Transactional
     public Boolean addOrUpdate(ProjectRequest request) {
         User user = userService.getCurrentUser();
+        Integer userId = user.getId();
         ProjectBaseInfo projectBaseInfo = new ProjectBaseInfo();
         BeanUtils.copyProperties(request, projectBaseInfo);
 
@@ -94,7 +111,7 @@ public class ProjectService {
             //添加
             projectBaseInfo.setCustomerId(customerService.obtainCustomerId(false));
             projectBaseInfo.setCreateTime(new Date());
-            projectBaseInfo.setCreateUser(user.getId());
+            projectBaseInfo.setCreateUser(userId);
             projectBaseInfo.setStatus(CommonConstant.STATUS_YES);
             projectMapper.insert(projectBaseInfo);
             //添加第三方设备
@@ -104,10 +121,11 @@ public class ProjectService {
                 BeanUtils.copyProperties(extraDevice, projectExtraDevice);
                 projectExtraDevice.setStatus(CommonConstant.STATUS_YES);
                 projectExtraDevice.setCreateTime(new Date());
-                projectExtraDevice.setCreateUser(user.getId());
+                projectExtraDevice.setCreateUser(userId);
                 projectExtraDevice.setProjectId(projectBaseInfo.getId());
                 projectExtraDevice.setDeviceNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_EXTRADEVICE));
                 extraDeviceMapper.insert(projectExtraDevice);
+
             }
             //添加材料信息
             List<ProjectRequest.MaterialInfo> materialInfoList = request.getMaterialInfoList();
@@ -116,13 +134,20 @@ public class ProjectService {
                 BeanUtils.copyProperties(materialInfo, projectMaterialInfo);
                 projectMaterialInfo.setStatus(CommonConstant.STATUS_YES);
                 projectMaterialInfo.setCreateTime(new Date());
-                projectMaterialInfo.setCreateUser(user.getId());
+                projectMaterialInfo.setCreateUser(userId);
                 projectMaterialInfo.setProjectId(projectBaseInfo.getId());
                 materiaMapper.insert(projectMaterialInfo);
+                //log
+                logMateria(projectMaterialInfo, ProjectMateriaLogContants.OPERATE_TYPE_CREATE, userId);
             }
 
         } else {
             //修改
+            //判断projectNo是否重复
+            if(projectMapper.editIfExist(projectBaseInfo.getProjectNo(), projectBaseInfo.getId()) > 0){
+                throw new BusinessException("projectNo已存在，请重新输入");
+            }
+
             projectBaseInfo.setUpdateTime(new Date());
             projectBaseInfo.setUpdateUser(user.getId());
             projectMapper.updateById(projectBaseInfo);
@@ -173,6 +198,8 @@ public class ProjectService {
                     projectMaterialInfo.setCreateUser(user.getId());
                     projectMaterialInfo.setProjectId(projectBaseInfo.getId());
                     materiaMapper.insert(projectMaterialInfo);
+                    //log
+                    logMateria(projectMaterialInfo, ProjectMateriaLogContants.OPERATE_TYPE_CREATE, userId);
                 } else {//已存在ID，说明是修改的材料
                     ProjectMaterialInfo projectMaterialInfo = materiaMapper.selectById(eId);
                     BeanUtils.copyProperties(e, projectMaterialInfo);
@@ -180,6 +207,8 @@ public class ProjectService {
                     projectMaterialInfo.setUpdateUser(user.getId());
                     projectMaterialInfo.setUpdateTime(new Date());
                     materiaMapper.updateById(projectMaterialInfo);
+                    //log
+                    logMateria(projectMaterialInfo, ProjectMateriaLogContants.OPERATE_TYPE_UPDATE, userId);
                 }
             });
             List<Integer> deleteMaterialIds = existMaterialIdList.stream().filter(e -> !materialIdList.contains(e)).collect(Collectors.toList());
@@ -188,6 +217,19 @@ public class ProjectService {
             }
         }
         return true;
+    }
+
+    private void logMateria(ProjectMaterialInfo projectMaterialInfo, Integer type, Integer userId) {
+        ProjectMaterialLog projectMaterialLog = new ProjectMaterialLog();
+        projectMaterialLog.setType(type);
+        projectMaterialLog.setMaterialId(projectMaterialInfo.getId());
+        projectMaterialLog.setHanderNums(projectMaterialInfo.getNums());
+        projectMaterialLog.setCurrentNums(projectMaterialInfo.getNums());
+        projectMaterialLog.setCreateTime(new Date());
+        projectMaterialLog.setUpdateTime(new Date());
+        projectMaterialLog.setCreateUser(userId);
+        projectMaterialLog.setUpdateUser(userId);
+        materiaLogMapper.insert(projectMaterialLog);
     }
 
     public Boolean reverseProject(List<Integer> valueList) {
@@ -233,8 +275,60 @@ public class ProjectService {
         return projectMapper.selectProjectDict(customerId);
     }
 
-    public Boolean existProjectNo(String projectNo) {
+    public Boolean existProjectNo(ExistProjectNoRequest request) {
+        Integer projectId = request.getProjectId();
+        String projectNo = request.getValue();
         Integer customerId = customerService.obtainCustomerId(false);
-        return projectMapper.existProjectNo(customerId, projectNo) > 0;
+        if(projectId != null){
+            return projectMapper.existProjectNo(customerId, projectId, projectNo) > 1;
+        }
+        return projectMapper.existProjectNo(customerId, projectId, projectNo) > 0;
     }
+
+    public List<ProjectGroupsRsp> selectGroups(BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        List<ProjectGroupsRsp> projectGroupsRspList = projectMapper.selectGroups(valueList);
+        for (ProjectGroupsRsp projectGroupsRsp : projectGroupsRspList) {
+            List<LinkGroupDeviceRspPo> devicePoList = deviceMapper.selectByGroupId(projectGroupsRsp.getId());
+            projectGroupsRsp.setDeviceList(devicePoList);
+        }
+        return projectGroupsRspList;
+    }
+
+    public ProjectAnalysisRsp projectAnalysis(Integer projectId) {
+        ProjectAnalysisRsp projectAnalysisRsp = new ProjectAnalysisRsp();
+        //工程项目数量,工程设备数量
+        ProjectBaseInfo projectBaseInfo = projectMapper.selectById(projectId);
+        String groupIds = projectBaseInfo.getGroupIds();
+        if (groupIds != null && !groupIds.equals("")) {
+            List<String> groupIdList = Arrays.asList(groupIds.split(","));
+            //工程项目数量
+            projectAnalysisRsp.setProjectGroupNum(groupIdList.size());
+            List<DevicePo> devicePoList = deviceGroupItemMapper.selectByGroupIds(groupIds);
+            Integer totalDeviceCount = devicePoList.size();
+            //工程设备数量
+            projectAnalysisRsp.setDeviceNum(totalDeviceCount);
+            long onlineDeviceCount = devicePoList.stream().filter(e -> e.getOnlineStatus() == 1).count();
+            long powerDeviceCount = devicePoList.stream().filter(e -> e.getPowerStatus() != null && e.getPowerStatus() == 1).count();
+            NumberFormat format = NumberFormat.getPercentInstance();// 获取格式化类实例
+            format.setMinimumFractionDigits(2);// 设置小数位
+            //设置百分比
+            projectAnalysisRsp.setOnlineDeviceProportion(format.format(onlineDeviceCount / totalDeviceCount) + "%");
+            projectAnalysisRsp.setPowerDeviceProportion(format.format(powerDeviceCount / totalDeviceCount) + "%");
+            System.out.println(format.format(onlineDeviceCount / totalDeviceCount));
+            System.out.println(format.format(powerDeviceCount / totalDeviceCount));
+        } else {
+            projectAnalysisRsp.setProjectGroupNum(0);
+            projectAnalysisRsp.setDeviceNum(0);
+            projectAnalysisRsp.setOnlineDeviceProportion("");
+            projectAnalysisRsp.setPowerDeviceProportion("");
+        }
+        //维保次数
+        Integer maintenanceCount = jobMapper.selectMaintenanceCountByProjectId(projectId);
+        projectAnalysisRsp.setMaintenanceCount(maintenanceCount);
+        //设备告警，暂无
+        projectAnalysisRsp.setDeviceWarnCount(0);
+        return projectAnalysisRsp;
+    }
+
 }

@@ -4,9 +4,11 @@ import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.request.project.ProjectRequest;
 import com.huanke.iot.base.resp.project.ProjectDictRsp;
+import com.huanke.iot.base.resp.project.ProjectGroupsRsp;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,5 +32,11 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
 
     Boolean batchReverse(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
-    Integer existProjectNo(@Param("customerId") Integer customerId, @Param("projectNo") String projectNo);
+    Integer existProjectNo(@Param("customerId") Integer customerId, @Param("projectId") Integer projectId, @Param("projectNo") String projectNo);
+
+    List<ProjectGroupsRsp> selectGroups(@Param("valueList") List<Integer> valueList);
+
+    Integer editIfExist(@Param("projectNo") String projectNo, @Param("projectId") Integer id);
+
+    List<ProjectBaseInfo> getAfterTime(@Param("customerId") Integer customerId,@Param("createTime") Date createTime);
 }

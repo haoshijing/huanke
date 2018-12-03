@@ -33,7 +33,7 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
             CustomerUserPo customerUserPo = userService.getUserByIMeiAndAppId(imei,appId);
             //判断是否注册
             if(customerUserPo != null){
-                CustomerPo customerByOpenId = userService.getCustomerByOpenId(customerUserPo.getOpenId());
+                CustomerPo customerByOpenId = userService.getCustomerById(customerUserPo.getCustomerId());
                 UserRequestContext requestContext = UserRequestContextHolder.get();
                 requestContext.setCurrentId(customerUserPo.getId());
                 if(customerByOpenId != null){

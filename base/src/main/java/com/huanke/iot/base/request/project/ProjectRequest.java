@@ -32,6 +32,7 @@ public class ProjectRequest {
         private String model;
         private String factory;
         private String direction;
+        private Date createTime;
     }
 
     @Data
@@ -40,6 +41,7 @@ public class ProjectRequest {
         private Integer type;
         private String name;
         private Integer nums;
+        private Date createTime;
     }
 
 

@@ -6,6 +6,7 @@ import com.huanke.iot.base.resp.project.JobRspPo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 描述:
@@ -25,4 +26,8 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
     Boolean batchFlow(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList, @Param("targetUserStr") String targetUserStr, @Param("flowStatus") Integer flowStatus);
 
     Integer selectCount(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("userId") Integer userId);
+
+    Integer selectMaintenanceCountByProjectId(@Param("projectId") Integer projectId);
+
+    Map<Object, Object> ifExistMateria(@Param("jobId") Integer jobId);
 }

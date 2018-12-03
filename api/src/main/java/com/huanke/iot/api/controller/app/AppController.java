@@ -1,6 +1,5 @@
 package com.huanke.iot.api.controller.app;
 
-import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppDeviceListVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
@@ -14,7 +13,6 @@ import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.service.device.basic.AppBasicService;
 import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,6 +80,14 @@ public class AppController extends BaseController {
         return new ApiResponse<>(deviceListVo);
     }
 
+    @RequestMapping("/queryChildDevice/{hostDeviceId}")
+    public Object obtainChildDevice(@PathVariable("hostDeviceId") Integer hostDeviceId) {
+        Integer userId = getCurrentUserIdForApp();
+        log.info("查询子设备列表，userId={}， hostDeviceId={}", userId, hostDeviceId);
+        List<AppDeviceListVo.DeviceItemPo> childDeviceList = appDeviceDataService.queryChildDevice(hostDeviceId);
+        return new ApiResponse<>(childDeviceList);
+    }
+
     @RequestMapping("/getModelVo")
     public ApiResponse<DeviceModelVo> getModelVo(@RequestBody DeviceFormatRequest request) {
         Integer deviceId = request.getDeviceId();
@@ -141,11 +147,11 @@ public class AppController extends BaseController {
     }
 
     @RequestMapping("/sendFunc")
-    public ApiResponse<String> sendFuc(@RequestBody DeviceFuncVo deviceFuncVo){
+    public ApiResponse<Boolean> sendFuc(@RequestBody DeviceFuncVo deviceFuncVo){
         log.debug("发送指令："+deviceFuncVo.toString());
         String funcId = deviceFuncVo.getFuncId();
-        String requestId = deviceDataService.sendFunc(deviceFuncVo,getCurrentUserIdForApp(),2);
-        return new ApiResponse<>(requestId);
+        Boolean request = deviceDataService.sendFuncs(deviceFuncVo,getCurrentUserIdForApp(),2);
+        return new ApiResponse<>(request);
     }
 
     @RequestMapping("/getAppPassword")
