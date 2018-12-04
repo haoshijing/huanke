@@ -136,7 +136,12 @@
         <if test="param.warnLevel != null">
             AND warnLevel = #{param.warnLevel}
         </if>
-        AND customerId = #{param.customerId}
+        <if test="param.warnLevel != null">
+            AND warnLevel = #{param.warnLevel}
+        </if>
+        <if test="param.customerId != null">
+            AND customerId = #{param.customerId}
+        </if>
         AND status != 2
     </select>
 
@@ -154,7 +159,9 @@
         <if test="projectRule.warnLevel != null">
             AND pr.warnLevel = #{projectRule.warnLevel}
         </if>
-        AND pr.customerId = #{projectRule.customerId}
+        <if test="projectRule.customerId != null">
+            AND pr.customerId = #{projectRule.customerId}
+        </if>
         AND pr.status != 2
       LIMIT #{start},#{limit}
     </select>
@@ -162,7 +169,10 @@
     <select id="selectRuleDict" resultType="com.huanke.iot.base.resp.project.RuleDictRsp">
         select id, name from
         <include refid="tableName"/>
-        WHERE customerId = #{customerId}
+        WHERE 1=1
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
         AND status = 1
     </select>
 
@@ -170,7 +180,7 @@
         SELECT *
         FROM <include refid="tableName"/>
         WHERE 1=1
-        <if test="customerId != null and customerId!='' ">
+        <if test="customerId != null">
             AND customerId = #{customerId}
         </if>
         <if test="typeId != null">

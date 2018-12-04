@@ -129,7 +129,9 @@
         <if test="param.type != null and param.type!='' ">
             AND type = #{param.type}
         </if>
-        AND customerId = #{param.customerId}
+        <if test="param.customerId != null">
+            AND customerId = #{param.customerId}
+        </if>
         AND isDelete = 0
     </select>
 
@@ -140,7 +142,9 @@
         <if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>
-        AND customerId = #{dictPo.customerId}
+        <if test="dictPo.customerId != null">
+            AND customerId = #{dictPo.customerId}
+        </if>
         AND isDelete = 0
       LIMIT #{start},#{limit}
     </select>
@@ -149,14 +153,20 @@
         select id,label,value from
         <include refid="tableName"/>
         where type = #{type}
-        AND customerId = #{customerId}
+        AND 1=1
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
         AND isDelete = 0
     </select>
 
     <select id="confirmAdd" parameterType="com.huanke.iot.base.po.config.DictPo" resultType="java.lang.Integer">
         SELECT count(1) from
         <include refid="tableName"/>
-        WHERE customerId = #{customerId}
+        WHERE 1=1
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
         AND type = #{type}
         AND value = #{value}
         AND isDelete = 0
@@ -165,7 +175,10 @@
     <select id="confirmUpdate" parameterType="com.huanke.iot.base.po.config.DictPo" resultType="java.lang.Integer">
         SELECT count(1) from
         <include refid="tableName"/>
-        WHERE customerId = #{customerId}
+        WHERE 1=1
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
         AND type = #{type}
         AND value = #{value}
         AND id != #{id}

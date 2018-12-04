@@ -229,7 +229,9 @@
         <if test = "projectJobInfo.createTime != null">
             AND  createTime >= #{projectJobInfo.createTime}
         </if>
-        AND customerId = #{projectJobInfo.customerId}
+        <if test = "projectJobInfo.customerId != null">
+            AND  customerId = #{projectJobInfo.customerId}
+        </if>
         AND status != 2
         AND (find_in_set(#{userId}, enableUsers)
         OR enableUsers is null)
@@ -260,7 +262,9 @@
         <if test = "projectJobInfo.createTime != null">
             AND pji.createTime >= #{projectJobInfo.createTime}
         </if>
-      AND pji.customerId = #{projectJobInfo.customerId}
+        <if test = "projectJobInfo.customerId != null">
+            AND pji.customerId = #{projectJobInfo.customerId}
+        </if>
       AND pji.status != 2
       AND (find_in_set(#{userId}, pji.enableUsers)
         OR pji.enableUsers is null)
@@ -302,7 +306,10 @@
     <select id="queryWarnJob" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
         SELECT * from
         <include refid="tableName"/>
-        where customerId = #{customerId}
+        where 1=1
+        <if test = "customerId != null">
+            AND customerId = #{customerId}
+        </if>
         AND warnStatus = 2
         AND flowStatus NOT IN (4,5)
         AND status = 1
