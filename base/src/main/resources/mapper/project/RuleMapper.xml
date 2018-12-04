@@ -12,6 +12,7 @@
         <include refid="tableName"/>
         (
         customerId,
+        useType,
         name,
         description,
         typeId,
@@ -23,6 +24,7 @@
         VALUES
         (
         #{customerId},
+        #{useType},
         #{name},
         #{description},
         #{typeId},
@@ -55,6 +57,9 @@
         update
         <include refid="tableName"/>
         <set>
+            <if test="useType != null and useType!='' ">
+                useType = #{useType},
+            </if>
             <if test="name != null and name!='' ">
                 name = #{name},
             </if>
@@ -130,6 +135,9 @@
         <if test="param.name != null and param.name!='' ">
             AND name like CONCAT('%',CONCAT(#{param.name},'%'))
         </if>
+        <if test="param.useType != null">
+            AND useType = #{param.useType}
+        </if>
         <if test="param.status != null">
             AND status = #{param.status}
         </if>
@@ -152,6 +160,9 @@
       WHERE 1=1
         <if test="projectRule.name != null and projectRule.name!='' ">
             AND pr.name like CONCAT('%',CONCAT(#{projectRule.name},'%'))
+        </if>
+        <if test="projectRule.useType != null">
+            AND pr.useType = #{projectRule.useType}
         </if>
         <if test="projectRule.status != null">
             AND pr.status = #{projectRule.status}
@@ -176,7 +187,7 @@
         AND status = 1
     </select>
 
-    <select id="selectAllRules" resultType="com.huanke.iot.base.resp.project.RuleRspPo">
+    <select id="selectAllRepaireRules" resultType="com.huanke.iot.base.resp.project.RuleRspPo">
         SELECT *
         FROM <include refid="tableName"/>
         WHERE 1=1
@@ -187,5 +198,6 @@
             AND typeId = #{typeId}
         </if>
         AND status = 1
+        AND useType = 2
     </select>
 </mapper>

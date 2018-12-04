@@ -68,7 +68,7 @@ public class UserFeedbackService {
         if (projectTypeRules!= null && projectTypeRules.size()>0) {
             List<RuleInfoVo> ruleInfoVos = new ArrayList<>();
             for (QueryDictRsp temp : projectTypeRules) {
-                List<RuleRspPo> ruleRspPos = ruleMapper.selectAllRules(customerId, temp.getId());
+                List<RuleRspPo> ruleRspPos = ruleMapper.selectAllRepaireRules(customerId, temp.getId());
                 if (ruleRspPos != null && ruleRspPos.size() > 0) {
                     RuleInfoVo ruleInfoVo = new RuleInfoVo();
                     ruleInfoVo.setDictId(temp.getId());
