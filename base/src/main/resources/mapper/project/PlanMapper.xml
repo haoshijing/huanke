@@ -211,10 +211,12 @@
         <if test = "param.createTime != null">
             AND ppi.createTime >= #{param.createTime}
         </if>
+        <if test = "param.customerId != null">
+            AND ppi.customerId = #{param.customerId}
+        </if>
         <!--<if test="param.type != null and param.type!='' ">
             AND type = #{param.type}
         </if>-->
-        AND ppi.customerId = #{param.customerId}
         AND ppi.status != 2
     </select>
 
@@ -244,7 +246,9 @@
         <!--<if test = "projectPlanInfo.type != null and projectPlanInfo.type != ''">
             AND d.type = #{projectPlanInfo.type}
         </if>-->
-        AND ppi.customerId = #{projectPlanInfo.customerId}
+        <if test = "projectPlanInfo.customerId != null">
+            AND ppi.customerId = #{projectPlanInfo.customerId}
+        </if>
         AND ppi.status != 2
       LIMIT #{start},#{limit}
     </select>

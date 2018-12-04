@@ -145,7 +145,9 @@
         select count(1) from
         <include refid="tableName"/>
         where 1=1
-        AND customerId = #{param.customerId}
+        <if test = "param.customerId != null">
+            AND customerId = #{param.customerId}
+        </if>
         AND status != 2
     </select>
 
@@ -169,10 +171,12 @@
         <if test = "projectBaseInfo.createTime != null">
             AND pbi.createTime >= #{projectBaseInfo.createTime}
         </if>
+        <if test = "projectBaseInfo.customerId != null">
+            AND pbi.customerId = #{projectBaseInfo.customerId}
+        </if>
         <!--<if test = "dictPo.type != null and dictPo.type != ''">
             AND d.type = #{dictPo.type}
         </if>-->
-      AND pbi.customerId = #{projectBaseInfo.customerId}
       AND pbi.status != 2
       group by pbi.id
       LIMIT #{start},#{limit}
@@ -187,14 +191,20 @@
     <select id="selectProjectDict" resultType="com.huanke.iot.base.resp.project.ProjectDictRsp">
         select id, name from
         <include refid="tableName"/>
-        WHERE customerId = #{customerId}
+        WHERE 1=1
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
         AND status = 1
     </select>
 
     <select id="existProjectNo" resultType="java.lang.Integer">
         SELECT count(1) FROM
         <include refid="tableName"/>
-        WHERE customerId = #{customerId}
+        WHERE 1=1
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
         <if test="projectId != null">
             AND  id = #{projectId}
         </if>
@@ -221,7 +231,10 @@
     </select>
     <select id="getAfterTime" resultType="com.huanke.iot.base.po.project.ProjectBaseInfo">
         SELECT * FROM <include refid="tableName"/>
-        WHERE customerId = #{customerId}
+        WHERE 1=1
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
         AND createTime >= #{createTime}
         AND status = 1
     </select>
