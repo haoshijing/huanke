@@ -278,8 +278,9 @@ public class JobService {
         return result;
     }
 
-    public List<ProjectJobInfo> queryWarnJob() {
+    public List<ProjectJobInfo> queryWarnJob(JobQueryRequest request) {
         Integer customerId = customerService.obtainCustomerId(false);
-        return jobMapper.queryWarnJob(customerId);
+        Integer start = (request.getCurrentPage()-1)*request.getLimit();
+        return jobMapper.queryWarnJob(customerId,request,start,request.getLimit());
     }
 }

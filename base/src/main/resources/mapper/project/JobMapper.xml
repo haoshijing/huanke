@@ -310,8 +310,21 @@
         <if test = "customerId != null">
             AND customerId = #{customerId}
         </if>
+        <if test = "request.name != null">
+            AND name LIKE CONCAT('%',#{request.name},'%')
+        </if>
+        <if test = "request.isRule != null">
+            AND isRule = #{request.isRule}
+        </if>
+        <if test = "request.warnLevel != null">
+            AND warnLevel = #{request.warnLevel}
+        </if>
+        <if test = "request.flowStatus != null">
+            AND flowStatus = #{request.flowStatus}
+        </if>
         AND warnStatus = 2
         AND flowStatus NOT IN (4,5)
         AND status = 1
+        LIMIT #{start},#{limit}
     </select>
 </mapper>

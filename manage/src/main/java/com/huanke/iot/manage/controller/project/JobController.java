@@ -94,8 +94,8 @@ public class JobController {
 
     @ApiOperation("查询报警任务")
     @PostMapping(value = "/queryWarnJob")
-    public ApiResponse<List<ProjectJobInfo>> queryWarnJob() {
-        List<ProjectJobInfo> warnJobList= jobService.queryWarnJob();
+    public ApiResponse<List<ProjectJobInfo>> queryWarnJob(JobQueryRequest request) {
+        List<ProjectJobInfo> warnJobList= jobService.queryWarnJob(request);
         return new ApiResponse<>(warnJobList);
     }
 }
