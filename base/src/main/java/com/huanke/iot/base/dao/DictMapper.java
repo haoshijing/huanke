@@ -21,6 +21,10 @@ public interface DictMapper extends BaseMapper<DictPo> {
      */
     List<DictPo> selectByType(String type);
 
+    Boolean batchDisable(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
+
+    Boolean batchEnable(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
+
     Boolean batchDelete(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
     List<DictRspPo> selectPageList(@Param("dictPo") DictPo dictPo, @Param("start") int start, @Param("limit") int limit);
