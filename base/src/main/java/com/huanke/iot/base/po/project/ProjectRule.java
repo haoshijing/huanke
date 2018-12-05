@@ -15,6 +15,7 @@ import java.util.Date;
 public class ProjectRule {
     private Integer id;
     private Integer customerId;
+    private Integer useType;//1-计划，2-客户报修反馈，3-设备告警
     private String name;
     private String description;
     private Integer typeId;

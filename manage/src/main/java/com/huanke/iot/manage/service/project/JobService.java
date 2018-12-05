@@ -13,13 +13,11 @@ import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.po.project.ProjectJobLog;
 import com.huanke.iot.base.po.project.ProjectRule;
 import com.huanke.iot.base.po.user.User;
-import com.huanke.iot.base.request.project.JobFlowStatusRequest;
-import com.huanke.iot.base.request.project.JobQueryRequest;
-import com.huanke.iot.base.request.project.JobRequest;
-import com.huanke.iot.base.request.project.MateriaUpdateRequest;
+import com.huanke.iot.base.request.project.*;
 import com.huanke.iot.base.resp.project.JobDetailRsp;
 import com.huanke.iot.base.resp.project.JobRsp;
 import com.huanke.iot.base.resp.project.JobRspPo;
+import com.huanke.iot.base.resp.project.WarnJobRsp;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -278,8 +276,27 @@ public class JobService {
         return result;
     }
 
-    public List<ProjectJobInfo> queryWarnJob() {
+
+    public WarnJobRsp queryWarnJob(WarnJobRequest request) {
         Integer customerId = customerService.obtainCustomerId(false);
-        return jobMapper.queryWarnJob(customerId);
+        Integer userId = userService.getCurrentUser().getId();
+        WarnJobRsp warnJobRsp = new WarnJobRsp();
+        Integer limit = request.getLimit();
+        Integer currentPage = request.getCurrentPage();
+        Integer start = (currentPage - 1) * limit;
+
+        ProjectJobInfo projectJob = new ProjectJobInfo();
+        projectJob.setCustomerId(customerId);
+        BeanUtils.copyProperties(request, projectJob);
+        projectJob.setWarnStatus(2);
+        Integer count = jobMapper.selectCount(projectJob, userId);
+        warnJobRsp.setTotalCount(count);
+        warnJobRsp.setCurrentPage(currentPage);
+        warnJobRsp.setCurrentCount(limit);
+
+        List<ProjectJobInfo> projectJobInfoList = jobMapper.selectWarnPageList(projectJob, start, limit, userId);
+
+        warnJobRsp.setProjectJobInfoList(projectJobInfoList);
+        return warnJobRsp;
     }
 }

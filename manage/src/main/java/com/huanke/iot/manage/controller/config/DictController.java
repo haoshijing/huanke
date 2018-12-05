@@ -60,12 +60,34 @@ public class DictController {
         return new ApiResponse<>(result);
     }
 
+    @ApiOperation("禁用字典信息")
+    @PostMapping(value = "/disableDict")
+    public ApiResponse<Boolean> disableDict(@RequestBody BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要禁用字典信息");
+        }
+        Boolean result = dictService.disableDict(valueList);
+        return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("启用字典信息")
+    @PostMapping(value = "/enableDict")
+    public ApiResponse<Boolean> enableDict(@RequestBody BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要启用字典信息");
+        }
+        Boolean result = dictService.enableDict(valueList);
+        return new ApiResponse<>(result);
+    }
+
     @ApiOperation("删除字典信息")
     @PostMapping(value = "/deleteDict")
     public ApiResponse<Boolean> deleteDict(@RequestBody BaseListRequest<Integer> request) {
         List<Integer> valueList = request.getValueList();
         if(valueList.size() == 0){
-            throw new BusinessException("没有要删除设备信息");
+            throw new BusinessException("没有要删除字典信息");
         }
         Boolean result = dictService.deleteDict(valueList);
         return new ApiResponse<>(result);

@@ -112,6 +112,26 @@
         AND  isDelete = 0
     </select>
 
+    <update id="batchDisable">
+        UPDATE <include refid="tableName"/>
+        SET isDelete = 2
+        ,updateUserId = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <update id="batchEnable">
+        UPDATE <include refid="tableName"/>
+        SET isDelete = 0
+        ,updateUserId = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
     <update id="batchDelete">
         UPDATE <include refid="tableName"/>
         SET isDelete = 1
@@ -132,11 +152,14 @@
         <if test="param.customerId != null">
             AND customerId = #{param.customerId}
         </if>
-        AND isDelete = 0
+        <if test="param.isDelete != null">
+            AND isDelete = #{param.isDelete}
+        </if>
+        AND isDelete != 1
     </select>
 
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.DictRspPo">
-      SELECT d.id, d.label, d.description, d.createTime, d.updateTime, d.value, d.sort, u.nickName createName,u1.nickName updateName
+      SELECT d.id, d.label, d.description, d.createTime, d.updateTime, d.value, d.sort,d.isDelete, u.nickName createName,u1.nickName updateName
       FROM t_dict d left join t_user u on d.createUserId = u.id left join t_user u1 on  d.updateUserId = u1.id
       WHERE 1=1
         <if test = "dictPo.type != null and dictPo.type != ''">
@@ -145,7 +168,10 @@
         <if test="dictPo.customerId != null">
             AND customerId = #{dictPo.customerId}
         </if>
-        AND isDelete = 0
+        <if test="dictPo.isDelete != null">
+            AND isDelete = #{dictPo.isDelete}
+        </if>
+        AND isDelete != 1
       LIMIT #{start},#{limit}
     </select>
 

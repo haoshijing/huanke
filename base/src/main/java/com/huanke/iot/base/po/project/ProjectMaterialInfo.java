@@ -14,7 +14,6 @@ import java.util.Date;
 @Data
 public class ProjectMaterialInfo {
     private Integer id;
-    private Integer jobLogId;
     private Integer type;//1-材料类；2-耗材类
     private  Integer projectId;
     private  String name;
