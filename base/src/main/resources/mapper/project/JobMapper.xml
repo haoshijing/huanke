@@ -328,18 +328,7 @@
         <if test = "projectJobInfo.customerId != null">
             AND customerId = #{projectJobInfo.customerId}
         </if>
-        <if test = "request.name != null">
-            AND name LIKE CONCAT('%',#{request.name},'%')
-        </if>
-        <if test = "request.isRule != null">
-            AND isRule = #{request.isRule}
-        </if>
-        <if test = "request.warnLevel != null">
-            AND warnLevel = #{request.warnLevel}
-        </if>
-        <if test = "request.flowStatus != null">
-            AND flowStatus = #{request.flowStatus}
-        </if>
+      
         AND warnStatus = 2
         AND status != 2
         AND (find_in_set(#{userId}, enableUsers)
