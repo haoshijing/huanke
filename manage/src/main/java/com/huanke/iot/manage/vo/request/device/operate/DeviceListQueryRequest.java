@@ -17,6 +17,7 @@ public class DeviceListQueryRequest {
      * 设备id
      */
     private String name;
+    private String manageName;
 
     /**
      * 设备mac地址
