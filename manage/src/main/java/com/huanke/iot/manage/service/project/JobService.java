@@ -276,6 +276,7 @@ public class JobService {
         return result;
     }
 
+
     public WarnJobRsp queryWarnJob(WarnJobRequest request) {
         Integer customerId = customerService.obtainCustomerId(false);
         Integer userId = userService.getCurrentUser().getId();

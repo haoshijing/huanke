@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.project;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.project.ProjectJobInfo;
+import com.huanke.iot.base.request.project.JobQueryRequest;
 import com.huanke.iot.base.resp.project.JobRspPo;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,5 +37,7 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
     List<ProjectJobInfo> selectAllToWarn();
 
     List<ProjectJobInfo> selectWarnPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId);
+
+    List<ProjectJobInfo> queryWarnJob(@Param("customerId") Integer customerId,@Param("request") JobQueryRequest jobQueryRequest,@Param("start") int start, @Param("limit") int limit);
 
 }

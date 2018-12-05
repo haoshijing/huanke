@@ -12,6 +12,7 @@ import lombok.Data;
 @Data
 public class RuleQueryRequest {
     private String name;
+    private Integer useType;
     private Integer warnLevel;
     private Integer status;
     private Integer currentPage = 1;
