@@ -35,5 +35,6 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
 
     List<ProjectJobInfo> selectAllToWarn();
 
-    List<ProjectJobInfo> queryWarnJob(@Param("customerId") Integer customerId);
+    List<ProjectJobInfo> selectWarnPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId);
+
 }

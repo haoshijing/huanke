@@ -232,6 +232,9 @@
         <if test = "projectJobInfo.customerId != null">
             AND  customerId = #{projectJobInfo.customerId}
         </if>
+        <if test = "projectJobInfo.warnStatus != null">
+            AND  warnStatus = #{projectJobInfo.warnStatus}
+        </if>
         AND status != 2
         AND (find_in_set(#{userId}, enableUsers)
         OR enableUsers is null)
@@ -303,15 +306,32 @@
         AND status = 1
     </select>
 
-    <select id="queryWarnJob" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
-        SELECT * from
-        <include refid="tableName"/>
-        where 1=1
-        <if test = "customerId != null">
-            AND customerId = #{customerId}
+    <select id="selectWarnPageList" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
+        SELECT *
+        FROM t_project_job_info pji
+        WHERE 1=1
+        <if test = "projectJobInfo.name != null and projectJobInfo.name != ''">
+            AND name LIKE CONCAT('%',#{projectJobInfo.name},'%')
+        </if>
+        <if test = "projectJobInfo.isRule != null and projectJobInfo.isRule != ''">
+            AND isRule = #{projectJobInfo.isRule}
+        </if>
+        <if test = "projectJobInfo.warnLevel != null and projectJobInfo.warnLevel != ''">
+            AND warnLevel = #{projectJobInfo.warnLevel}
+        </if>
+        <if test = "projectJobInfo.flowStatus != null and projectJobInfo.flowStatus != ''">
+            AND flowStatus = #{projectJobInfo.flowStatus}
+        </if>
+        <if test = "projectJobInfo.createTime != null">
+            AND createTime >= #{projectJobInfo.createTime}
+        </if>
+        <if test = "projectJobInfo.customerId != null">
+            AND customerId = #{projectJobInfo.customerId}
         </if>
         AND warnStatus = 2
-        AND flowStatus NOT IN (4,5)
-        AND status = 1
+        AND status != 2
+        AND (find_in_set(#{userId}, enableUsers)
+        OR enableUsers is null)
+        LIMIT #{start},#{limit}
     </select>
 </mapper>

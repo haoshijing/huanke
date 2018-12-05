@@ -3,12 +3,13 @@ package com.huanke.iot.manage.controller.project;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.exception.BusinessException;
-import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.request.project.JobFlowStatusRequest;
 import com.huanke.iot.base.request.project.JobQueryRequest;
 import com.huanke.iot.base.request.project.JobRequest;
+import com.huanke.iot.base.request.project.WarnJobRequest;
 import com.huanke.iot.base.resp.project.JobDetailRsp;
 import com.huanke.iot.base.resp.project.JobRsp;
+import com.huanke.iot.base.resp.project.WarnJobRsp;
 import com.huanke.iot.manage.service.project.JobService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -94,8 +95,8 @@ public class JobController {
 
     @ApiOperation("查询报警任务")
     @PostMapping(value = "/queryWarnJob")
-    public ApiResponse<List<ProjectJobInfo>> queryWarnJob() {
-        List<ProjectJobInfo> warnJobList= jobService.queryWarnJob();
-        return new ApiResponse<>(warnJobList);
+    public ApiResponse<WarnJobRsp> queryWarnJob(@RequestBody WarnJobRequest request) {
+        WarnJobRsp warnJobRsp = jobService.queryWarnJob(request);
+        return new ApiResponse<>(warnJobRsp);
     }
 }
