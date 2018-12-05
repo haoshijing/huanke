@@ -132,7 +132,10 @@
         <if test="param.customerId != null">
             AND customerId = #{param.customerId}
         </if>
-        AND isDelete = 0
+        <if test="param.isDelete != null">
+            AND isDelete = #{param.isDelete}
+        </if>
+        AND isDelete != 1
     </select>
 
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.DictRspPo">
@@ -145,7 +148,10 @@
         <if test="dictPo.customerId != null">
             AND customerId = #{dictPo.customerId}
         </if>
-        AND isDelete = 0
+        <if test="dictPo.isDelete != null">
+            AND isDelete = #{dictPo.isDelete}
+        </if>
+        AND isDelete != 1
       LIMIT #{start},#{limit}
     </select>
 

@@ -17,5 +17,5 @@ public class DictRequest {
     private String description;
     private Integer sort;
     private String remarks;
-    private Integer isDelete;//是否删除：0-不删除；1-删除
+    private Integer isDelete;//是否删除：0-启用；1-删除，2-禁用
 }
