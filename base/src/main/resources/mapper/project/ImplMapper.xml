@@ -33,6 +33,40 @@
         )
     </insert>
 
+    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectImplementLog">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="projectId != null">
+                projectId = #{projectId},
+            </if>
+            <if test="typeId != null">
+                typeId = #{typeId},
+            </if>
+            <if test="description != null and description!='' ">
+                description = #{description},
+            </if>
+            <if test="implTime != null">
+                implTime = #{implTime},
+            </if>
+            <if test="imgList != null and imgList!='' ">
+                imgList = #{imgList},
+            </if>
+            <if test="fileList != null and fileList!='' ">
+                fileList = #{fileList},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                updateUser = #{updateUser},
+            </if>
+        </set>
+        where
+        1= 1
+        and id = #{id}
+    </update>
+
     <select id="selectByProjectId" resultType="com.huanke.iot.base.resp.project.ImplementRsp">
         select pil.description, pil.implTime, pil.imgList imgListStr, pil.fileList, d.label typeName FROM t_project_implement_log pil
         LEFT JOIN t_dict d ON pil.typeId = d.id
