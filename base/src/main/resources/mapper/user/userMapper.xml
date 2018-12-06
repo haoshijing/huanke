@@ -141,4 +141,11 @@
         LEFT JOIN t_customer c ON u.secondDomain = c.SLD
         where secondDomain = #{secondDomain}
     </select>
+
+    <select id="selectAllSecond" resultType="com.huanke.iot.base.po.user.User">
+        SELECT * FROM
+        <include refid="tableName"/>
+        where secondDomain != "pro"
+        AND status = "enable"
+    </select>
 </mapper>
