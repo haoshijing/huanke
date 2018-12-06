@@ -25,9 +25,10 @@ public class OnlineCheckService {
 
     private ConcurrentHashMap<Integer, OnlineCheckData> idMap =
             new ConcurrentHashMap<>(2048);
-
     @Autowired
     private DeviceMapper deviceMapper;
+
+    private long l = System.currentTimeMillis();
 
     @Autowired
     private DeviceOperLogMapper deviceOperLogMapper;
@@ -47,15 +48,16 @@ public class OnlineCheckService {
                     log.error("",e);
                 }
             }
-        },1,15, TimeUnit.SECONDS);
+        },0,15, TimeUnit.SECONDS);
     }
 
     public void doScan() {
 
         Iterator<Map.Entry<Integer, OnlineCheckData>> it = idMap.entrySet().iterator();
+        long temp = System.currentTimeMillis();
         while (it.hasNext()){
             OnlineCheckData data = it.next().getValue();
-            if (data.getLastUpdateTime() < (System.currentTimeMillis() - 15000)) {
+            if (data.getLastUpdateTime() < l ) {
                 data.setFailCount(data.getFailCount() + 1);
                 if (data.getFailCount() > 3) {
                     data.setOnline(false);
@@ -76,6 +78,7 @@ public class OnlineCheckService {
                 it.remove();
             }
         }
+        l = temp;
     }
 
     public void resetOnline(Integer id){
@@ -115,7 +118,12 @@ public class OnlineCheckService {
         queryPo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES);
         List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,100000,0);
         devicePoList.forEach(devicePo -> {
-            resetOnline(devicePo.getId());
+            OnlineCheckData data = new OnlineCheckData();
+            data.setFailCount(0);
+            data.setLastUpdateTime(System.currentTimeMillis());
+            data.setOnline(true);
+            data.setId(devicePo.getId());
+            idMap.put(devicePo.getId(),data);
         });
     }
 }
