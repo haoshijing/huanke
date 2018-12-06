@@ -10,25 +10,21 @@ import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupSceneMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
-import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.po.customer.CustomerPo;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupPo;
-import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.group.DeviceGroupScenePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
-import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.po.user.User;
-import com.huanke.iot.base.po.user.UserPo;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.service.user.UserService;
@@ -36,13 +32,10 @@ import com.huanke.iot.manage.vo.request.device.group.FuncListMessage;
 import com.huanke.iot.manage.vo.request.device.group.GroupControlRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.group.GroupQueryRequest;
-import com.huanke.iot.manage.vo.request.device.operate.DeviceCreateOrUpdateRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceFuncRequest;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceQueryRequest;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupDetailVo;
 import com.huanke.iot.manage.vo.response.device.group.DeviceGroupListVo;
-import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
@@ -310,10 +303,12 @@ public class DeviceGroupService {
         //获取该二级域名客户的主键
         Integer customerId = customerService.obtainCustomerId(false);
         DeviceGroupPo queryPo = new DeviceGroupPo();
-        queryPo.setCustomerId(customerId);
-        CustomerPo customerPo = this.customerMapper.selectById(customerId);
-        if(null != customerPo.getParentCustomerId()){
-            queryPo.setParentCustomerId(customerPo.getParentCustomerId());
+        if(customerId != 0){//pro域名下没有公众号问题
+            queryPo.setCustomerId(customerId);
+            CustomerPo customerPo = this.customerMapper.selectById(customerId);
+            if(null != customerPo.getParentCustomerId()){
+                queryPo.setParentCustomerId(customerPo.getParentCustomerId());
+            }
         }
         List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo,limit,offset);
         if(null == deviceGroupPoList || 0 == deviceGroupPoList.size()){

@@ -797,6 +797,9 @@ public class CustomerService {
 
         String customerId;
         String userHost = commonUtil.obtainSecondHost();
+        if(userHost.equals("pro")){
+            return 0;
+        }
         System.out.println("userHost->" + userHost);
         if (StringUtils.isNotBlank(userHost)) {
             if (!StringUtils.contains(skipRemoteHost, userHost)) {
