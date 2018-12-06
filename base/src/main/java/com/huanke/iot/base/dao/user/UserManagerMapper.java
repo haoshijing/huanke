@@ -2,6 +2,7 @@ package com.huanke.iot.base.dao.user;
 
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.po.user.UserPo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,5 @@ public interface UserManagerMapper extends BaseMapper<User> {
 
     List<User> selectAll();
 
+    List<UserPo> selectAllSecond();
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.user.UserMessageLogMapper">
+
+    <sql id="tableName">
+        t_user_message_log
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" parameterType="com.huanke.iot.base.po.user.UserMessageLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        userId,
+        topic,
+        description,
+        status,
+        readStatus,
+        createTime,
+        createUser
+        )
+        VALUE (
+        #{userId},
+        #{topic},
+        #{description},
+        #{status},
+        #{readStatus},
+        #{createTime},
+        #{createUser}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="com.huanke.iot.base.po.user.UserMessageLog">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="topic != null and topic != ''">
+                topic = #{topic},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="readStatus != null">
+                readStatus = #{readStatus},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                updateUser = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from
+        <include refid="tableName"/>
+        where id=#{id}
+    </delete>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.user.UserMessageLog">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE id = #{id}
+    </select>
+
+</mapper>
