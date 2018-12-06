@@ -303,11 +303,13 @@ public class DeviceGroupService {
         //获取该二级域名客户的主键
         Integer customerId = customerService.obtainCustomerId(false);
         DeviceGroupPo queryPo = new DeviceGroupPo();
+        if(customerId != null){
             queryPo.setCustomerId(customerId);
             CustomerPo customerPo = this.customerMapper.selectById(customerId);
             if(null != customerPo.getParentCustomerId()){
                 queryPo.setParentCustomerId(customerPo.getParentCustomerId());
             }
+        }
         List<DeviceGroupPo> deviceGroupPoList = this.deviceGroupMapper.selectList(queryPo,limit,offset);
         if(null == deviceGroupPoList || 0 == deviceGroupPoList.size()){
             return new ApiResponse<>(RetCode.OK,"暂无数据");
