@@ -24,9 +24,7 @@ public interface DeviceTeamMapper  extends BaseMapper<DeviceTeamPo> {
 
     List<DeviceTeamPo> selectByUserOpenId(@Param("openId") String openId,@Param("customerId") Integer customerId);
 
-    int updateDeviceGroupId(@Param("userId") Integer userId,
-                            @Param("newTeamId") int newTeamId,
-                            @Param("deviceId") Integer deviceId);
+
 
     Integer updateTeamStatus(@Param("userId") Integer userId,@Param("teamId") Integer teamId, @Param("status") Integer status);
 

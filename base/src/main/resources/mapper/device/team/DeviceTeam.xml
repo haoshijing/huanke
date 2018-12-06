@@ -205,6 +205,7 @@
         <if test="userId != null">
             and userId = #{userId}
         </if>
+        ORDER BY lastUpdateTime ASC
     </select>
 
     <!--批量更新-->
@@ -224,13 +225,6 @@
         <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
             #{item.id,jdbcType=BIGINT}
         </foreach>
-    </update>
-
-    <update id="updateDeviceGroupId">
-        update t_device_team_item
-        set teamId = #{newTeamId}
-        where userId = #{userId} and deviceId =
-        #{deviceId}
     </update>
 
     <update id="updateTeamStatus">

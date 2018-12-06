@@ -44,7 +44,7 @@
                 status = #{status},
             </if>
             <if test="lastUpdateTime != null ">
-                lastUpdateTime = #{lastUpdateTime},
+                lastUpdateTime = now(),
             </if>
         </set>
         where id=#{id}
@@ -74,7 +74,7 @@
             #{teamItem.linkAgeStatus},
             #{teamItem.status},
             #{teamItem.createTime},
-            #{teamItem.lastUpdateTime}
+            now()
             )
         </foreach>
     </insert>
@@ -265,5 +265,11 @@
         and status = 1
         limit 1
     </select>
-
+    <update id="updateDeviceGroupId">
+        update t_device_team_item
+        set teamId = #{newTeamId},
+        lastUpdateTime = now();
+        where userId = #{userId} and deviceId =
+        #{deviceId}
+    </update>
 </mapper>

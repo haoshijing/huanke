@@ -119,7 +119,7 @@ public class DeviceTeamService {
                     DevicePo devicePo = deviceMapper.selectByWxDeviceId(deviceId);
                     if (devicePo != null) {
                         Integer dId = devicePo.getId();
-                        deviceTeamMapper.updateDeviceGroupId(userId, teamId, dId);
+                        deviceTeamItemMapper.updateDeviceGroupId(userId, teamId, dId);
                     }
                 }
         );
