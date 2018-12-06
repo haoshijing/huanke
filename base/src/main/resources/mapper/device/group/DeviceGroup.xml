@@ -120,6 +120,7 @@
         t_device_group,t_customer
         <where>
             1=1
+            AND t_device_group.customerId = t_customer.id
             <if test = "param.name != null and param.name != ''">
                 AND t_device_group.name = #{param.name}
             </if>
@@ -127,7 +128,6 @@
                 AND t_device_group.status = #{param.status}
             </if>
             <if test = "param.customerId != null">
-                AND t_device_group.customerId = t_customer.id
                 AND ( t_customer.parentCustomerId = #{param.customerId} OR t_device_group.customerId = #{param.customerId} )
             </if>
             <if test = "param.introduction != null and param.introduction != ''">

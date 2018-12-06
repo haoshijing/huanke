@@ -271,6 +271,7 @@
       AND pji.status != 2
       AND (find_in_set(#{userId}, pji.enableUsers)
         OR pji.enableUsers is null)
+      ORDER BY pji.finalTime ASC
       LIMIT #{start},#{limit}
     </select>
 

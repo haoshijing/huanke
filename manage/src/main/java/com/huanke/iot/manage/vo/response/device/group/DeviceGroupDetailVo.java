@@ -30,7 +30,7 @@ public class DeviceGroupDetailVo {
         private Integer modelId;
         private String productName;
         private Integer onlineStatus;
-        private Integer workStatus;
+        private Integer powerStatus;
         //todo 告警状态
 
         private String icon;

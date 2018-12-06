@@ -71,6 +71,30 @@ public class DictService {
     }
 
     /**
+     * 禁用dict
+     *
+     * @param valueList
+     * @return
+     */
+    public Boolean disableDict(List<Integer> valueList) {
+        Integer userId = 26;//userService.getCurrentUser().getId();
+        Boolean result = dictMapper.batchDisable(userId, valueList);
+        return result;
+    }
+
+    /**
+     * 启用dict
+     *
+     * @param valueList
+     * @return
+     */
+    public Boolean enableDict(List<Integer> valueList) {
+        Integer userId = 26;//userService.getCurrentUser().getId();
+        Boolean result = dictMapper.batchEnable(userId, valueList);
+        return result;
+    }
+
+    /**
      * 删除dict
      *
      * @param valueList

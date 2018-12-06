@@ -16,5 +16,5 @@ public class DictQueryRequest {
     private Integer status;
     private Integer currentPage = 1;
     private Integer limit = 10;
-
+    private Integer isDelete;
 }
