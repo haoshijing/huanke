@@ -44,7 +44,7 @@
                 status = #{status},
             </if>
             <if test="lastUpdateTime != null ">
-                lastUpdateTime = now(),
+                lastUpdateTime = unix_timestamp()*1000,
             </if>
         </set>
         where id=#{id}
@@ -74,7 +74,7 @@
             #{teamItem.linkAgeStatus},
             #{teamItem.status},
             #{teamItem.createTime},
-            now()
+            unix_timestamp()*1000
             )
         </foreach>
     </insert>
@@ -268,7 +268,7 @@
     <update id="updateDeviceGroupId">
         update t_device_team_item
         set teamId = #{newTeamId},
-        lastUpdateTime = now();
+        lastUpdateTime = unix_timestamp()*1000
         where userId = #{userId} and deviceId =
         #{deviceId}
     </update>
