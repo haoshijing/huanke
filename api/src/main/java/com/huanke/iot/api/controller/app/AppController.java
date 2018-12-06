@@ -110,6 +110,9 @@ public class AppController extends BaseController {
         log.debug("查询设备天气，设备ID={}",deviceId);
         WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
         LocationVo locationVo = deviceService.queryDeviceLocation(deviceId);
+        if(locationVo.getLocation().split(",").length>3) {
+            locationVo.setLocation(locationVo.getLocation().split(",")[3]);
+        }
         List resp = new ArrayList();
         resp.add(weatherVo);
         resp.add(locationVo);
