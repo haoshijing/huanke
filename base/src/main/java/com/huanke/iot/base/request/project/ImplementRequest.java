@@ -15,10 +15,18 @@ import java.util.Map;
  */
 @Data
 public class ImplementRequest {
+    private Integer id;
     private Integer projectId;
     private Integer typeId;
     private String description;
     private Date implTime;
     private List<String> imgList;
     private Map<String, List<String>> fileMap;
+    private List<updateFileMap> fileMapUpdate;
+
+    @Data
+    public static class updateFileMap{
+        private Integer id;
+        private String url;
+    }
 }

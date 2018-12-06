@@ -33,6 +33,13 @@ public class ImplementController {
         return new ApiResponse<>(result);
     }
 
+    @ApiOperation("修改实施工程信息")
+    @PostMapping(value = "/editImpl")
+    public ApiResponse<Boolean> editImpl(@RequestBody ImplementRequest request) {
+        Boolean result = implService.addImplement(request);
+        return new ApiResponse<>(result);
+    }
+
     @ApiOperation("根据工程查实施工程信息")
     @PostMapping(value = "/select/{projectId}")
     public ApiResponse<List<ImplementRsp>> selectImplements(@PathVariable("projectId") Integer projectId) {
