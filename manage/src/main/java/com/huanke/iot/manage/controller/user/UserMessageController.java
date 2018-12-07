@@ -76,4 +76,11 @@ public class UserMessageController {
         return new ApiResponse<>(result);
     }
 
+    @ApiOperation("删除日志消息")
+    @PostMapping(value = "/deleteMessageLog")
+    public ApiResponse<Boolean> deleteMessageLog(@RequestBody BaseListRequest<Integer> request){
+        Boolean result = userMessageService.delMessageLog(request);
+        return new ApiResponse<>(result);
+    }
+
 }

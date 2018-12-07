@@ -133,4 +133,11 @@ public class UserMessageService {
         userMessageLog.setUpdateUser(userService.getCurrentUser().getId());
         return userMessageLogMapper.updateById(userMessageLog) > 0;
     }
+
+    public Boolean delMessageLog(BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        Integer userId = userService.getCurrentUser().getId();
+        Boolean result = userMessageLogMapper.batchDelete(userId, valueList);
+        return result;
+    }
 }
