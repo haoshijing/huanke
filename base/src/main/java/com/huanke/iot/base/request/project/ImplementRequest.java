@@ -22,11 +22,5 @@ public class ImplementRequest {
     private Date implTime;
     private List<String> imgList;
     private Map<String, List<String>> fileMap;
-    private List<updateFileMap> fileMapUpdate;
 
-    @Data
-    public static class updateFileMap{
-        private Integer id;
-        private String url;
-    }
 }

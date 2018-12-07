@@ -47,4 +47,11 @@ public class ImplementController {
         return new ApiResponse<>(implementRspList);
     }
 
+    @ApiOperation("查单个实施工程信息")
+    @GetMapping(value = "/select/{implId}")
+    public ApiResponse<ImplementRsp> select(@PathVariable("implId") Integer implId) {
+        ImplementRsp implementSingleRsp = implService.select(implId);
+        return new ApiResponse<>(implementSingleRsp);
+    }
+
 }
