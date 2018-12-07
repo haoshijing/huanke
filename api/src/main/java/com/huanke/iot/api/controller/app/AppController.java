@@ -13,6 +13,7 @@ import com.huanke.iot.api.service.device.basic.DeviceService;
 import com.huanke.iot.api.service.device.basic.AppBasicService;
 import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,8 +111,9 @@ public class AppController extends BaseController {
         log.debug("查询设备天气，设备ID={}",deviceId);
         WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
         LocationVo locationVo = deviceService.queryDeviceLocation(deviceId);
-        if(locationVo.getLocation().split(",").length>3) {
-            locationVo.setLocation(locationVo.getLocation().split(",")[3]);
+        String[] s = locationVo.getArea().split(" ");
+        if(s.length>3) {
+            locationVo.setArea(StringUtils.isEmpty(s[1])?s[2]:s[1]);
         }
         List resp = new ArrayList();
         resp.add(weatherVo);
