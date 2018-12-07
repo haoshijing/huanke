@@ -76,8 +76,8 @@
         select count(1) from
         <include refid="tableName"/>
         where 1=1
-        <if test = "param.name != null and param.name != ''">
-            AND name LIKE CONCAT('%',#{param.name},'%')
+        <if test = "param.topic != null and param.topic != ''">
+            AND topic LIKE CONCAT('%',#{param.topic},'%')
         </if>
         AND status != 2
     </select>
@@ -88,8 +88,8 @@
         SELECT * from
         <include refid="tableName"/>
         WHERE 1=1
-        <if test = "userMessage.name != null and userMessage.name != ''">
-            AND name LIKE CONCAT('%',#{userMessage.name},'%')
+        <if test = "userMessage.topic != null and userMessage.topic != ''">
+            AND topic LIKE CONCAT('%',#{userMessage.topic},'%')
         </if>
         AND status != 2
         LIMIT #{start},#{limit}
@@ -98,8 +98,8 @@
     <select id="selectLogCount"  resultType="java.lang.Integer">
         select count(1) from t_user_message_log
         where 1=1
-        <if test = "userMessageLog.name != null and userMessageLog.name != ''">
-            AND name LIKE CONCAT('%',#{userMessageLog.name},'%')
+        <if test = "userMessageLog.topic != null and userMessageLog.topic != ''">
+            AND topic LIKE CONCAT('%',#{userMessageLog.topic},'%')
         </if>
         AND userId = #{userMessageLog.userId}
         AND status != 2
@@ -108,8 +108,8 @@
     <select id="selectLogPageList" resultType="com.huanke.iot.base.po.user.UserMessageLog">
         SELECT * from t_user_message_log
         WHERE 1=1
-        <if test = "userMessage.name != null and userMessage.name != ''">
-            AND name LIKE CONCAT('%',#{userMessage.name},'%')
+        <if test = "userMessage.topic != null and userMessage.topic != ''">
+            AND topic LIKE CONCAT('%',#{userMessage.topic},'%')
         </if>
         AND userId = #{userMessageLog.userId}
         AND status != 2
