@@ -758,6 +758,10 @@ public class DeviceDataService {
         //获取当前登录的用户
         DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
         if(null != devicePo){
+            //设备禁用，禁止发送指令
+            if(devicePo.getEnableStatus() == DeviceConstant.ENABLE_STATUS_NO){
+                throw new BusinessException("设备已禁止使用");
+            }
             //对当前设备发送指令
             sendFunc(deviceFuncVo,userId,operType);
             //查询当前设备是否为联动设备

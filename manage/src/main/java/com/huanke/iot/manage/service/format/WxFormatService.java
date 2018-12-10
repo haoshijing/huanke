@@ -15,6 +15,7 @@ import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.format.WxFormatPo;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.vo.request.format.WxFormatQueryRequest;
 import com.huanke.iot.manage.vo.response.format.WxFormatVo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +52,9 @@ public class WxFormatService {
     @Autowired
     private CommonUtil commonUtil;
 
+    @Autowired
+    private UserService userService;
+
 
 
     /**
@@ -74,10 +77,12 @@ public class WxFormatService {
             } else {
                 wxFormatPo.setStatus(CommonConstant.STATUS_YES);
             }
+            wxFormatPo.setUpdateUserId(userService.getCurrentUser().getId());
             ret = wxFormatMapper.updateById(wxFormatPo) > 0;
         } else {
             wxFormatPo.setCreateTime(System.currentTimeMillis());
             wxFormatPo.setStatus(CommonConstant.STATUS_YES);
+            wxFormatPo.setCreateUserId(userService.getCurrentUser().getId());
             ret = wxFormatMapper.insert(wxFormatPo) > 0;
         }
 

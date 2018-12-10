@@ -270,6 +270,7 @@
             AND d.type = #{dictPo.type}
         </if>-->
         AND ppi.linkProjectId = #{projectId}
+        LIMIT #{start},#{limit}
     </select>
 
     <select id="selectAllExist" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">

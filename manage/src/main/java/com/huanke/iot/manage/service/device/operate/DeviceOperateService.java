@@ -2,9 +2,7 @@ package com.huanke.iot.manage.service.device.operate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.*;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
@@ -17,8 +15,8 @@ import com.huanke.iot.base.dao.device.ability.DeviceTypeAbilitysMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
-import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.enums.SensorTypeEnums;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
@@ -38,7 +36,6 @@ import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
-import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.service.wechart.WechartUtil;
@@ -68,7 +65,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Repository
@@ -1991,6 +1987,10 @@ public class DeviceOperateService {
         //获取当前登录的用户
         DevicePo devicePo = deviceMapper.selectById(deviceFuncVo.getDeviceId());
         if(null != devicePo){
+            //设备禁用，禁止发送指令
+            if(devicePo.getEnableStatus() == DeviceConstant.ENABLE_STATUS_NO){
+                throw new BusinessException("设备已禁止使用");
+            }
             //对当前设备发送指令
             sendFunc(deviceFuncVo,operType);
             //查询当前设备是否为联动设备
