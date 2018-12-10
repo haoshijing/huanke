@@ -70,4 +70,14 @@
         WHERE id = #{id}
     </select>
 
+    <update id="batchDelete">
+        UPDATE <include refid="tableName"/>
+        SET status = 2
+        ,updateUserId = #{userId}
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
 </mapper>

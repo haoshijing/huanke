@@ -76,8 +76,8 @@
         select count(1) from
         <include refid="tableName"/>
         where 1=1
-        <if test = "param.name != null and param.name != ''">
-            AND name LIKE CONCAT('%',#{param.name},'%')
+        <if test = "param.topic != null and param.topic != ''">
+            AND topic LIKE CONCAT('%',#{param.topic},'%')
         </if>
         AND status != 2
     </select>
@@ -85,36 +85,37 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.po.user.UserMessage">
-        SELECT * from
-        <include refid="tableName"/>
+        SELECT tum.*, tu.nickName createUserName from t_user_message tum
+        LEFT JOIN t_user tu ON tum.createUser = tu.id
         WHERE 1=1
-        <if test = "userMessage.name != null and userMessage.name != ''">
-            AND name LIKE CONCAT('%',#{userMessage.name},'%')
+        <if test = "userMessage.topic != null and userMessage.topic != ''">
+            AND tum.topic LIKE CONCAT('%',#{userMessage.topic},'%')
         </if>
-        AND status != 2
+        AND tum.status != 2
         LIMIT #{start},#{limit}
     </select>
 
     <select id="selectLogCount"  resultType="java.lang.Integer">
         select count(1) from t_user_message_log
         where 1=1
-        <if test = "userMessageLog.name != null and userMessageLog.name != ''">
-            AND name LIKE CONCAT('%',#{userMessageLog.name},'%')
+        <if test = "userMessageLog.topic != null and userMessageLog.topic != ''">
+            AND topic LIKE CONCAT('%',#{userMessageLog.topic},'%')
         </if>
         AND userId = #{userMessageLog.userId}
         AND status != 2
     </select>
 
     <select id="selectLogPageList" resultType="com.huanke.iot.base.po.user.UserMessageLog">
-        SELECT * from t_user_message_log
+        SELECT tuml.*, tu.nickName createUserName from t_user_message_log tuml
+        LEFT JOIN t_user tu ON tuml.createUser = tu.id
         WHERE 1=1
-        <if test = "userMessage.name != null and userMessage.name != ''">
-            AND name LIKE CONCAT('%',#{userMessage.name},'%')
+        <if test = "userMessage.topic != null and userMessage.topic != ''">
+            AND tuml.topic LIKE CONCAT('%',#{userMessage.topic},'%')
         </if>
-        AND userId = #{userMessageLog.userId}
-        AND status != 2
+        AND tuml.userId = #{userMessageLog.userId}
+        AND tuml.status != 2
         LIMIT #{start},#{limit}
-        ORDER BY readStatus ASC
+        ORDER BY tuml.readStatus ASC
     </select>
 
 </mapper>

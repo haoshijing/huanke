@@ -74,4 +74,11 @@
         ORDER BY pil.id DESC
     </select>
 
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectImplementLog">
+        SELECT
+        *
+        FROM <include refid="tableName"/>
+        WHERE id = #{id}
+    </select>
+
 </mapper>

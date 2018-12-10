@@ -22,4 +22,6 @@ public class UserMessageLog {
     private Date updateTime;
     private Integer createUser;
     private Integer updateUser;
+    //冗余信息
+    private String createUserName;
 }
