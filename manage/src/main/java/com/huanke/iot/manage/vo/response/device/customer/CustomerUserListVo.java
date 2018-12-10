@@ -16,4 +16,5 @@ public class CustomerUserListVo {
     private Integer modelId;
     private String modelName;
     private Long lastVisitTime;
+    private String deviceName;
 }
