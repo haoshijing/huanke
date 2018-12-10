@@ -14,6 +14,7 @@ import com.huanke.iot.base.po.statstic.StatsticCustomerUserLivePo;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceLocationCountRequest;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationCountVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
@@ -516,7 +517,7 @@ public class StatisticService {
      * 查询 地址数量
      * @return
      */
-    public ApiResponse<DeviceLocationCountVo> queryLocationCount(){
+    public ApiResponse<DeviceLocationCountVo> queryLocationCount(DeviceLocationCountRequest daeviceLocationCountRequest){
         Integer customerId = customerService.obtainCustomerId(false);
         DevicePo queryDevicePo = new DevicePo();
         queryDevicePo.setCustomerId(customerId);
@@ -544,10 +545,26 @@ public class StatisticService {
                     locations.add(temps[i]);
                 }
             }
-            if(locationCountMap.get(locations.get(0))==null)locationCountMap.put(locations.get(0),new HashMap<>());
-            if(locationCountMap.get(locations.get(0)).get(locations.get(1))==null)locationCountMap.get(locations.get(0)).put(locations.get(1),new HashMap<>());
-            if(locationCountMap.get(locations.get(0)).get(locations.get(1)).get(locations.get(2))==null)locationCountMap.get(locations.get(0)).get(locations.get(1)).put(locations.get(2),0);
-            locationCountMap.get(locations.get(0)).get(locations.get(1)).put(locations.get(2),locationCountMap.get(locations.get(0)).get(locations.get(1)).get(locations.get(2))+1);
+            boolean flag = true;
+            if(StringUtils.isNotEmpty(daeviceLocationCountRequest.getProvince())){
+                flag = locations.get(0).contains(daeviceLocationCountRequest.getProvince());
+                if(flag&&StringUtils.isNotEmpty(daeviceLocationCountRequest.getCity())){
+                    if("上海市".equals(locations.get(0))||"北京市".equals(locations.get(0))||"重庆市".equals(locations.get(0))||"天津市".equals(locations.get(0))){
+                        flag = locations.get(2).contains(daeviceLocationCountRequest.getCity());
+                    }else{
+                        flag = locations.get(1).contains(daeviceLocationCountRequest.getCity());
+                    }
+                }
+            }
+            if(flag) {
+                if (locationCountMap.get(locations.get(0)) == null)
+                    locationCountMap.put(locations.get(0), new HashMap<>());
+                if (locationCountMap.get(locations.get(0)).get(locations.get(1)) == null)
+                    locationCountMap.get(locations.get(0)).put(locations.get(1), new HashMap<>());
+                if (locationCountMap.get(locations.get(0)).get(locations.get(1)).get(locations.get(2)) == null)
+                    locationCountMap.get(locations.get(0)).get(locations.get(1)).put(locations.get(2), 0);
+                locationCountMap.get(locations.get(0)).get(locations.get(1)).put(locations.get(2), locationCountMap.get(locations.get(0)).get(locations.get(1)).get(locations.get(2)) + 1);
+            }
         });
         DeviceLocationCountVo deviceLocationCountVo = new DeviceLocationCountVo();
         deviceLocationCountVo.setTotal(0);

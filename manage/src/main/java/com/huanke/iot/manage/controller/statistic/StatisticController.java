@@ -6,6 +6,7 @@ import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
 import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceLocationCountRequest;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationCountVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
@@ -15,9 +16,7 @@ import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -93,9 +92,9 @@ public class StatisticController {
         return this.statisticService.selectDeviceByDay();
     }
     @ApiOperation("设备区域统计")
-    @GetMapping(value = "/deviceLocationCount")
-    public ApiResponse<DeviceLocationCountVo> deviceLocationCount(){
-        return this.statisticService.queryLocationCount();
+    @PostMapping(value = "/deviceLocationCount")
+    public ApiResponse<DeviceLocationCountVo> deviceLocationCount(@RequestBody DeviceLocationCountRequest daeviceLocationCountRequest){
+        return this.statisticService.queryLocationCount(daeviceLocationCountRequest);
     }
     @ApiOperation("首页统计")
     @GetMapping(value = "/queryHomePageStatistic")
