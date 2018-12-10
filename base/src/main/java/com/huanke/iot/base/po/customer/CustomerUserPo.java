@@ -29,4 +29,6 @@ public class CustomerUserPo {
     private Long lastVisitTime;
     private String mac;
 
+
+    private String deviceName;
 }
