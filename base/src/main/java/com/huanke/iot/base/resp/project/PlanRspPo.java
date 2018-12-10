@@ -32,6 +32,7 @@ public class PlanRspPo {
     private Integer overTimeDays;
     private String enableUsers;
     private Integer status;
+    private String statusName;
     private Date createTime;
     private Date updateTime;
     private String createName;

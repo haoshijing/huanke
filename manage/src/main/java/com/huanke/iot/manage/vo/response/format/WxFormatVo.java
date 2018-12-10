@@ -2,8 +2,6 @@ package com.huanke.iot.manage.vo.response.format;
 
 import com.huanke.iot.base.constant.CommonConstant;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.Data;
 
 import java.util.List;
@@ -31,6 +29,9 @@ public class WxFormatVo {
     private String description;
     private Integer status = CommonConstant.STATUS_YES;
     private List<WxFormatPageVo> wxFormatPageVos;
+    private Integer createUserId;
+    private String createUserName;
+    private Long createTime;
 
     @Data
     public static class WxFormatPageVo {

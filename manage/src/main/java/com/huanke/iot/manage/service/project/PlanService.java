@@ -16,17 +16,17 @@ import com.huanke.iot.base.request.project.PlanRequest;
 import com.huanke.iot.base.resp.project.PlanInfoRsp;
 import com.huanke.iot.base.resp.project.PlanRsp;
 import com.huanke.iot.base.resp.project.PlanRspPo;
+import com.huanke.iot.manage.common.util.ExcelUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +49,10 @@ public class PlanService {
     private CustomerService customerService;
     @Autowired
     private JobMapper jobMapper;
+
+    private static String[] keys = {"name","description", "ruleName", "warnLevel",  "createTime","createName"};
+
+    private static String[] texts = {"维保项", "维保内容", "规则分类", "告警级别","创建时间","创建者"};
 
 
     public PlanRsp selectList(PlanQueryRequest request) {
@@ -228,5 +232,26 @@ public class PlanService {
         }
         planRsp.setPlanRspPoList(planPoList);
         return planRsp;
+    }
+
+    public Boolean exportMaintenance(Integer projectId, HttpServletResponse response) throws Exception {
+        Map<String, String> titleMap = new HashMap<>();
+        for (int i = 0; i < keys.length; i++) {
+            titleMap.put(keys[i], texts[i]);
+        }
+        Integer count = planMapper.selectMaintenanceCount(projectId);
+        List<PlanRspPo> planPoList = planMapper.maintenance(projectId, 0, count);
+        for (PlanRspPo planRspPo : planPoList) {
+            if(planRspPo.getIsRule() == 1){
+                planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
+            }
+        }
+        ExcelUtil<PlanRspPo> planRspPoExcelUtil = new ExcelUtil<>();
+        DateTime dateTime = new DateTime();
+        String time = dateTime.toString("yyyy-MM-dd");
+        planRspPoExcelUtil.exportExcel("工程维保项" + time + ".xls", response, "sheet1", texts, planPoList, titleMap, planRspPoExcelUtil.EXCEl_FILE_2007);
+
+
+        return true;
     }
 }

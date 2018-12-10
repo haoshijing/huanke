@@ -25,4 +25,6 @@ public class WxFormatPo {
     private Long lastUpdateTime;
     private Integer createUserId;
     private Integer updateUserId;
+    //冗余（返回字段）
+    private String createUserName;
 }

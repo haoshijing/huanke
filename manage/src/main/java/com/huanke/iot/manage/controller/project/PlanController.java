@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -96,5 +97,12 @@ public class PlanController {
     public ApiResponse<PlanRsp> maintenance(@RequestBody MaintenanceRequest request) {
         PlanRsp planRsp = planService.maintenance(request);
         return new ApiResponse<>(planRsp);
+    }
+
+    @ApiOperation("导出工程维保列表")
+    @GetMapping(value = "/exportMaintenance/{projectId}")
+    public ApiResponse<Boolean> exportMaintenance(@PathVariable("projectId") Integer projectId, HttpServletResponse response) throws Exception {
+        Boolean result = planService.exportMaintenance(projectId, response);
+        return new ApiResponse<>(result);
     }
 }
