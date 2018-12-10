@@ -46,6 +46,7 @@ public class CustomerUserService {
         CustomerUserPo queryPo = new CustomerUserPo();
         if(null != customerUserQueryRequest){
             BeanUtils.copyProperties(customerUserQueryRequest,queryPo);
+            queryPo.setNickname(customerUserQueryRequest.getUserName());
         }
         if (customerUserQueryRequest.getCustomerId() == null) {
             queryPo.setCustomerId(customerId);
@@ -66,6 +67,7 @@ public class CustomerUserService {
         CustomerUserPo queryPo = new CustomerUserPo();
         if(null != customerUserQueryRequest){
             BeanUtils.copyProperties(customerUserQueryRequest,queryPo);
+            queryPo.setNickname(customerUserQueryRequest.getUserName());
         }
         if (customerUserQueryRequest.getCustomerId() == null) {
             queryPo.setCustomerId(customerId);

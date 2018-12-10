@@ -31,4 +31,5 @@ public class CustomerUserPo {
 
 
     private String deviceName;
+    private String location;
 }

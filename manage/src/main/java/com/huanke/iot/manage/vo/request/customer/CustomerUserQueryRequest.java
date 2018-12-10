@@ -13,6 +13,11 @@ public class CustomerUserQueryRequest {
     private String city;
     private Integer status;
 
+    private String userName;
+    private String location;
+    private String modelName;
+
+
     private Integer page = 1;
     private Integer limit = 20;
 }

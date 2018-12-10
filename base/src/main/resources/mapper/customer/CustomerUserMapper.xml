@@ -192,6 +192,16 @@
             <if test="param.modelId != null">
                 AND tdm.id = #{param.modelId}
             </if>
+            <if test="param.location != null">
+                AND( tcu.province like CONCAT('%',#{param.location},'%')
+                OR tcu.city like CONCAT('%',#{param.location},'%'))
+            </if>
+            <if test="param.nickname != null">
+                AND tcu.nickname like CONCAT('%',#{param.nickname},'%')
+            </if>
+            <if test="param.modelName != null">
+                AND tdm.name like CONCAT('%',#{param.modelName},'%')
+            </if>
         </where>
         ORDER BY tcu.createTime DESC
         limit #{limit} offset #{offset}
@@ -226,6 +236,16 @@
             </if>
             <if test="param.modelId != null">
                 AND tdm.id = #{param.modelId}
+            </if>
+            <if test="param.location != null">
+                AND( tcu.province like CONCAT('%',#{param.location},'%')
+                OR tcu.city like CONCAT('%',#{param.location},'%'))
+            </if>
+            <if test="param.nickname != null">
+                AND tcu.nickname like CONCAT('%',#{param.nickname},'%')
+            </if>
+            <if test="param.modelName != null">
+                AND tdm.name like CONCAT('%',#{param.modelName},'%')
             </if>
         </where>
     </select>
