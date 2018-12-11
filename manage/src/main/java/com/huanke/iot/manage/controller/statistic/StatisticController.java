@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * @author caikun
@@ -34,7 +33,7 @@ public class StatisticController {
 
     @Autowired
     private StatisticService statisticService;
-    
+
     @ApiOperation("每月新增用户统计")
     @GetMapping(value = "/customerUserCountPerMonth")
     public ApiResponse<List<CustomerUserVo>> customerUserCountPerMonth() {
@@ -101,97 +100,6 @@ public class StatisticController {
     @GetMapping(value = "/queryHomePageStatistic")
     public ApiResponse<DeviceHomePageStatisticVo> queryHomePageStatistic(){
         return this.statisticService.queryHomePageStatistic();
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private static int count=0;
-
-    @SuppressWarnings("resource")
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int N = Integer.valueOf(scanner.nextLine());
-        if(N==0){
-            return;
-        }else{
-            Queen(N);
-            System.out.println("总共:"+count+"中组合!");
-        }
-        scanner.close();
-    }
-
-    public static void Queen(int N){
-        int[][] cheers = new int[N][N];
-        _cheers(cheers, 0,N);
-        System.out.println("**********************");
-        outPutCheers(cheers);
-        System.out.println("**********************");
-    }
-
-    public static void _cheers(int[][] cheers,int row,int N){
-        if(row+1>N){
-            count++;
-            System.out.println("第"+count+"种:");
-            outPutCheers(cheers);
-            System.out.println("-------------------------------------");
-            return;
-        }
-
-        for(int column=0;column<N;column++){
-            boolean flag = true;
-            //中上
-            for(int i=row;i>=0;i--){
-                if(cheers[i][column]==1){
-                    flag = false;break;
-                }
-            }
-            if(!flag) continue;
-            //左上
-            for(int i=row,j=column;;i--,j--){
-                if(i<0||j<0){
-                    break;
-                }
-                if(cheers[i][j]==1){
-                    flag = false;break;
-                }
-            }
-            if(!flag) continue;
-            //右上
-            for(int i=row,j=column;;i--,j++){
-                if(i<0||j>=N) break;
-                if(cheers[i][j]==1){
-                    flag = false;break;
-                }
-            }
-            if(!flag) continue;
-            cheers[row][column]=1;
-            _cheers(cheers, row+1, N);
-            cheers[row][column]=0;
-        }
-    }
-    public static void outPutCheers(int[][] cheers){
-        for(int i=0;i<cheers.length;i++){
-            for(int j=0;j<cheers[i].length;j++){
-                System.out.print(cheers[i][j]+" ");
-            }
-            System.out.println();
-        }
     }
 
 
