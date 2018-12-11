@@ -25,4 +25,11 @@ public class JobRspPo {
     private Date updateTime;
     private String createName;
     private String updateName;
+
+
+    @Data
+    public static class JobCountVo {
+        private String date;
+        private Integer jobCount;
+    }
 }

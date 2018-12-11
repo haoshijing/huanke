@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.controller.statistic;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.resp.project.JobRspPo;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import com.huanke.iot.manage.service.statistic.ProjectStatisticService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
@@ -32,5 +33,11 @@ public class ProjectStatisticController {
     @GetMapping(value = "/projectTrendCount")
     public ApiResponse<List<ProjectRspPo.ProjectCountVo>> projectTrendCount(){
         return new ApiResponse<>(this.projectStatisticService.queryProjectTrendCount());
+    }
+
+    @ApiOperation("任务告警来源统计")
+    @GetMapping(value = "/jobWarningSourceCount")
+    public ApiResponse<List<JobRspPo.JobCountVo>> jobWarningSourceCount(){
+        return new ApiResponse<>(this.projectStatisticService.jobWarningSourceCount());
     }
 }

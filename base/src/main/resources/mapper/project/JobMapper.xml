@@ -223,6 +223,9 @@
         <if test = "projectJobInfo.warnLevel != null and projectJobInfo.warnLevel != ''">
             AND warnLevel = #{projectJobInfo.warnLevel}
         </if>
+        <if test = "projectJobInfo.sourceType != null and projectJobInfo.sourceType != ''">
+            AND sourceType = #{projectJobInfo.sourceType}
+        </if>
         <if test = "projectJobInfo.flowStatus != null and projectJobInfo.flowStatus != ''">
             AND flowStatus = #{projectJobInfo.flowStatus}
         </if>
@@ -235,9 +238,11 @@
         <if test = "projectJobInfo.warnStatus != null">
             AND  warnStatus = #{projectJobInfo.warnStatus}
         </if>
+        <if test = "userId != null">
+            AND (find_in_set(#{userId}, enableUsers)
+            OR enableUsers is null)
+        </if>
         AND status != 2
-        AND (find_in_set(#{userId}, enableUsers)
-        OR enableUsers is null)
     </select>
 
     <!--返回当前列表集合-->
@@ -259,6 +264,9 @@
         <if test = "projectJobInfo.warnLevel != null and projectJobInfo.warnLevel != ''">
             AND pji.warnLevel = #{projectJobInfo.warnLevel}
         </if>
+        <if test = "projectJobInfo.sourceType != null and projectJobInfo.sourceType != ''">
+            AND pji.sourceType = #{projectJobInfo.sourceType}
+        </if>
         <if test = "projectJobInfo.flowStatus != null and projectJobInfo.flowStatus != ''">
             AND pji.flowStatus = #{projectJobInfo.flowStatus}
         </if>
@@ -268,9 +276,11 @@
         <if test = "projectJobInfo.customerId != null">
             AND pji.customerId = #{projectJobInfo.customerId}
         </if>
-      AND pji.status != 2
-      AND (find_in_set(#{userId}, pji.enableUsers)
-        OR pji.enableUsers is null)
+        <if test = "userId != null">
+            AND (find_in_set(#{userId}, enableUsers)
+            OR enableUsers is null)
+        </if>
+        AND status != 2
       ORDER BY pji.finalTime ASC
       LIMIT #{start},#{limit}
     </select>

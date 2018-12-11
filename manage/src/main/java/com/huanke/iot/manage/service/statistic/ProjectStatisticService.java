@@ -1,11 +1,15 @@
 package com.huanke.iot.manage.service.statistic;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.ProjectMapper;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
+import com.huanke.iot.base.po.project.ProjectJobInfo;
+import com.huanke.iot.base.resp.project.JobRspPo;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
+import com.huanke.iot.manage.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -23,7 +27,13 @@ public class ProjectStatisticService {
     private CustomerService customerService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ProjectMapper projectMapper;
+
+    @Autowired
+    private JobMapper jobMapper;
     /**
      * 查询 地址数量
      * @return
@@ -97,5 +107,31 @@ public class ProjectStatisticService {
         }
         projectCounts.sort((x, y) -> Long.compare(y.getProjectCount(), x.getProjectCount()));
         return projectCounts;
+    }
+    public List<JobRspPo.JobCountVo> jobWarningSourceCount(){
+        List<JobRspPo.JobCountVo> resp = new ArrayList<>();
+        Integer customerId = customerService.obtainCustomerId(false);
+        JobRspPo.JobCountVo jobCountVo0 = new JobRspPo.JobCountVo();
+        ProjectJobInfo projectJobInfo = new ProjectJobInfo();
+        projectJobInfo.setCustomerId(customerId);
+        projectJobInfo.setSourceType(1);
+        jobCountVo0.setDate("计划维保");
+        jobCountVo0.setJobCount(jobMapper.selectCount(projectJobInfo,null));
+        resp.add(jobCountVo0);
+        JobRspPo.JobCountVo jobCountVo1 = new JobRspPo.JobCountVo();
+        projectJobInfo = new ProjectJobInfo();
+        projectJobInfo.setCustomerId(customerId);
+        projectJobInfo.setSourceType(2);
+        jobCountVo1.setDate("用户反馈");
+        jobCountVo1.setJobCount(jobMapper.selectCount(projectJobInfo,null));
+        resp.add(jobCountVo1);
+        JobRspPo.JobCountVo jobCountVo2 = new JobRspPo.JobCountVo();
+        projectJobInfo = new ProjectJobInfo();
+        projectJobInfo.setCustomerId(customerId);
+        projectJobInfo.setSourceType(3);
+        jobCountVo2.setDate("设备告警");
+        jobCountVo2.setJobCount(jobMapper.selectCount(projectJobInfo,null));
+        resp.add(jobCountVo2);
+        return resp;
     }
 }
