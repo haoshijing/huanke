@@ -37,14 +37,12 @@
         update
         <include refid="tableName"/>
         <set>
+            lastUpdateTime = unix_timestamp()*1000,
             <if test="teamId != null">
                 teamId = #{teamId},
             </if>
             <if test="status != null ">
                 status = #{status},
-            </if>
-            <if test="lastUpdateTime != null ">
-                lastUpdateTime = unix_timestamp()*1000,
             </if>
         </set>
         where id=#{id}
@@ -192,7 +190,8 @@
     <update id="updateStatus">
         update
         <include refid="tableName"/>
-        set status = #{status}
+        set status = #{status},
+        lastUpdateTime = unix_timestamp()*1000
         where userId = #{userId}
         and deviceId = #{deviceId}
     </update>
@@ -200,7 +199,8 @@
     <update id="updateStatusById" parameterType="java.lang.Integer">
         update
         <include refid="tableName"/>
-        set status = #{status}
+        set status = #{status},
+        lastUpdateTime = unix_timestamp()*1000
         where id = #{id}
     </update>
 
