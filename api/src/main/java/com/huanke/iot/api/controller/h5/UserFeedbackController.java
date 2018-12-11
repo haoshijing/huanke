@@ -58,11 +58,11 @@ public class UserFeedbackController extends BaseController {
 
     @ApiOperation("获取反馈报修历史")
     @RequestMapping("/getRepairInfoLog")
-    public ApiResponse<Object> getRepairInfoLog() {
+    public ApiResponse<Object> getRepairInfoLog(@RequestBody UserRepairInfo userRepairInfo) {
         Integer userId = getCurrentUserId();
         Integer custId = getCurrentCustomerId();
         log.debug("获取反馈报修历史，userId={}", userId);
-        List<RepairInfoLogVo> resp = userFeedbackService.getRepairInfoLog(userId,custId);
+        List<RepairInfoLogVo> resp = userFeedbackService.getRepairInfoLog(userId,custId,userRepairInfo.getDeviceId());
         return new ApiResponse<>(resp);
     }
 }

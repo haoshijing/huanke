@@ -124,10 +124,11 @@ public class UserFeedbackService {
         return "反馈成功！";
     }
 
-    public List<RepairInfoLogVo> getRepairInfoLog(Integer userId,Integer custId){
+    public List<RepairInfoLogVo> getRepairInfoLog(Integer userId,Integer custId,Integer deviceId){
         ProjectJobInfo projectJobInfo = new ProjectJobInfo();
         projectJobInfo.setCustomerId(custId);
         projectJobInfo.setReportCustUserId(userId);
+        projectJobInfo.setLinkDeviceId(deviceId);
         List<ProjectJobInfo> projectJobInfos = jobMapper.selectListJob(projectJobInfo);
         List<RepairInfoLogVo> repairInfoLogVos = new ArrayList<>();
         if ( projectJobInfos != null && projectJobInfos.size() > 0){
