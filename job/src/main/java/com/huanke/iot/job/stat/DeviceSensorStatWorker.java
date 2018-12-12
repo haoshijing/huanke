@@ -56,6 +56,8 @@ public class DeviceSensorStatWorker {
                 Future<Integer>  hum = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.HUMIDITY_IN.getCode()));
                 Future<Integer>  tem = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.TEMPERATURE_IN.getCode()));
                 Future<Integer>  pm = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.PM25_IN.getCode()));
+                Future<Integer>  nh3 = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.NH3_IN.getCode()));
+                Future<Integer>  anion = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.ANION_IN.getCode()));
 
                 DeviceSensorStatPo deviceSensorStatPo = new DeviceSensorStatPo();
                 deviceSensorStatPo.setDeviceId(devicePo.getId());
@@ -69,6 +71,8 @@ public class DeviceSensorStatWorker {
                     deviceSensorStatPo.setHcho(hcho.get());
                     deviceSensorStatPo.setTvoc(tvoc.get());
                     deviceSensorStatPo.setTem(tem.get());
+                    deviceSensorStatPo.setNh3(nh3.get());
+                    deviceSensorStatPo.setAnion(anion.get());
                 }catch (Exception e){
                     log.error("",e);
                 }

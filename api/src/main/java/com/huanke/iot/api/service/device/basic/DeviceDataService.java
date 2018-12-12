@@ -300,24 +300,33 @@ public class DeviceDataService {
                     continue;
                 }
                 xdata.add(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:mm:ss"));
-                if (StringUtils.equals(sensorType, SensorTypeEnums.CO2_IN.getCode())) {
-                    ydata.add(deviceSensorPo.getCo2().toString());
-                } else if (StringUtils.equals(sensorType, SensorTypeEnums.HUMIDITY_IN.getCode())) {
-                    ydata.add(deviceSensorPo.getHum().toString());
-                } else if (StringUtils.equals(sensorType, SensorTypeEnums.TEMPERATURE_IN.getCode())) {
-                    ydata.add(deviceSensorPo.getTem().toString());
-                } else if (StringUtils.equals(sensorType, SensorTypeEnums.HCHO_IN.getCode())) {
-                    ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getHcho()));
-                } else if (StringUtils.equals(sensorType, SensorTypeEnums.PM25_IN.getCode())) {
-                    if (deviceSensorPo.getPm() != null) {
+                switch (sensorTypeEnums){
+                    case CO2_IN:
+                        ydata.add(deviceSensorPo.getCo2().toString());
+                        break;
+                    case HUMIDITY_IN:
+                        ydata.add(deviceSensorPo.getHum().toString());
+                        break;
+                    case TEMPERATURE_IN:
+                        ydata.add(deviceSensorPo.getTem().toString());
+                        break;
+                    case HCHO_IN:
+                        ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getHcho()));
+                        break;
+                    case PM25_IN:
                         ydata.add(deviceSensorPo.getPm().toString());
-                    } else {
-                        ydata.add("");
-                    }
-                } else if (StringUtils.equals(sensorType, SensorTypeEnums.TVOC_IN.getCode())) {
-                    ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getTvoc()));
-                } else {
-                    continue;
+                        break;
+                    case TVOC_IN:
+                        ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getTvoc()));
+                        break;
+                    case NH3_IN:
+                        ydata.add(deviceSensorPo.getNh3().toString());
+                        break;
+                    case ANION_IN:
+                        ydata.add(deviceSensorPo.getAnion().toString());
+                        break;
+                    default:
+                        break;
                 }
                 sensorDataVo.setXdata(xdata);
                 sensorDataVo.setYdata(ydata);

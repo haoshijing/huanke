@@ -16,6 +16,8 @@ public class DeviceSensorStatPo {
     private Integer pm;
     private Integer tvoc;
     private Integer hcho;
+    private Integer nh3;
+    private Integer anion;
     private Long startTime;
     private Long endTime;
     private Long insertTime;

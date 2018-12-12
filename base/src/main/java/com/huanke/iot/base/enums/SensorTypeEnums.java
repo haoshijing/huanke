@@ -21,6 +21,7 @@ public enum SensorTypeEnums {
     TVOC_OUTER("151", "室外TVOC", "mg/m³"),
     HCHO_IN("160", "室内甲醛", "mg/m³"),
     HCHO_OUTER("161", "室外甲醛", "mg/m³"),
+    NH3_IN("170","室内氨气","ppm"),
     /**
      * 1-晴,2-多云,3-阴,4-阵雨,5-雷阵雨,6-雷阵雨有冰雹,7-雨夹雪,8-小雨,9-中雨,
      * 10-大雨,11-暴雨,12-大暴雨,13-特大暴雨,14-阵雪,15-小雪,16-中雪,17-大雪,
@@ -28,7 +29,8 @@ public enum SensorTypeEnums {
      * 25-暴雨-大暴雨,26-大暴雨-特大暴雨,27-小雪-中雪,28-中雪-大雪,29-大雪-暴雪,
      * 30-浮尘,31-扬沙,32-强沙尘暴,33-霾
      */
-	WEATHER("17F","天气","");
+	WEATHER("17F","天气",""),
+    ANION_IN("180","室内负离子","个/m³");
 
     SensorTypeEnums(String code, String mark, String unit) {
         this.code = code;

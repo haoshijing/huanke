@@ -88,7 +88,9 @@ public class AppBasicService {
             SensorTypeEnums.PM25_IN.getCode(),
             SensorTypeEnums.CO2_IN.getCode(),
             SensorTypeEnums.HCHO_IN.getCode(),
-            SensorTypeEnums.TVOC_IN.getCode()));
+            SensorTypeEnums.TVOC_IN.getCode(),
+            SensorTypeEnums.NH3_IN.getCode(),
+            SensorTypeEnums.ANION_IN.getCode()));
     @Transactional
     public ApiResponse<Object> removeIMeiInfo(HttpServletRequest request){
         String appId = request.getParameter("appId");
@@ -249,32 +251,38 @@ public class AppBasicService {
             sensorDataVo.setType(sensorType);
             Map<String,String> map = new LinkedHashMap<>();
             for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
-                String value;
+                Float value;
                 switch (sensorTypeEnums){
                     case CO2_IN:
-                        value = deviceSensorPo.getCo2().toString();
+                        value = Float.valueOf(deviceSensorPo.getCo2()==null?0:deviceSensorPo.getCo2());
                         break;
                     case HUMIDITY_IN:
-                        value = deviceSensorPo.getHum().toString();
+                        value = Float.valueOf(deviceSensorPo.getHum()==null?0:deviceSensorPo.getHum());
                         break;
                     case TEMPERATURE_IN:
-                        value = deviceSensorPo.getTem().toString();
+                        value = Float.valueOf(deviceSensorPo.getTem()==null?0:deviceSensorPo.getTem());
                         break;
                     case HCHO_IN:
-                        value = FloatDataUtil.getFloat(deviceSensorPo.getHcho());
+                        value = Float.valueOf((deviceSensorPo.getHcho()==null?0:deviceSensorPo.getHcho())/100);
                         break;
                     case PM25_IN:
-                        value = deviceSensorPo.getPm().toString();
+                        value = Float.valueOf(deviceSensorPo.getPm()==null?0:deviceSensorPo.getPm());
                         break;
                     case TVOC_IN:
-                        value = FloatDataUtil.getFloat(deviceSensorPo.getTvoc());
+                        value = Float.valueOf((deviceSensorPo.getTvoc()==null?0:deviceSensorPo.getTvoc())/100);
+                        break;
+                    case NH3_IN:
+                        value = Float.valueOf(deviceSensorPo.getNh3()==null?0:deviceSensorPo.getNh3());
+                        break;
+                    case ANION_IN:
+                        value = Float.valueOf(deviceSensorPo.getAnion()==null?0:deviceSensorPo.getAnion());
                         break;
                         default:
-                            value = "";
+                            value = Float.valueOf(0);
                 }
                 String key = new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:00:00");
                 if(map.get(key)==null){
-                    map.put(key,value);
+                    map.put(key,new DecimalFormat("0.00").format(value));
                 }else{
                     map.put(key,new DecimalFormat("0.00").format(Float.valueOf(map.get(key))/2+Float.valueOf(value)/2));
                 }
