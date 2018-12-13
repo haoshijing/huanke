@@ -13,6 +13,7 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
@@ -181,6 +182,7 @@ public class DeviceTeamService {
         List<Integer> deviceIdList = deviceTeamItemPos.stream().filter(e -> e.getStatus().equals(CommonConstant.STATUS_YES)).map(e -> e.getDeviceId()).collect(Collectors.toList());
 
         List<DevicePo> deviceList = deviceMapper.selectByIdList(deviceIdList);
+        String result;
         for (DevicePo device : deviceList) {
             DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
             BeanUtils.copyProperties(occRequest, deviceFuncVo);
@@ -195,7 +197,10 @@ public class DeviceTeamService {
                     linkDeviceFuncVo.setDeviceId(eachPo.getDeviceId());
                     linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
                     linkDeviceFuncVo.setValue(deviceFuncVo.getValue());
-                    deviceDataService.sendFunc(linkDeviceFuncVo,userId, operType);
+                    result = deviceDataService.sendFunc(linkDeviceFuncVo,userId, operType);
+                    if(result.equals("")){
+                        throw new BusinessException("指令发送失败");
+                    }
                 }
             }
         }
