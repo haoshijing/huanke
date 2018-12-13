@@ -272,4 +272,14 @@
         where userId = #{userId} and deviceId =
         #{deviceId}
     </update>
+
+    <update id="trusteeTeamItems">
+        update t_device_team_item
+        set userId = #{userId},
+        lastUpdateTime = unix_timestamp()*1000
+        where id IN
+        <foreach collection="updateItemIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

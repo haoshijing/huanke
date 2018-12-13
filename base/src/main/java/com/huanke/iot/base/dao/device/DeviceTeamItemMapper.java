@@ -48,4 +48,6 @@ public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
     int updateStatus(@Param("deviceId") Integer deviceId, @Param("userId") Integer userId, @Param("status")Integer status);
 
     Integer updateBatch(List<DeviceTeamItemPo> deviceTeamItemPoList);
+
+    void trusteeTeamItems(@Param("updateItemIds") List<Integer> updateItemIds, @Param("userId") Integer userId);
 }
