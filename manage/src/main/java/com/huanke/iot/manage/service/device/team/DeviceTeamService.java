@@ -10,23 +10,23 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.*;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
-import com.huanke.iot.base.po.customer.CustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DeviceCustomerRelationPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamScenePo;
-import com.huanke.iot.manage.common.util.QRCodeUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.QueryInfoByCustomerRequest;
-import com.huanke.iot.manage.vo.request.device.team.*;
+import com.huanke.iot.manage.vo.request.device.team.TeamCreateOrUpdateRequest;
+import com.huanke.iot.manage.vo.request.device.team.TeamDeleteRequest;
+import com.huanke.iot.manage.vo.request.device.team.TeamListQueryRequest;
+import com.huanke.iot.manage.vo.request.device.team.TeamTrusteeRequest;
 import com.huanke.iot.manage.vo.response.device.team.DeviceTeamVo;
-import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
@@ -443,6 +443,7 @@ public class DeviceTeamService {
      * @param teamTrusteeRequest
      * @return
      */
+    @Transactional
     public CustomerUserPo trusteeTeam(TeamTrusteeRequest teamTrusteeRequest) {
         DeviceTeamPo deviceTeamPo = this.deviceTeamMapper.selectById(teamTrusteeRequest.getId());
         //根据masterUserId查询现持有者

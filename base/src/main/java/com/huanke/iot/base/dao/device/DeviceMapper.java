@@ -76,4 +76,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DeviceSelectRsp> selectProjectByModelId(@Param("customerId") Integer customerId, @Param("modelId") Integer modelId);
 
     List<LinkGroupDeviceRspPo> selectByGroupId(@Param("groupId") Integer groupId);
+
+    List<DevicePo> selectByIdList(@Param("deviceIdList") List<Integer> deviceIdList);
 }

@@ -3,6 +3,7 @@ package com.huanke.iot.api.controller.app;
 import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.h5.BaseController;
 import com.huanke.iot.api.controller.h5.req.BaseRequest;
+import com.huanke.iot.api.controller.h5.req.OccRequest;
 import com.huanke.iot.api.controller.h5.req.UpdateDeviceTeamRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceTeamVo;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
@@ -92,5 +93,19 @@ public class AppDeviceTeamController extends BaseController {
             deviceTeamVoList.add(deviceTeamVo);
         }
         return deviceTeamVoList;
+    }
+
+    /**
+     * 组开/关 occ = openCloseControl
+     * @return
+     */
+    @RequestMapping("/occ")
+    public ApiResponse<Boolean> occ(@RequestBody OccRequest occRequest) {
+        Integer teamId = occRequest.getTeamId();
+        Integer openCloseStatus = occRequest.getOpenCloseStatus();
+        Integer userId = getCurrentUserIdForApp();
+        log.info("组开关操作，操作人={}, 操作状态={}，操作组={}", userId, openCloseStatus, teamId);
+        Boolean result = deviceTeamService.occ(occRequest, userId, 2);
+        return new ApiResponse<>(result);
     }
 }

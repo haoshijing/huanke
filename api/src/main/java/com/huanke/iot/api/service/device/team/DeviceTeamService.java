@@ -1,7 +1,10 @@
 package com.huanke.iot.api.service.device.team;
 
+import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
+import com.huanke.iot.api.controller.h5.req.OccRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
+import com.huanke.iot.api.service.device.basic.DeviceDataService;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceTeamConstants;
@@ -15,13 +18,14 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author onlymark
@@ -42,6 +46,9 @@ public class DeviceTeamService {
 
     @Autowired
     CustomerUserMapper customerUserMapper;
+
+    @Autowired
+    DeviceDataService deviceDataService;
 
     @Transactional
     public Object createDeviceTeam(Integer userId, DeviceTeamNewRequest newRequest) {
@@ -164,5 +171,34 @@ public class DeviceTeamService {
             deviceTeamItemMapper.updateById(deviceTeamItemPo);
         }
         return new ApiResponse<>(true);
+    }
+
+    @Transactional
+    public Boolean occ(OccRequest occRequest, Integer userId, Integer operType) {
+        Integer teamId = occRequest.getTeamId();
+        //根据teamId查当前组所有可用设备
+        List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(teamId);
+        List<Integer> deviceIdList = deviceTeamItemPos.stream().filter(e -> e.getStatus().equals(CommonConstant.STATUS_YES)).map(e -> e.getDeviceId()).collect(Collectors.toList());
+
+        List<DevicePo> deviceList = deviceMapper.selectByIdList(deviceIdList);
+        for (DevicePo device : deviceList) {
+            DeviceFuncVo deviceFuncVo = new DeviceFuncVo();
+            BeanUtils.copyProperties(occRequest, deviceFuncVo);
+            deviceFuncVo.setDeviceId(device.getId());
+            deviceDataService.sendFunc(deviceFuncVo, userId, operType);//H5操作，所以是1
+            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(device.getId());
+            if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
+                //对其他联动设备发送指令
+                List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
+                for (DeviceTeamItemPo eachPo : deviceTeamItemPoList) {
+                    DeviceFuncVo linkDeviceFuncVo = new DeviceFuncVo();
+                    linkDeviceFuncVo.setDeviceId(eachPo.getDeviceId());
+                    linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
+                    linkDeviceFuncVo.setValue(deviceFuncVo.getValue());
+                    deviceDataService.sendFunc(linkDeviceFuncVo,userId, operType);
+                }
+            }
+        }
+        return true;
     }
 }
