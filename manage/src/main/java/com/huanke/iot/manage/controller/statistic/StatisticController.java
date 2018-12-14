@@ -7,6 +7,7 @@ import com.huanke.iot.manage.service.device.typeModel.DeviceTypeService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceLocationCountRequest;
+import com.huanke.iot.manage.vo.response.device.WeatherVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationCountVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
@@ -15,6 +16,7 @@ import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceTypeVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -102,5 +104,12 @@ public class StatisticController {
         return this.statisticService.queryHomePageStatistic();
     }
 
-
+    @ApiOperation("天气接口")
+    @GetMapping(value = "/queryWeather")
+    public ApiResponse<WeatherVo> queryHomePageStatistic(@RequestBody String location){
+        if(StringUtils.isNotEmpty(location)) {
+            return new ApiResponse(this.statisticService.queryWeather(location));
+        }
+        return null;
+    }
 }

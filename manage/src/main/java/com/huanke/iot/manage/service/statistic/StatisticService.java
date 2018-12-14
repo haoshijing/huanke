@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.statistic;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
@@ -12,9 +13,11 @@ import com.huanke.iot.base.dao.statstic.StatsticCustomerUserLiveMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.statstic.StatsticCustomerUserLivePo;
 import com.huanke.iot.base.util.CommonUtil;
+import com.huanke.iot.base.util.LocationUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceHomePageStatisticVo;
 import com.huanke.iot.manage.vo.request.device.operate.DeviceLocationCountRequest;
+import com.huanke.iot.manage.vo.response.device.WeatherVo;
 import com.huanke.iot.manage.vo.response.device.customer.CustomerUserVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceLocationCountVo;
 import com.huanke.iot.manage.vo.response.device.operate.DeviceOnlineStatVo;
@@ -56,6 +59,9 @@ public class StatisticService {
 
     @Autowired
     private CommonUtil commonUtil;
+
+    @Autowired
+    private LocationUtils locationUtils;
 
 
     /**
@@ -694,5 +700,21 @@ public class StatisticService {
         }
 
         return rtnList;
+    }
+    public WeatherVo queryWeather(String location) {
+        JSONObject weatherJson = locationUtils.getWeather(location, true);
+        WeatherVo weatherVo = new WeatherVo();
+        if (weatherJson != null) {
+            if (weatherJson.containsKey("result")) {
+                JSONObject result = weatherJson.getJSONObject("result");
+                if (result != null) {
+                    weatherVo.setOuterHum(result.getString("humidity"));
+                    weatherVo.setOuterPm(result.getString("aqi"));
+                    weatherVo.setOuterTem(result.getString("temperature_curr"));
+                    weatherVo.setWeather(result.getString("weather_curr"));
+                }
+            }
+        }
+        return weatherVo;
     }
 }
