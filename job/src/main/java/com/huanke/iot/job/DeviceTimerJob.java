@@ -1,21 +1,31 @@
 package com.huanke.iot.job;
 
 import com.alibaba.fastjson.JSON;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTimerMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
 import com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityOptionMapper;
 import com.huanke.iot.base.enums.FuncTypeEnums;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.DeviceTimerPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.job.gateway.MqttSendService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +35,20 @@ import java.util.UUID;
 public class DeviceTimerJob {
 
     @Autowired
+    private DeviceMapper deviceMapper;
+
+    @Autowired
+    private DeviceAbilityOptionMapper deviceAbilityOptionMapper;
+
+    @Autowired
+    private DeviceModelAbilityOptionMapper deviceModelAbilityOptionMapper;
+
+    @Autowired
+    private DeviceModelAbilityMapper deviceModelAbilityMapper;
+
+    @Autowired
     private MqttSendService mqttSendService;
+
     @Autowired
     private DeviceTimerMapper deviceTimerMapper;
 
@@ -135,7 +158,33 @@ public class DeviceTimerJob {
     }*/
 
     public String sendFunc(Integer deviceId, String funcId, Integer funcValue) {
-        String topic = "/down2/control/" + deviceId;
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        List<DeviceAbilityPo> deviceAbilityPos = deviceModelAbilityMapper.selectActiveByModelId(devicePo.getModelId());
+        List<DeviceAbilityOptionPo> deviceAbilityOptionPos = new ArrayList<>();
+        List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = new ArrayList<>();
+        deviceAbilityPos.stream().filter(temp ->{return temp.getDirValue().equals(funcId);}).forEach(deviceAbilityPo-> {
+            deviceAbilityOptionPos.addAll(deviceAbilityOptionMapper.selectActiveOptionsByAbilityId(deviceAbilityPo.getId()));
+            deviceModelAbilityOptionPos.addAll(deviceModelAbilityOptionMapper.queryByModelIdAbilityId(devicePo.getModelId(), deviceAbilityPo.getId()));
+        });
+        Integer optionId = null;
+        String actualValue = funcValue.toString();
+        for (DeviceAbilityOptionPo temp : deviceAbilityOptionPos){
+            if (funcValue.toString().equals(temp.getOptionValue())){
+                optionId = temp.getId();
+                break;
+            }
+        }
+        for (DeviceModelAbilityOptionPo temp : deviceModelAbilityOptionPos){
+            if (temp.getAbilityOptionId().equals(optionId)&& StringUtils.isNotEmpty(temp.getActualOptionValue())){
+                actualValue = temp.getActualOptionValue();
+                break;
+            }
+        }
+        //映射结束
+
+        Integer hostDeviceId = devicePo.getHostDeviceId()==null||devicePo.getHostDeviceId()==0?devicePo.getId():devicePo.getHostDeviceId();
+
+        String topic = "/down2/control/" + hostDeviceId;
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId(funcId);
@@ -152,6 +201,7 @@ public class DeviceTimerJob {
         FuncItemMessage funcItemMessage = new FuncItemMessage();
         funcItemMessage.setType(funcId);
         funcItemMessage.setValue(String.valueOf(funcValue));
+        funcItemMessage.setChildid(devicePo.getChildId());
         funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
         mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
         return requestId;
@@ -162,6 +212,7 @@ public class DeviceTimerJob {
     public static class FuncItemMessage {
         private String type;
         private String value;
+        private String childid;
     }
 
     @Data

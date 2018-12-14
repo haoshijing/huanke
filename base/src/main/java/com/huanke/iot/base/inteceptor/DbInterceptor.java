@@ -36,12 +36,19 @@ import java.util.stream.Stream;
 public class DbInterceptor implements Interceptor {
     @Value("${apiHost}")
     private String apiHost;
+    @Value("${jobHost}")
+    private String jobHost;
 
     /**
      * 监听的表范围
      */
-    public static final List<Class<?>> CLASS_LIST = Stream.of(DeviceAbilityPo.class, DeviceAbilityOptionPo.class,
-            DeviceModelPo.class, DeviceModelAbilityPo.class, DeviceModelAbilityOptionPo.class, CustomerPo.class)
+    public static final List<Class<?>> CLASS_LIST = Stream.of(
+            DeviceAbilityPo.class,
+            DeviceAbilityOptionPo.class,
+            DeviceModelPo.class,
+            DeviceModelAbilityPo.class,
+            DeviceModelAbilityOptionPo.class,
+            CustomerPo.class)
             .collect(Collectors.toList());
 
     @Override
@@ -107,6 +114,19 @@ public class DbInterceptor implements Interceptor {
             HttpClients.createDefault().execute(httpGet);
         }catch (Exception e ){
             log.info("api缓存刷新调用失败");
+        }
+        try {
+            log.info("job缓存刷新");
+            String url2 = String.format("http://"+jobHost + "/job/flushCache/flushCache");
+            HttpGet httpGet2 = new HttpGet();
+            httpGet2.setURI(new URI(url2));
+
+            RequestConfig requestConfig2 = RequestConfig.custom().setSocketTimeout(3000).
+                    setConnectTimeout(3000).build();//设置请求和传输超时时间
+            httpGet2.setConfig(requestConfig2);
+            HttpClients.createDefault().execute(httpGet2);
+        }catch (Exception e ){
+            log.info("job缓存刷新调用失败");
         }
     }
 }
