@@ -29,7 +29,7 @@
         #{linkAgeStatus},
         #{status},
         #{createTime},
-        #{lastUpdateTime}
+        unix_timestamp()*1000
         )
     </insert>
 
