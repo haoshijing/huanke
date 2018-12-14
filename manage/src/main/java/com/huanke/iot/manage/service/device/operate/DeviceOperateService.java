@@ -183,7 +183,7 @@ public class DeviceOperateService {
             //设定在线状态为离线
             insertPo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_NO);
             //设定启用状态为禁用
-            insertPo.setEnableStatus(DeviceConstant.ENABLE_STATUS_NO);
+            insertPo.setEnableStatus(DeviceConstant.ENABLE_STATUS_YES);
             insertPo.setHardVersion(device.getHardVersion());
             insertPo.setBirthTime(device.getBirthTime());
 

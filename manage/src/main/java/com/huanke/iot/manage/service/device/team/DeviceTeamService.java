@@ -30,6 +30,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -544,7 +545,9 @@ public class DeviceTeamService {
         //根据当前传入的teamId查询到当前customer的appId等相关信息
         CustomerPo customerPo = this.customerMapper.selectByTeamId(teamId);
         String appId = customerPo.getAppid();
-        String code = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
+        String redirect_uri = customerPo.getSLD() + ".hcocloud.com/h5/init";
+        String code = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
+                + URLEncoder.encode(redirect_uri, "UTF-8")+ "?teamId=" + teamId +"&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
         return code;
     }
 
