@@ -2,6 +2,7 @@ package com.huanke.iot.api.service.device.team;
 
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.req.OccRequest;
+import com.huanke.iot.api.controller.h5.req.TeamTrusteeRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
@@ -10,11 +11,13 @@ import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
+import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +54,9 @@ public class DeviceTeamService {
 
     @Autowired
     DeviceDataService deviceDataService;
+
+    @Autowired
+    DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
 
     @Transactional
     public Object createDeviceTeam(Integer userId, DeviceTeamNewRequest newRequest) {
@@ -205,5 +212,64 @@ public class DeviceTeamService {
             }
         }
         return true;
+    }
+
+    /**
+     * 查询当前用户是否已关注公众号
+     *
+     * @param openId
+     * @return
+     */
+    public CustomerUserPo queryCustomerUser(String openId) {
+        CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(openId);
+        return customerUserPo;
+    }
+
+    /**
+     * 托管组给指定用户（输入指定用户openId方式）
+     *
+     * @param teamTrusteeRequest
+     * @return
+     */
+    @Transactional
+    public CustomerUserPo trusteeTeam(TeamTrusteeRequest teamTrusteeRequest) {
+        DeviceTeamPo deviceTeamPo = this.deviceTeamMapper.selectById(teamTrusteeRequest.getTeamId());
+        Integer masterUserId = deviceTeamPo.getMasterUserId();
+        Integer teamId = deviceTeamPo.getId();
+        //判断设备组下设备是否该用户是主绑定人
+        List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(teamId);
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByUserId(masterUserId);
+        List<Integer> deviceIdList = deviceCustomerUserRelationPos.stream().map(e -> e.getDeviceId()).collect(Collectors.toList());
+        for (DeviceTeamItemPo deviceTeamItemPo : deviceTeamItemPos) {
+            if(!deviceIdList.contains(deviceTeamItemPo.getDeviceId())){
+                throw new BusinessException("无法托管非该用户主绑定设备，设备id=" + deviceTeamItemPo.getDeviceId());
+            }
+        }
+        //根据masterUserId查询现持有者
+        CustomerUserPo currentOwner = this.customerUserMapper.selectByUserId(masterUserId);
+        CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(teamTrusteeRequest.getOpenId());
+        deviceTeamPo.setMasterUserId(customerUserPo.getId());
+        //设置的组状态为托管组
+        deviceTeamPo.setTeamStatus(DeviceTeamConstants.DEVICE_TEAM_STATUS_TRUSTEE);
+        //变更当前设备和用户的绑定关系表，将组托管给另一个用户后同时需要改变设备与用户的绑定关系
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = this.deviceCustomerUserRelationMapper.selectByOpenId(currentOwner.getOpenId());
+        List<DeviceCustomerUserRelationPo> updatePos = new ArrayList<>();
+        if (0 != deviceCustomerUserRelationPoList.size()) {
+            deviceCustomerUserRelationPoList.stream().forEach(deviceCustomerUserRelationPo -> {
+                deviceCustomerUserRelationPo.setOpenId(teamTrusteeRequest.getOpenId());
+                deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
+                updatePos.add(deviceCustomerUserRelationPo);
+            });
+        }
+        this.deviceCustomerUserRelationMapper.updateBatch(updatePos);
+        Boolean ret = this.deviceTeamMapper.updateById(deviceTeamPo) > 0;
+        List<Integer> updateItemIds = deviceTeamItemPos.stream().map(e -> e.getId()).collect(Collectors.toList());
+        deviceTeamItemMapper.trusteeTeamItems(updateItemIds, customerUserPo.getId());
+        if (ret) {
+            //成功返回被托管用户的相关信息
+            return customerUserPo;
+        } else {
+            return null;
+        }
     }
 }

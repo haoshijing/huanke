@@ -93,9 +93,9 @@ public class DeviceTimerService {
 
 
 
-    public List<DeviceTimerVo> queryTimerList(Integer userId, String wxDeviceId, Integer type) {
+    public List<DeviceTimerVo> queryTimerList(Integer userId, Integer deviceId, Integer type) {
 
-        DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if (devicePo == null) {
             return Lists.newArrayList();
         }
