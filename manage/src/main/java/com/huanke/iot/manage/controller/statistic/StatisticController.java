@@ -105,7 +105,7 @@ public class StatisticController {
     }
 
     @ApiOperation("天气接口")
-    @GetMapping(value = "/queryWeather")
+    @PostMapping(value = "/queryWeather")
     public ApiResponse<WeatherVo> queryHomePageStatistic(@RequestBody String location){
         if(StringUtils.isNotEmpty(location)) {
             return new ApiResponse(this.statisticService.queryWeather(location));
