@@ -9,7 +9,7 @@ public class BaseController {
 
     @Autowired
     UserService userService;
-    Integer getCurrentUserId(){
+    protected Integer getCurrentUserId(){
         UserRequestContext requestContext = UserRequestContextHolder.get();
         return  requestContext.getCurrentId();
     }

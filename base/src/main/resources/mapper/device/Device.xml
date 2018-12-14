@@ -906,4 +906,16 @@
         AND tdgi.status = 1
     </select>
 
+    <select id="selectByIdList" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select * FROM <include refid="tableName"/>
+        WHERE 1=1
+        <if test="deviceIdList != null and deviceIdList.size() > 0">
+           AND  id IN
+            <foreach collection="deviceIdList" index="index" item="item" open="(" separator="," close=")">
+                  #{item}
+            </foreach>
+        </if>
+        AND status = 1
+        AND enableStatus = 1
+    </select>
 </mapper>

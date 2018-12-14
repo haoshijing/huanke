@@ -1,6 +1,5 @@
 package com.huanke.iot.api.service.device.basic;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
@@ -119,6 +118,8 @@ public class DeviceHighService {
      * @return
      */
     public List<ChildDeviceVo> childDeviceList(Integer hostDeviceId) {
+        DevicePo hostDevice = deviceMapper.selectById(hostDeviceId);
+        Integer powerStatus = hostDevice.getPowerStatus();
         List<DevicePo> devicePoList = deviceMapper.selectChildDeviceListByHostDeviceId(hostDeviceId);
         List<ChildDeviceVo> childDeviceVos = new ArrayList<>();
         for (DevicePo devicePo : devicePoList) {
@@ -126,6 +127,8 @@ public class DeviceHighService {
             childDeviceVo.setId(devicePo.getId());
             childDeviceVo.setDeviceName(devicePo.getName());
             childDeviceVo.setChildId(devicePo.getChildId());
+            childDeviceVo.setOnlineStatus(devicePo.getOnlineStatus());
+            childDeviceVo.setHostPowerStatus(powerStatus);
             childDeviceVos.add(childDeviceVo);
             Integer modelId = devicePo.getModelId();
             DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
