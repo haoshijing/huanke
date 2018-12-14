@@ -545,9 +545,9 @@ public class DeviceTeamService {
         //根据当前传入的teamId查询到当前customer的appId等相关信息
         CustomerPo customerPo = this.customerMapper.selectByTeamId(teamId);
         String appId = customerPo.getAppid();
-        String redirect_uri = "http://" + customerPo.getSLD() + ".hcocloud.com/h5/auth";
+        String redirect_uri = "http://" + customerPo.getSLD() + ".hcocloud.com/h5/auth?teamId="+ teamId+"&customerId="+customerPo.getId();
         String code = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="
-                + URLEncoder.encode(redirect_uri, "UTF-8")+ "?teamId=" + teamId +"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+                + URLEncoder.encode(redirect_uri, "UTF-8")+ "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
         return code;
     }
 
