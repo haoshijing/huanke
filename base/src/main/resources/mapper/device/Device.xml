@@ -891,10 +891,11 @@
     </select>
 
     <select id="selectProjectByModelId" resultType="com.huanke.iot.base.resp.device.DeviceSelectRsp">
-        select id,name from
-        <include refid="tableName"/>
-        where customerId = #{customerId}
-        AND modelId = #{modelId}
+        select di.id,di.name from
+        <include refid="tableName"/> di
+        LEFT JOIN newiot.t_device_customer_relation dc ON dc.deviceId = di.id
+        where dc.customerId = #{customerId}
+        AND di.modelId = #{modelId}
     </select>
 
     <select id="selectByGroupId" resultType="com.huanke.iot.base.resp.project.LinkGroupDeviceRspPo">
