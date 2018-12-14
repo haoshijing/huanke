@@ -53,13 +53,13 @@ public class AppDeviceTimerController extends BaseController {
     @RequestMapping("/queryTimerList")
     public Object queryTimerList(@RequestBody QueryTimerRequest request){
         Integer userId = getCurrentUserIdForApp();
-        String wxDeviceId = request.getWxDeviceId();
+        Integer deviceId = request.getDeviceId();
         Integer type = request.getType();
-        if(wxDeviceId.equals("") || wxDeviceId == null){
+        if(deviceId.equals("") || deviceId == null){
             return new ApiResponse<>(RetCode.PARAM_ERROR, "参数错误");
         }
-        log.info("查询定时列表：userId={}, wxDeviceId={}, type={}", userId, wxDeviceId, type);
-        List<DeviceTimerVo> deviceTimerVos = deviceTimerService.queryTimerList(userId,wxDeviceId,type);
+        log.info("查询定时列表：userId={}, deviceId={}, type={}", userId, deviceId, type);
+        List<DeviceTimerVo> deviceTimerVos = deviceTimerService.queryTimerList(userId,deviceId,type);
         return new ApiResponse<>(deviceTimerVos);
     }
 

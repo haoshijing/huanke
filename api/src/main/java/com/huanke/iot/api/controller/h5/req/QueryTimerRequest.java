@@ -10,6 +10,6 @@ import lombok.Data;
  */
 @Data
 public class QueryTimerRequest {
-    private String wxDeviceId;
+    private Integer deviceId;
     private Integer type;
 }
