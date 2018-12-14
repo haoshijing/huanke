@@ -280,7 +280,7 @@
             AND (find_in_set(#{userId}, enableUsers)
             OR enableUsers is null)
         </if>
-        AND status != 2
+        AND pji.status != 2
       ORDER BY pji.finalTime ASC
       LIMIT #{start},#{limit}
     </select>
