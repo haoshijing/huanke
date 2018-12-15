@@ -11,6 +11,9 @@ import lombok.Data;
  */
 @Data
 public class WarnJobRequest {
+    private String name;
+    private Integer warnLevel;
+    private Integer flowStatus;
     private Integer currentPage = 1;
     private Integer limit = 10;
 }
