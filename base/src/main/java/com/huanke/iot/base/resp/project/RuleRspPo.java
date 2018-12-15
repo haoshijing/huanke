@@ -3,6 +3,7 @@ package com.huanke.iot.base.resp.project;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述:
@@ -22,4 +23,8 @@ public class RuleRspPo {
     private Date updateTime;
     private String createName;
     private String updateName;
+    private String monitorValue;//监听的设备指令集
+
+
+    private List<String> monitorValues;
 }

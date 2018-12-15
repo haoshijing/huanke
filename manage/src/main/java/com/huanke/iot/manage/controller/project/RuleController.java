@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 描述:
@@ -29,7 +30,7 @@ public class RuleController {
     @Autowired
     private RuleService ruleService;
 
-    @ApiOperation("查询客户列表")
+    @ApiOperation("查询规则列表")
     @PostMapping(value = "/selectList")
     public ApiResponse<RuleRsp> selectList(@RequestBody RuleQueryRequest request) throws Exception {
         RuleRsp ruleRsp = ruleService.selectList(request);
@@ -47,6 +48,13 @@ public class RuleController {
     @PostMapping(value = "/editRule")
     public ApiResponse<Boolean> editRule(@RequestBody RuleRequest request) {
         Boolean result = ruleService.addOrUpdate(request);
+        return new ApiResponse<>(result);
+    }
+
+    @ApiOperation("查询可关联功能项")
+    @GetMapping(value = "/getEnableAbility")
+    public ApiResponse<Map> getEnableAbility() {
+        Map<Integer, String> result = ruleService.getEnableAbility();
         return new ApiResponse<>(result);
     }
 

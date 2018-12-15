@@ -3,6 +3,7 @@ package com.huanke.iot.base.po.project;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述:
@@ -25,4 +26,5 @@ public class ProjectRule {
     private Date updateTime;
     private Integer createUser;
     private Integer updateUser;
+    private String monitorValue;//监听的设备指令集
 }
