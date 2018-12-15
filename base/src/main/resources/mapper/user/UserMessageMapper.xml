@@ -109,8 +109,8 @@
         SELECT tuml.*, tu.nickName createUserName from t_user_message_log tuml
         LEFT JOIN t_user tu ON tuml.createUser = tu.id
         WHERE 1=1
-        <if test = "userMessage.topic != null and userMessage.topic != ''">
-            AND tuml.topic LIKE CONCAT('%',#{userMessage.topic},'%')
+        <if test = "userMessageLog.topic != null and userMessageLog.topic != ''">
+            AND tuml.topic LIKE CONCAT('%',#{userMessageLog.topic},'%')
         </if>
         AND tuml.userId = #{userMessageLog.userId}
         AND tuml.status != 2
