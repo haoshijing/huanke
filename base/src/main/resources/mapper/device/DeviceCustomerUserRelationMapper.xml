@@ -212,4 +212,11 @@
         </foreach>
     </delete>
 
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tableName"/>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
 </mapper>

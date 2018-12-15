@@ -30,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -234,40 +235,66 @@ public class DeviceTeamService {
     @Transactional
     public CustomerUserPo trusteeTeam(TeamTrusteeRequest teamTrusteeRequest) {
         DeviceTeamPo deviceTeamPo = this.deviceTeamMapper.selectById(teamTrusteeRequest.getTeamId());
-        Integer masterUserId = deviceTeamPo.getMasterUserId();
+        Integer oldUserId = deviceTeamPo.getMasterUserId();
         Integer teamId = deviceTeamPo.getId();
-        //判断设备组下设备是否该用户是主绑定人
+        //判断设备组下设备是否该旧用户是主绑定人
         List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(teamId);
-        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByUserId(masterUserId);
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByUserId(oldUserId);
         List<Integer> deviceIdList = deviceCustomerUserRelationPos.stream().map(e -> e.getDeviceId()).collect(Collectors.toList());
         for (DeviceTeamItemPo deviceTeamItemPo : deviceTeamItemPos) {
-            if(!deviceIdList.contains(deviceTeamItemPo.getDeviceId())){
+            if (!deviceIdList.contains(deviceTeamItemPo.getDeviceId())) {
                 throw new BusinessException("无法托管非该用户主绑定设备，设备id=" + deviceTeamItemPo.getDeviceId());
             }
         }
-        //根据masterUserId查询现持有者
-        CustomerUserPo currentOwner = this.customerUserMapper.selectByUserId(masterUserId);
-        CustomerUserPo customerUserPo = this.customerUserMapper.selectByOpenId(teamTrusteeRequest.getOpenId());
-        deviceTeamPo.setMasterUserId(customerUserPo.getId());
-        //设置的组状态为托管组
-        deviceTeamPo.setTeamStatus(DeviceTeamConstants.DEVICE_TEAM_STATUS_TRUSTEE);
-        //变更当前设备和用户的绑定关系表，将组托管给另一个用户后同时需要改变设备与用户的绑定关系
-        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPoList = this.deviceCustomerUserRelationMapper.selectByOpenId(currentOwner.getOpenId());
+        //根据masterUserId查询现持有者和新持有者
+        CustomerUserPo oldUserPo = this.customerUserMapper.selectByUserId(oldUserId);
+        CustomerUserPo newUserPo = this.customerUserMapper.selectByOpenId(teamTrusteeRequest.getOpenId());
+
+        //变更当前设备和用户的绑定关系表，将组托管给另一个用户后同时需要改变设备与用户的绑定关系,新用户已有绑定关系则删除旧用户的绑定关系，否则修改过来
+        List<DeviceCustomerUserRelationPo> oldRelationPos = this.deviceCustomerUserRelationMapper.selectByOpenId(oldUserPo.getOpenId());
+        List<DeviceCustomerUserRelationPo> newUserRelationPos = this.deviceCustomerUserRelationMapper.selectByOpenId(newUserPo.getOpenId());
+        Map<Integer, DeviceCustomerUserRelationPo> newUserRelationMap = newUserRelationPos.stream().collect(Collectors.toMap(DeviceCustomerUserRelationPo::getDeviceId, a -> a, (k1, k2) -> k1));
         List<DeviceCustomerUserRelationPo> updatePos = new ArrayList<>();
-        if (0 != deviceCustomerUserRelationPoList.size()) {
-            deviceCustomerUserRelationPoList.stream().forEach(deviceCustomerUserRelationPo -> {
-                deviceCustomerUserRelationPo.setOpenId(teamTrusteeRequest.getOpenId());
-                deviceCustomerUserRelationPo.setLastUpdateTime(System.currentTimeMillis());
-                updatePos.add(deviceCustomerUserRelationPo);
+        if (0 != oldRelationPos.size()) {
+            oldRelationPos.stream().forEach(oldRelationPo -> {
+                if (newUserRelationMap.keySet().contains(oldRelationPo.getDeviceId())) {
+                    deviceCustomerUserRelationMapper.deleteById(oldRelationPo.getId());
+                } else {
+                    oldRelationPo.setOpenId(teamTrusteeRequest.getOpenId());
+                    oldRelationPo.setLastUpdateTime(System.currentTimeMillis());
+                    updatePos.add(oldRelationPo);
+                }
             });
         }
         this.deviceCustomerUserRelationMapper.updateBatch(updatePos);
+
+        //设置的组状态为托管组
+        deviceTeamPo.setMasterUserId(newUserPo.getId());
+        deviceTeamPo.setTeamStatus(DeviceTeamConstants.DEVICE_TEAM_STATUS_TRUSTEE);
+        deviceTeamPo.setCreateUserId(null);
         Boolean ret = this.deviceTeamMapper.updateById(deviceTeamPo) > 0;
-        List<Integer> updateItemIds = deviceTeamItemPos.stream().map(e -> e.getId()).collect(Collectors.toList());
-        deviceTeamItemMapper.trusteeTeamItems(updateItemIds, customerUserPo.getId());
+
+        //组设备表修改
+        List<Integer> sourceDeviceIdList = deviceTeamItemPos.stream().map(e -> e.getDeviceId()).collect(Collectors.toList());
+        List<Integer> updateItemIds = new ArrayList<>();
+        List<DeviceTeamItemPo> ownDeviceList = deviceTeamItemMapper.selectByUserId(newUserPo.getId());
+        Map<Integer, DeviceTeamItemPo> ownDeviceMap = ownDeviceList.stream().collect(Collectors.toMap(DeviceTeamItemPo::getDeviceId, a -> a, (k1, k2) -> k1));
+        deviceTeamItemPos.stream().forEach(temp -> {
+            if (ownDeviceMap.keySet().contains(temp.getDeviceId())) {
+                DeviceTeamItemPo deviceTeamItemPo = ownDeviceMap.get(temp.getDeviceId());
+                deviceTeamItemPo.setTeamId(teamTrusteeRequest.getTeamId());
+                deviceTeamItemMapper.updateById(deviceTeamItemPo);
+                deviceTeamItemMapper.deleteById(temp.getId());
+            } else {
+                updateItemIds.add(temp.getId());
+            }
+        });
+        if (updateItemIds.size() > 0) {
+            deviceTeamItemMapper.trusteeTeamItems(updateItemIds, newUserPo.getId());
+        }
         if (ret) {
             //成功返回被托管用户的相关信息
-            return customerUserPo;
+            return newUserPo;
         } else {
             return null;
         }

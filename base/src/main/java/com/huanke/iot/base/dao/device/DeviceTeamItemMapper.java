@@ -33,7 +33,7 @@ public interface DeviceTeamItemMapper extends BaseMapper<DeviceTeamItemPo> {
 
     Integer deleteBatch(List<DeviceTeamItemPo> deviceTeamItemPoList);
 
-    DeviceTeamItemPo selectByUserId(Integer userId);
+    List<DeviceTeamItemPo> selectByUserId(Integer userId);
 
     int deleteItemsByDeviceId(Integer deviceId);
 

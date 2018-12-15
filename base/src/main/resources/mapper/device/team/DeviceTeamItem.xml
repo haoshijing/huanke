@@ -77,6 +77,13 @@
         </foreach>
     </insert>
 
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tableName"/>
+        <where>
+            id = #{id}
+        </where>
+    </delete>
     <select id="selectByDeviceId" parameterType="java.lang.Integer"
             resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
         select
