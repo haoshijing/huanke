@@ -542,6 +542,16 @@ public class DeviceTeamService {
      * @throws Exception
      */
     public String createQrCode(@RequestBody Integer teamId) throws Exception {
+        DeviceTeamPo deviceTeamPo = deviceTeamMapper.selectById(teamId);
+        List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(teamId);
+        List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByUserId(deviceTeamPo.getMasterUserId());
+        List<Integer> deviceIdList = deviceCustomerUserRelationPos.stream().map(e -> e.getDeviceId()).collect(Collectors.toList());
+        for (DeviceTeamItemPo deviceTeamItemPo : deviceTeamItemPos) {
+            if(!deviceIdList.contains(deviceTeamItemPo.getDeviceId())){
+                throw new BusinessException("无法托管非该用户主绑定设备，设备id=" + deviceTeamItemPo.getDeviceId());
+            }
+        }
+
         //根据当前传入的teamId查询到当前customer的appId等相关信息
         CustomerPo customerPo = this.customerMapper.selectByTeamId(teamId);
         String appId = customerPo.getAppid();
