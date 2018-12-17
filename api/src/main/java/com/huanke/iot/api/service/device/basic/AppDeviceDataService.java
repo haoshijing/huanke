@@ -310,7 +310,8 @@ public class AppDeviceDataService {
                         }
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
-                        if (optionValue.equals(deviceabilityOptionPo.getOptionValue())) {
+                        if ((StringUtils.isNotEmpty(deviceModelAbilityOptionPo.getActualOptionValue())&&optionValue.equals(deviceModelAbilityOptionPo.getActualOptionValue()))
+                                ||(StringUtils.isEmpty(deviceModelAbilityOptionPo.getActualOptionValue())&&optionValue.equals(deviceabilityOptionPo.getOptionValue()))) {
                             deviceAbilitysVo.setCurrValue(deviceabilityOptionPo.getOptionValue());
                             abilityOption.setIsSelect(1);
                         } else {
