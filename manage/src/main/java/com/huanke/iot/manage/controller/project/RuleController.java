@@ -53,8 +53,8 @@ public class RuleController {
 
     @ApiOperation("查询可关联功能项")
     @GetMapping(value = "/getEnableAbility")
-    public ApiResponse<Map> getEnableAbility() {
-        Map<Integer, String> result = ruleService.getEnableAbility();
+    public ApiResponse<List> getEnableAbility() {
+        List<Map<String, String>> result = ruleService.getEnableAbility();
         return new ApiResponse<>(result);
     }
 

@@ -158,9 +158,15 @@ public class RuleService {
         Integer customerId = customerService.obtainCustomerId(false);
         return ruleMapper.selectRuleDict(customerId);
     }
-    public Map<Integer, String> getEnableAbility() {
+    public List<Map<String, String>> getEnableAbility() {
         List<DeviceAbilityPo> deviceAbilityPos = deviceAbilityMapper.selectList(new DeviceAbilityPo(), 10000, 0);
-        Map<Integer, String> deviceAbilityMap = deviceAbilityPos.stream().collect(Collectors.toMap(DeviceAbilityPo::getId, a ->a.getAbilityName(), (k1, k2) -> k1));
-        return deviceAbilityMap;
+        List<Map<String, String>> resp = new ArrayList<>();
+        deviceAbilityPos.stream().forEach(temp->{
+            Map<String, String> map = new HashMap<>();
+            map.put("id",temp.getId().toString());
+            map.put("name",temp.getAbilityName());
+            resp.add(map);
+        });
+        return resp;
     }
 }
