@@ -22,6 +22,9 @@ bucketName: idcfota
 skipRemoteHost: pro
 defaultPassWord: 123456
 
+weather.key: 33489
+weather.sign: a423a10ccfdfaaf60c4674dc48d06356
+
 env: dev
 mybatis.configuration.cache-enabled: false
 
