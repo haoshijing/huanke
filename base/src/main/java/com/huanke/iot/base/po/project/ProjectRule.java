@@ -17,6 +17,7 @@ public class ProjectRule {
     private Integer id;
     private Integer customerId;
     private Integer useType;//1-计划，2-客户报修反馈，3-设备告警
+    private String monitorValue;//监听的设备指令Id集
     private String name;
     private String description;
     private Integer typeId;
@@ -26,5 +27,4 @@ public class ProjectRule {
     private Date updateTime;
     private Integer createUser;
     private Integer updateUser;
-    private String monitorValue;//监听的设备指令集
 }

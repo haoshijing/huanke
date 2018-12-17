@@ -38,6 +38,8 @@ public class DbInterceptor implements Interceptor {
     private String apiHost;
     @Value("${jobHost}")
     private String jobHost;
+    @Value("${gatewayHost}")
+    private String gatewayHost;
 
     /**
      * 监听的表范围
@@ -117,7 +119,7 @@ public class DbInterceptor implements Interceptor {
         }
         try {
             log.info("job缓存刷新");
-            String url2 = String.format("http://"+jobHost + "/job/flushCache/flushCache");
+            String url2 = String.format("http://"+jobHost + "/job/job/flushCache/flushCache");
             HttpGet httpGet2 = new HttpGet();
             httpGet2.setURI(new URI(url2));
 
@@ -127,6 +129,19 @@ public class DbInterceptor implements Interceptor {
             HttpClients.createDefault().execute(httpGet2);
         }catch (Exception e ){
             log.info("job缓存刷新调用失败");
+        }
+        try {
+            log.info("gateway缓存刷新");
+            String url3 = String.format("http://"+gatewayHost + "/gateway/gateway/flushCache/flushCache");
+            HttpGet httpGet3 = new HttpGet();
+            httpGet3.setURI(new URI(url3));
+
+            RequestConfig requestConfig3 = RequestConfig.custom().setSocketTimeout(3000).
+                    setConnectTimeout(3000).build();//设置请求和传输超时时间
+            httpGet3.setConfig(requestConfig3);
+            HttpClients.createDefault().execute(httpGet3);
+        }catch (Exception e ){
+            log.info("gateway缓存刷新调用失败");
         }
     }
 }

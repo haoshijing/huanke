@@ -28,4 +28,6 @@ public interface RuleMapper extends BaseMapper<ProjectRule> {
     List<RuleDictRsp> selectRuleDict(@Param("customerId") Integer customerId);
 
     List<RuleRspPo> selectAllRepaireRules(@Param("customerId") Integer customerId,@Param("typeId") Integer typeId);
+
+    List<ProjectRule> selectByMonitorValue(@Param("customerId") Integer customerId,@Param("abilityId") Integer typeId);
 }

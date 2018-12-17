@@ -79,24 +79,25 @@ public class RuleService {
         BeanUtils.copyProperties(request, projectRule);
         if(projectRule.getUseType() == 3 && request.getMonitorValues() != null && request.getMonitorValues().size() > 0) {
             //判断是否重复监听了同一功能项；
-            List monitoredAbilitys = new ArrayList();
-            ProjectRule req = new ProjectRule();
-            req.setCustomerId(customerId);
-            req.setUseType(3);
-            req.setStatus(1);
-            List<RuleRspPo> ruleDictRsps = ruleMapper.selectPageList(req,10000,0);
-            for(int i = 0; i<ruleDictRsps.size(); i++){
-                if(ruleDictRsps.get(i).getMonitorValue()!=null) {
-                    String[] split = ruleDictRsps.get(i).getMonitorValue().split(",");
-                    monitoredAbilitys.addAll(Arrays.asList(split));
-                }
-            }
-            for(int i = 0 ;i<request.getMonitorValues().size();i++) {
-                if (monitoredAbilitys.contains(request.getMonitorValues().get(i))){
-                    DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(Integer.valueOf(request.getMonitorValues().get(i)));
-                    throw new BusinessException("关联了已被关联的功能项："+deviceAbilityPo.getAbilityName());
-                }
-            }
+//            List monitoredAbilitys = new ArrayList();
+//            ProjectRule req = new ProjectRule();
+//            req.setCustomerId(customerId);
+//            req.setUseType(3);
+//            req.setStatus(1);
+//            List<RuleRspPo> ruleDictRsps = ruleMapper.selectPageList(req,10000,0);
+//            for(int i = 0; i<ruleDictRsps.size(); i++){
+//                if(ruleDictRsps.get(i).getMonitorValue()!=null) {
+//                    String[] split = ruleDictRsps.get(i).getMonitorValue().split(",");
+//
+//                    monitoredAbilitys.addAll(Arrays.asList(split));
+//                }
+//            }
+//            for(int i = 0 ;i<request.getMonitorValues().size();i++) {
+//                if (monitoredAbilitys.contains(request.getMonitorValues().get(i))){
+//                    DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(Integer.valueOf(request.getMonitorValues().get(i)));
+//                    throw new BusinessException("关联了已被关联的功能项："+deviceAbilityPo.getAbilityName());
+//                }
+//            }
             projectRule.setMonitorValue(String.join(",",request.getMonitorValues()));
         }
         ProjectRule oldProjectRule = null;
@@ -114,24 +115,24 @@ public class RuleService {
             projectRule.setUpdateUser(user.getId());
             ruleMapper.updateById(projectRule);
         }
-        if(projectRule.getUseType() == 3 && request.getMonitorValues() != null && request.getMonitorValues().size() > 0) {
-            String oldMonitorValue = new String();
-            if (oldProjectRule!=null){
-                oldMonitorValue = oldProjectRule.getMonitorValue();
-            }
-            for(int i = 0 ; i<request.getMonitorValues().size() ; i++) {
-                oldMonitorValue.replace(request.getMonitorValues().get(i),"");
-                DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(Integer.valueOf(request.getMonitorValues().get(i)));
-                //缓存以备getaway使用，缓存格式：客户号.rule.指令
-                stringRedisTemplate.opsForValue().set(customerId + ".rule." + deviceAbilityPo.getDirValue(), projectRule.getId().toString());
-            }
-            String[] list = oldMonitorValue.split(",");
-            for(int i = 0 ; i<list.length ; i++) {
-                DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(Integer.valueOf(list[i]));
-                //缓存以备getaway使用，缓存格式：客户号.rule.指令
-                stringRedisTemplate.opsForValue().set(customerId + ".rule." + deviceAbilityPo.getDirValue(), "");
-            }
-        }
+//        if(projectRule.getUseType() == 3 && request.getMonitorValues() != null && request.getMonitorValues().size() > 0) {
+//            String oldMonitorValue = new String();
+//            if (oldProjectRule!=null){
+//                oldMonitorValue = oldProjectRule.getMonitorValue();
+//            }
+//            for(int i = 0 ; i<request.getMonitorValues().size() ; i++) {
+//                oldMonitorValue.replace(request.getMonitorValues().get(i),"");
+//                DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(Integer.valueOf(request.getMonitorValues().get(i)));
+//                //缓存以备getaway使用，缓存格式：客户号.rule.指令
+//                stringRedisTemplate.opsForValue().set(customerId + ".rule." + deviceAbilityPo.getDirValue(), projectRule.getId().toString());
+//            }
+//            String[] list = oldMonitorValue.split(",");
+//            for(int i = 0 ; i<list.length ; i++) {
+//                DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(Integer.valueOf(list[i]));
+//                //缓存以备getaway使用，缓存格式：客户号.rule.指令
+//                stringRedisTemplate.opsForValue().set(customerId + ".rule." + deviceAbilityPo.getDirValue(), "");
+//            }
+//        }
         return true;
     }
 

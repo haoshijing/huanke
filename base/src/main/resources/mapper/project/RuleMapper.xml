@@ -205,4 +205,18 @@
         AND status = 1
         AND useType = 2
     </select>
+
+    <select id="selectByMonitorValue" resultType="com.huanke.iot.base.po.project.ProjectRule">
+        select * from
+        <include refid="tableName"/>
+        WHERE 1=1
+        AND status = 1
+        AND useType = 3
+        <if test="customerId != null">
+            AND customerId = #{customerId}
+        </if>
+        <if test="abilityId != null">
+            AND FIND_IN_SET(#{abilityId}, monitorValue)
+        </if>
+    </select>
 </mapper>

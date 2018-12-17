@@ -52,7 +52,7 @@ public class MqttService {
 
     public class MqttMessageListener implements IMqttMessageListener{
 
-        DefaultEventLoopGroup defaultEventLoopGroup = new DefaultEventLoopGroup(8,new DefaultThreadFactory("MqttMessageThread"));
+        DefaultEventLoopGroup defaultEventLoopGroup = new DefaultEventLoopGroup(9,new DefaultThreadFactory("MqttMessageThread"));
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
 
