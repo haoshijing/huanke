@@ -229,14 +229,16 @@ public class AppDeviceDataService {
         return deviceListVo;
     }
 
-    public List<AppDeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId) {
+    public List<AppDeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId,Integer customerId) {
         List<AppDeviceListVo.DeviceItemPo> childDevicePos = new ArrayList<>();
         List<DevicePo> devicePoList = deviceMapper.queryChildDevice(hostDeviceId);
+        CustomerPo customerPo = customerMapper.selectById(customerId);
         for (DevicePo devicePo : devicePoList) {
             AppDeviceListVo.DeviceItemPo deviceItemPo = new AppDeviceListVo.DeviceItemPo();
             deviceItemPo.setDeviceId(devicePo.getId());
             deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
             deviceItemPo.setLocation(devicePo.getLocation());
+            deviceItemPo.setCustomerName(customerPo.getName());
             Integer modelId = devicePo.getModelId();
             DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
             Integer typeId = deviceModelPo.getTypeId();

@@ -69,8 +69,9 @@ public class DeviceController extends BaseController {
     @RequestMapping("/obtainChildDevice/{hostDeviceId}")
     public Object obtainChildDevice(@PathVariable("hostDeviceId") Integer hostDeviceId) {
         Integer userId = getCurrentUserId();
+        Integer customerId = getCurrentCustomerId();
         log.info("查询子设备列表，userId={}， hostDeviceId={}", userId, hostDeviceId);
-        List<DeviceListVo.DeviceItemPo> childDeviceList = deviceService.queryChildDevice(hostDeviceId);
+        List<DeviceListVo.DeviceItemPo> childDeviceList = deviceService.queryChildDevice(hostDeviceId,customerId);
         return new ApiResponse<>(childDeviceList);
     }
 

@@ -442,14 +442,16 @@ public class DeviceService {
         return weatherVo;
     }
 
-    public List<DeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId) {
+    public List<DeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId,Integer customerId) {
         List<DeviceListVo.DeviceItemPo> childDevicePos = new ArrayList<>();
         List<DevicePo> devicePoList = deviceMapper.queryChildDevice(hostDeviceId);
+        CustomerPo customerPo = customerMapper.selectById(customerId);
         for (DevicePo devicePo : devicePoList) {
             DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
             deviceItemPo.setDeviceId(devicePo.getId());
             deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
             deviceItemPo.setLocation(devicePo.getLocation());
+            deviceItemPo.setCustomerName(customerPo.getName());
             Integer modelId = devicePo.getModelId();
             Integer typeId = deviceModelMapper.selectById(modelId).getTypeId();
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
