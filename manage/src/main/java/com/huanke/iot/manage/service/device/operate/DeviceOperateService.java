@@ -1868,7 +1868,8 @@ public class DeviceOperateService {
                         }
                         DeviceAbilityVo.abilityOption abilityOption = new DeviceAbilityVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
-                        if (optionValue.equals(deviceabilityOptionPo.getOptionValue())) {
+                        if ((StringUtils.isNotEmpty(deviceModelAbilityOptionPo.getActualOptionValue())&&optionValue.equals(deviceModelAbilityOptionPo.getActualOptionValue()))
+                                ||(StringUtils.isEmpty(deviceModelAbilityOptionPo.getActualOptionValue())&&optionValue.equals(deviceabilityOptionPo.getOptionValue()))) {
                             deviceAbilitysVo.setCurrValue(deviceabilityOptionPo.getOptionValue());
                             abilityOption.setIsSelect(CommonConstant.STATUS_IS_YES);
                         } else {
