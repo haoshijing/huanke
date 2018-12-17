@@ -17,7 +17,7 @@
         description,
         typeId,
         warnLevel,
-        moniTorValue,
+        monitorValue,
         status,
         createTime,
         createUser
@@ -30,7 +30,7 @@
         #{description},
         #{typeId},
         #{warnLevel},
-        #{moniTorValue},
+        #{monitorValue},
         #{status},
         #{createTime},
         #{createUser}
@@ -74,8 +74,8 @@
             <if test="warnLevel != null">
                 warnLevel = #{warnLevel},
             </if>
-            <if test="moniTorValue != null">
-                moniTorValue = #{moniTorValue},
+            <if test="monitorValue != null">
+                monitorValue = #{monitorValue},
             </if>
             <if test="status != null">
                 status = #{status},
