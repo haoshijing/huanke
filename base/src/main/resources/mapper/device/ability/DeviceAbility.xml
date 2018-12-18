@@ -256,7 +256,7 @@
         WHERE 1=1
         limit 1
     </select>
-    <select id="selectAbilityCodeByDeviceId" parameterType="java.lang.Integer" resultType="java.lang.String">
+    <select id="selectAbilityCodeByDeviceId" parameterType="java.lang.Integer" resultType="java.lang.String" useCache="false">
         select tda.abilityCode from
         t_device_ability tda,t_device td,t_device_model_ability tdm
         where 1=1
