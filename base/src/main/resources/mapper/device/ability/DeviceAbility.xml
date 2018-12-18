@@ -174,7 +174,7 @@
         <!--</where>-->
     <!--</select>-->
 
-    <select id="selectAbilityListByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo">
+    <select id="selectAbilityListByTypeId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.ability.DeviceTypeAbilitysPo" useCache="false">
         SELECT
         t_device_ability.abilityName,t_device_ability.abilityType, t_device_ability.minVal, t_device_ability.minVal,t_device_type_abilitys.*
         FROM
