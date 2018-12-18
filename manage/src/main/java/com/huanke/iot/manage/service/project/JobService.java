@@ -119,13 +119,31 @@ public class JobService {
         if (StringUtils.isNotEmpty(projectJobInfo.getEnableUsers()) && projectJobInfo.getEnableUsers().indexOf(userId.toString()) < 0) {
             return "无权操作该任务，请刷新重新获取任务！";
         }
+        //判断当前任务是否可以执行当前操作。
+        Integer operateType = request.getOperateType();
+        switch(projectJobInfo.getFlowStatus()){
+            case JobFlowStatusConstants.FLOW_STATUS_CREATED:
+                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_DEAL || operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
+                    return "错误的操作，任务状态已被更改，请刷新！";
+                break;
+            case JobFlowStatusConstants.FLOW_STATUS_DEALING:
+                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_COMMIT)
+                    return "错误的操作，任务状态已被更改，请刷新！";
+                break;
+            case JobFlowStatusConstants.FLOW_STATUS_COMMITED:
+                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_PASS || operateType != JobFlowStatusConstants.OPERATE_TYPE_BACK)
+                    return "错误的操作，任务状态已被更改，请刷新！";
+                break;
+            case JobFlowStatusConstants.FLOW_STATUS_FINISH:
+            case JobFlowStatusConstants.FLOW_STATUS_IGNORED:
+                return "错误的操作，任务状态已被更改，请刷新！";
+        }
         List<Integer> targetUsers = request.getTargetUsers();
         if (targetUsers != null && !targetUsers.isEmpty()) {
             List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
             String targetUserStr = String.join(",", targetUserStrList);
             projectJobInfo.setEnableUsers(targetUserStr);
         }
-        Integer operateType = request.getOperateType();
         int flowStatus = 0;
         switch (operateType) {
             case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
