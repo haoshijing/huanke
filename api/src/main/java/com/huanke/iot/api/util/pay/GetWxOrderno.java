@@ -1,12 +1,7 @@
 package com.huanke.iot.api.util.pay;
 
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -25,71 +20,6 @@ import java.util.Map;
 public class GetWxOrderno
 {
   public static DefaultHttpClient httpclient;
-
-  static
-  {
-    httpclient = new DefaultHttpClient();
-    httpclient = (DefaultHttpClient)HttpClientConnectionManager.getSSLInstance(httpclient);
-  }
-
-
-  /**
-   *description:获取预支付id
-   *@param url
-   *@param xmlParam
-   *@return
-   * @author ex_yangxiaoyi
-   * @see
-   */
-  public static String getPayNo(String url,String xmlParam){
-	  DefaultHttpClient client = new DefaultHttpClient();
-	  client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
-	  HttpPost httpost= HttpClientConnectionManager.getPostMethod(url);
-	  String prepay_id = "";
-     try {
-		 httpost.setEntity(new StringEntity(xmlParam, "UTF-8"));
-		 HttpResponse response = httpclient.execute(httpost);
-	     String jsonStr = EntityUtils.toString(response.getEntity(), "UTF-8");
-	    if(jsonStr.indexOf("FAIL")!=-1){
-	    	return prepay_id;
-	    }
-	    Map map = doXMLParse(jsonStr);
-	    prepay_id  = (String) map.get("prepay_id");
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	return prepay_id;
-  }
-  
-  /**
-   *description:获取扫码支付连接
-   *@param url
-   *@param xmlParam
-   *@return
-   * @author ex_yangxiaoyi
-   * @see
-   */
-  public static String getCodeUrl(String url,String xmlParam){
-	  DefaultHttpClient client = new DefaultHttpClient();
-	  client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
-	  HttpPost httpost= HttpClientConnectionManager.getPostMethod(url);
-	  String code_url = "";
-     try {
-		 httpost.setEntity(new StringEntity(xmlParam, "UTF-8"));
-		 HttpResponse response = httpclient.execute(httpost);
-	     String jsonStr = EntityUtils.toString(response.getEntity(), "UTF-8");
-	    if(jsonStr.indexOf("FAIL")!=-1){
-	    	return code_url;
-	    }
-	    Map map = doXMLParse(jsonStr);
-	    code_url  = (String) map.get("code_url");
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	return code_url;
-  }
   
   
   /**

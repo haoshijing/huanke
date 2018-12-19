@@ -1,10 +1,11 @@
 package com.huanke.iot.api.pay;
 
+import com.huanke.iot.api.pay.req.PayReq;
+import com.huanke.iot.api.pay.resp.PayResp;
 import com.huanke.iot.api.util.pay.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,20 +25,18 @@ import java.util.*;
 @RestController
 @Slf4j
 public class PayController {
-    @RequestMapping(value="/pay2")
-    public ModelAndView pay2(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value="/pay")
+    public PayResp pay2(PayReq request, HttpServletResponse response) throws Exception {
         String order_id= UUID.randomUUID().toString().replace("-", "");
         String body="支付测试";
-        Double order =0.01;
-        Map<String,String> xmlMap = new HashMap<>();
+        String openId = request.getOpenId();
+        Double order = request.getPrice();
         Map<String,String> resMap = new HashMap<>();
         //生成签名
-        String xml = WeChatUtil.GetWeChatXML(order_id,body,order);
-        //xmlMap = XMLUtil.doXMLParse(xml);
-
+        String xml = WeChatUtil.GetWeChatXML(order_id,body,openId, order);
         //统一下单
         String SubmitResult = HttpUtil.postData(WeChatUtil.UFDODER_URL,xml);
-        SortedMap<Object,Object> SubmitMap = new TreeMap<Object,Object>();
+        Map<Object,Object> SubmitMap = new LinkedHashMap<Object,Object>();
         //解析XML
         resMap = GetWxOrderno.doXMLParse(SubmitResult);
         String result_code  = resMap.get("result_code");

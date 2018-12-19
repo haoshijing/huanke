@@ -39,7 +39,7 @@ public class WeChatUtil {
     /**
      * 回调url
      */
-    public static String NOTIFY_URL = "http://907fa4e4.ngrok.io/weixinNotify";
+    public static String NOTIFY_URL = "http://dev.hcocloud.com/api/h5/pay/weixinNotify";
 
     /**
      * 生成微信签名
@@ -51,7 +51,7 @@ public class WeChatUtil {
      *         价格
      * @return
      */
-    public static  String GetWeChatXML(String order_id, String body, double order_price ){
+    public static  String GetWeChatXML(String order_id, String body, String openId, double order_price ){
         String currTime = PayCommonUtil.getCurrTime();
         String strTime = currTime.substring(8, currTime.length());
         String strRandom = PayCommonUtil.buildRandom(4) + "";
@@ -76,7 +76,7 @@ public class WeChatUtil {
         packageParams.put("mch_id", MCH_ID);
         packageParams.put("nonce_str", nonce_str);
         packageParams.put("notify_url", notify_url);
-        packageParams.put("openid", "oOSkz0XrnfSunFKRD2yzbF_-SpOE");
+        packageParams.put("openid", openId);
         packageParams.put("out_trade_no", order_id);
         packageParams.put("spbill_create_ip", spbill_create_ip);
         packageParams.put("total_fee", price);
