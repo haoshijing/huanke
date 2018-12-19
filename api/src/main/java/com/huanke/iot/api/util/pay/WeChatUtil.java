@@ -31,11 +31,11 @@ public class WeChatUtil {
     /**
      * 密匙
      */
-    public static String API_KEY = "cdfe9490a9b64fada1542deee61a18f9";// 商户号对应的密钥
+    public static String API_KEY = "ccf17252ff7b4ff88230d3b3504ac88f";// 商户号对应的密钥
     /**
      * 发起支付IP
      */
-    public static String CREATE_IP = "39.104.52.84";
+    public static String CREATE_IP = "192.168.31.84";
     /**
      * 回调url
      */

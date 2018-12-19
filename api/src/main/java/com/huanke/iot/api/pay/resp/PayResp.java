@@ -14,7 +14,7 @@ public class PayResp {
     private String appId;
     private String timeStamp;
     private String nonceStr;
-    private String packageStr;
+    private String package1;
     private String signType;
     private String paySign;
 }

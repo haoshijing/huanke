@@ -21,12 +21,12 @@ import java.util.*;
  * @author onlymark
  * @create 2018-12-18 上午9:09
  */
-@RequestMapping("/h5/pay")
+@RequestMapping("/pay")
 @RestController
 @Slf4j
 public class PayController {
     @RequestMapping(value="/pay")
-    public PayResp pay2(PayReq request, HttpServletResponse response) throws Exception {
+    public PayResp pay(PayReq request, HttpServletResponse response) throws Exception {
         String order_id= UUID.randomUUID().toString().replace("-", "");
         String body="支付测试";
         String openId = request.getOpenId();
@@ -36,24 +36,69 @@ public class PayController {
         String xml = WeChatUtil.GetWeChatXML(order_id,body,openId, order);
         //统一下单
         String SubmitResult = HttpUtil.postData(WeChatUtil.UFDODER_URL,xml);
-        Map<Object,Object> SubmitMap = new LinkedHashMap<Object,Object>();
+        Map<Object,Object> submitMap = new LinkedHashMap<Object,Object>();
         //解析XML
         resMap = GetWxOrderno.doXMLParse(SubmitResult);
         String result_code  = resMap.get("result_code");
+        PayResp payResp = new PayResp();
         if("SUCCESS".equals(result_code)) {
             //appId，partnerId，prepayId，nonceStr，timeStamp，package。注意：package的值格式为Sign=WXPay
-            SubmitMap.put("appid", WeChatUtil.APP_ID);
-            SubmitMap.put("partnerid", WeChatUtil.MCH_ID);
-            SubmitMap.put("prepayid", resMap.get("prepay_id"));
-            SubmitMap.put("noncestr", resMap.get("nonce_str"));
+            submitMap.put("appId", WeChatUtil.APP_ID);
             Long time = (System.currentTimeMillis() / 1000);
-            SubmitMap.put("timestamp", time.toString());
-            SubmitMap.put("package", "Sign=WXPay");
+            submitMap.put("timeStamp", time.toString());
+            submitMap.put("nonceStr", resMap.get("nonce_str"));
+            submitMap.put("package", "prepay_id=" + resMap.get("prepay_id"));
+            submitMap.put("signType", "MD5");
             //第二次生成签名
-            String sign = PayCommonUtil.createSign("UTF-8", SubmitMap, WeChatUtil.API_KEY);
-            SubmitMap.put("sign", sign);
+            String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY);
+            submitMap.put("sign", sign);
+
+            payResp.setAppId(WeChatUtil.APP_ID);
+            payResp.setNonceStr((String) submitMap.get("nonceStr"));
+            payResp.setPackage1((String) submitMap.get("package"));
+            payResp.setPaySign(sign);
+            payResp.setSignType("MD5");
+            payResp.setTimeStamp(time.toString());
         }
-        return null;
+        return payResp;
+    }
+
+    @RequestMapping(value="/pay2")
+    public PayResp pay2(PayReq request, HttpServletResponse response) throws Exception {
+        String order_id= UUID.randomUUID().toString().replace("-", "");
+        String body="支付测试";
+        String openId = "oOSkz0XrnfSunFKRD2yzbF_-SpOE";
+        Double order = 0.01;
+        Map<String,String> resMap;
+        //生成签名
+        String xml = WeChatUtil.GetWeChatXML(order_id,body,openId, order);
+        //统一下单
+        String SubmitResult = HttpUtil.postData(WeChatUtil.UFDODER_URL,xml);
+        Map<Object,Object> submitMap = new LinkedHashMap<Object,Object>();
+        //解析XML
+        resMap = GetWxOrderno.doXMLParse(SubmitResult);
+        String result_code  = resMap.get("result_code");
+        PayResp payResp = new PayResp();
+        if("SUCCESS".equals(result_code)) {
+            //appId，partnerId，prepayId，nonceStr，timeStamp，package。注意：package的值格式为Sign=WXPay
+            submitMap.put("appId", WeChatUtil.APP_ID);
+            Long time = (System.currentTimeMillis() / 1000);
+            submitMap.put("timeStamp", time.toString());
+            submitMap.put("nonceStr", resMap.get("nonce_str"));
+            submitMap.put("package", "prepay_id=" + resMap.get("prepay_id"));
+            submitMap.put("signType", "MD5");
+            //第二次生成签名
+            String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY);
+            submitMap.put("sign", sign);
+
+            payResp.setAppId(WeChatUtil.APP_ID);
+            payResp.setNonceStr((String) submitMap.get("nonceStr"));
+            payResp.setPackage1((String) submitMap.get("package"));
+            payResp.setPaySign(sign);
+            payResp.setSignType("MD5");
+            payResp.setTimeStamp(time.toString());
+        }
+        return payResp;
     }
 
     /**

@@ -62,6 +62,7 @@ public class PayCommonUtil {
             }
         }
         sb.append("key=" + API_KEY);
+        System.out.println("sb.toString()->" + sb.toString());
 //        String stringA="appid=wxc7b425229b570867&mch_id=1406330002&nonce_str=1702585759&key=ab42e0b7aa6bce35164a2d14855d7264";
         String sign = MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
 //        String sign = MD5Util.MD5Encode(stringA, characterEncoding).toUpperCase();
