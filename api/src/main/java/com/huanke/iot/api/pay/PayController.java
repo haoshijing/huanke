@@ -4,6 +4,7 @@ import com.huanke.iot.api.pay.req.PayReq;
 import com.huanke.iot.api.pay.resp.PayResp;
 import com.huanke.iot.api.util.pay.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,7 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 描述:
@@ -26,7 +30,7 @@ import java.util.*;
 @Slf4j
 public class PayController {
     @RequestMapping(value="/pay")
-    public PayResp pay(PayReq request, HttpServletResponse response) throws Exception {
+    public PayResp pay(@RequestBody PayReq request, HttpServletResponse response) throws Exception {
         String order_id= UUID.randomUUID().toString().replace("-", "");
         String body="支付测试";
         String openId = request.getOpenId();
