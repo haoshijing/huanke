@@ -78,6 +78,7 @@ public class WeChatUtil {
         packageParams.put("notify_url", notify_url);
         packageParams.put("openid", openId);
         packageParams.put("out_trade_no", order_id);
+        packageParams.put("sign_type", "MD5");
         packageParams.put("spbill_create_ip", spbill_create_ip);
         packageParams.put("total_fee", price);
         packageParams.put("trade_type", trade_type);
