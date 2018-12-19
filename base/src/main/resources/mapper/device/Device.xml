@@ -36,6 +36,7 @@
         speedConfig,
         version,
         location,
+        iconSelect,
         status,
         hardVersion,
         communicationVersion,
@@ -77,6 +78,7 @@
         #{speedConfig},
         #{version},
         #{location},
+        #{iconSelect},
         #{status},
         #{hardVersion},
         #{communicationVersion},
@@ -123,6 +125,7 @@
         speedConfig,
         version,
         location,
+        iconSelect,
         status,
         hardVersion,
         communicationVersion,
@@ -165,6 +168,7 @@
             #{device.speedConfig},
             #{device.version},
             #{device.location},
+            #{device.iconSelect},
             #{device.status},
             #{device.hardVersion},
             #{device.communicationVersion},
@@ -542,6 +546,9 @@
             </if>
             <if test="version != null and version != '' ">
                 version = #{version},
+            </if>
+            <if test="iconSelect != null ">
+                iconSelect = #{iconSelect},
             </if>
             <if test="location != null and location != '' ">
                 location = #{location},

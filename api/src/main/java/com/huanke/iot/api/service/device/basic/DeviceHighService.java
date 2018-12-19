@@ -2,7 +2,9 @@ package com.huanke.iot.api.service.device.basic;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
+import com.huanke.iot.api.controller.h5.req.DeviceIcon;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
+import com.huanke.iot.api.controller.h5.response.DeviceIconItem;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
@@ -184,6 +186,40 @@ public class DeviceHighService {
         mb.put("mb", mbMap);
         String topic = "/down2/stopWatch/" + deviceId;
         mqttSendService.sendMessage(topic, mb.toString());
+        return true;
+    }
+
+    public List<DeviceIconItem> queryDeviceIcon(Integer deviceId){
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        DeviceModelPo deviceModelPo = deviceModelMapper.selectById(devicePo.getModelId());
+        List<DeviceIconItem> resp = new ArrayList<>();
+        if(StringUtils.isNotEmpty(deviceModelPo.getIconList())){
+            String[] icons = deviceModelPo.getIconList().split(",");
+            int select;
+            if(devicePo.getIconSelect()==null||devicePo.getIconSelect()>=icons.length) {
+                select = 0;
+            }else{
+                select = devicePo.getIconSelect();
+            }
+            for (int i = 0 ; i < icons.length;i++){
+                DeviceIconItem deviceIconItem = new DeviceIconItem();
+                deviceIconItem.setIcon(icons[i]);
+                deviceIconItem.setSort(i);
+                if (select == i) {
+                    deviceIconItem.setIsSelect(1);
+                }else{
+                    deviceIconItem.setIsSelect(0);
+                }
+                resp.add(deviceIconItem);
+            }
+        }
+        return resp;
+    }
+
+    public Boolean setDeviceIcon(DeviceIcon deviceIcon,Integer userId){
+        DevicePo devicePo = deviceMapper.selectById(deviceIcon.getDeviceId());
+        devicePo.setIconSelect(deviceIcon.getIconSelect());
+        deviceMapper.updateById(devicePo);
         return true;
     }
 }

@@ -2,9 +2,11 @@ package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSON;
 import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
+import com.huanke.iot.api.controller.h5.req.DeviceIcon;
 import com.huanke.iot.api.controller.h5.req.DeviceRequest;
 import com.huanke.iot.api.controller.h5.req.HighTokenRequest;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
+import com.huanke.iot.api.controller.h5.response.DeviceIconItem;
 import com.huanke.iot.api.controller.h5.response.DeviceModelTypeVo;
 import com.huanke.iot.api.service.device.basic.DeviceHighService;
 import com.huanke.iot.api.service.device.basic.DeviceModelService;
@@ -137,4 +139,16 @@ public class DeviceHighController extends BaseController{
         return new ApiResponse<>();
     }
 
+    @RequestMapping("queryDeviceIconList/{deviceId}")
+    public ApiResponse<List<DeviceIconItem>> queryDeviceIcon(@PathVariable("deviceId") Integer deviceId){
+        Integer userId = getCurrentUserId();
+        log.info("获取设备可选缩略图：deviceId={}", deviceId);
+        return new ApiResponse<>(deviceHighService.queryDeviceIcon(deviceId));
+    }
+    @RequestMapping("setDeviceIcon")
+    public ApiResponse<Boolean> setDeviceIcon(@RequestBody DeviceIcon deviceIcon){
+        Integer userId = getCurrentUserId();
+        log.info("选择缩略图：deviceId={},select={}", deviceIcon.getDeviceId(),deviceIcon.getIconSelect());
+        return new ApiResponse<>(deviceHighService.setDeviceIcon(deviceIcon,userId));
+    }
 }
