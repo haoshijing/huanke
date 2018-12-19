@@ -24,4 +24,6 @@ public class DeviceListDto {
     private String typeNo;
     private String typeIcon;
     private String formatName;
+    private Integer iconSelect;
+    private String modelIconList;
 }

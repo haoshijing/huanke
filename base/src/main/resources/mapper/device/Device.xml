@@ -871,7 +871,7 @@
     </select>
 
     <select id="queryDeviceList" resultType="com.huanke.iot.base.dto.DeviceListDto">
-        select d.id deviceId,d.mac,d.wxDeviceId,d.onlineStatus,d.name deviceName,d.location,d.ip,dm.name modelName,dt.id typeId,dt.name typeName,dt.typeNo, dt.icon typeIcon, wf.name formatName
+        select d.id deviceId,d.mac,d.wxDeviceId,d.onlineStatus,d.name deviceName,d.location,d.ip,d.iconSelect iconSelect,dm.name modelName,dm.iconList modelIconList,dt.id typeId,dt.name typeName,dt.typeNo, dt.icon typeIcon, wf.name formatName
         FROM t_device d,t_device_model dm,t_device_type dt,wx_format wf
         WHERE d.id = #{deviceId}
         and d.status = 1

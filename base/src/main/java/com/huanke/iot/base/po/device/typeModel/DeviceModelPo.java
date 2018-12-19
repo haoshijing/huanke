@@ -25,7 +25,7 @@ public class DeviceModelPo implements Serializable{
     private String productId;
     private Integer formatId;
     private Integer androidFormatId;
-    private String icon;
+    private String iconList;
     private String version;
     private Integer status = CommonConstant.STATUS_YES; //默认正常状态
     private String remark;

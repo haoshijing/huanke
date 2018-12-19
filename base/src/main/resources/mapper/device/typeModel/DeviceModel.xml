@@ -21,7 +21,7 @@
         productQrCode,
         formatId,
         androidFormatId,
-        icon,
+        iconList,
         version,
         childModelIds,
         status,
@@ -41,7 +41,7 @@
         #{productQrCode},
         #{formatId},
         #{androidFormatId},
-        #{icon},
+        #{iconList},
         #{version},
         #{childModelIds},
         #{status},
@@ -83,8 +83,8 @@
             <if test="productQrCode != null and productQrCode !='' ">
                 productQrCode = #{productQrCode},
             </if>
-            <if test="icon != null and icon != ''">
-                icon = #{icon},
+            <if test="iconList != null and iconList != ''">
+                iconList = #{iconList},
             </if>
             <if test="version != null and version != ''">
                 version = #{version},

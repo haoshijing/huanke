@@ -85,6 +85,7 @@ public class DevicePo {
     private String communicationVersion;
     private String softVersion;
     private Long birthTime;
+    private Integer iconSelect;
 
     private Integer createUser;
     private Long createTime;

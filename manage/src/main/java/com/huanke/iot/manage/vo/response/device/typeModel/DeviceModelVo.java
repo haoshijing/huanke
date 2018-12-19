@@ -25,7 +25,7 @@ public class DeviceModelVo {
     private String productId;
     private Integer formatId;
     private Integer androidFormatId;
-    private String icon;
+    private String[] icons;
     private String version;
     private String childModelIds;
     private Integer status = CommonConstant.STATUS_YES;

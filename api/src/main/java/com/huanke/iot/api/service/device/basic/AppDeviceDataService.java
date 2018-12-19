@@ -189,6 +189,15 @@ public class AppDeviceDataService {
                     deviceItemPo.setDeviceName(devicePo.getName() == null ? "默认名称" : devicePo.getName());
                     if (deviceTypePo != null) {
                         deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
+                    }
+                    if (StringUtils.isNotEmpty(deviceModelPo.getIconList())){
+                        String[] icons = deviceModelPo.getIconList().split(",");
+                        if(devicePo.getIconSelect()!=null&&devicePo.getIconSelect()<=icons.length){
+                            deviceItemPo.setIcon(icons[devicePo.getIconSelect()-1]);
+                        }else{
+                            deviceItemPo.setIcon(icons[0]);
+                        }
+                    }else{
                         deviceItemPo.setIcon(deviceTypePo.getIcon());
                     }
                     if (StringUtils.isEmpty(devicePo.getLocation())) {

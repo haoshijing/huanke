@@ -135,6 +135,7 @@ public class DeviceModelService {
         try {
             if (modelRequest != null) {
                 BeanUtils.copyProperties(modelRequest, deviceModelPo);
+                deviceModelPo.setIconList(String.join(",", modelRequest.getIcons()));
             }
             //校验 productId 不可为空
             if (StringUtils.isNotBlank(modelRequest.getProductId())) {
@@ -368,7 +369,7 @@ public class DeviceModelService {
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
-            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setIcons(deviceModelPo.getIconList().split(","));
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setModelCode(deviceModelPo.getModelCode());
             deviceModelVo.setId(deviceModelPo.getId());
@@ -425,7 +426,7 @@ public class DeviceModelService {
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
-            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setIcons(deviceModelPo.getIconList().split(","));
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
@@ -463,7 +464,7 @@ public class DeviceModelService {
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
-            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setIcons(deviceModelPo.getIconList().split(","));
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
@@ -502,7 +503,7 @@ public class DeviceModelService {
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
-            deviceModelVo.setIcon(deviceModelPo.getIcon());
+            deviceModelVo.setIcons(deviceModelPo.getIconList().split(","));
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
             deviceModelVo.setModelCode(deviceModelPo.getModelCode());

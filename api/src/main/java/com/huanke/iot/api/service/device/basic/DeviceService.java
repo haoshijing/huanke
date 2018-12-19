@@ -214,9 +214,16 @@ public class DeviceService {
                         deviceItemPo.setCustomerName(customerPo.getName());
                         deviceItemPo.setDeviceName(deviceListDto.getDeviceName() == null ? "默认名称" : deviceListDto.getDeviceName());
                         deviceItemPo.setDeviceTypeName(deviceListDto.getTypeName());
-                        deviceItemPo.setIcon(deviceListDto.getTypeIcon());
-
-
+                        if (StringUtils.isNotEmpty(deviceListDto.getModelIconList())){
+                            String[] icons = deviceListDto.getModelIconList().split(",");
+                            if(deviceListDto.getIconSelect()!=null&&deviceListDto.getIconSelect()<=icons.length){
+                                deviceItemPo.setIcon(icons[deviceListDto.getIconSelect()-1]);
+                            }else{
+                                deviceItemPo.setIcon(icons[0]);
+                            }
+                        }else{
+                            deviceItemPo.setIcon(deviceListDto.getTypeIcon());
+                        }
                         if (StringUtils.isEmpty(deviceListDto.getLocation())) {
                             JSONObject locationJson = locationUtils.getLocation(deviceListDto.getIp(), false);
                             if (locationJson != null) {
