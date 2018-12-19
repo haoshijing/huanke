@@ -22,6 +22,7 @@ public class ProjectBaseInfo {
     private String buildAddress;
     private String gps;
     private String groupIds;
+    private String imgList;
     private Integer status;
     private Date createTime;
     private Date updateTime;

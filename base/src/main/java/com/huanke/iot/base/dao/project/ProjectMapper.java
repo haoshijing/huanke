@@ -26,7 +26,7 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
 
     Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
-    ProjectRequest selectByProjectId(@Param("projectId") Integer projectId);
+    ProjectBaseInfo selectByProjectId(@Param("projectId") Integer projectId);
 
     List<ProjectDictRsp> selectProjectDict(@Param("customerId") Integer customerId);
 

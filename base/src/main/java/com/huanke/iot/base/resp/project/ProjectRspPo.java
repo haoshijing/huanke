@@ -19,6 +19,7 @@ public class ProjectRspPo {
     private Date buildTime;
     private String buildAddress;
     private String groupIds;
+    private String[] imgList;
     private Integer projectCount;
     private Integer deviceCount;
     private Integer status;

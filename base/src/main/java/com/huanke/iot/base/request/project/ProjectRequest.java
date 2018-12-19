@@ -25,6 +25,7 @@ public class ProjectRequest {
     private List<ExtraDevice> extraDeviceList;      //第三方设备list
     private List<MaterialInfo> materialInfoList;    //实施信息list
 
+    private String[] imgs;
     @Data
     public static class ExtraDevice{
         private Integer id;

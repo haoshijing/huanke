@@ -19,6 +19,7 @@
         buildAddress,
         gps,
         groupIds,
+        imgList,
         status,
         createTime,
         createUser
@@ -33,6 +34,7 @@
         #{buildAddress},
         #{gps},
         #{groupIds},
+        #{imgList},
         #{status},
         #{createTime},
         #{createUser}
@@ -84,6 +86,9 @@
             </if>
             <if test="groupIds != null and groupIds!='' ">
                 groupIds = #{groupIds},
+            </if>
+            <if test="imgList != null and imgList!='' ">
+                imgList = #{imgList},
             </if>
             <if test="status != null">
                 status = #{status},
@@ -182,8 +187,8 @@
       LIMIT #{start},#{limit}
     </select>
 
-    <select id="selectByProjectId" resultType="com.huanke.iot.base.request.project.ProjectRequest">
-        select id, projectNo, name, description, buildTime, buildAddress, gps, groupIds, status from
+    <select id="selectByProjectId" resultType="com.huanke.iot.base.po.project.ProjectBaseInfo">
+        select id, projectNo, name, description, buildTime, buildAddress, gps, groupIds,imgList, status from
         <include refid="tableName"/>
         where id = #{projectId}
     </select>

@@ -22,6 +22,7 @@ import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -106,7 +107,7 @@ public class ProjectService {
         Integer userId = user.getId();
         ProjectBaseInfo projectBaseInfo = new ProjectBaseInfo();
         BeanUtils.copyProperties(request, projectBaseInfo);
-
+        projectBaseInfo.setImgList(String.join(",",request.getImgs()));
         if (projectBaseInfo.getId() == null) {
             //添加
             projectBaseInfo.setCustomerId(customerService.obtainCustomerId(false));
@@ -149,7 +150,7 @@ public class ProjectService {
             }
 
             projectBaseInfo.setUpdateTime(new Date());
-            projectBaseInfo.setUpdateUser(user.getId());
+            projectBaseInfo.setUpdateUser(userId);
             projectMapper.updateById(projectBaseInfo);
 
             //修改第三方设备信息
@@ -164,7 +165,7 @@ public class ProjectService {
                     BeanUtils.copyProperties(e, projectExtraDevice);
                     projectExtraDevice.setStatus(CommonConstant.STATUS_YES);
                     projectExtraDevice.setCreateTime(new Date());
-                    projectExtraDevice.setCreateUser(user.getId());
+                    projectExtraDevice.setCreateUser(userId);
                     projectExtraDevice.setProjectId(projectBaseInfo.getId());
                     projectExtraDevice.setDeviceNo(UniNoCreateUtils.createNo(DeviceConstant.DEVICE_UNI_NO_EXTRADEVICE));
                     extraDeviceMapper.insert(projectExtraDevice);
@@ -172,14 +173,14 @@ public class ProjectService {
                     ProjectExtraDevice projectExtraDevice = extraDeviceMapper.selectById(eId);
                     BeanUtils.copyProperties(e, projectExtraDevice);
                     projectExtraDevice.setStatus(CommonConstant.STATUS_YES);
-                    projectExtraDevice.setUpdateUser(user.getId());
+                    projectExtraDevice.setUpdateUser(userId);
                     projectExtraDevice.setUpdateTime(new Date());
                     extraDeviceMapper.updateById(projectExtraDevice);
                 }
             });
             List<Integer> deleteIds = existIdList.stream().filter(e -> !extraDeviceIddList.contains(e)).collect(Collectors.toList());
             if (deleteIds.size() != 0) {
-                extraDeviceMapper.batchDelete(user.getId(), deleteIds);//删除修改中已删除的设备
+                extraDeviceMapper.batchDelete(userId, deleteIds);//删除修改中已删除的设备
 
             }
             //修改材料信息
@@ -195,7 +196,7 @@ public class ProjectService {
                     BeanUtils.copyProperties(e, projectMaterialInfo);
                     projectMaterialInfo.setStatus(CommonConstant.STATUS_YES);
                     projectMaterialInfo.setCreateTime(new Date());
-                    projectMaterialInfo.setCreateUser(user.getId());
+                    projectMaterialInfo.setCreateUser(userId);
                     projectMaterialInfo.setProjectId(projectBaseInfo.getId());
                     materiaMapper.insert(projectMaterialInfo);
                     //log
@@ -204,7 +205,7 @@ public class ProjectService {
                     ProjectMaterialInfo projectMaterialInfo = materiaMapper.selectById(eId);
                     BeanUtils.copyProperties(e, projectMaterialInfo);
                     projectMaterialInfo.setStatus(CommonConstant.STATUS_YES);
-                    projectMaterialInfo.setUpdateUser(user.getId());
+                    projectMaterialInfo.setUpdateUser(userId);
                     projectMaterialInfo.setUpdateTime(new Date());
                     materiaMapper.updateById(projectMaterialInfo);
                     //log
@@ -213,7 +214,7 @@ public class ProjectService {
             });
             List<Integer> deleteMaterialIds = existMaterialIdList.stream().filter(e -> !materialIdList.contains(e)).collect(Collectors.toList());
             if (deleteMaterialIds.size() != 0) {
-                materiaMapper.batchDelete(user.getId(), deleteMaterialIds);//删除修改中已删除的材料
+                materiaMapper.batchDelete(userId, deleteMaterialIds);//删除修改中已删除的材料
             }
         }
         return true;
@@ -246,7 +247,9 @@ public class ProjectService {
 
 
     public ProjectRequest selectById(Integer projectId) {
-        ProjectRequest projectRequest = projectMapper.selectByProjectId(projectId);
+        ProjectBaseInfo projectBaseInfo = projectMapper.selectByProjectId(projectId);
+        ProjectRequest projectRequest = new ProjectRequest();
+        BeanUtils.copyProperties(projectBaseInfo,projectRequest);
         //查关联其他设备
         List<ProjectRequest.ExtraDevice> extraDeviceList = new ArrayList<>();
         List<ProjectExtraDevice> projectExtraDeviceList = extraDeviceMapper.selectExtraDeviceByProjectId(projectId);
@@ -265,7 +268,9 @@ public class ProjectService {
             materialList.add(materialInfo);
         }
         projectRequest.setMaterialInfoList(materialList);
-
+        if(StringUtils.isNotEmpty(projectBaseInfo.getImgList())) {
+            projectRequest.setImgs(projectBaseInfo.getImgList().split(","));
+        }
         return projectRequest;
     }
 

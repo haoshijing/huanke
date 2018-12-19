@@ -8,6 +8,7 @@ import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Repository
+@Slf4j
 public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
     private static final String TICKET = "Ticket";
     private static final String APPID = "AppId";
@@ -28,8 +30,8 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
             throws Exception {
         String imei = request.getHeader(TICKET);
         String appId = request.getHeader(APPID);
+        log.info("app request:imei={},appId={},url={}",imei,appId,request.getServletPath());
         if(StringUtils.isNotEmpty(imei)){
-
             CustomerUserPo customerUserPo = userService.getUserByIMeiAndAppId(imei,appId);
             //判断是否注册
             if(customerUserPo != null){
