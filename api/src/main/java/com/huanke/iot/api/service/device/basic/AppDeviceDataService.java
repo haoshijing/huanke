@@ -192,8 +192,8 @@ public class AppDeviceDataService {
                     }
                     if (StringUtils.isNotEmpty(deviceModelPo.getIconList())){
                         String[] icons = deviceModelPo.getIconList().split(",");
-                        if(devicePo.getIconSelect()!=null&&devicePo.getIconSelect()<=icons.length){
-                            deviceItemPo.setIcon(icons[devicePo.getIconSelect()-1]);
+                        if(devicePo.getIconSelect()!=null&&devicePo.getIconSelect()<icons.length){
+                            deviceItemPo.setIcon(icons[devicePo.getIconSelect()]);
                         }else{
                             deviceItemPo.setIcon(icons[0]);
                         }

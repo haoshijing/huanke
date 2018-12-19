@@ -216,8 +216,8 @@ public class DeviceService {
                         deviceItemPo.setDeviceTypeName(deviceListDto.getTypeName());
                         if (StringUtils.isNotEmpty(deviceListDto.getModelIconList())){
                             String[] icons = deviceListDto.getModelIconList().split(",");
-                            if(deviceListDto.getIconSelect()!=null&&deviceListDto.getIconSelect()<=icons.length){
-                                deviceItemPo.setIcon(icons[deviceListDto.getIconSelect()-1]);
+                            if(deviceListDto.getIconSelect()!=null&&deviceListDto.getIconSelect()<icons.length){
+                                deviceItemPo.setIcon(icons[deviceListDto.getIconSelect()]);
                             }else{
                                 deviceItemPo.setIcon(icons[0]);
                             }
