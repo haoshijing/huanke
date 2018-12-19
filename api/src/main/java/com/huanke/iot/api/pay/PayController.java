@@ -71,8 +71,8 @@ public class PayController {
             payResp.setTimeStamp(time.toString());
 
             Map<Object,Object> pageMap = new LinkedHashMap<Object,Object>();
-            pageMap.put("noncestr", (String) submitMap.get("nonceStr"));
             pageMap.put("jsapi_ticket", wechartUtil.getJsApi());
+            pageMap.put("noncestr", (String) submitMap.get("nonceStr"));
             pageMap.put("timestamp", time.toString());
             pageMap.put("url", (String) "http://dev.hcocloud.com/h5/demo");
             String signature = PayCommonUtil.createSign("UTF-8", pageMap, WeChatUtil.API_KEY, 2);
