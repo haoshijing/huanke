@@ -263,13 +263,13 @@ public class AppBasicService {
                         value = Float.valueOf(deviceSensorPo.getTem()==null?0:deviceSensorPo.getTem());
                         break;
                     case HCHO_IN:
-                        value = Float.valueOf((deviceSensorPo.getHcho()==null?0:deviceSensorPo.getHcho())/100);
+                        value = Float.valueOf(deviceSensorPo.getHcho()==null?0:deviceSensorPo.getHcho())/100;
                         break;
                     case PM25_IN:
                         value = Float.valueOf(deviceSensorPo.getPm()==null?0:deviceSensorPo.getPm());
                         break;
                     case TVOC_IN:
-                        value = Float.valueOf((deviceSensorPo.getTvoc()==null?0:deviceSensorPo.getTvoc())/100);
+                        value = Float.valueOf(deviceSensorPo.getTvoc()==null?0:deviceSensorPo.getTvoc())/100;
                         break;
                     case NH3_IN:
                         value = Float.valueOf(deviceSensorPo.getNh3()==null?0:deviceSensorPo.getNh3());
