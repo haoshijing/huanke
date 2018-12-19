@@ -17,6 +17,8 @@
         hum,
         hcho,
         tvoc,
+        nh3,
+        anion,
         startTime,
         endTime,
         insertTime
@@ -29,6 +31,8 @@
         #{hum},
         #{hcho},
         #{tvoc},
+        #{nh3},
+        #{anion},
         #{startTime},
         #{endTime},
         #{insertTime}
