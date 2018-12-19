@@ -3,7 +3,11 @@ package com.huanke.iot.api.pay;
 import com.huanke.iot.api.pay.req.PayReq;
 import com.huanke.iot.api.pay.resp.PayResp;
 import com.huanke.iot.api.util.pay.*;
+import com.huanke.iot.api.wechat.WechartUtil;
+import com.huanke.iot.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,7 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 描述:
@@ -21,12 +28,15 @@ import java.util.*;
  * @author onlymark
  * @create 2018-12-18 上午9:09
  */
-@RequestMapping("/pay")
+@RequestMapping("/h5/pay")
 @RestController
 @Slf4j
 public class PayController {
+    @Autowired
+    private WechartUtil wechartUtil;
+
     @RequestMapping(value="/pay")
-    public PayResp pay(PayReq request, HttpServletResponse response) throws Exception {
+    public ApiResponse<PayResp> pay(@RequestBody PayReq request, HttpServletResponse response) throws Exception {
         String order_id= UUID.randomUUID().toString().replace("-", "");
         String body="支付测试";
         String openId = request.getOpenId();
@@ -50,7 +60,7 @@ public class PayController {
             submitMap.put("package", "prepay_id=" + resMap.get("prepay_id"));
             submitMap.put("signType", "MD5");
             //第二次生成签名
-            String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY);
+            String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY, 1);
             submitMap.put("sign", sign);
 
             payResp.setAppId(WeChatUtil.APP_ID);
@@ -59,8 +69,17 @@ public class PayController {
             payResp.setPaySign(sign);
             payResp.setSignType("MD5");
             payResp.setTimeStamp(time.toString());
+
+            Map<Object,Object> pageMap = new LinkedHashMap<Object,Object>();
+            pageMap.put("jsapi_ticket", wechartUtil.getJsApi());
+            pageMap.put("noncestr", (String) submitMap.get("nonceStr"));
+            pageMap.put("timestamp", time.toString());
+            pageMap.put("url", (String) "http://dev.hcocloud.com/h5/demo");
+            String signature = PayCommonUtil.createSign("UTF-8", pageMap, WeChatUtil.API_KEY, 2);
+
+            payResp.setSignature(signature);
         }
-        return payResp;
+        return new ApiResponse<>(payResp);
     }
 
     @RequestMapping(value="/pay2")
@@ -88,7 +107,7 @@ public class PayController {
             submitMap.put("package", "prepay_id=" + resMap.get("prepay_id"));
             submitMap.put("signType", "MD5");
             //第二次生成签名
-            String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY);
+            String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY, 1);
             submitMap.put("sign", sign);
 
             payResp.setAppId(WeChatUtil.APP_ID);

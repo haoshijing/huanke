@@ -81,7 +81,7 @@ public class WeChatUtil {
         packageParams.put("spbill_create_ip", spbill_create_ip);
         packageParams.put("total_fee", price);
         packageParams.put("trade_type", trade_type);
-        String sign = PayCommonUtil.createSign("UTF-8", packageParams,API_KEY);
+        String sign = PayCommonUtil.createSign("UTF-8", packageParams,API_KEY, 1);
         packageParams.put("sign", sign);
         String requestXML = PayCommonUtil.getRequestXml(packageParams);
         System.out.println(requestXML);
