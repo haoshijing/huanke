@@ -17,4 +17,5 @@ public class PayResp {
     private String package1;
     private String signType;
     private String paySign;
+    private String signature;
 }

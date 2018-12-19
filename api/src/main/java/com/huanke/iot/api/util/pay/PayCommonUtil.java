@@ -48,7 +48,7 @@ public class PayCommonUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static String createSign(String characterEncoding, Map<Object, Object> packageParams, String API_KEY) {
+    public static String createSign(String characterEncoding, Map<Object, Object> packageParams, String API_KEY, Integer encryptionType) {
         StringBuffer sb = new StringBuffer();
         Set<?> es = packageParams.entrySet();
         Iterator<?> it = es.iterator();
@@ -61,10 +61,19 @@ public class PayCommonUtil {
                 sb.append(k + "=" + v + "&");
             }
         }
-        sb.append("key=" + API_KEY);
-        System.out.println("sb.toString()->" + sb.toString());
+        String sign;
 //        String stringA="appid=wxc7b425229b570867&mch_id=1406330002&nonce_str=1702585759&key=ab42e0b7aa6bce35164a2d14855d7264";
-        String sign = MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
+        if(encryptionType == 1){
+            //MD5加密
+            sb.append("key=" + API_KEY);
+            System.out.println("sb.toString()->" + sb.toString());
+            sign = MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
+        }else{
+            //SHA1加密
+            sb.deleteCharAt(sb.length()-1);
+            System.out.println("sb.toString()->" + sb.toString());
+            sign = SHA1.encode(sb.toString());
+        }
 //        String sign = MD5Util.MD5Encode(stringA, characterEncoding).toUpperCase();
 //        System.out.println(sign);
 //        System.out.println(MD5Util.MD5Encode("appid=wxd930ea5d5a258f4f&body=test&device_info=1000&mch_id=10000100&nonce_str=ibuaiVcKdpRxkhJA&key=192006250b4c09247ec02edce69f6a2d", characterEncoding).toUpperCase());
