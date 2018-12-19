@@ -55,10 +55,10 @@ public class PayController {
             //appId，partnerId，prepayId，nonceStr，timeStamp，package。注意：package的值格式为Sign=WXPay
             submitMap.put("appId", WeChatUtil.APP_ID);
             Long time = (System.currentTimeMillis() / 1000);
-            submitMap.put("timeStamp", time.toString());
             submitMap.put("nonceStr", resMap.get("nonce_str"));
             submitMap.put("package", "prepay_id=" + resMap.get("prepay_id"));
             submitMap.put("signType", "MD5");
+            submitMap.put("timeStamp", time.toString());
             //第二次生成签名
             String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY, 1);
             submitMap.put("sign", sign);
