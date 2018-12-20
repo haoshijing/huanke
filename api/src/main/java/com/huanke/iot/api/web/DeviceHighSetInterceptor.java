@@ -42,10 +42,12 @@ public class DeviceHighSetInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         String hightoken = stringRedisTemplate.opsForValue().get(token);
-        String[] split = hightoken.split("-");
-        WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(Integer.valueOf(split[0]), split[1]);
-        if(wxConfigPo != null){
-            return true;
+        if(hightoken!=null) {
+            String[] split = hightoken.split("-");
+            WxConfigPo wxConfigPo = wxConfigMapper.getByJoinId(Integer.valueOf(split[0]), split[1]);
+            if (wxConfigPo != null) {
+                return true;
+            }
         }
 
         ApiResponse apiResponse = new ApiResponse(RetCode.TICKET_ERROR,"token无效或已经过期");
