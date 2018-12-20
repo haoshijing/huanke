@@ -123,7 +123,7 @@ public class JobService {
         Integer operateType = request.getOperateType();
         switch(projectJobInfo.getFlowStatus()){
             case JobFlowStatusConstants.FLOW_STATUS_CREATED:
-                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_DEAL || operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
+                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_DEAL && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
                     return "错误的操作，任务状态已被更改，请刷新！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_DEALING:
@@ -131,7 +131,7 @@ public class JobService {
                     return "错误的操作，任务状态已被更改，请刷新！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_COMMITED:
-                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_PASS || operateType != JobFlowStatusConstants.OPERATE_TYPE_BACK)
+                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_PASS && operateType != JobFlowStatusConstants.OPERATE_TYPE_BACK)
                     return "错误的操作，任务状态已被更改，请刷新！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_FINISH:
