@@ -15,6 +15,7 @@ public class DeviceListDto {
     private String mac;
     private String wxDeviceId;
     private Integer onlineStatus;
+    private Integer powerStatus;
     private String deviceName;
     private String location;
     private String ip;

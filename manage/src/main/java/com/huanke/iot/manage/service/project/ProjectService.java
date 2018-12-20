@@ -88,6 +88,10 @@ public class ProjectService {
         for (ProjectRspPo projectRspPo : projectPoList) {
             String[] projectArray = projectRspPo.getGroupIds().split(",");
             projectRspPo.setProjectCount(projectArray.length);
+            if(StringUtils.isNotEmpty(projectRspPo.getImgs())) {
+                projectRspPo.setImgList(projectRspPo.getImgs().split(","));
+                projectRspPo.setImgs(null);
+            }
         }
         projectRsp.setProjectRspPoList(projectPoList);
         return projectRsp;

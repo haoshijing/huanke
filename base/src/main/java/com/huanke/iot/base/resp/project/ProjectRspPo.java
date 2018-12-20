@@ -27,6 +27,7 @@ public class ProjectRspPo {
     private Date updateTime;
     private String createName;
     private String updateName;
+    private String imgs;
 
     @Data
     public static class ProjectPercent{

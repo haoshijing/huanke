@@ -82,6 +82,7 @@ public class DeviceListVo {
          * 1-在线，2-离线
          */
         private Integer onlineStatus;
+        private Integer powerStatus;
         private String location;
     }
 
