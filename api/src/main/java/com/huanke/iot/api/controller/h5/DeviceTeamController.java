@@ -1,10 +1,7 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSON;
-import com.huanke.iot.api.controller.h5.req.BaseRequest;
-import com.huanke.iot.api.controller.h5.req.OccRequest;
-import com.huanke.iot.api.controller.h5.req.TeamTrusteeRequest;
-import com.huanke.iot.api.controller.h5.req.UpdateDeviceTeamRequest;
+import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.response.DeviceTeamVo;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
@@ -138,5 +135,14 @@ public class DeviceTeamController extends BaseController {
             log.error("托管组失败={}", e);
             return new ApiResponse<>(RetCode.ERROR, "托管组失败");
         }
+    }
+
+    @ApiOperation("设置组内设备的关联状态")
+    @RequestMapping(value = "/setLinkStatus",method = RequestMethod.POST)
+    public ApiResponse<Boolean> setLinkStatus(@RequestBody TeamDeviceLinkRequest teamDeviceLinkRequest){
+        Integer currentUserId = getCurrentUserId();
+        log.info("设置组内设备的关联状态,userId={}, deviceId={}", currentUserId, teamDeviceLinkRequest.getDeviceId());
+        Boolean result = deviceTeamService.setLinkStatus(currentUserId, teamDeviceLinkRequest);
+        return new ApiResponse<>(result);
     }
 }
