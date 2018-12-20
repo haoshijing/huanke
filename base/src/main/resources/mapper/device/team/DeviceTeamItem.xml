@@ -44,6 +44,9 @@
             <if test="status != null ">
                 status = #{status},
             </if>
+            <if test="linkAgeStatus != null ">
+                linkAgeStatus = #{linkAgeStatus},
+            </if>
         </set>
         where id=#{id}
     </update>
@@ -272,6 +275,7 @@
         and status = 1
         limit 1
     </select>
+
     <update id="updateDeviceGroupId">
         update t_device_team_item
         set teamId = #{newTeamId},
@@ -289,4 +293,15 @@
             #{item}
         </foreach>
     </update>
+
+    <select id="selectExistByTeamIdAndDeviceId" resultType="com.huanke.iot.base.po.device.team.DeviceTeamItemPo">
+        select
+        *
+        FROM
+        <include refid="tableName"/>
+        WHERE deviceId = #{deviceId}
+        and teamId = #{teamId}
+        and status = 1
+        limit 1
+    </select>
 </mapper>

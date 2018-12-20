@@ -2,6 +2,7 @@ package com.huanke.iot.api.service.device.team;
 
 import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
 import com.huanke.iot.api.controller.h5.req.OccRequest;
+import com.huanke.iot.api.controller.h5.req.TeamDeviceLinkRequest;
 import com.huanke.iot.api.controller.h5.req.TeamTrusteeRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
@@ -298,5 +299,23 @@ public class DeviceTeamService {
         } else {
             return null;
         }
+    }
+
+    public Boolean setLinkStatus(Integer userId, TeamDeviceLinkRequest teamDeviceLinkRequest) {
+        Integer teamId = teamDeviceLinkRequest.getTeamId();
+        Integer deviceId = teamDeviceLinkRequest.getDeviceId();
+        //创建查询实体类
+        DeviceTeamItemPo deviceTeamItemPo = new DeviceTeamItemPo();
+        deviceTeamItemPo.setTeamId(teamId);
+        deviceTeamItemPo.setDeviceId(deviceId);
+        deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
+        deviceTeamItemPo.setUserId(userId);
+        DeviceTeamItemPo existdeviceTeamItemPo = deviceTeamItemMapper.selectExistByTeamIdAndDeviceId(teamId, deviceId);
+        if(existdeviceTeamItemPo == null){
+            throw new BusinessException("用户在改组下无此设备");
+        }
+        //修改组内设备的关联状态
+        existdeviceTeamItemPo.setLinkAgeStatus(teamDeviceLinkRequest.getLinkAgeStatus());
+        return deviceTeamItemMapper.updateById(existdeviceTeamItemPo) > 0;
     }
 }

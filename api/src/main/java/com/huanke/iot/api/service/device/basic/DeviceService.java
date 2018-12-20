@@ -191,6 +191,7 @@ public class DeviceService {
                         deviceItemPo.setTypeId(deviceListDto.getTypeId());
                         deviceItemPo.setTypeNo(deviceListDto.getTypeNo());
                         deviceItemPo.setOnlineStatus(deviceListDto.getOnlineStatus());
+                        deviceItemPo.setLinkAgeStatus(deviceTeamItemPo.getLinkAgeStatus());
 
                        /* DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                         deviceItemPo.setDeviceId(devicePo.getId());
