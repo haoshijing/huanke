@@ -41,13 +41,14 @@ public class PayController {
         String body="支付测试";
         String openId = request.getOpenId();
         Double order = request.getPrice();
+        log.info("下单信息openId={}, order={}, order_id={}", openId, order, order_id);
         Map<String,String> resMap = new HashMap<>();
         //生成签名
         String xml = WeChatUtil.GetWeChatXML(order_id,body,openId, order);
-        //统一下单
+        //调用微信统一下单接口
         String SubmitResult = HttpUtil.postData(WeChatUtil.UFDODER_URL,xml);
         Map<Object,Object> submitMap = new LinkedHashMap<Object,Object>();
-        //解析XML
+        //解析下单返回XML
         resMap = GetWxOrderno.doXMLParse(SubmitResult);
         String result_code  = resMap.get("result_code");
         PayResp payResp = new PayResp();
@@ -82,43 +83,6 @@ public class PayController {
         return new ApiResponse<>(payResp);
     }
 
-    @RequestMapping(value="/pay2")
-    public PayResp pay2(PayReq request, HttpServletResponse response) throws Exception {
-        String order_id= UUID.randomUUID().toString().replace("-", "");
-        String body="支付测试";
-        String openId = "oOSkz0XrnfSunFKRD2yzbF_-SpOE";
-        Double order = 0.01;
-        Map<String,String> resMap;
-        //生成签名
-        String xml = WeChatUtil.GetWeChatXML(order_id,body,openId, order);
-        //统一下单
-        String SubmitResult = HttpUtil.postData(WeChatUtil.UFDODER_URL,xml);
-        Map<Object,Object> submitMap = new LinkedHashMap<Object,Object>();
-        //解析XML
-        resMap = GetWxOrderno.doXMLParse(SubmitResult);
-        String result_code  = resMap.get("result_code");
-        PayResp payResp = new PayResp();
-        if("SUCCESS".equals(result_code)) {
-            //appId，partnerId，prepayId，nonceStr，timeStamp，package。注意：package的值格式为Sign=WXPay
-            submitMap.put("appId", WeChatUtil.APP_ID);
-            Long time = (System.currentTimeMillis() / 1000);
-            submitMap.put("timeStamp", time.toString());
-            submitMap.put("nonceStr", resMap.get("nonce_str"));
-            submitMap.put("package", "prepay_id=" + resMap.get("prepay_id"));
-            submitMap.put("signType", "MD5");
-            //第二次生成签名
-            String sign = PayCommonUtil.createSign("UTF-8", submitMap, WeChatUtil.API_KEY, 1);
-            submitMap.put("sign", sign);
-
-            payResp.setAppId(WeChatUtil.APP_ID);
-            payResp.setNonceStr((String) submitMap.get("nonceStr"));
-            payResp.setPackage1((String) submitMap.get("package"));
-            payResp.setPaySign(sign);
-            payResp.setSignType("MD5");
-            payResp.setTimeStamp(time.toString());
-        }
-        return payResp;
-    }
 
     /**
      * 提交支付后的微信异步返回接口
@@ -165,6 +129,7 @@ public class PayController {
         }
         if(return_code.equals("SUCCESS")){
             //支付成功的业务逻辑
+            System.out.println("支付成功");
         }else{
             //支付失败的业务逻辑
         }
