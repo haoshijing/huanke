@@ -30,6 +30,9 @@ public class ManageStarter {
     @Value("${swaggerUrl}")
     private String swaggerUrl;
 
+    @Value("${env}")
+    private String env;
+
     public static void main(String[] args) {
         SpringApplication.run(ManageStarter.class, args);
     }
@@ -41,7 +44,7 @@ public class ManageStarter {
                 .host(swaggerUrl)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.huanke.iot"))
-                .paths(PathSelectors.any())
+                .paths("dev".equals(env)?PathSelectors.any():PathSelectors.none())
                 .build();
     }
 

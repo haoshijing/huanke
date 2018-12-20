@@ -101,6 +101,8 @@ public class DeviceController extends BaseController {
      * 新版首页查询我的设备
      * @return
      */
+
+    @ApiOperation("新版首页查询我的设备")
     @RequestMapping("/newQueryDetailByDeviceId")
     public ApiResponse<List<DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
