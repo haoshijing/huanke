@@ -89,6 +89,7 @@ public class PayController {
      */
     @RequestMapping(value="/weixinNotify")
     public void weixinNotify(HttpServletRequest request, HttpServletResponse response){
+        log.info("微信支付回调。。。");
         String out_trade_no=null;
         String return_code =null;
         try {
@@ -102,8 +103,7 @@ public class PayController {
             outSteam.close();
             inStream.close();
             String resultStr  = new String(outSteam.toByteArray(),"utf-8");
-            //logger.info("支付成功的回调："+resultStr);
-            System.out.println("支付成功的回调");
+            log.info("支付成功的回调："+resultStr);
             Map<String, Object> resultMap = GetWxOrderno.parseXmlToList(resultStr);
             String result_code = (String) resultMap.get("result_code");
             String is_subscribe = (String) resultMap.get("is_subscribe");
@@ -114,6 +114,9 @@ public class PayController {
 
             out_trade_no = (String) resultMap.get("out_trade_no");
             return_code = (String) resultMap.get("return_code");
+
+            log.info("支付回调参数result_code={}, is_subscribe={}, transaction_id={}, sign={}, time_end={}, bank_type={}, out_trade_no={}, return_code={}",
+                    result_code, is_subscribe, transaction_id, sign, time_end, bank_type, out_trade_no, return_code);
 
             request.setAttribute("out_trade_no", out_trade_no);
             //通知微信.异步确认成功.必写.不然微信会一直通知后台.八次之后就认为交易失败了.
