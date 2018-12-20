@@ -8,12 +8,10 @@ import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.*;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.project.ProjectBaseInfo;
-import com.huanke.iot.base.po.project.ProjectExtraDevice;
-import com.huanke.iot.base.po.project.ProjectMaterialInfo;
-import com.huanke.iot.base.po.project.ProjectMaterialLog;
+import com.huanke.iot.base.po.project.*;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.BaseListRequest;
+import com.huanke.iot.base.request.project.CopyProjectPlanReq;
 import com.huanke.iot.base.request.project.ExistProjectNoRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
@@ -332,4 +330,41 @@ public class ProjectService {
         return projectAnalysisRsp;
     }
 
+
+    public List<ProjectPlanCount> getCopyProjectPlan(Integer projectId){
+        Integer customerId = customerService.obtainCustomerId(false);
+        List<ProjectPlanCount> projectPlanCounts = projectMapper.queryOtherProjectPlanCount(customerId,projectId);
+        return projectPlanCounts;
+    }
+
+    @Transactional
+    public Boolean copyProjectPlan(CopyProjectPlanReq copyProjectPlanReq){
+        try {
+            Integer customerId = customerService.obtainCustomerId(false);
+            User user = userService.getCurrentUser();
+            ProjectPlanInfo query = new ProjectPlanInfo();
+            query.setCustomerId(customerId);
+            query.setLinkType(2);
+            query.setLinkProjectId(copyProjectPlanReq.getSourceProjectId());
+            query.setStatus(1);
+            List<ProjectPlanInfo> projectPlanInfos = planMapper.selectList(query, 10000, 0);
+            projectPlanInfos.stream().forEach(temp -> {
+                if (temp.getCycleType() != 0) {
+                    ProjectPlanInfo copyPlan = new ProjectPlanInfo();
+                    BeanUtils.copyProperties(temp, copyPlan);
+                    copyPlan.setId(null);
+                    copyPlan.setLinkProjectId(copyProjectPlanReq.getCurrentProjectId());
+                    copyPlan.setCreateTime(new Date());
+                    copyPlan.setCreateUser(user.getId());
+                    copyPlan.setUpdateTime(null);
+                    copyPlan.setUpdateUser(null);
+                    planMapper.insert(copyPlan);
+                }
+            });
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 }

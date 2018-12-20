@@ -78,6 +78,63 @@
         <include refid="tableName"/>
         <where>
             1=1
+            <if test="param.customerId != null">
+                AND customerId = #{param.customerId}
+            </if>
+            <if test="param.name != null and param.name!='' ">
+                AND name = #{param.name}
+            </if>
+            <if test="param.description != null and param.description!='' ">
+                AND description = #{param.description}
+            </if>
+            <if test="param.isRule != null">
+                AND isRule = #{param.isRule}
+            </if>
+            <if test="param.ruleId != null">
+                AND ruleId = #{param.ruleId}
+            </if>
+            <if test="param.linkType != null">
+                AND linkType = #{param.linkType}
+            </if>
+            <if test="param.linkDeviceId != null">
+                AND linkDeviceId = #{param.linkDeviceId}
+            </if>
+            <if test="param.linkProjectId != null">
+                AND linkProjectId = #{param.linkProjectId}
+            </if>
+            <if test="param.warnDate != null">
+                AND warnDate = #{param.warnDate}
+            </if>
+            <if test="param.nextExecuteTime != null">
+                AND nextExecuteTime = #{param.nextExecuteTime}
+            </if>
+            <if test="param.month != null">
+                AND month = #{param.month}
+            </if>
+            <if test="param.day != null">
+                AND day = #{param.day}
+            </if>
+            <if test="param.cycleType != null">
+                AND cycleType = #{param.cycleType}
+            </if>
+            <if test="param.cycleNums != null">
+                AND cycleNums = #{param.cycleNums}
+            </if>
+            <if test="param.overTimeDays != null">
+                AND overTimeDays = #{param.overTimeDays}
+            </if>
+            <if test="param.enableUsers != null">
+                AND enableUsers = #{param.enableUsers}
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+            <if test="param.updateTime != null">
+                AND updateTime = #{param.updateTime}
+            </if>
+            <if test="param.updateUser != null">
+                AND updateUser = #{param.updateUser}
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>

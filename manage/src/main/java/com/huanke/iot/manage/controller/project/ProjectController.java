@@ -3,13 +3,11 @@ package com.huanke.iot.manage.controller.project;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.request.BaseListRequest;
+import com.huanke.iot.base.request.project.CopyProjectPlanReq;
 import com.huanke.iot.base.request.project.ExistProjectNoRequest;
 import com.huanke.iot.base.request.project.ProjectQueryRequest;
 import com.huanke.iot.base.request.project.ProjectRequest;
-import com.huanke.iot.base.resp.project.ProjectAnalysisRsp;
-import com.huanke.iot.base.resp.project.ProjectDictRsp;
-import com.huanke.iot.base.resp.project.ProjectGroupsRsp;
-import com.huanke.iot.base.resp.project.ProjectRsp;
+import com.huanke.iot.base.resp.project.*;
 import com.huanke.iot.manage.service.project.ProjectService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -113,5 +111,20 @@ public class ProjectController {
 
         ProjectAnalysisRsp projectAnalysisRsp = projectService.projectAnalysis(projectId);
         return new ApiResponse<>(projectAnalysisRsp);
+    }
+
+    @ApiOperation("获取可复制工程维保")
+    @GetMapping(value = "/getCopyProjectPlan/{projectId}")
+    public ApiResponse<List<ProjectPlanCount>> getCopyProjectPlan(@PathVariable("projectId") Integer projectId) {
+
+        List<ProjectPlanCount> projectPlanCounts= projectService.getCopyProjectPlan(projectId);
+        return new ApiResponse<>(projectPlanCounts);
+    }
+
+    @ApiOperation("从另一个工程复制周期的维保至本工程")
+    @PostMapping(value = "/copyProjectPlan")
+    public ApiResponse<Boolean> copyProjectPlan(@RequestBody CopyProjectPlanReq copyProjectPlanReq) {
+        Boolean resp= projectService.copyProjectPlan(copyProjectPlanReq);
+        return new ApiResponse<>(resp);
     }
 }

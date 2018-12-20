@@ -5,6 +5,7 @@ import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.request.project.ProjectRequest;
 import com.huanke.iot.base.resp.project.ProjectDictRsp;
 import com.huanke.iot.base.resp.project.ProjectGroupsRsp;
+import com.huanke.iot.base.resp.project.ProjectPlanCount;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import org.apache.ibatis.annotations.Param;
 
@@ -39,4 +40,6 @@ public interface ProjectMapper extends BaseMapper<ProjectBaseInfo> {
     Integer editIfExist(@Param("projectNo") String projectNo, @Param("projectId") Integer id);
 
     List<ProjectBaseInfo> getAfterTime(@Param("customerId") Integer customerId,@Param("createTime") Date createTime);
+
+    List<ProjectPlanCount> queryOtherProjectPlanCount(@Param("customerId") Integer customerId,@Param("projectId") Integer projectId);
 }

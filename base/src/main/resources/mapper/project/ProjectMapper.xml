@@ -243,4 +243,18 @@
         AND createTime >= #{createTime}
         AND status = 1
     </select>
+
+    <select id="queryOtherProjectPlanCount" resultType="com.huanke.iot.base.resp.project.ProjectPlanCount">
+        SELECT COUNT(1) count,pbi.id,pbi.`name`,pbi.projectNo
+        FROM t_project_plan_info ppi , t_project_base_info pbi
+        WHERE pbi.id = ppi.linkProjectId
+		AND ppi.status = 1
+        AND ppi.linkType = 2
+		AND ppi.cycleType != 0
+		AND ppi.customerId = #{customerId}
+		AND ppi.linkProjectId != #{projectId}
+        GROUP BY ppi.linkProjectId
+    </select>
+
+
 </mapper>
