@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -52,7 +49,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @ApiOperation("获取设备列表")
-    @RequestMapping("/obtainMyDevice")
+    @RequestMapping(value = "/obtainMyDevice", method = RequestMethod.POST)
     public ApiResponse<DeviceListVo> obtainMyDevice() {
         Integer userId = getCurrentUserId();
         String openId = getCurrentUserOpenId();

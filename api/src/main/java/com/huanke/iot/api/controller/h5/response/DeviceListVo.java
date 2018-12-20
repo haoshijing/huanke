@@ -56,6 +56,10 @@ public class DeviceListVo {
          */
         private String customerName;
         /**
+         * 连接状态
+         */
+        private Integer linkAgeStatus;
+        /**
          * 设备图标
          */
         private String icon;
