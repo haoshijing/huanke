@@ -9,10 +9,7 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.project.*;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.*;
-import com.huanke.iot.base.resp.project.JobDetailRsp;
-import com.huanke.iot.base.resp.project.JobRsp;
-import com.huanke.iot.base.resp.project.JobRspPo;
-import com.huanke.iot.base.resp.project.WarnJobRsp;
+import com.huanke.iot.base.resp.project.*;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
 import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
@@ -371,5 +368,13 @@ public class JobService {
         warnDataVoList.add(warnDataVo4);
         warnDataVoList.add(warnDataVo5);
         return warnDataVoList;
+    }
+
+    public List<MaintenanceDataVo> queryDataMaintenance() {
+        Integer customerId = customerService.obtainCustomerId(false);
+        List<MaintenanceDataVo> maintenanceDataVoList = new ArrayList<>();
+
+        maintenanceDataVoList = jobMapper.queryDataMaintenance(customerId);
+        return maintenanceDataVoList;
     }
 }

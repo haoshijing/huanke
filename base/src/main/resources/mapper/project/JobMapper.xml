@@ -358,4 +358,15 @@
         AND warnStatus = 2
         AND status != 2
     </select>
+
+    <select id="queryDataMaintenance" resultType="com.huanke.iot.base.resp.project.MaintenanceDataVo">
+        SELECT DATE_FORMAT(createTime,'%Y-%m') as dateStr, count(*) as num
+        FROM t_project_job_info
+        WHERE linkProjectId IS NOT null
+        <if test = "customerId != null">
+            AND customerId = #{customerId}
+        </if>
+        AND status = 1
+        GROUP BY DATE_FORMAT(createTime, '%Y-%m');
+    </select>
 </mapper>

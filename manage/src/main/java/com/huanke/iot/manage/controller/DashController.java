@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.controller;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.resp.project.MaintenanceDataVo;
 import com.huanke.iot.manage.service.project.JobService;
 import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
 import io.swagger.annotations.ApiOperation;
@@ -29,5 +30,12 @@ public class DashController {
     public ApiResponse<List<WarnDataVo>> queryWarnData(){
         List<WarnDataVo> warnDataVoList = jobService.queryWarnData();
         return new ApiResponse<>(warnDataVoList);
+    }
+
+    @ApiOperation("查询维护信息看板")
+    @GetMapping(value = "/queryMaintenance")
+    public ApiResponse<List<MaintenanceDataVo>> queryMaintenance(){
+        List<MaintenanceDataVo> maintenanceDataVoList = jobService.queryDataMaintenance();
+        return new ApiResponse<>(maintenanceDataVoList);
     }
 }
