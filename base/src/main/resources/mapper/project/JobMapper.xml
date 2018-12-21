@@ -347,4 +347,15 @@
         AND flowStatus NOT IN (4,5)
         LIMIT #{start},#{limit}
     </select>
+
+    <select id="selectWarnDataCount" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
+        SELECT *
+        FROM t_project_job_info
+        WHERE 1=1
+        <if test = "projectJob.customerId != null">
+            AND customerId = #{projectJob.customerId}
+        </if>
+        AND warnStatus = 2
+        AND status != 2
+    </select>
 </mapper>

@@ -337,4 +337,12 @@
         AND cycleType != 0
         AND status = 1
     </select>
+
+    <select id="queryByJobId" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+        select * from
+        <include refid="tableName"/>
+        where id = (SELECT planId FROM t_project_job_info WHERE id = #{jobId})
+    </select>
+
+
 </mapper>

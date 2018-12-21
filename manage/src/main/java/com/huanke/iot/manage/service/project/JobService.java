@@ -2,16 +2,11 @@ package com.huanke.iot.manage.service.project;
 
 import com.huanke.iot.base.constant.JobFlowStatusConstants;
 import com.huanke.iot.base.dao.device.DeviceMapper;
-import com.huanke.iot.base.dao.project.JobLogMapper;
-import com.huanke.iot.base.dao.project.JobMapper;
-import com.huanke.iot.base.dao.project.ProjectMapper;
-import com.huanke.iot.base.dao.project.RuleMapper;
+import com.huanke.iot.base.dao.project.*;
 import com.huanke.iot.base.dto.project.JobHistoryDataDto;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.po.project.ProjectBaseInfo;
-import com.huanke.iot.base.po.project.ProjectJobInfo;
-import com.huanke.iot.base.po.project.ProjectJobLog;
-import com.huanke.iot.base.po.project.ProjectRule;
+import com.huanke.iot.base.po.project.*;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.*;
 import com.huanke.iot.base.resp.project.JobDetailRsp;
@@ -20,6 +15,7 @@ import com.huanke.iot.base.resp.project.JobRspPo;
 import com.huanke.iot.base.resp.project.WarnJobRsp;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +55,8 @@ public class JobService {
     private MateriaService materiaService;
     @Autowired
     private ProjectMapper projectMapper;
+    @Autowired
+    private PlanMapper planMapper;
 
 
     public JobRsp selectList(JobQueryRequest request) {
@@ -121,17 +119,17 @@ public class JobService {
         }
         //判断当前任务是否可以执行当前操作。
         Integer operateType = request.getOperateType();
-        switch(projectJobInfo.getFlowStatus()){
+        switch (projectJobInfo.getFlowStatus()) {
             case JobFlowStatusConstants.FLOW_STATUS_CREATED:
-                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_DEAL && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_DEAL && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
                     return "错误的操作，任务状态已被更改，请刷新！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_DEALING:
-                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_COMMIT)
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_COMMIT)
                     return "错误的操作，任务状态已被更改，请刷新！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_COMMITED:
-                if(operateType != JobFlowStatusConstants.OPERATE_TYPE_PASS && operateType != JobFlowStatusConstants.OPERATE_TYPE_BACK)
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_PASS && operateType != JobFlowStatusConstants.OPERATE_TYPE_BACK)
                     return "错误的操作，任务状态已被更改，请刷新！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_FINISH:
@@ -217,7 +215,7 @@ public class JobService {
         } else if (type == 2 && jobDetailRsp.getLinkProjectId() != null) {
             //关联工程
             Integer linkProjectId = jobDetailRsp.getLinkProjectId();
-            ProjectBaseInfo projectBaseInfo = projectMapper.selectById(linkProjectId) ;
+            ProjectBaseInfo projectBaseInfo = projectMapper.selectById(linkProjectId);
             jobDetailRsp.setLinkProjectName(projectBaseInfo.getName());
         }
         if (projectJobInfo.getIsRule() == 1) {
@@ -316,5 +314,62 @@ public class JobService {
 
         warnJobRsp.setProjectJobInfoList(projectJobInfoList);
         return warnJobRsp;
+    }
+
+    public List<Integer> queryAdmins(Integer jobId) {
+        ProjectPlanInfo projectPlanInfo = planMapper.queryByJobId(jobId);
+        if (projectPlanInfo == null) {
+            throw new BusinessException("无计划信息");
+        }
+        String enableUsers = projectPlanInfo.getEnableUsers();
+        List<Integer> adminIds = Arrays.asList(enableUsers.split(",")).stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
+        return adminIds;
+    }
+
+    public List<WarnDataVo> queryWarnData() {
+        Integer customerId = customerService.obtainCustomerId(false);
+        List<WarnDataVo> warnDataVoList = new ArrayList<>();
+        //查该客户下所有告警信息（一级查所有）
+        ProjectJobInfo projectJob = new ProjectJobInfo();
+        projectJob.setCustomerId(customerId);
+        List<ProjectJobInfo> projectJobInfoList = jobMapper.selectWarnDataCount(projectJob);
+        int flowCreated = 0;
+        int flowDealing = 0;
+        int flowCommited = 0;
+        int flowFinish = 0;
+        int flowIgnored = 0;
+        for (ProjectJobInfo projectJobInfo : projectJobInfoList) {
+            Integer flowStatus = projectJobInfo.getFlowStatus();
+            switch (flowStatus) {
+                case JobFlowStatusConstants.FLOW_STATUS_CREATED:
+                    flowCreated++;
+                    break;
+                case JobFlowStatusConstants.FLOW_STATUS_DEALING:
+                    flowDealing++;
+                    break;
+                case JobFlowStatusConstants.FLOW_STATUS_COMMITED:
+                    flowCommited++;
+                    break;
+                case JobFlowStatusConstants.FLOW_STATUS_FINISH:
+                    flowFinish++;
+                    break;
+                case JobFlowStatusConstants.FLOW_STATUS_IGNORED:
+                    flowIgnored++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        WarnDataVo warnDataVo1 = new WarnDataVo("待处理", flowCreated);
+        WarnDataVo warnDataVo2 = new WarnDataVo("处理中", flowDealing);
+        WarnDataVo warnDataVo3 = new WarnDataVo("待审核", flowCommited);
+        WarnDataVo warnDataVo4 = new WarnDataVo("已完成", flowFinish);
+        WarnDataVo warnDataVo5 = new WarnDataVo("已忽略", flowIgnored);
+        warnDataVoList.add(warnDataVo1);
+        warnDataVoList.add(warnDataVo2);
+        warnDataVoList.add(warnDataVo3);
+        warnDataVoList.add(warnDataVo4);
+        warnDataVoList.add(warnDataVo5);
+        return warnDataVoList;
     }
 }

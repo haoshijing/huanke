@@ -99,4 +99,11 @@ public class JobController {
         WarnJobRsp warnJobRsp = jobService.queryWarnJob(request);
         return new ApiResponse<>(warnJobRsp);
     }
+
+    @ApiOperation("根据任务id查最初制定人")
+    @GetMapping(value = "/queryAdmins/{jobId}")
+    public ApiResponse<List<Integer>> queryAdmins(@PathVariable("jobId") Integer jobId) {
+        List<Integer> adminIds = jobService.queryAdmins(jobId);
+        return new ApiResponse<>(adminIds);
+    }
 }

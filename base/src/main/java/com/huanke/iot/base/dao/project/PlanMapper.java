@@ -33,4 +33,6 @@ public interface PlanMapper extends BaseMapper<ProjectPlanInfo> {
     PlanInfoRsp  selectPlanInfoById(@Param("planId") Integer planId);
 
     List<ProjectPlanInfo> selectAllExist();
+
+    ProjectPlanInfo queryByJobId(@Param("jobId") Integer jobId);
 }
