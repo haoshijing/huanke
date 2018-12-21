@@ -91,6 +91,8 @@ public class ProjectService {
             if(StringUtils.isNotEmpty(projectRspPo.getImgs())) {
                 projectRspPo.setImgList(projectRspPo.getImgs().split(","));
                 projectRspPo.setImgs(null);
+            }else{
+                projectRspPo.setImgList(new String[0]);
             }
         }
         projectRsp.setProjectRspPoList(projectPoList);
@@ -272,6 +274,8 @@ public class ProjectService {
         projectRequest.setMaterialInfoList(materialList);
         if(StringUtils.isNotEmpty(projectBaseInfo.getImgList())) {
             projectRequest.setImgs(projectBaseInfo.getImgList().split(","));
+        }else{
+            projectRequest.setImgs(new String[0]);
         }
         return projectRequest;
     }
