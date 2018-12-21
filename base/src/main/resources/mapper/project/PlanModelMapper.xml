@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huanke.iot.base.dao.project.PlanMapper">
+<mapper namespace="com.huanke.iot.base.dao.project.PlanModelMapper">
 
     <sql id="tableName">
-        t_project_plan_info
+        t_project_plan_info_model
     </sql>
     <!-- 插入一条记录 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.project.ProjectPlanModelInfo">
         INSERT INTO
         <include refid="tableName"/>
         (
@@ -55,7 +55,7 @@
         )
     </insert>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <select id="selectById" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.project.ProjectPlanModelInfo">
         select
         *
         FROM
@@ -65,15 +65,15 @@
 
     <select id="selectPlanInfoById" resultType="com.huanke.iot.base.resp.project.PlanInfoRsp">
         select ppi.*, d.name linkDeviceName, d.modelId linkDeviceModelId, dm.name linkDeviceModelName
-        FROM t_project_plan_info ppi LEFT JOIN t_device d
+        FROM t_project_plan_info_model ppi LEFT JOIN t_device d
         ON ppi.linkDeviceId = d.id
         LEFT JOIN t_device_model dm
         ON d.modelId = dm.id
-        WHERE ppi.id = #{planId}
+        WHERE ppi.id = #{planModelId}
         limit 1
     </select>
 
-    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectPlanModelInfo">
         select * from
         <include refid="tableName"/>
         <where>
@@ -140,7 +140,7 @@
     </select>
 
 
-    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectPlanModelInfo">
         update
         <include refid="tableName"/>
         <set>
@@ -280,31 +280,31 @@
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
       SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.enableUsers, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
-      FROM t_project_plan_info ppi
+      FROM t_project_plan_info_model ppi
       left join t_user u on ppi.createUser = u.id
       left join t_user u1 on  ppi.updateUser = u1.id
       LEFT JOIN t_project_rule r on ppi.ruleId = r.id
       WHERE 1=1
-        <if test = "projectPlanInfo.name != null and projectPlanInfo.name != ''">
-            AND ppi.name LIKE CONCAT('%',#{projectPlanInfo.name},'%')
+        <if test = "projectPlanModelInfo.name != null and projectPlanModelInfo.name != ''">
+            AND ppi.name LIKE CONCAT('%',#{projectPlanModelInfo.name},'%')
         </if>
-        <if test = "projectPlanInfo.isRule != null">
-            AND ppi.isRule = #{projectPlanInfo.isRule}
+        <if test = "projectPlanModelInfo.isRule != null">
+            AND ppi.isRule = #{projectPlanModelInfo.isRule}
         </if>
-        <if test = "projectPlanInfo.warnLevel != null">
-            AND r.warnLevel = #{projectPlanInfo.warnLevel}
+        <if test = "projectPlanModelInfo.warnLevel != null">
+            AND r.warnLevel = #{projectPlanModelInfo.warnLevel}
         </if>
-        <if test = "projectPlanInfo.status != null ">
-            AND ppi.status = #{projectPlanInfo.status}
+        <if test = "projectPlanModelInfo.status != null ">
+            AND ppi.status = #{projectPlanModelInfo.status}
         </if>
-        <if test = "projectPlanInfo.createTime != null">
-            AND ppi.createTime >= #{projectPlanInfo.createTime}
+        <if test = "projectPlanModelInfo.createTime != null">
+            AND ppi.createTime >= #{projectPlanModelInfo.createTime}
         </if>
-        <!--<if test = "projectPlanInfo.type != null and projectPlanInfo.type != ''">
-            AND d.type = #{projectPlanInfo.type}
+        <!--<if test = "projectPlanModelInfo.type != null and projectPlanModelInfo.type != ''">
+            AND d.type = #{projectPlanModelInfo.type}
         </if>-->
-        <if test = "projectPlanInfo.customerId != null">
-            AND ppi.customerId = #{projectPlanInfo.customerId}
+        <if test = "projectPlanModelInfo.customerId != null">
+            AND ppi.customerId = #{projectPlanModelInfo.customerId}
         </if>
         AND ppi.status != 2
       LIMIT #{start},#{limit}
@@ -316,21 +316,7 @@
         where linkProjectId = #{projectId}
     </select>
 
-    <select id="maintenance" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-        SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, pr.name ruleName, ppi.status, ppi.createTime, ppi.updateTime, ppi.enableUsers, u.nickName createName,u1.nickName updateName
-        FROM t_project_plan_info ppi
-        LEFT JOIN t_user u on ppi.createUser = u.id
-        LEFT JOIN t_user u1 on  ppi.updateUser = u1.id
-        LEFT JOIN t_project_rule pr on ppi.ruleId = pr.id
-        WHERE ppi.status = 1
-        <!--<if test = "dictPo.type != null and dictPo.type != ''">
-            AND d.type = #{dictPo.type}
-        </if>-->
-        AND ppi.linkProjectId = #{projectId}
-        LIMIT #{start},#{limit}
-    </select>
-
-    <select id="selectAllExist" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <select id="selectAllExist" resultType="com.huanke.iot.base.po.project.ProjectPlanModelInfo">
         select * from
         <include refid="tableName"/>
         where to_days(nextExecuteTime) = to_days(now())
@@ -338,10 +324,16 @@
         AND status = 1
     </select>
 
-    <select id="queryByJobId" resultType="com.huanke.iot.base.po.project.ProjectPlanInfo">
+    <select id="queryByJobId" resultType="com.huanke.iot.base.po.project.ProjectPlanModelInfo">
         select * from
         <include refid="tableName"/>
         where id = (SELECT planId FROM t_project_job_info WHERE id = #{jobId})
+    </select>
+
+    <select id="queryPlanModels" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
+        select name, description, linkType, isRule, ruleId from
+        <include refid="tableName"/>
+        where status = 1
     </select>
 
 

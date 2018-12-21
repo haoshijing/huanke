@@ -6,13 +6,13 @@ import java.util.Date;
 
 /**
  * 描述:
- * 计划表
+ * 计划模版表
  *
  * @author onlymark
  * @create 2018-11-14 上午9:48
  */
 @Data
-public class ProjectPlanInfo {
+public class ProjectPlanModelInfo {
     private Integer id;
     private Integer customerId;
     private String name;
