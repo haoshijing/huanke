@@ -27,6 +27,7 @@ public class PowerCheckService {
     @Autowired
     private DeviceMapper deviceMapper;
 
+    private long l = System.currentTimeMillis();
 
     private ScheduledExecutorService executorService;
 
@@ -49,9 +50,11 @@ public class PowerCheckService {
     public void doScan() {
 
         Iterator<Map.Entry<Integer, PowerCheckData>> it = idMap.entrySet().iterator();
+
+        Long now = System.currentTimeMillis();
         while (it.hasNext()){
             PowerCheckData data = it.next().getValue();
-            if (data.getLastUpdateTime() < (System.currentTimeMillis() - 15000)) {
+            if (data.getLastUpdateTime() < l) {
                 data.setFailCount(data.getFailCount() + 1);
                 if (data.getFailCount() > 3) {
                     data.setPowerOn(false);
@@ -65,6 +68,7 @@ public class PowerCheckService {
                 it.remove();
             }
         }
+        l = now;
     }
 
     public void resetPowerStatus(Integer id){
@@ -72,15 +76,13 @@ public class PowerCheckService {
         boolean needUpdateDd  =false;
         if(data == null){
             data = new PowerCheckData();
+            needUpdateDd = true;
+        }else if(!data.isPowerOn()){
+            needUpdateDd = true;
         }
         data.setFailCount(0);
         data.setLastUpdateTime(System.currentTimeMillis());
         data.setPowerOn(true);
-        DevicePo devicePo = this.deviceMapper.selectById(id);
-        //上次记录为关机时才更新状态
-        if(DeviceConstant.POWER_STATUS__NO == devicePo.getPowerStatus()) {
-            needUpdateDd = true;
-        }
         data.setId(id);
         idMap.put(id,data);
         if(needUpdateDd){
@@ -96,7 +98,12 @@ public class PowerCheckService {
         queryPo.setPowerStatus(DeviceConstant.POWER_STATUS_YES);
         List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,100000,0);
         devicePoList.forEach(devicePo -> {
-            resetPowerStatus(devicePo.getId());
+            PowerCheckData   data = new PowerCheckData();
+            data.setFailCount(0);
+            data.setLastUpdateTime(System.currentTimeMillis());
+            data.setPowerOn(true);
+            data.setId(devicePo.getId());
+            idMap.put(devicePo.getId(),data);
         });
     }
 }
