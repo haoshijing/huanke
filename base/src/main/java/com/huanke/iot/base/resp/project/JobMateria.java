@@ -13,5 +13,6 @@ public class JobMateria {
     private Integer id;
     private Integer type;
     private String name;
+    private String unit;
     private Integer nums;
 }

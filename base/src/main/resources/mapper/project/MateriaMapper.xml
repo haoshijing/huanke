@@ -14,6 +14,7 @@
         type,
         projectId,
         name,
+        unit,
         nums,
         status,
         createTime,
@@ -24,6 +25,7 @@
         #{type},
         #{projectId},
         #{name},
+        #{unit},
         #{nums},
         #{status},
         #{createTime},
@@ -109,7 +111,7 @@
     </select>
 
     <select id="queryJobMateria" resultType="com.huanke.iot.base.resp.project.JobMateria">
-        select tpmi.name name, tpml.type type, tpml.handerNums nums
+        select tpmi.name name, tpml.type type, tpml.handerNums nums,tpmi.unit unit
         from t_project_material_info tpmi
         left join t_project_material_log tpml on tpmi.id = tpml.materialId
         where tpml.jobLogId =

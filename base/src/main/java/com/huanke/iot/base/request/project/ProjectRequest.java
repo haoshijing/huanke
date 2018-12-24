@@ -41,6 +41,7 @@ public class ProjectRequest {
         private Integer id;
         private Integer type;
         private String name;
+        private String unit;
         private Integer nums;
         private Date createTime;
     }

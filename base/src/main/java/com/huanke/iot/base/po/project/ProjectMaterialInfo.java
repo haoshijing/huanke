@@ -15,8 +15,9 @@ import java.util.Date;
 public class ProjectMaterialInfo {
     private Integer id;
     private Integer type;//1-材料类；2-耗材类
-    private  Integer projectId;
-    private  String name;
+    private Integer projectId;
+    private String name;
+    private String unit;
     private Integer nums;
     private Integer status;//1-正常；2-删除
     private Date createTime;

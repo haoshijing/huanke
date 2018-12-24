@@ -58,7 +58,7 @@ public class ProjectController {
         return new ApiResponse<>(result);
     }
 
-    @ApiOperation("修改计划信息")
+    @ApiOperation("修改工程信息")
     @PostMapping(value = "/editProject")
     public ApiResponse<Boolean> editPlan(@RequestBody ProjectRequest request) {
         Boolean result = projectService.addOrUpdate(request);
