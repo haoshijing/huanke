@@ -25,9 +25,14 @@ public class WeChatUtil {
      */
     public static String MCH_ID= "1431479102";// 财付通商户号
     /**
-     * 请求路径
+     * 下单API
      */
     public static String UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    /**
+     * 支付结果查询
+     *
+     */
+    public static String PAY_RESULT_URL = "https://api.mch.weixin.qq.com/pay/orderquery";
     /**
      * 密匙
      */
@@ -82,6 +87,23 @@ public class WeChatUtil {
         packageParams.put("spbill_create_ip", spbill_create_ip);
         packageParams.put("total_fee", price);
         packageParams.put("trade_type", trade_type);
+        String sign = PayCommonUtil.createSign("UTF-8", packageParams,API_KEY, 1);
+        packageParams.put("sign", sign);
+        String requestXML = PayCommonUtil.getRequestXml(packageParams);
+        System.out.println(requestXML);
+        return requestXML;
+    }
+
+    /**
+     * 生成查询支付接口签名
+     * @param outTradeNo
+     */
+    public static  String GetPayResultXML(String outTradeNo){
+        Map<Object,Object> packageParams = new LinkedHashMap<Object,Object>();
+        packageParams.put("appid", APP_ID);
+        packageParams.put("mch_id", MCH_ID);
+        packageParams.put("nonce_str", UUID.randomUUID().toString().replace("-", ""));
+        packageParams.put("out_trade_no", outTradeNo);
         String sign = PayCommonUtil.createSign("UTF-8", packageParams,API_KEY, 1);
         packageParams.put("sign", sign);
         String requestXML = PayCommonUtil.getRequestXml(packageParams);

@@ -1,12 +1,15 @@
 package com.huanke.iot.api.pay;
 
 import com.huanke.iot.api.pay.req.PayReq;
+import com.huanke.iot.api.pay.req.ResultReq;
 import com.huanke.iot.api.pay.resp.PayResp;
 import com.huanke.iot.api.util.pay.*;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -136,5 +139,30 @@ public class PayController {
         }else{
             //支付失败的业务逻辑
         }
+    }
+
+    /**
+     * 提交支付后的微信异步返回接口
+     */
+    @ApiOperation("微信支付结果查询")
+    @PostMapping(value="/queryResult")
+    public ApiResponse<Boolean> queryResult(@RequestBody ResultReq request, HttpServletResponse response) throws Exception {
+        log.info("微信支付结果查询。。。");
+        String out_trade_no = request.getOutTradeNo();
+
+        //生成签名
+        String xml = WeChatUtil.GetPayResultXML(out_trade_no);
+        //调用微信统一下单接口
+        String SubmitResult = HttpUtil.postData(WeChatUtil.PAY_RESULT_URL,xml);
+        Map<Object,Object> submitMap = new LinkedHashMap<Object,Object>();
+        //解析下单返回XML
+        Map<String,String> resMap = new HashMap<>();
+        resMap = GetWxOrderno.doXMLParse(SubmitResult);
+        String result_code  = resMap.get("return_code");
+        PayResp payResp = new PayResp();
+        if("SUCCESS".equals(result_code)) {
+            return new ApiResponse<>(true);
+        }
+        return new ApiResponse<>(false);
     }
 }
