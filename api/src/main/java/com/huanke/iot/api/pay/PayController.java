@@ -73,6 +73,7 @@ public class PayController {
             payResp.setPaySign(sign);
             payResp.setSignType("MD5");
             payResp.setTimeStamp(time.toString());
+            payResp.setOutTradeNo(order_id);
 
             Map<Object,Object> pageMap = new LinkedHashMap<Object,Object>();
             pageMap.put("jsapi_ticket", wechartUtil.getJsApi());

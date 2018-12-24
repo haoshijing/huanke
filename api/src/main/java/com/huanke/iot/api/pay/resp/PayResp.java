@@ -18,4 +18,5 @@ public class PayResp {
     private String signType;
     private String paySign;
     private String signature;
+    private String outTradeNo;
 }
