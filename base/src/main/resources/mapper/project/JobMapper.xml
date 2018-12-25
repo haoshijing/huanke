@@ -232,6 +232,9 @@
         <if test = "projectJobInfo.createTime != null">
             AND  createTime >= #{projectJobInfo.createTime}
         </if>
+        <if test = "projectJobInfo.linkProjectId != null">
+            AND  linkProjectId = #{projectJobInfo.linkProjectId}
+        </if>
         <if test = "projectJobInfo.customerId != null">
             AND  customerId = #{projectJobInfo.customerId}
         </if>
@@ -274,6 +277,9 @@
         </if>
         <if test = "projectJobInfo.createTime != null">
             AND pji.createTime >= #{projectJobInfo.createTime}
+        </if>
+        <if test = "projectJobInfo.linkProjectId != null">
+            AND pji.linkProjectId = #{projectJobInfo.linkProjectId}
         </if>
         <if test = "projectJobInfo.customerId != null">
             AND pji.customerId = #{projectJobInfo.customerId}

@@ -265,6 +265,9 @@
         <if test = "param.status != null ">
             AND ppi.status = #{param.status}
         </if>
+        <if test = "param.linkProjectId != null ">
+            AND ppi.linkProjectId = #{param.linkProjectId}
+        </if>
         <if test = "param.createTime != null">
             AND ppi.createTime >= #{param.createTime}
         </if>
@@ -298,6 +301,9 @@
         </if>
         <if test = "projectPlanInfo.status != null ">
             AND ppi.status = #{projectPlanInfo.status}
+        </if>
+        <if test = "projectPlanInfo.linkProjectId != null ">
+            AND ppi.linkProjectId = #{projectPlanInfo.linkProjectId}
         </if>
         <if test = "projectPlanInfo.createTime != null">
             AND ppi.createTime >= #{projectPlanInfo.createTime}

@@ -18,6 +18,7 @@ public class PlanQueryRequest {
     private Integer isRule;
     private Integer warnLevel;
     private Integer status;
+    private Integer linkProjectId;
     private Date createTime;
 
     private Integer currentPage = 1;

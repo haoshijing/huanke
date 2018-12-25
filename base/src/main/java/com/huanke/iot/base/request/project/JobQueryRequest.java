@@ -18,6 +18,7 @@ public class JobQueryRequest {
     private Integer warnLevel;
     private Integer flowStatus;
     private Date createTime;
+    private Integer linkProjectId;
     private Integer currentPage = 1;
     private Integer limit = 10;
 }
