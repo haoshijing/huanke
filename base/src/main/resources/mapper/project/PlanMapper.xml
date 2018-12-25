@@ -279,11 +279,13 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType,ppi.isRule, ppi.ruleId, ppi.enableUsers, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType, tpr.name ruleName, td.label projectTypeName, ppi.isRule, ppi.ruleId, ppi.enableUsers, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
       FROM t_project_plan_info ppi
       left join t_user u on ppi.createUser = u.id
       left join t_user u1 on  ppi.updateUser = u1.id
       LEFT JOIN t_project_rule r on ppi.ruleId = r.id
+      left join t_project_rule tpr on ppi.ruleId = tpr.id
+      left join t_dict td on tpr.typeId = td.id
       WHERE 1=1
         <if test = "projectPlanInfo.name != null and projectPlanInfo.name != ''">
             AND ppi.name LIKE CONCAT('%',#{projectPlanInfo.name},'%')

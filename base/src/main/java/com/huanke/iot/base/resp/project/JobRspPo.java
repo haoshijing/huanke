@@ -15,6 +15,8 @@ public class JobRspPo {
     private Integer id;
     private String name;
     private String description;
+    private String ruleName;
+    private String projectTypeName;
     private Integer isRule;
     private Integer ruleId;
     private Integer warnLevel;
