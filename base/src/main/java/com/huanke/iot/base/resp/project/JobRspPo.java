@@ -14,6 +14,7 @@ import java.util.Date;
 public class JobRspPo {
     private Integer id;
     private String name;
+    private Integer type;
     private String description;
     private String ruleName;
     private String projectTypeName;
