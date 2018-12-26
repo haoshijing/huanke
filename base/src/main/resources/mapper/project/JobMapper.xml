@@ -243,14 +243,16 @@
         </if>
         <if test = "userId != null">
             AND (find_in_set(#{userId}, enableUsers)
-            OR enableUsers is null)
+            OR enableUsers is null
+            OR find_in_set(#{userId}, viewUsers))
         </if>
         AND status != 2
     </select>
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.JobRspPo">
-      SELECT pji.id, pji.name, pji.type, pji.description, tpr.name ruleName, td.label projectTypeName, pji.isRule, pji.ruleId, pji.sourceType,pji.finalTime,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT pji.id, pji.name, pji.type, pji.description, tpr.name ruleName, td.label projectTypeName, pji.isRule, pji.ruleId, pji.sourceType,pji.finalTime,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName,
+        (find_in_set(#{userId}, pji.enableUsers) OR pji.enableUsers is null) editEnable
       FROM t_project_job_info pji
       left join t_user u on pji.createUser = u.id
       left join t_user u1 on  pji.updateUser = u1.id
@@ -286,7 +288,8 @@
         </if>
         <if test = "userId != null">
             AND (find_in_set(#{userId}, enableUsers)
-            OR enableUsers is null)
+            OR enableUsers is null
+            OR find_in_set(#{userId}, viewUsers))
         </if>
         AND pji.status != 2
       ORDER BY pji.finalTime ASC
@@ -325,34 +328,40 @@
         AND status = 1
     </select>
 
-    <select id="selectWarnPageList" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
-        SELECT *
-        FROM t_project_job_info
+    <select id="selectWarnPageList" resultType="com.huanke.iot.base.resp.project.JobRspPo">
+        SELECT pji.id, pji.name, pji.type, pji.description, tpr.name ruleName, td.label projectTypeName, pji.isRule, pji.ruleId, pji.sourceType,pji.finalTime,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName,
+        (find_in_set(#{userId}, pji.enableUsers) OR pji.enableUsers is null) editEnable
+        FROM t_project_job_info pji
+        left join t_user u on pji.createUser = u.id
+        left join t_user u1 on  pji.updateUser = u1.id
+        left join t_project_rule tpr on pji.ruleId = tpr.id
+        left join t_dict td on tpr.typeId = td.id
         WHERE 1=1
         <if test = "projectJobInfo.name != null and projectJobInfo.name != ''">
-            AND name LIKE CONCAT('%',#{projectJobInfo.name},'%')
+            AND pji.name LIKE CONCAT('%',#{projectJobInfo.name},'%')
         </if>
         <if test = "projectJobInfo.isRule != null and projectJobInfo.isRule != ''">
-            AND isRule = #{projectJobInfo.isRule}
+            AND pji.isRule = #{projectJobInfo.isRule}
         </if>
         <if test = "projectJobInfo.warnLevel != null and projectJobInfo.warnLevel != ''">
-            AND warnLevel = #{projectJobInfo.warnLevel}
+            AND pji.warnLevel = #{projectJobInfo.warnLevel}
         </if>
         <if test = "projectJobInfo.flowStatus != null and projectJobInfo.flowStatus != ''">
-            AND flowStatus = #{projectJobInfo.flowStatus}
+            AND pji.flowStatus = #{projectJobInfo.flowStatus}
         </if>
         <if test = "projectJobInfo.createTime != null">
-            AND createTime >= #{projectJobInfo.createTime}
+            AND pji.createTime >= #{projectJobInfo.createTime}
         </if>
         <if test = "projectJobInfo.customerId != null">
-            AND customerId = #{projectJobInfo.customerId}
+            AND pji.customerId = #{projectJobInfo.customerId}
         </if>
       
-        AND warnStatus = 2
-        AND status != 2
-        AND (find_in_set(#{userId}, enableUsers)
-        OR enableUsers is null)
-        AND flowStatus NOT IN (4,5)
+        AND pji.warnStatus = 2
+        AND pji.status != 2
+        AND (find_in_set(#{userId}, pji.enableUsers)
+        OR pji.enableUsers is null
+        OR find_in_set(#{userId}, pji.viewUsers))
+        AND pji.flowStatus NOT IN (4,5)
         LIMIT #{start},#{limit}
     </select>
 

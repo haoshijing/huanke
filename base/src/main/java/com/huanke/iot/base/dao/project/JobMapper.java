@@ -37,7 +37,7 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
 
     List<ProjectJobInfo> selectAllToWarn();
 
-    List<ProjectJobInfo> selectWarnPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId);
+    List<JobRspPo> selectWarnPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId);
 
     List<ProjectJobInfo> queryWarnJob(@Param("customerId") Integer customerId,@Param("request") JobQueryRequest jobQueryRequest,@Param("start") int start, @Param("limit") int limit);
 

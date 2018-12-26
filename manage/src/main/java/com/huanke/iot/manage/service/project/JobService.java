@@ -73,11 +73,6 @@ public class JobService {
         jobRsp.setCurrentCount(limit);
 
         List<JobRspPo> jobPoList = jobMapper.selectPageList(projectJob, start, limit, userId);
-        for (JobRspPo jobRspPo : jobPoList) {
-            if (jobRspPo.getIsRule() == 1) {
-                jobRspPo.setWarnLevel(ruleMapper.selectById(jobRspPo.getRuleId()).getWarnLevel());
-            }
-        }
         jobRsp.setJobRspPoList(jobPoList);
         return jobRsp;
     }
@@ -112,13 +107,13 @@ public class JobService {
         Integer userId = userService.getCurrentUser().getId();
         ProjectJobInfo projectJobInfo = jobMapper.selectById(jobId);
         if (StringUtils.isNotEmpty(projectJobInfo.getEnableUsers()) && projectJobInfo.getEnableUsers().indexOf(userId.toString()) < 0) {
-            return "无权操作该任务，请刷新重新获取任务！";
+            return "无权操作该任务！";
         }
         //判断当前任务是否可以执行当前操作。
         Integer operateType = request.getOperateType();
         switch (projectJobInfo.getFlowStatus()) {
             case JobFlowStatusConstants.FLOW_STATUS_CREATED:
-                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_DEAL && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_ALLOT && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
                     return "错误的操作，任务状态已被更改，请刷新！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_DEALING:
@@ -134,28 +129,34 @@ public class JobService {
                 return "错误的操作，任务状态已被更改，请刷新！";
         }
         List<Integer> targetUsers = request.getTargetUsers();
+        String targetUserStr = new String();
         if (targetUsers != null && !targetUsers.isEmpty()) {
             List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
-            String targetUserStr = String.join(",", targetUserStrList);
-            projectJobInfo.setEnableUsers(targetUserStr);
+            targetUserStr = String.join(",", targetUserStrList);
         }
         int flowStatus = 0;
         switch (operateType) {
             case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
                 break;
-            case JobFlowStatusConstants.OPERATE_TYPE_DEAL:
-                projectJobInfo.setEnableUsers(userId.toString());
+            case JobFlowStatusConstants.OPERATE_TYPE_ALLOT:
+                //分配者和执行者都有操作权限和查看权限
+                projectJobInfo.setEnableUsers(userId.toString()+","+targetUserStr);
+                projectJobInfo.setViewUsers(userId.toString()+","+targetUserStr);
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_COMMIT:
+                //所选审批者，查看权限为自己和所选审批者
+                projectJobInfo.setEnableUsers(targetUserStr);
+                projectJobInfo.setViewUsers(userId.toString()+","+targetUserStr);
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_COMMITED;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_PASS:
+                projectJobInfo.setEnableUsers("");
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_FINISH;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_BACK:
-                projectJobInfo.setEnableUsers(jobLogMapper.selectLastByJobId(jobId).getCreateUser().toString());
+                projectJobInfo.setEnableUsers(userId.toString()+","+jobLogMapper.selectLastByJobId(jobId).getCreateUser().toString());
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_IGNORE:
@@ -164,11 +165,10 @@ public class JobService {
             default:
                 break;
         }
-        if (flowStatus == projectJobInfo.getFlowStatus()) {
+        if (flowStatus == projectJobInfo.getFlowStatus()||flowStatus==0) {
             return "错误的操作，任务状态已被更改，请刷新！";
         }
         String description = request.getDescription();
-        List<Integer> valueList = request.getValueList();
         projectJobInfo.setFlowStatus(flowStatus);
         jobMapper.updateById(projectJobInfo);
         //日志处理
@@ -226,8 +226,9 @@ public class JobService {
         List<JobDetailRsp.HistoryData> historyDataList = new ArrayList<>();
         for (JobHistoryDataDto jobHistoryDataDto : jobHistoryDataDtos) {
             JobDetailRsp.HistoryData historyData = new JobDetailRsp.HistoryData();
-            historyData.setUserName(userService.getUserName(jobHistoryDataDto.getCreateUser()));
             BeanUtils.copyProperties(jobHistoryDataDto, historyData);
+            historyData.setUserName(userService.getUserName(jobHistoryDataDto.getCreateUser()));
+            historyData.setUserId(jobHistoryDataDto.getCreateUser());
             if (jobHistoryDataDto.getImgListStr() != null) {
                 String imgListStr = jobHistoryDataDto.getImgListStr();
                 List<String> imgList = Arrays.asList(imgListStr.split(","));
@@ -266,7 +267,7 @@ public class JobService {
             case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
                 break;
-            case JobFlowStatusConstants.OPERATE_TYPE_DEAL:
+            case JobFlowStatusConstants.OPERATE_TYPE_ALLOT:
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_COMMIT:
@@ -307,9 +308,9 @@ public class JobService {
         warnJobRsp.setCurrentPage(currentPage);
         warnJobRsp.setCurrentCount(limit);
 
-        List<ProjectJobInfo> projectJobInfoList = jobMapper.selectWarnPageList(projectJob, start, limit, userId);
+        List<JobRspPo> jobRspPos = jobMapper.selectWarnPageList(projectJob, start, limit, userId);
 
-        warnJobRsp.setProjectJobInfoList(projectJobInfoList);
+        warnJobRsp.setProjectJobInfoList(jobRspPos);
         return warnJobRsp;
     }
 

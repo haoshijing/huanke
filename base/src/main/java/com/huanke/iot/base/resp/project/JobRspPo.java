@@ -28,6 +28,7 @@ public class JobRspPo {
     private Date updateTime;
     private String createName;
     private String updateName;
+    private Boolean editEnable;
 
 
     @Data

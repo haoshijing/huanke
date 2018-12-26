@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 public class WarnJobRsp {
-    List<ProjectJobInfo> projectJobInfoList;
+    List<JobRspPo> projectJobInfoList;
     private Integer currentPage;
     private Integer currentCount;
     private Integer totalCount;

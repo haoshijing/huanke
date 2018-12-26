@@ -14,11 +14,11 @@ public class JobFlowStatusConstants {
      */
     public static final int OPERATE_TYPE_CREATE= 1;
     /**
-     * 处理
+     * 分配
      */
-    public static final int OPERATE_TYPE_DEAL= 2;
+    public static final int OPERATE_TYPE_ALLOT= 2;
     /**
-     * 提交审核
+     * 处理完成提交审核
      */
     public static final int OPERATE_TYPE_COMMIT= 3;
     /**
@@ -36,19 +36,19 @@ public class JobFlowStatusConstants {
 
     //任务流程状态标志
     /**
-     * 待处理
+     * 已生成待分配
      */
     public static final int FLOW_STATUS_CREATED= 1;
     /**
-     * 处理中
+     * 已分配待处理
      */
     public static final int FLOW_STATUS_DEALING= 2;
     /**
-     * 待审核
+     * 已处理待审核
      */
     public static final int FLOW_STATUS_COMMITED= 3;
     /**
-     * 已完成
+     * 审核通过已完成
      */
     public static final int FLOW_STATUS_FINISH= 4;
     /**

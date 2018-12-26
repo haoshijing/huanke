@@ -44,6 +44,7 @@ public class JobDetailRsp {
     public static class HistoryData{
         private Date createTime;
         private String userName;
+        private Integer userId;
         private Integer operateType;
         private String description;
         private List<String> imgList;
