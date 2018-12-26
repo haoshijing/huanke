@@ -129,10 +129,12 @@ public class JobService {
                 return "错误的操作，任务状态已被更改，请刷新！";
         }
         List<Integer> targetUsers = request.getTargetUsers();
-        String targetUserStr = new String();
-        if (targetUsers != null && !targetUsers.isEmpty()) {
+        String targetUserStr;
+        if (targetUsers != null && targetUsers.size() <= 0) {
             List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
             targetUserStr = String.join(",", targetUserStrList);
+        }else{
+            return "请指定人员！";
         }
         int flowStatus = 0;
         switch (operateType) {
