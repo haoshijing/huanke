@@ -130,7 +130,7 @@ public class JobService {
         }
         List<Integer> targetUsers = request.getTargetUsers();
         String targetUserStr;
-        if (targetUsers != null && targetUsers.size() <= 0) {
+        if (targetUsers != null && targetUsers.size() > 0) {
             List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
             targetUserStr = String.join(",", targetUserStrList);
         }else{
