@@ -544,7 +544,7 @@ public class StatisticService {
                     break;
                 }else if("上海市".equals(temps[0])||"北京市".equals(temps[0])||"重庆市".equals(temps[0])||"天津市".equals(temps[0])) {
                     locations.add(temps[0]);
-                    locations.add("市辖区");
+                    locations.add(temps[0]);
                     locations.add(temps[2]);
                     break;
                 }else{
