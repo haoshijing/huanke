@@ -25,6 +25,7 @@ import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.device.group.DeviceGroupScenePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityOptionPo;
 import com.huanke.iot.base.po.user.User;
+import com.huanke.iot.base.resp.BaseIdNameRsp;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.gateway.MqttSendService;
 import com.huanke.iot.manage.service.user.UserService;
@@ -532,6 +533,10 @@ public class DeviceGroupService {
             }
         }
         return null;
+    }
+
+    public List<BaseIdNameRsp> queryDevices(Integer groupId) {
+        return deviceGroupItemMapper.queryDevices(groupId);
     }
 //
 //

@@ -3,6 +3,7 @@ package com.huanke.iot.base.dao.device;
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
+import com.huanke.iot.base.resp.BaseIdNameRsp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface DeviceGroupItemMapper extends BaseMapper<DeviceGroupItemPo> {
     List<DeviceGroupItemPo> selectByGroupId(Integer groupId);
 
     List<DevicePo> selectByGroupIds(@Param("groupIds") String groupIds);
+
+    List<BaseIdNameRsp> queryDevices(@Param("groupId")Integer groupId);
 }
