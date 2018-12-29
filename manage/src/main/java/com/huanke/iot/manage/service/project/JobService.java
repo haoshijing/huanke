@@ -238,6 +238,12 @@ public class JobService {
     }
 
     public String mergerList(String a,String b){
+        if(StringUtils.isEmpty(a)){
+            return b;
+        }
+        if(StringUtils.isEmpty(b)){
+            return a;
+        }
         List<String> list1 = new ArrayList(Arrays.asList(a.split(",")));
         List<String> list2 = new ArrayList(Arrays.asList(b.split(",")));
         for(int i = 0 ; i<list2.size(); i++){
