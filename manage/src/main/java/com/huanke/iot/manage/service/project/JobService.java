@@ -254,6 +254,19 @@ public class JobService {
         }
         return String.join(",", list1);
     }
+    @Transactional
+    public String editJobWarnLevel(JobRequest request){
+        Integer userId = userService.getCurrentUser().getId();
+        ProjectJobInfo projectJobInfo = jobMapper.selectById(request.getId());
+        if (projectJobInfo.getSourceType()!=2){
+            return "该任务不允许修改告警等级";
+        }
+        projectJobInfo.setUpdateTime(new Date());
+        projectJobInfo.setUpdateUser(userId);
+        projectJobInfo.setWarnLevel(request.getWarnLevel());
+        jobMapper.updateById(projectJobInfo);
+        return "修改成功";
+    }
 
 
     public JobDetailRsp selectById(Integer jobId) {

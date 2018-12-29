@@ -146,6 +146,9 @@
             <if test="ruleId != null">
                 ruleId = #{ruleId},
             </if>
+            <if test="warnLevel != null">
+                warnLevel = #{warnLevel},
+            </if>
             <if test="type != null">
                 type = #{type},
             </if>
