@@ -115,10 +115,16 @@ public class JobService {
         }
         Integer operateType = request.getOperateType();
         List<Integer> targetUsers = request.getTargetUsers();
-        List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
-        String targetUserStr = String.join(",", targetUserStrList);
-        List<String> workUserStrList = request.getWorkUsers().stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
-        String workUserStr = String.join(",", workUserStrList);
+        String targetUserStr = null;
+        if (targetUsers != null && targetUsers.size() > 0) {
+            List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+            targetUserStr = String.join(",", targetUserStrList);
+        }
+        String workUserStr = null;
+        if (request.getWorkUsers() != null && request.getWorkUsers().size() > 0) {
+            List<String> workUserStrList = request.getWorkUsers().stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+            workUserStr = String.join(",", workUserStrList);
+        }
         int flowStatus = 0;
         switch (operateType) {
             case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
