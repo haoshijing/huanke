@@ -238,8 +238,8 @@ public class JobService {
     }
 
     public String mergerList(String a,String b){
-        List<String> list1 = Arrays.asList(a.split(","));
-        List<String> list2 = Arrays.asList(b.split(","));
+        List<String> list1 = new ArrayList(Arrays.asList(a.split(",")));
+        List<String> list2 = new ArrayList(Arrays.asList(b.split(",")));
         for(int i = 0 ; i<list2.size(); i++){
             if (!list1.contains(list2.get(i))){
                 list1.add(list2.get(i));

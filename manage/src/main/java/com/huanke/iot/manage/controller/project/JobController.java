@@ -64,6 +64,13 @@ public class JobController {
         return new ApiResponse<>(result);
     }
 
+    @ApiOperation("修改任务告警等级")
+    @PostMapping(value = "/editJobWarnLevel")
+    public ApiResponse<String> editJobWarnLevel(@RequestBody JobFlowStatusRequest request) {
+        String result = jobService.jobFlow(request);
+        return new ApiResponse<>(result);
+    }
+
     /*@ApiOperation("修改任务信息")
     @PostMapping(value = "/editPlan")
     public ApiResponse<Boolean> editPlan(@RequestBody PlanRequest request) {
