@@ -1,8 +1,11 @@
 package com.huanke.iot.manage.service.statistic;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
+import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.ProjectMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.resp.project.JobRspPo;
@@ -15,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -31,6 +35,9 @@ public class ProjectStatisticService {
 
     @Autowired
     private ProjectMapper projectMapper;
+
+    @Autowired
+    private DeviceGroupItemMapper deviceGroupItemMapper;
 
     @Autowired
     private JobMapper jobMapper;
@@ -132,6 +139,35 @@ public class ProjectStatisticService {
         jobCountVo2.setDate("设备告警");
         jobCountVo2.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo2);
+        return resp;
+    }
+
+    public List<ProjectRspPo.ProjectCountVo> projectDevicePowerStatusCount(Integer id){
+        List<ProjectRspPo.ProjectCountVo> resp = new ArrayList<>();
+        ProjectBaseInfo projectBaseInfo = projectMapper.selectById(id);
+        int on = 0;
+        int off = 0;
+        if(StringUtils.isNotEmpty(projectBaseInfo.getGroupIds())){
+            String[] groupIds = projectBaseInfo.getGroupIds().split(",");
+            List<DevicePo> devicePos = deviceGroupItemMapper.selectByGroupIds(projectBaseInfo.getGroupIds());
+            if (devicePos !=null && devicePos.size()>0) {
+                for (DevicePo temp : devicePos) {
+                    if (temp.getPowerStatus()!=null && temp.getPowerStatus() == 1) {
+                        on++;
+                    } else {
+                        off++;
+                    }
+                }
+            }
+        }
+        ProjectRspPo.ProjectCountVo onCount = new ProjectRspPo.ProjectCountVo();
+        onCount.setDate("开机");
+        onCount.setProjectCount(Long.valueOf(on));
+        ProjectRspPo.ProjectCountVo offCount = new ProjectRspPo.ProjectCountVo();
+        offCount.setDate("关机");
+        offCount.setProjectCount(Long.valueOf(off));
+        resp.add(onCount);
+        resp.add(offCount);
         return resp;
     }
 }

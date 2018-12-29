@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,5 +40,11 @@ public class ProjectStatisticController {
     @GetMapping(value = "/jobWarningSourceCount")
     public ApiResponse<List<JobRspPo.JobCountVo>> jobWarningSourceCount(){
         return new ApiResponse<>(this.projectStatisticService.jobWarningSourceCount());
+    }
+
+    @ApiOperation("工程设备开关机分布")
+    @GetMapping(value = "/projectDevicePowerStatusCount/{projectId}")
+    public ApiResponse<List<ProjectRspPo.ProjectCountVo>> projectDevicePowerStatusCount(@PathVariable("projectId") Integer projectId){
+        return new ApiResponse<>(this.projectStatisticService.projectDevicePowerStatusCount(projectId));
     }
 }
