@@ -159,6 +159,7 @@ public class DeviceSensorStatWorker {
         if(!sb.toString().equals("")){
             ProjectJobInfo projectJobInfo = new ProjectJobInfo();
             projectJobInfo.setCustomerId(customerId);
+            projectJobInfo.setType(1);
             projectJobInfo.setLinkDeviceId(deviceId);
             projectJobInfo.setName("设备报警");
             projectJobInfo.setDescription(sb.toString());
