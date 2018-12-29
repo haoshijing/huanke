@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.project;
 
+import com.google.common.collect.Lists;
 import com.huanke.iot.base.constant.JobFlowStatusConstants;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.*;
@@ -282,6 +283,8 @@ public class JobService {
             jobDetailRsp.setRuleName(projectRule.getName());
             jobDetailRsp.setRuleDescription(projectRule.getDescription());
         }
+        if(StringUtils.isNotEmpty(projectJobInfo.getWorkUsers()))
+            jobDetailRsp.setWorkUsers(Lists.transform(Arrays.asList(projectJobInfo.getWorkUsers().split(",")),(a->{return Integer.valueOf(a);})));
         //任务历史记录信息
         List<JobHistoryDataDto> jobHistoryDataDtos = jobLogMapper.selectByJobId(jobId);
         List<JobDetailRsp.HistoryData> historyDataList = new ArrayList<>();
