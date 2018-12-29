@@ -12,6 +12,7 @@ import com.huanke.iot.base.request.project.*;
 import com.huanke.iot.base.resp.project.*;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.response.device.data.DashJobVo;
 import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -376,5 +377,10 @@ public class JobService {
 
         maintenanceDataVoList = jobMapper.queryDataMaintenance(customerId);
         return maintenanceDataVoList;
+    }
+
+    public List<DashJobVo> queryJobDash() {
+        jobMapper.queryJobDash();
+        return null;
     }
 }
