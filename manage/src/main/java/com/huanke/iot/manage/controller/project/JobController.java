@@ -57,6 +57,9 @@ public class JobController {
     @ApiOperation("添加任务流转")
     @PostMapping(value = "/jobFlow")
     public ApiResponse<String> jobFlow(@RequestBody JobFlowStatusRequest request) {
+        if(StringUtils.isEmpty(request.getJobId().toString())){
+            new ApiResponse<>(RetCode.PARAM_ERROR,"未指定任务！",false);
+        }
         if(StringUtils.isEmpty(request.getOperateType().toString())){
             new ApiResponse<>(RetCode.PARAM_ERROR,"错误的流转操作！",false);
         }
