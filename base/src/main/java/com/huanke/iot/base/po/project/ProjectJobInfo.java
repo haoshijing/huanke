@@ -28,8 +28,9 @@ public class ProjectJobInfo {
     private Integer planId;
     private Date finalTime;
     private String imgList;//图册
-    private String enableUsers;//执行者
+    private String enableUsers;//当前可操作者
     private String viewUsers;//可查看者
+    private String workUsers;//指定任务执行人
     private Integer warnStatus;//1-正常；2-告警
     private Integer flowStatus;//1-待处理；2-处理中；3-待审核；4-已完成；5-已忽略
     private Integer status;

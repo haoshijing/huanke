@@ -19,6 +19,7 @@ public class JobFlowStatusRequest extends BaseListRequest<Integer> {
     private List<String> imgList;//图册
     private Integer operateType;//1-生成；2-处理；3-提交审核；4-通过；5-驳回；6-忽略
     private List<Integer> targetUsers;
+    private List<Integer> workUsers;
     /**
      * 使用材料信息
      */

@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -106,60 +103,59 @@ public class JobService {
         Integer jobId = request.getJobId();
         Integer userId = userService.getCurrentUser().getId();
         ProjectJobInfo projectJobInfo = jobMapper.selectById(jobId);
-        if (StringUtils.isNotEmpty(projectJobInfo.getEnableUsers()) && projectJobInfo.getEnableUsers().indexOf(userId.toString()) < 0) {
-            return "无权操作该任务！";
+        if (StringUtils.isNotEmpty(projectJobInfo.getEnableUsers())) {
+            if(!Arrays.asList(projectJobInfo.getEnableUsers().split(",")).contains(userId.toString()))
+                return "无权操作该任务！";
         }
         //判断当前任务是否可以执行当前操作。
+        String checkResult = operateCheck(request, projectJobInfo);
+        if(StringUtils.isNotEmpty(checkResult)){
+            return checkResult;
+        }
         Integer operateType = request.getOperateType();
-        switch (projectJobInfo.getFlowStatus()) {
-            case JobFlowStatusConstants.FLOW_STATUS_CREATED:
-                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_ALLOT && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
-                    return "错误的操作，任务状态已被更改，请刷新！";
-                break;
-            case JobFlowStatusConstants.FLOW_STATUS_DEALING:
-                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_COMMIT)
-                    return "错误的操作，任务状态已被更改，请刷新！";
-                break;
-            case JobFlowStatusConstants.FLOW_STATUS_COMMITED:
-                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_PASS && operateType != JobFlowStatusConstants.OPERATE_TYPE_BACK)
-                    return "错误的操作，任务状态已被更改，请刷新！";
-                break;
-            case JobFlowStatusConstants.FLOW_STATUS_FINISH:
-            case JobFlowStatusConstants.FLOW_STATUS_IGNORED:
-                return "错误的操作，任务状态已被更改，请刷新！";
-        }
         List<Integer> targetUsers = request.getTargetUsers();
-        String targetUserStr;
-        if (targetUsers != null && targetUsers.size() > 0) {
-            List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
-            targetUserStr = String.join(",", targetUserStrList);
-        }else{
-            return "请指定人员！";
-        }
+        List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+        String targetUserStr = String.join(",", targetUserStrList);
+        List<String> workUserStrList = request.getWorkUsers().stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+        String workUserStr = String.join(",", workUserStrList);
         int flowStatus = 0;
         switch (operateType) {
             case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_ALLOT:
+                //分配者和执行者，审核者有操作权限，分配者有查看权限
+                projectJobInfo.setEnableUsers(targetUserStr);
+                projectJobInfo.setViewUsers(mergerList(targetUserStr,userId.toString()));
+                projectJobInfo.setWorkUsers(mergerList(workUserStr,userId.toString()));
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_ALLOTTED;
+                break;
+            case JobFlowStatusConstants.OPERATE_TYPE_ALLOW:
                 //分配者和执行者都有操作权限和查看权限
-                projectJobInfo.setEnableUsers(userId.toString()+","+targetUserStr);
-                projectJobInfo.setViewUsers(userId.toString()+","+targetUserStr);
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
+                projectJobInfo.setEnableUsers(projectJobInfo.getWorkUsers());
+                projectJobInfo.setViewUsers(mergerList(projectJobInfo.getViewUsers(),projectJobInfo.getWorkUsers()));
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_PERMIT;
+                break;
+            case JobFlowStatusConstants.OPERATE_TYPE_REJECT:
+                //任务回归未分配状态
+                projectJobInfo.setEnableUsers("");
+                projectJobInfo.setViewUsers("");
+                projectJobInfo.setWorkUsers("");
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_COMMIT:
-                //所选审批者，查看权限为自己和所选审批者
+                //所选审批者
                 projectJobInfo.setEnableUsers(targetUserStr);
-                projectJobInfo.setViewUsers(userId.toString()+","+targetUserStr);
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_COMMITED;
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_SUBMIT;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_PASS:
+                projectJobInfo.setViewUsers(mergerList(projectJobInfo.getViewUsers(),projectJobInfo.getEnableUsers()));
                 projectJobInfo.setEnableUsers("");
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_FINISH;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_BACK:
-                projectJobInfo.setEnableUsers(userId.toString()+","+jobLogMapper.selectLastByJobId(jobId).getCreateUser().toString());
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
+                projectJobInfo.setEnableUsers(projectJobInfo.getWorkUsers());
+                flowStatus = JobFlowStatusConstants.FLOW_STATUS_PERMIT;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_IGNORE:
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_IGNORED;
@@ -195,6 +191,63 @@ public class JobService {
         }
         return "操作成功！";
     }
+
+    public String operateCheck(JobFlowStatusRequest request,ProjectJobInfo projectJobInfo){
+        Integer operateType = request.getOperateType();
+        List<Integer> targetUsers = request.getTargetUsers();
+        String targetUserStr = null;
+        if (targetUsers != null && targetUsers.size() > 0) {
+            List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+            targetUserStr = String.join(",", targetUserStrList);
+        }
+        String workUserStr = null;
+        if (request.getWorkUsers() != null && request.getWorkUsers().size() > 0) {
+        List<String> workUserStrList = request.getWorkUsers().stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+        workUserStr = String.join(",", workUserStrList);
+        }
+        switch (projectJobInfo.getFlowStatus()) {
+            case JobFlowStatusConstants.FLOW_STATUS_CREATED:
+                //待分配任务只允许分配或者忽略
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_ALLOT && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
+                    return "错误的操作！请刷新任务状态。";
+                if (operateType == JobFlowStatusConstants.OPERATE_TYPE_ALLOT && (StringUtils.isEmpty(workUserStr)||StringUtils.isEmpty(targetUserStr)))
+                    return "指定人不能为空！";
+                break;
+            case JobFlowStatusConstants.FLOW_STATUS_ALLOTTED:
+                //已分配任务只允许同意或拒绝
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_ALLOW && operateType != JobFlowStatusConstants.OPERATE_TYPE_REJECT)
+                    return "错误的操作！请刷新任务状态。";
+                break;
+            case JobFlowStatusConstants.FLOW_STATUS_PERMIT:
+                //已出任务只允许提交归档审核
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_COMMIT)
+                    return "错误的操作！请刷新任务状态。";
+                if (StringUtils.isEmpty(targetUserStr))
+                    return "指定人不能为空";
+                break;
+            case JobFlowStatusConstants.FLOW_STATUS_SUBMIT:
+                //已提交归档审核只允许通过或拒绝
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_PASS && operateType != JobFlowStatusConstants.OPERATE_TYPE_BACK)
+                    return "错误的操作！请刷新任务状态。";
+                break;
+            case JobFlowStatusConstants.FLOW_STATUS_FINISH:
+            case JobFlowStatusConstants.FLOW_STATUS_IGNORED:
+                return "错误的操作！请刷新任务状态。";
+        }
+        return null;
+    }
+
+    public String mergerList(String a,String b){
+        List<String> list1 = Arrays.asList(a.split(","));
+        List<String> list2 = Arrays.asList(b.split(","));
+        for(int i = 0 ; i<list2.size(); i++){
+            if (!list1.contains(list2.get(i))){
+                list1.add(list2.get(i));
+            }
+        }
+        return String.join(",", list1);
+    }
+
 
     public JobDetailRsp selectById(Integer jobId) {
         JobDetailRsp jobDetailRsp = new JobDetailRsp();
@@ -244,52 +297,54 @@ public class JobService {
 
     @Transactional
     public Boolean flowJob(JobFlowStatusRequest request) {
-        Boolean result = null;
-        Integer jobId = request.getJobId();
-        Integer operateType = request.getOperateType();
-        String description = request.getDescription();
-        List<Integer> valueList = request.getValueList();
-        List<Integer> targetUsers = request.getTargetUsers();
-        List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
-        String targetUserStr = String.join(",", targetUserStrList);
-        String imgListStr = String.join(",", request.getImgList());
-        Integer userId = userService.getCurrentUser().getId();
-        ProjectJobLog projectJobLog = new ProjectJobLog();
-        int flowStatus = 0;
-        //日志处理
-        projectJobLog.setJobId(jobId);
-        projectJobLog.setDescription(description);
-        projectJobLog.setCreateUser(userId);
-        projectJobLog.setImgList(imgListStr);
-        projectJobLog.setCreateTime(new Date());
-        projectJobLog.setOperateType(operateType);
-        jobLogMapper.insert(projectJobLog);
-
-        switch (operateType) {
-            case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
-                break;
-            case JobFlowStatusConstants.OPERATE_TYPE_ALLOT:
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
-                break;
-            case JobFlowStatusConstants.OPERATE_TYPE_COMMIT:
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_COMMITED;
-                break;
-            case JobFlowStatusConstants.OPERATE_TYPE_PASS:
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_FINISH;
-                break;
-            case JobFlowStatusConstants.OPERATE_TYPE_BACK:
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
-                break;
-            case JobFlowStatusConstants.OPERATE_TYPE_IGNORE:
-                flowStatus = JobFlowStatusConstants.FLOW_STATUS_IGNORED;
-                break;
-            default:
-                break;
-        }
-
-        result = result && jobMapper.batchFlow(userId, valueList, targetUserStr, flowStatus);
-        return result;
+        //todo
+//        Boolean result = null;
+//        Integer jobId = request.getJobId();
+//        Integer operateType = request.getOperateType();
+//        String description = request.getDescription();
+//        List<Integer> valueList = request.getValueList();
+//        List<Integer> targetUsers = request.getTargetUsers();
+//        List<String> targetUserStrList = targetUsers.stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+//        String targetUserStr = String.join(",", targetUserStrList);
+//        String imgListStr = String.join(",", request.getImgList());
+//        Integer userId = userService.getCurrentUser().getId();
+//        ProjectJobLog projectJobLog = new ProjectJobLog();
+//        int flowStatus = 0;
+//        //日志处理
+//        projectJobLog.setJobId(jobId);
+//        projectJobLog.setDescription(description);
+//        projectJobLog.setCreateUser(userId);
+//        projectJobLog.setImgList(imgListStr);
+//        projectJobLog.setCreateTime(new Date());
+//        projectJobLog.setOperateType(operateType);
+//        jobLogMapper.insert(projectJobLog);
+//
+//        switch (operateType) {
+//            case JobFlowStatusConstants.OPERATE_TYPE_CREATE:
+//                flowStatus = JobFlowStatusConstants.FLOW_STATUS_CREATED;
+//                break;
+//            case JobFlowStatusConstants.OPERATE_TYPE_ALLOT:
+//                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
+//                break;
+//            case JobFlowStatusConstants.OPERATE_TYPE_COMMIT:
+//                flowStatus = JobFlowStatusConstants.FLOW_STATUS_COMMITED;
+//                break;
+//            case JobFlowStatusConstants.OPERATE_TYPE_PASS:
+//                flowStatus = JobFlowStatusConstants.FLOW_STATUS_FINISH;
+//                break;
+//            case JobFlowStatusConstants.OPERATE_TYPE_BACK:
+//                flowStatus = JobFlowStatusConstants.FLOW_STATUS_DEALING;
+//                break;
+//            case JobFlowStatusConstants.OPERATE_TYPE_IGNORE:
+//                flowStatus = JobFlowStatusConstants.FLOW_STATUS_IGNORED;
+//                break;
+//            default:
+//                break;
+//        }
+//
+//        result = result && jobMapper.batchFlow(userId, valueList, targetUserStr, flowStatus);
+//        return result;
+        return null;
     }
 
 
@@ -344,10 +399,11 @@ public class JobService {
                 case JobFlowStatusConstants.FLOW_STATUS_CREATED:
                     flowCreated++;
                     break;
-                case JobFlowStatusConstants.FLOW_STATUS_DEALING:
+                case JobFlowStatusConstants.FLOW_STATUS_ALLOTTED:
+                case JobFlowStatusConstants.FLOW_STATUS_PERMIT:
                     flowDealing++;
                     break;
-                case JobFlowStatusConstants.FLOW_STATUS_COMMITED:
+                case JobFlowStatusConstants.FLOW_STATUS_SUBMIT:
                     flowCommited++;
                     break;
                 case JobFlowStatusConstants.FLOW_STATUS_FINISH:
@@ -362,7 +418,7 @@ public class JobService {
         }
         WarnDataVo warnDataVo1 = new WarnDataVo("待处理", flowCreated);
         WarnDataVo warnDataVo2 = new WarnDataVo("处理中", flowDealing);
-        WarnDataVo warnDataVo3 = new WarnDataVo("待审核", flowCommited);
+        WarnDataVo warnDataVo3 = new WarnDataVo("待归档", flowCommited);
         WarnDataVo warnDataVo4 = new WarnDataVo("已完成", flowFinish);
         WarnDataVo warnDataVo5 = new WarnDataVo("已忽略", flowIgnored);
         warnDataVoList.add(warnDataVo1);
