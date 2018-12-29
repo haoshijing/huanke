@@ -26,6 +26,8 @@
         finalTime,
         imgList,
         enableUsers,
+        viewUsers,
+        workUsers,
         warnStatus,
         flowStatus,
         status,
@@ -49,6 +51,8 @@
         #{finalTime},
         #{imgList},
         #{enableUsers},
+        #{viewUsers},
+        #{workUsers},
         #{warnStatus},
         #{flowStatus},
         #{status},
@@ -126,7 +130,6 @@
     </select>
 
 
-    <!--暂时未使用-->
     <update id="updateById" parameterType="com.huanke.iot.base.po.project.ProjectJobInfo">
         update
         <include refid="tableName"/>
@@ -157,6 +160,12 @@
             </if>
             <if test="enableUsers != null and enableUsers!='' ">
                 enableUsers = #{enableUsers},
+            </if>
+            <if test="viewUsers != null and viewUsers!='' ">
+                viewUsers = #{viewUsers},
+            </if>
+            <if test="workUsers != null and workUsers!='' ">
+                workUsers = #{workUsers},
             </if>
             <if test="warnStatus != null">
                 warnStatus = #{warnStatus},
