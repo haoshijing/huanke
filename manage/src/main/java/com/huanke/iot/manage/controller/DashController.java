@@ -1,7 +1,10 @@
 package com.huanke.iot.manage.controller;
 
 import com.huanke.iot.base.api.ApiResponse;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.resp.project.MaintenanceDataVo;
+import com.huanke.iot.base.resp.project.ProjectModelPercentVo;
+import com.huanke.iot.manage.service.device.typeModel.DeviceModelService;
 import com.huanke.iot.manage.service.project.JobService;
 import com.huanke.iot.manage.vo.response.device.data.DashJobVo;
 import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
@@ -9,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +29,10 @@ import java.util.List;
 public class DashController {
     @Autowired
     private JobService jobService;
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
+    @Autowired
+    private DeviceModelService deviceModelService;
 
     @ApiOperation("查询报警数据看板")
     @GetMapping(value = "/queryWarnData")
@@ -45,5 +53,12 @@ public class DashController {
     public ApiResponse<List<DashJobVo>> queryJobDash(){
         List<DashJobVo> dashJobVoList = jobService.queryJobDash();
         return new ApiResponse<>(dashJobVoList);
+    }
+
+    @ApiOperation("查询单个工程下型号比例看板")
+    @GetMapping(value = "/queryMaintenance/{projectId}")
+    public ApiResponse<List<ProjectModelPercentVo>> queryModelPercent(@PathVariable("projectId") Integer projectId){
+        List<ProjectModelPercentVo> projectModelPercentVoList = deviceModelService.queryModelPercent(projectId);
+        return new ApiResponse<>(projectModelPercentVoList);
     }
 }

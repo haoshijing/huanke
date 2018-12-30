@@ -32,6 +32,7 @@ import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.resp.device.ModelProjectRsp;
+import com.huanke.iot.base.resp.project.ProjectModelPercentVo;
 import com.huanke.iot.base.util.UniNoCreateUtils;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.device.operate.DeviceOperateService;
@@ -1030,5 +1031,9 @@ public class DeviceModelService {
     public List<ModelProjectRsp> selectModelDict() {
         Integer customerId = customerService.obtainCustomerId(false);
         return deviceModelMapper.selectProjectRspByCustomerId(customerId);
+    }
+
+    public List<ProjectModelPercentVo> queryModelPercent(Integer projectId) {
+        return deviceModelMapper.queryModelPercent(projectId);
     }
 }
