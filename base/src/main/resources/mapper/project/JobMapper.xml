@@ -377,4 +377,13 @@
         AND status = 1
         GROUP BY DATE_FORMAT(createTime, '%Y-%m');
     </select>
+
+    <select id="queryJobDash" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
+        SELECT *
+        FROM t_project_job_info
+        WHERE
+        status = 1
+        AND flowStatus != 5
+        AND year(createTime)=year(curdate())
+    </select>
 </mapper>

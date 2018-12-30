@@ -8,5 +8,5 @@ import java.util.Date;
 public class DashJobVo {
     private Integer jobCount;
     private Integer finishJobCount;
-    private Date time;
+    private String time;
 }

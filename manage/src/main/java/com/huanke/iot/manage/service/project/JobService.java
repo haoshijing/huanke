@@ -16,11 +16,14 @@ import com.huanke.iot.manage.vo.response.device.data.DashJobVo;
 import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -380,7 +383,21 @@ public class JobService {
     }
 
     public List<DashJobVo> queryJobDash() {
-        jobMapper.queryJobDash();
-        return null;
+        List<DashJobVo> dashJobVoList = new ArrayList<>();
+        //查最近一年内的数据
+        List<ProjectJobInfo> projectJobInfoList = jobMapper.queryJobDash();
+        DateTime dateTime = new DateTime();
+        for (int minusMonths = 11; minusMonths>=0; minusMonths--){
+            dateTime = dateTime.minusMonths(minusMonths);
+            int year = dateTime.getYear();
+            int monthOfYear = dateTime.getMonthOfYear();
+            List<ProjectJobInfo> monthData = projectJobInfoList.stream().filter(e -> e.getCreateTime().getYear() == year && e.getCreateTime().getMonth() == monthOfYear).collect(Collectors.toList());
+            DashJobVo dashJobVo = new DashJobVo();
+            dashJobVo.setTime("" + year + "-" + monthOfYear);
+            dashJobVo.setJobCount(monthData.size());
+            dashJobVo.setFinishJobCount((int) monthData.stream().filter(e -> e.getFlowStatus() == 4).count());
+            dashJobVoList.add(dashJobVo);
+        }
+        return dashJobVoList;
     }
 }
