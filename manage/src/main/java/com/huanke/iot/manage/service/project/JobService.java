@@ -13,9 +13,11 @@ import com.huanke.iot.base.request.project.*;
 import com.huanke.iot.base.resp.project.*;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.response.device.data.DashJobVo;
 import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -463,5 +465,32 @@ public class JobService {
 
         maintenanceDataVoList = jobMapper.queryDataMaintenance(customerId);
         return maintenanceDataVoList;
+    }
+
+    public List<DashJobVo> queryJobDash() {
+        List<DashJobVo> dashJobVoList = new ArrayList<>();
+        //查最近一年内的数据
+        List<ProjectJobInfo> projectJobInfoList = jobMapper.queryJobDash();
+        DateTime dateTime = new DateTime();
+        for (int minusMonths = 11; minusMonths>=0; minusMonths--){
+            DateTime currDateTime = dateTime.minusMonths(minusMonths);
+            int year = currDateTime.getYear();
+            int monthOfYear = currDateTime.getMonthOfYear();
+            List<ProjectJobInfo> monthData;
+            monthData = projectJobInfoList.stream().filter(e -> {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(e.getCreateTime());
+                if(cal.get(Calendar.YEAR)== year && cal.get(Calendar.MONTH) + 1 == monthOfYear){
+                    return true;
+                }
+                return false;
+            }).collect(Collectors.toList());
+            DashJobVo dashJobVo = new DashJobVo();
+            dashJobVo.setTime("" + year + "-" + monthOfYear);
+            dashJobVo.setJobCount(monthData.size());
+            dashJobVo.setFinishJobCount((int) monthData.stream().filter(e -> e.getFlowStatus() == 4).count());
+            dashJobVoList.add(dashJobVo);
+        }
+        return dashJobVoList;
     }
 }

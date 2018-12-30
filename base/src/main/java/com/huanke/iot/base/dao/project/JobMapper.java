@@ -44,4 +44,6 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
     List<ProjectJobInfo> selectWarnDataCount(@Param("projectJob") ProjectJobInfo projectJob);
 
     List<MaintenanceDataVo> queryDataMaintenance(@Param("customerId") Integer customerId);
+
+    List<ProjectJobInfo> queryJobDash();
 }
