@@ -5,6 +5,7 @@ import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
+import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceIdPoolMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
@@ -16,6 +17,7 @@ import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatPageMapper;
+import com.huanke.iot.base.dao.project.ProjectMapper;
 import com.huanke.iot.base.dao.user.UserManagerMapper;
 import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerPo;
@@ -30,6 +32,7 @@ import com.huanke.iot.base.po.format.DeviceModelFormatItemPo;
 import com.huanke.iot.base.po.format.DeviceModelFormatPo;
 import com.huanke.iot.base.po.format.WxFormatItemPo;
 import com.huanke.iot.base.po.format.WxFormatPagePo;
+import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.resp.device.ModelProjectRsp;
 import com.huanke.iot.base.resp.project.ProjectModelPercentVo;
@@ -104,6 +107,12 @@ public class DeviceModelService {
 
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private DeviceGroupItemMapper deviceGroupItemMapper;
+
+    @Autowired
+    private ProjectMapper projectMapper;
 
     @Autowired
     private UserManagerMapper userManagerMapper;
@@ -1034,6 +1043,9 @@ public class DeviceModelService {
     }
 
     public List<ProjectModelPercentVo> queryModelPercent(Integer projectId) {
-        return deviceModelMapper.queryModelPercent(projectId);
+        ProjectBaseInfo projectBaseInfo = projectMapper.selectById(projectId);
+        List<DevicePo> devicePoList = deviceGroupItemMapper.selectByGroupIds(projectBaseInfo.getGroupIds());
+        List<Integer> deviceIdList = devicePoList.stream().map(e -> e.getId()).distinct().collect(Collectors.toList());
+        return deviceModelMapper.queryModelPercent(deviceIdList);
     }
 }

@@ -284,7 +284,10 @@
         FROM t_device d
         LEFT JOIN t_device_model dm ON d.modelId=dm.id
         WHERE d.status =1
-        AND dm.customerId = 3
+        AND d.id IN
+        <foreach collection="deviceIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
         GROUP BY d.modelId;
     </select>
 </mapper>

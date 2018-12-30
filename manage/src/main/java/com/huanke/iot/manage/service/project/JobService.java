@@ -22,12 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -388,10 +383,18 @@ public class JobService {
         List<ProjectJobInfo> projectJobInfoList = jobMapper.queryJobDash();
         DateTime dateTime = new DateTime();
         for (int minusMonths = 11; minusMonths>=0; minusMonths--){
-            dateTime = dateTime.minusMonths(minusMonths);
-            int year = dateTime.getYear();
-            int monthOfYear = dateTime.getMonthOfYear();
-            List<ProjectJobInfo> monthData = projectJobInfoList.stream().filter(e -> e.getCreateTime().getYear() == year && e.getCreateTime().getMonth() == monthOfYear).collect(Collectors.toList());
+            DateTime currDateTime = dateTime.minusMonths(minusMonths);
+            int year = currDateTime.getYear();
+            int monthOfYear = currDateTime.getMonthOfYear();
+            List<ProjectJobInfo> monthData;
+            monthData = projectJobInfoList.stream().filter(e -> {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(e.getCreateTime());
+                if(cal.get(Calendar.YEAR)== year && cal.get(Calendar.MONTH) + 1 == monthOfYear){
+                    return true;
+                }
+                return false;
+            }).collect(Collectors.toList());
             DashJobVo dashJobVo = new DashJobVo();
             dashJobVo.setTime("" + year + "-" + monthOfYear);
             dashJobVo.setJobCount(monthData.size());

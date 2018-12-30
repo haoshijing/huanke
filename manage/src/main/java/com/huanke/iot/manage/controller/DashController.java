@@ -49,14 +49,14 @@ public class DashController {
     }
 
     @ApiOperation("查询任务数据看板")
-    @GetMapping(value = "/queryMaintenance")
+    @GetMapping(value = "/queryJobDash")
     public ApiResponse<List<DashJobVo>> queryJobDash(){
         List<DashJobVo> dashJobVoList = jobService.queryJobDash();
         return new ApiResponse<>(dashJobVoList);
     }
 
     @ApiOperation("查询单个工程下型号比例看板")
-    @GetMapping(value = "/queryMaintenance/{projectId}")
+    @GetMapping(value = "/queryModelPercent/{projectId}")
     public ApiResponse<List<ProjectModelPercentVo>> queryModelPercent(@PathVariable("projectId") Integer projectId){
         List<ProjectModelPercentVo> projectModelPercentVoList = deviceModelService.queryModelPercent(projectId);
         return new ApiResponse<>(projectModelPercentVoList);
