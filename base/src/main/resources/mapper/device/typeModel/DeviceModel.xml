@@ -278,4 +278,16 @@
         WHERE customerId = #{customerId}
         AND status = 1
     </select>
+
+    <select id="queryModelPercent" resultType="com.huanke.iot.base.resp.project.ProjectModelPercentVo">
+        SELECT dm.name modelName, count(*) num
+        FROM t_device d
+        LEFT JOIN t_device_model dm ON d.modelId=dm.id
+        WHERE d.status =1
+        AND d.id IN
+        <foreach collection="deviceIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY d.modelId;
+    </select>
 </mapper>

@@ -3,6 +3,7 @@ package com.huanke.iot.base.dao.device.typeModel;
 import com.huanke.iot.base.dao.BaseMapper;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
 import com.huanke.iot.base.resp.device.ModelProjectRsp;
+import com.huanke.iot.base.resp.project.ProjectModelPercentVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface DeviceModelMapper extends BaseMapper<DeviceModelPo> {
     void flushCache();
 
     List<ModelProjectRsp> selectProjectRspByCustomerId(@Param("customerId") Integer customerId);
+
+    List<ProjectModelPercentVo> queryModelPercent(@Param("deviceIdList") List<Integer> deviceIdList);
 }
