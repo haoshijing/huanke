@@ -185,6 +185,7 @@ public class JobService {
         projectJobLog.setCreateUser(userId);
         List<String> imgList = request.getImgList();
         if (imgList != null) {
+            imgList = imgList.stream().filter(temp->{return StringUtils.isNotEmpty(temp)&&!"null".equals(temp);}).collect(Collectors.toList());
             String imgListStr = String.join(",", imgList);
             projectJobLog.setImgList(imgListStr);
         }
@@ -318,6 +319,8 @@ public class JobService {
                 String imgListStr = jobHistoryDataDto.getImgListStr();
                 List<String> imgList = Arrays.asList(imgListStr.split(","));
                 historyData.setImgList(imgList);
+            }else{
+                historyData.setImgList(new ArrayList<>());
             }
             historyDataList.add(historyData);
         }
