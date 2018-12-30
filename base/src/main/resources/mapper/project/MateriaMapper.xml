@@ -61,6 +61,9 @@
             <if test="name != null and name!='' ">
                 name = #{name},
             </if>
+            <if test="unit != null and unit!='' ">
+                unit = #{unit},
+            </if>
             <if test="nums != null">
                 nums = #{nums},
             </if>
