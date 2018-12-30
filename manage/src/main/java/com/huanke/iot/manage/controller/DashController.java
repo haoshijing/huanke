@@ -35,7 +35,7 @@ public class DashController {
 
     @Autowired
     private DeviceGroupService deviceGroupService;
-    \
+    
     @Autowired
     private DashBoardIndexService dashBoardIndexService;
 
