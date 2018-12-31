@@ -427,44 +427,49 @@ public class JobService {
         ProjectJobInfo projectJob = new ProjectJobInfo();
         projectJob.setCustomerId(customerId);
         List<ProjectJobInfo> projectJobInfoList = jobMapper.selectWarnDataCount(projectJob);
-        int flowCreated = 0;
-        int flowDealing = 0;
-        int flowCommited = 0;
-        int flowFinish = 0;
-        int flowIgnored = 0;
+        int flow1 = 0;
+        int flow2 = 0;
+        int flow3 = 0;
+        int flow4 = 0;
+        int flow5 = 0;
+        int flow6 = 0;
         for (ProjectJobInfo projectJobInfo : projectJobInfoList) {
             Integer flowStatus = projectJobInfo.getFlowStatus();
             switch (flowStatus) {
                 case JobFlowStatusConstants.FLOW_STATUS_CREATED:
-                    flowCreated++;
+                    flow1++;
                     break;
                 case JobFlowStatusConstants.FLOW_STATUS_ALLOTTED:
+                    flow2++;
+                    break;
                 case JobFlowStatusConstants.FLOW_STATUS_PERMIT:
-                    flowDealing++;
+                    flow3++;
                     break;
                 case JobFlowStatusConstants.FLOW_STATUS_SUBMIT:
-                    flowCommited++;
+                    flow4++;
                     break;
                 case JobFlowStatusConstants.FLOW_STATUS_FINISH:
-                    flowFinish++;
+                    flow5++;
                     break;
                 case JobFlowStatusConstants.FLOW_STATUS_IGNORED:
-                    flowIgnored++;
+                    flow6++;
                     break;
                 default:
                     break;
             }
         }
-        WarnDataVo warnDataVo1 = new WarnDataVo("待处理", flowCreated);
-        WarnDataVo warnDataVo2 = new WarnDataVo("处理中", flowDealing);
-        WarnDataVo warnDataVo3 = new WarnDataVo("待归档", flowCommited);
-        WarnDataVo warnDataVo4 = new WarnDataVo("已完成", flowFinish);
-        WarnDataVo warnDataVo5 = new WarnDataVo("已忽略", flowIgnored);
+        WarnDataVo warnDataVo1 = new WarnDataVo("待分配", flow1);
+        WarnDataVo warnDataVo2 = new WarnDataVo("待分配审核", flow2);
+        WarnDataVo warnDataVo3 = new WarnDataVo("待处理", flow3);
+        WarnDataVo warnDataVo4 = new WarnDataVo("待归档", flow4);
+        WarnDataVo warnDataVo5 = new WarnDataVo("已完成", flow5);
+        WarnDataVo warnDataVo6 = new WarnDataVo("已忽略", flow6);
         warnDataVoList.add(warnDataVo1);
         warnDataVoList.add(warnDataVo2);
         warnDataVoList.add(warnDataVo3);
         warnDataVoList.add(warnDataVo4);
         warnDataVoList.add(warnDataVo5);
+        warnDataVoList.add(warnDataVo6);
         return warnDataVoList;
     }
 

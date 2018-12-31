@@ -136,7 +136,7 @@ public class ProjectStatisticService {
         projectJobInfo.setCustomerId(customerId);
         projectJobInfo.setSourceType(2);
         projectJobInfo.setWarnStatus(2);
-        jobCountVo1.setDate("用户反馈");
+        jobCountVo1.setDate("用户报修");
         jobCountVo1.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo1);
         JobRspPo.JobCountVo jobCountVo2 = new JobRspPo.JobCountVo();
