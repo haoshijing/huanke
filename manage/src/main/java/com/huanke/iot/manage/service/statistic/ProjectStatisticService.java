@@ -122,6 +122,7 @@ public class ProjectStatisticService {
         ProjectJobInfo projectJobInfo = new ProjectJobInfo();
         projectJobInfo.setCustomerId(customerId);
         projectJobInfo.setSourceType(1);
+        projectJobInfo.setWarnStatus(2);
         jobCountVo0.setDate("计划维保");
         jobCountVo0.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo0);
@@ -129,6 +130,7 @@ public class ProjectStatisticService {
         projectJobInfo = new ProjectJobInfo();
         projectJobInfo.setCustomerId(customerId);
         projectJobInfo.setSourceType(2);
+        projectJobInfo.setWarnStatus(2);
         jobCountVo1.setDate("用户反馈");
         jobCountVo1.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo1);
@@ -136,6 +138,7 @@ public class ProjectStatisticService {
         projectJobInfo = new ProjectJobInfo();
         projectJobInfo.setCustomerId(customerId);
         projectJobInfo.setSourceType(3);
+        projectJobInfo.setWarnStatus(2);
         jobCountVo2.setDate("设备告警");
         jobCountVo2.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo2);

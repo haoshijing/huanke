@@ -373,7 +373,7 @@
         AND (find_in_set(#{userId}, pji.enableUsers)
         OR pji.enableUsers is null
         OR find_in_set(#{userId}, pji.viewUsers))
-        AND pji.flowStatus NOT IN (4,5)
+        ORDER BY flowStatus ASC ,finalTime ASC
         LIMIT #{start},#{limit}
     </select>
 
