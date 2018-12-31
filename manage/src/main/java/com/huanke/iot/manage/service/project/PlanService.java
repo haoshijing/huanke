@@ -225,16 +225,20 @@ public class PlanService {
         planRsp.setCurrentCount(limit);
 
         List<PlanRspPo> planPoList = planMapper.maintenance(projectId, start, limit);
-        for (PlanRspPo planRspPo : planPoList) {
-            if(planRspPo.getIsRule() == 1){
-                planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
+        if(planPoList != null && planPoList.size()>0) {
+            for (PlanRspPo planRspPo : planPoList) {
+                if (planRspPo.getIsRule() == 1) {
+                    planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
+                }
+                if (planRspPo.getEnableUsers() != null) {
+                    List<Integer> enableUserList = Arrays.asList(planRspPo.getEnableUsers().split(",")).stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
+                    planRspPo.setEnableUserList(enableUserList);
+                }
             }
-            if(planRspPo.getEnableUsers() != null){
-                List<Integer> enableUserList = Arrays.asList(planRspPo.getEnableUsers().split(",")).stream().map(e -> Integer.valueOf(e)).collect(Collectors.toList());
-                planRspPo.setEnableUserList(enableUserList);
-            }
+            planRsp.setPlanRspPoList(planPoList);
+        }else{
+            planRsp.setPlanRspPoList(new ArrayList<>());
         }
-        planRsp.setPlanRspPoList(planPoList);
         return planRsp;
     }
 
