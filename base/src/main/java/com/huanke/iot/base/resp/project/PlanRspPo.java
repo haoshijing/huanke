@@ -17,6 +17,7 @@ public class PlanRspPo {
     private String name;
     private String description;
     private Integer linkType; // 关联类型：0-不关联；1-关联设备；2-关联工程
+    private String linkProjectName;
     private String ruleName;
     private String projectTypeName;
     private Integer isRule;

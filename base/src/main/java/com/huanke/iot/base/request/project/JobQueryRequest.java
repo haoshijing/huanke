@@ -19,6 +19,7 @@ public class JobQueryRequest {
     private Integer flowStatus;
     private Date createTime;
     private Integer linkProjectId;
+    private String projectName;
     private Integer currentPage = 1;
     private Integer limit = 10;
 }

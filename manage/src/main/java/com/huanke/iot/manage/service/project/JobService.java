@@ -63,16 +63,22 @@ public class JobService {
         Integer limit = request.getLimit();
         Integer currentPage = request.getCurrentPage();
         Integer start = (currentPage - 1) * limit;
+        String projectName = request.getProjectName();
 
         ProjectJobInfo projectJob = new ProjectJobInfo();
         projectJob.setCustomerId(customerId);
         BeanUtils.copyProperties(request, projectJob);
-        Integer count = jobMapper.selectCount(projectJob, userId);
+        Integer count = jobMapper.selectListCount(projectJob, userId, projectName);
         jobRsp.setTotalCount(count);
         jobRsp.setCurrentPage(currentPage);
         jobRsp.setCurrentCount(limit);
 
-        List<JobRspPo> jobPoList = jobMapper.selectPageList(projectJob, start, limit, userId);
+        List<JobRspPo> jobPoList = jobMapper.selectPageList(projectJob, start, limit, userId, projectName);
+        for (JobRspPo jobRspPo : jobPoList) {
+            if(jobRspPo.getType() == 2){
+                jobRspPo.setLinkProjectName(projectMapper.selectById(jobRspPo.getLinkProjectId()).getName());
+            }
+        }
         jobRsp.setJobRspPoList(jobPoList);
         return jobRsp;
     }

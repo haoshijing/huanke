@@ -252,7 +252,14 @@
         select count(1) from
         <include refid="tableName"/> ppi
         LEFT JOIN t_project_rule r on ppi.ruleId = r.id
+        <if test = "projectName != null and projectName != ''">
+            LEFT JOIN t_project_base_info pbi on ppi.linkProjectId = pbi.id
+        </if>
         where 1=1
+        <if test = "projectName != null and projectName != ''">
+            AND ppi.linkType = 2
+            AND pbi.name LIKE CONCAT('%',#{projectName},'%')
+        </if>
         <if test = "param.name != null and param.name != ''">
             AND ppi.name LIKE CONCAT('%',#{param.name},'%')
         </if>
@@ -282,14 +289,21 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType, tpr.name ruleName, td.label projectTypeName, ppi.isRule, ppi.ruleId, ppi.enableUsers, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
+      SELECT ppi.id, ppi.name, ppi.description, ppi.linkType, ppi.linkProjectId, tpr.name ruleName, td.label projectTypeName, ppi.isRule, ppi.ruleId, ppi.enableUsers, ppi.status, ppi.createTime, ppi.updateTime, u.nickName createName,u1.nickName updateName
       FROM t_project_plan_info ppi
       left join t_user u on ppi.createUser = u.id
       left join t_user u1 on  ppi.updateUser = u1.id
       LEFT JOIN t_project_rule r on ppi.ruleId = r.id
       left join t_project_rule tpr on ppi.ruleId = tpr.id
       left join t_dict td on tpr.typeId = td.id
+        <if test = "projectName != null and projectName != ''">
+            LEFT JOIN t_project_base_info pbi on ppi.linkProjectId = pbi.id
+        </if>
       WHERE 1=1
+        <if test = "projectName != null and projectName != ''">
+            AND ppi.linkType = 2
+            AND pbi.name LIKE CONCAT('%',#{projectName},'%')
+        </if>
         <if test = "projectPlanInfo.name != null and projectPlanInfo.name != ''">
             AND ppi.name LIKE CONCAT('%',#{projectPlanInfo.name},'%')
         </if>

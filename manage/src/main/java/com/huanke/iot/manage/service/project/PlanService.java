@@ -5,6 +5,7 @@ import com.huanke.iot.base.constant.JobFlowStatusConstants;
 import com.huanke.iot.base.constant.ProjectPlanCycleTypeConstants;
 import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.PlanMapper;
+import com.huanke.iot.base.dao.project.ProjectMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
 import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
@@ -49,6 +50,8 @@ public class PlanService {
     private CustomerService customerService;
     @Autowired
     private JobMapper jobMapper;
+    @Autowired
+    private ProjectMapper projectMapper;
 
     private static String[] keys = {"name","description", "ruleName", "warnLevel",  "createTime","createName"};
 
@@ -61,17 +64,21 @@ public class PlanService {
         Integer limit = request.getLimit();
         Integer currentPage = request.getCurrentPage();
         Integer start = (currentPage - 1) * limit;
+        String projectName = request.getProjectName();
 
         ProjectPlanInfo projectPlan = new ProjectPlanInfo();
         projectPlan.setCustomerId(customerId);
         BeanUtils.copyProperties(request, projectPlan);
-        Integer count = planMapper.selectCount(projectPlan);
+        Integer count = planMapper.selectCount(projectPlan, projectName);
         planRsp.setTotalCount(count);
         planRsp.setCurrentPage(currentPage);
         planRsp.setCurrentCount(limit);
 
-        List<PlanRspPo> planPoList = planMapper.selectPageList(projectPlan, start, limit);
+        List<PlanRspPo> planPoList = planMapper.selectPageList(projectPlan, start, limit, projectName);
         for (PlanRspPo planRspPo : planPoList) {
+            if(planRspPo.getLinkType() == 2){
+                planRspPo.setLinkProjectName(projectMapper.selectById(planRspPo.getLinkProjectId()).getName());
+            }
             if(planRspPo.getIsRule() == 1){
                 planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
             }

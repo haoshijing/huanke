@@ -20,6 +20,7 @@ public class PlanQueryRequest {
     private Integer status;
     private Integer linkProjectId;
     private Date createTime;
+    private String projectName;
 
     private Integer currentPage = 1;
     private Integer limit = 10;

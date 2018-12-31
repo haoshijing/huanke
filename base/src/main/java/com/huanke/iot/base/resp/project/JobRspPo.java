@@ -14,7 +14,9 @@ import java.util.Date;
 public class JobRspPo {
     private Integer id;
     private String name;
-    private Integer type;
+    private Integer type;   //关联类型：0-不关联；1-关联设备；2-关联工程
+    private Integer linkProjectId;
+    private String linkProjectName;
     private String description;
     private String ruleName;
     private String projectTypeName;
