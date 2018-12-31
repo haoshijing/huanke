@@ -47,5 +47,7 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
 
     List<ProjectJobInfo> queryJobDash();
 
+    Integer selectListCount(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("userId") Integer userId, @Param("projectName") String projectName);
+
     Integer queryWarningDeviceCount(@Param("customerId") Integer customerId);
 }
