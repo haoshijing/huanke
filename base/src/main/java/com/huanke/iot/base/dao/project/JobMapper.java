@@ -21,7 +21,7 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
 
     Boolean batchDelete(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
-    List<JobRspPo> selectPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId);
+    List<JobRspPo> selectPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId, @Param("projectName") String projectName);
 
     //Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
