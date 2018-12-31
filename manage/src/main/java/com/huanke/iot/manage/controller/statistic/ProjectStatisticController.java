@@ -5,6 +5,9 @@ import com.huanke.iot.base.resp.project.JobRspPo;
 import com.huanke.iot.base.resp.project.ProjectRspPo;
 import com.huanke.iot.manage.service.statistic.ProjectStatisticService;
 import com.huanke.iot.manage.service.statistic.StatisticService;
+import com.huanke.iot.manage.vo.request.device.operate.DeviceDataQueryRequest;
+import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
+import com.huanke.iot.manage.vo.response.device.operate.DeviceListVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +49,11 @@ public class ProjectStatisticController {
     @GetMapping(value = "/projectDevicePowerStatusCount/{projectId}")
     public ApiResponse<List<ProjectRspPo.ProjectCountVo>> projectDevicePowerStatusCount(@PathVariable("projectId") Integer projectId){
         return new ApiResponse<>(this.projectStatisticService.projectDevicePowerStatusCount(projectId));
+    }
+
+    @ApiOperation("告警设备统计")
+    @GetMapping(value = "/warningDeviceCount")
+    public ApiResponse<List<WarnDataVo>> warningDeviceCount(){
+        return new ApiResponse<>(this.projectStatisticService.warningDeviceCount());
     }
 }

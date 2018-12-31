@@ -21,7 +21,7 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
 
     Boolean batchDelete(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
-    List<JobRspPo> selectPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId, @Param("projectName") String projectName);
+    List<JobRspPo> selectPageList(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("start") int start, @Param("limit") int limit, @Param("userId") Integer userId);
 
     //Boolean batchForbidden(@Param("userId") Integer userId, @Param("valueList") List<Integer> valueList);
 
@@ -47,5 +47,5 @@ public interface JobMapper extends BaseMapper<ProjectJobInfo> {
 
     List<ProjectJobInfo> queryJobDash();
 
-    Integer selectListCount(@Param("projectJobInfo") ProjectJobInfo projectJobInfo, @Param("userId") Integer userId, @Param("projectName") String projectName);
+    Integer queryWarningDeviceCount(@Param("customerId") Integer customerId);
 }

@@ -3,6 +3,7 @@ package com.huanke.iot.manage.service.statistic;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
 import com.huanke.iot.base.dao.device.DeviceGroupMapper;
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.ProjectMapper;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -13,6 +14,7 @@ import com.huanke.iot.base.resp.project.ProjectRspPo;
 import com.huanke.iot.base.util.CommonUtil;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -41,6 +43,9 @@ public class ProjectStatisticService {
 
     @Autowired
     private JobMapper jobMapper;
+    
+    @Autowired
+    private DeviceMapper deviceMapper;
     /**
      * 查询 地址数量
      * @return
@@ -122,6 +127,7 @@ public class ProjectStatisticService {
         ProjectJobInfo projectJobInfo = new ProjectJobInfo();
         projectJobInfo.setCustomerId(customerId);
         projectJobInfo.setSourceType(1);
+        projectJobInfo.setWarnStatus(2);
         jobCountVo0.setDate("计划维保");
         jobCountVo0.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo0);
@@ -129,6 +135,7 @@ public class ProjectStatisticService {
         projectJobInfo = new ProjectJobInfo();
         projectJobInfo.setCustomerId(customerId);
         projectJobInfo.setSourceType(2);
+        projectJobInfo.setWarnStatus(2);
         jobCountVo1.setDate("用户反馈");
         jobCountVo1.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo1);
@@ -136,6 +143,7 @@ public class ProjectStatisticService {
         projectJobInfo = new ProjectJobInfo();
         projectJobInfo.setCustomerId(customerId);
         projectJobInfo.setSourceType(3);
+        projectJobInfo.setWarnStatus(2);
         jobCountVo2.setDate("设备告警");
         jobCountVo2.setJobCount(jobMapper.selectCount(projectJobInfo,null));
         resp.add(jobCountVo2);
@@ -168,6 +176,24 @@ public class ProjectStatisticService {
         offCount.setProjectCount(Long.valueOf(off));
         resp.add(onCount);
         resp.add(offCount);
+        return resp;
+    }
+
+    public List<WarnDataVo> warningDeviceCount(){
+        List<WarnDataVo> resp = new ArrayList<>();
+        Integer customerId = customerService.obtainCustomerId(false);
+        DevicePo devicePo = new DevicePo();
+        devicePo.setCustomerId(customerId);
+        Integer total = deviceMapper.selectCount(devicePo);
+        Integer warn = jobMapper.queryWarningDeviceCount(customerId);
+        WarnDataVo noWarnCount = new WarnDataVo();
+        noWarnCount.setName("正常设备");
+        noWarnCount.setNum(total-warn);
+        WarnDataVo warnCount = new WarnDataVo();
+        warnCount.setName("告警设备");
+        warnCount.setNum(warn);
+        resp.add(noWarnCount);
+        resp.add(warnCount);
         return resp;
     }
 }

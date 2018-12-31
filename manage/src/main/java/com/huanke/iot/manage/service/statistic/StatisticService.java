@@ -592,14 +592,17 @@ public class StatisticService {
                     city.setCount(city.getCount()+district.getCount());
                     districts.add(district);
                 }
+                Collections.sort(districts,(arg0,arg1)->{ return arg1.getCount().compareTo(arg0.getCount()); });
                 city.setDistancts(districts);
                 province.setCount(province.getCount()+city.getCount());
                 citys.add(city);
             }
+            Collections.sort(citys,(arg0,arg1)->{ return arg1.getCount().compareTo(arg0.getCount()); });
             province.setCitys(citys);
             deviceLocationCountVo.setTotal(deviceLocationCountVo.getTotal()+province.getCount());
             provinces.add(province);
         }
+        Collections.sort(provinces,(arg0,arg1)->{ return arg1.getCount().compareTo(arg0.getCount()); });
         deviceLocationCountVo.setProvinces(provinces);
         return new ApiResponse<>(deviceLocationCountVo);
     }
