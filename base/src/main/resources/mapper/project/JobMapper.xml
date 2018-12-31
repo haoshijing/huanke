@@ -407,4 +407,20 @@
         AND flowStatus != 5
         AND year(createTime)=year(curdate())
     </select>
+    <select id="queryWarningDeviceCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM (
+            SELECT linkDeviceId
+            FROM t_project_job_info
+            WHERE
+            status = 1
+            AND flowStatus != 5
+            AND flowStatus != 6
+            AND warnStatus = 2
+            AND type = 1
+            AND linkDeviceId IS NOT NULL
+            AND customerId = #{customerId}
+            GROUP BY linkDeviceId
+        ) a
+    </select>
+
 </mapper>
