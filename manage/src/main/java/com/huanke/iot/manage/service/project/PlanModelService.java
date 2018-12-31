@@ -154,8 +154,8 @@ public class PlanModelService {
         return planInfoRsp;
     }
 
-    public List<PlanRsp> queryPlanModels() {
-        List<PlanRsp> planRspList = planModelMapper.queryPlanModels();
+    public List<PlanRspPo> queryPlanModels() {
+        List<PlanRspPo> planRspList = planModelMapper.queryPlanModels();
         return planRspList;
     }
 }

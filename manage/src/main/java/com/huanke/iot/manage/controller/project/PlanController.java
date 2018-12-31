@@ -8,6 +8,7 @@ import com.huanke.iot.base.request.project.PlanQueryRequest;
 import com.huanke.iot.base.request.project.PlanRequest;
 import com.huanke.iot.base.resp.project.PlanInfoRsp;
 import com.huanke.iot.base.resp.project.PlanRsp;
+import com.huanke.iot.base.resp.project.PlanRspPo;
 import com.huanke.iot.manage.service.project.PlanModelService;
 import com.huanke.iot.manage.service.project.PlanService;
 import io.swagger.annotations.ApiOperation;
@@ -111,8 +112,8 @@ public class PlanController {
 
     @ApiOperation("查工程维保（计划）模版")
     @GetMapping(value = "/queryPlanModels")
-    public ApiResponse<List<PlanRsp>> queryPlanModels() {
-        List<PlanRsp> planRspList = planModelService.queryPlanModels();
+    public ApiResponse<List<PlanRspPo>> queryPlanModels() {
+        List<PlanRspPo> planRspList = planModelService.queryPlanModels();
         return new ApiResponse<>(planRspList);
     }
 }

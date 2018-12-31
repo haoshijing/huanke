@@ -331,7 +331,7 @@
     </select>
 
     <select id="queryPlanModels" resultType="com.huanke.iot.base.resp.project.PlanRspPo">
-        select id, name, description, linkType, isRule, ruleId from
+        select id, name, description, linkType, isRule, ruleId ,createTime from
         <include refid="tableName"/>
         where status = 1
     </select>

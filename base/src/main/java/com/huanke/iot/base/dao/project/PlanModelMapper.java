@@ -37,5 +37,5 @@ public interface PlanModelMapper extends BaseMapper<ProjectPlanModelInfo> {
 
     ProjectPlanModelInfo queryByJobId(@Param("jobId") Integer jobId);
 
-    List<PlanRsp> queryPlanModels();
+    List<PlanRspPo> queryPlanModels();
 }
