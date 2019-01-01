@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.project.JobMapper;
 import com.huanke.iot.base.dao.project.PlanMapper;
 import com.huanke.iot.base.dao.project.ProjectMapper;
 import com.huanke.iot.base.dao.project.RuleMapper;
+import com.huanke.iot.base.po.project.ProjectBaseInfo;
 import com.huanke.iot.base.po.project.ProjectJobInfo;
 import com.huanke.iot.base.po.project.ProjectPlanInfo;
 import com.huanke.iot.base.po.project.ProjectRule;
@@ -77,7 +78,12 @@ public class PlanService {
         List<PlanRspPo> planPoList = planMapper.selectPageList(projectPlan, start, limit, projectName);
         for (PlanRspPo planRspPo : planPoList) {
             if(planRspPo.getLinkType() == 2){
-                planRspPo.setLinkProjectName(projectMapper.selectById(planRspPo.getLinkProjectId()).getName());
+                if(planRspPo.getLinkProjectId() != null) {
+                    ProjectBaseInfo projectBaseInfo = projectMapper.selectById(planRspPo.getLinkProjectId());
+                    if (projectBaseInfo != null){
+                        planRspPo.setLinkProjectName(projectBaseInfo.getName());
+                    }
+                }
             }
             if(planRspPo.getIsRule() == 1){
                 planRspPo.setWarnLevel(ruleMapper.selectById(planRspPo.getRuleId()).getWarnLevel());
