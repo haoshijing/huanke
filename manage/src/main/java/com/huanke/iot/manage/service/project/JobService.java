@@ -76,7 +76,12 @@ public class JobService {
         List<JobRspPo> jobPoList = jobMapper.selectPageList(projectJob, start, limit, userId, projectName);
         for (JobRspPo jobRspPo : jobPoList) {
             if(jobRspPo.getType() == 2){
-                jobRspPo.setLinkProjectName(projectMapper.selectById(jobRspPo.getLinkProjectId()).getName());
+                if(jobRspPo.getLinkProjectId() != null) {
+                    ProjectBaseInfo projectBaseInfo = projectMapper.selectById(jobRspPo.getLinkProjectId());
+                    if (projectBaseInfo != null){
+                        jobRspPo.setLinkProjectName(projectMapper.selectById(jobRspPo.getLinkProjectId()).getName());
+                    }
+                }
             }
         }
         jobRsp.setJobRspPoList(jobPoList);
