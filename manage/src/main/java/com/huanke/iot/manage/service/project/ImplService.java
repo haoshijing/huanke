@@ -84,10 +84,11 @@ public class ImplService {
         String fileList = implementRsp.getFileList();
         implementRsp.setFileMap((Map<String, List<String>>) JSONObject.parse(fileList));
 
-        String imgListStr = implementRsp.getImgListStr();
+        String imgListStr = projectImplementLog.getImgList();
         if(imgListStr != null){
             implementRsp.setImgList(Arrays.asList(imgListStr.split(",")));
         }
+        implementRsp.setTypeName(dictMapper.selectById(projectImplementLog.getTypeId()).getLabel());
         implementRsp.setFileList(null);
         implementRsp.setImgListStr(null);
         return implementRsp;
