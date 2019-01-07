@@ -626,6 +626,7 @@ public class CustomerService {
         }
         androidConfigPo.setName(androidConfig.getName());
         androidConfigPo.setLogo(androidConfig.getLogo());
+        androidConfigPo.setVersion(androidConfig.getVersion());
         androidConfigPo.setAppUrl(androidConfig.getAppUrl());
         androidConfigPo.setQrcode(androidConfig.getQrcode());
         androidConfigPo.setDeviceChangePassword(androidConfig.getDeviceChangePassword());
