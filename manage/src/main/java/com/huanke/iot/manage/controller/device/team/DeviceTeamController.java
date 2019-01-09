@@ -3,6 +3,7 @@ package com.huanke.iot.manage.controller.device.team;
 
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
+import com.huanke.iot.base.exception.BusinessException;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
@@ -143,11 +144,14 @@ public class DeviceTeamController {
     @RequestMapping(value = "/createTrusteeQrCode",method = RequestMethod.POST)
     public ApiResponse<String> createTrusteeQrCode(@RequestBody TrusteeQrCodeRequest trusteeQrCodeRequest){
         try {
-            String code = this.deviceTeamService.createQrCode(trusteeQrCodeRequest.getTeamId());
-            return new ApiResponse<>(RetCode.OK,"生成成功",code);
+            return new ApiResponse<>(this.deviceTeamService.createQrCode(trusteeQrCodeRequest.getTeamId()));
         }
-        catch (Exception e){
-            return new ApiResponse<>(RetCode.ERROR,"二维码生成错误");
+        catch (Exception e) {
+            if (e instanceof BusinessException){
+                return new ApiResponse<>(RetCode.ERROR, e.getMessage());
+            }else {
+                return new ApiResponse<>(RetCode.ERROR, "二维码生成错误");
+            }
         }
     }
 
