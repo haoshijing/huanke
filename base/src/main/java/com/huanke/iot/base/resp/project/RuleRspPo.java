@@ -25,6 +25,7 @@ public class RuleRspPo {
     private String createName;
     private String updateName;
     private String monitorValue;//监听的设备指令集
+    private String typeName;
 
 
     private List<String> monitorValues;
