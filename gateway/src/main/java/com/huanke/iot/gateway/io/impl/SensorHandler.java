@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceSensorPo;
 import com.huanke.iot.gateway.io.AbstractHandler;
+import com.huanke.iot.gateway.mqttlistener.MqttService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,9 @@ public class SensorHandler  extends AbstractHandler {
 
     @Autowired
     private DeviceAbilityMapper deviceAbilityMapper;
+
+    @Autowired
+    private MqttService mqttService;
 
     private Map<String,Integer> maxValue;
 
@@ -70,6 +74,11 @@ public class SensorHandler  extends AbstractHandler {
 
         sensorListMessage.getDatas().forEach(sensorMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
+            if(deviceId == 444){
+                //能源管理后台测试
+                String topicPower = "/down2/powerManage/" + deviceId;
+                mqttService.sendMessage(topicPower, JSON.toJSONString(sensorMessage));
+            }
             if(sensorMessage.getChildid() != null && !sensorMessage.getChildid().equals("0")){
                 DevicePo childDevice = deviceMapper.getChildDevice(deviceId, sensorMessage.getChildid());
                 deviceId = childDevice.getId();
