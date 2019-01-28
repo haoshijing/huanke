@@ -451,6 +451,13 @@ public class DeviceDataService {
             deviceAbilitysVo.setDirValue(dirValue);
             switch (abilityType) {
                 case DeviceAbilityTypeContants.ability_type_text:
+                    if (deviceabilityPo.getWriteStatus() == 1){
+                        String data = getData(controlDatas, dirValue);
+                        if (data.equals("0") ){
+                            data = getData(datas, dirValue);
+                        }
+                        deviceAbilitysVo.setCurrValue(data);
+                    }
                     deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
                     deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
