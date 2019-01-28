@@ -160,8 +160,11 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.RuleRspPo">
-      SELECT pr.id, pr.name,pr.useType,pr.monitorValue, pr.description, pr.warnLevel, pr.createTime, pr.updateTime, pr.typeId, pr.status, u.nickName createName,u1.nickName updateName
-      FROM t_project_rule pr left join t_user u on pr.createUser = u.id left join t_user u1 on  pr.updateUser = u1.id
+      SELECT pr.id, pr.name,pr.useType,pr.monitorValue, pr.description, pr.warnLevel, pr.createTime, pr.updateTime, pr.typeId, pr.status, u.nickName createName,u1.nickName updateName,d.label typeName
+      FROM t_project_rule pr
+      left join t_user u on pr.createUser = u.id
+      left join t_user u1 on  pr.updateUser = u1.id
+      left join t_dict d on  pr.typeId = d.id
       WHERE 1=1
         <if test="projectRule.name != null and projectRule.name!='' ">
             AND pr.name like CONCAT('%',CONCAT(#{projectRule.name},'%'))

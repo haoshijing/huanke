@@ -7,6 +7,7 @@ import com.huanke.iot.base.dao.device.data.DeviceSensorDataMapper;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceSensorPo;
 import com.huanke.iot.gateway.io.AbstractHandler;
+import com.huanke.iot.gateway.mqttlistener.MqttService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,9 @@ public class SensorHandler  extends AbstractHandler {
 
     @Autowired
     private DeviceAbilityMapper deviceAbilityMapper;
+
+    @Autowired
+    private MqttService mqttService;
 
     private Map<String,Integer> maxValue;
 
@@ -68,6 +73,14 @@ public class SensorHandler  extends AbstractHandler {
         }
         SensorHandler.SensorListMessage sensorListMessage = JSON.parseObject(new String(payloads),SensorHandler.SensorListMessage.class);
 
+        Integer deviceIdPower = getDeviceIdFromTopic(topic);
+        if(deviceIdPower == 444){
+            //能源管理后台测试
+            String topicPower = "/down2/powerManage/" + deviceIdPower;
+            mqttService.sendMessage(topicPower, JSON.toJSONString(sensorListMessage));
+        }
+
+        List<SensorHandler.SensorMessage> datasPower = new ArrayList<>();
         sensorListMessage.getDatas().forEach(sensorMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
             if(sensorMessage.getChildid() != null && !sensorMessage.getChildid().equals("0")){
