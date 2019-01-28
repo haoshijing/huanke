@@ -457,9 +457,11 @@ public class DeviceDataService {
                             data = getData(datas, dirValue);
                         }
                         deviceAbilitysVo.setCurrValue(data);
+                        deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
+                    }else {
+                        deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
+                        deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     }
-                    deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
-                    deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     break;
                 case DeviceAbilityTypeContants.ability_type_single:
                     List<DeviceAbilityOptionPo> deviceabilityOptionPos = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
