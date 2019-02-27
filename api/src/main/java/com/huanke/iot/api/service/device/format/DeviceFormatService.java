@@ -1,6 +1,7 @@
 package com.huanke.iot.api.service.device.format;
 
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
+import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
@@ -82,8 +83,8 @@ public class DeviceFormatService {
         DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, wxFormatPagePo.getId());
         Integer modelFormatId = deviceModelFormatPo.getId();
         deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
-        CustomerPo customerPo = customerMapper.selectById(devicePo.getCustomerId());
-        //deviceModelVo.setCompanyName(customerPo.getPublicName());
+        CustomerPo customerPo = customerMapper.selectById(UserRequestContextHolder.get().getCustomerVo().getCustomerId());
+        deviceModelVo.setCompanyName(customerPo.getPublicName());
         //查型号版式配置项
         List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
         deviceModelVo.setPageName(wxFormatPagePo.getName());
