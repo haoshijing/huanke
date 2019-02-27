@@ -14,6 +14,7 @@ public class DeviceModelVo {
     private String typeNo;
     private List<Abilitys> abilitysList;
     private List<FormatItems> formatItemsList;
+    private String companyName;
 
     @Data
     public static class Abilitys{
