@@ -83,7 +83,7 @@ public class DeviceFormatService {
         Integer modelFormatId = deviceModelFormatPo.getId();
         deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
         CustomerPo customerPo = customerMapper.selectById(devicePo.getCustomerId());
-        deviceModelVo.setCompanyName(customerPo.getPublicName());
+        //deviceModelVo.setCompanyName(customerPo.getPublicName());
         //查型号版式配置项
         List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
         deviceModelVo.setPageName(wxFormatPagePo.getName());
