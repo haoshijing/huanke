@@ -55,7 +55,7 @@ public class DeviceAbilityService {
 
         if(StringUtils.isNotBlank(abilityRequest.getAbilityCode())){
             DeviceAbilityPo queryAbilityPo = deviceAbilityMapper.selectByAbilityCode(abilityRequest.getAbilityCode());
-            if(queryAbilityPo!=null&&queryAbilityPo.getId().equals(abilityRequest.getId())){
+            if(queryAbilityPo!=null&&!queryAbilityPo.getId().equals(abilityRequest.getId())){
                 return new ApiResponse<>(RetCode.PARAM_ERROR,"已存在此功能项代码");
             }
         }
