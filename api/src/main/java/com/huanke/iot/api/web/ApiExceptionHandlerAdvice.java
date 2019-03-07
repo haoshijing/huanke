@@ -20,14 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ApiExceptionHandlerAdvice {
     @ResponseBody
     @ExceptionHandler
-    public ApiResponse processException(Exception e){
-        log.error("{123}",e);
-        ApiResponse apiResponse = ApiResponse.responseError(e);
-        return apiResponse;
-    }
-
-    @ResponseBody
-    @ExceptionHandler
     public ApiResponse processException(HttpMessageNotReadableException e){
         UserRequestContext requestContext = UserRequestContextHolder.get();
         log.info(requestContext.getRequestInfo());
