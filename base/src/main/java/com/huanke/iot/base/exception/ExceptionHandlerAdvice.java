@@ -7,9 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author haoshijing
@@ -55,6 +59,13 @@ public class ExceptionHandlerAdvice {
         return apiResponse;
     }
 
+    @ResponseBody
+    @ExceptionHandler
+    public ApiResponse processException(HttpMessageNotReadableException e){
+        log.error("Exception!!{"+e.getClass().getName()+"}:"+e.getCause().getMessage());
+        ApiResponse apiResponse = ApiResponse.responseError(e);
+        return apiResponse;
+    }
     //@ResponseBody
     //@ExceptionHandler
     //public ApiResponse processException(Exception e) {
