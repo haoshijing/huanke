@@ -30,13 +30,13 @@ public class AppAuthInterceptor  extends HandlerInterceptorAdapter {
             throws Exception {
         String imei = request.getHeader(TICKET);
         String appId = request.getHeader(APPID);
-        log.info("app request:imei={},appId={},url={}",imei,appId,request.getServletPath());
         if(StringUtils.isNotEmpty(imei)){
             CustomerUserPo customerUserPo = userService.getUserByIMeiAndAppId(imei,appId);
             //判断是否注册
             if(customerUserPo != null){
                 CustomerPo customerByOpenId = userService.getCustomerById(customerUserPo.getCustomerId());
                 UserRequestContext requestContext = UserRequestContextHolder.get();
+                requestContext.setRequestInfo("app request:imei={"+imei+"},appId={"+appId+"},url={"+request.getServletPath()+"}");
                 requestContext.setCurrentId(customerUserPo.getId());
                 if(customerByOpenId != null){
                     //此处必进入

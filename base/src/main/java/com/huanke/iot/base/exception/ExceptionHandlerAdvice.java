@@ -59,13 +59,7 @@ public class ExceptionHandlerAdvice {
         return apiResponse;
     }
 
-    @ResponseBody
-    @ExceptionHandler
-    public ApiResponse processException(HttpMessageNotReadableException e){
-        log.error("Exception!!{"+e.getClass().getName()+"}:"+e.getCause().getMessage());
-        ApiResponse apiResponse = ApiResponse.responseError(e);
-        return apiResponse;
-    }
+
     //@ResponseBody
     //@ExceptionHandler
     //public ApiResponse processException(Exception e) {
