@@ -10,6 +10,7 @@ public class UserRequestContext {
     private String openId;
     private CustomerVo customerVo;
 
+    private String requestInfo;
     @Data
     public static class CustomerVo{
         private Integer customerId;
