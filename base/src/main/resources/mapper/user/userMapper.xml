@@ -19,6 +19,7 @@
         realName,
         nickName,
         telephone,
+        location,
         roleId,
         openID,
         appId,
@@ -37,6 +38,7 @@
         #{realName},
         #{nickName},
         #{telephone},
+        #{location},
         #{roleId},
         #{openID},
         #{appId},
@@ -68,6 +70,9 @@
             </if>
             <if test="telephone != null and telephone != ''">
                 telephone = #{telephone},
+            </if>
+            <if test="location != null and location != ''">
+                location = #{location},
             </if>
             <if test="roleId != null ">
                 roleId = #{roleId},

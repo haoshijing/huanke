@@ -22,6 +22,8 @@ public class User implements Serializable {
 
     private String telephone;
 
+    private String location;
+
     private Integer roleId;
 
     private String roleName;

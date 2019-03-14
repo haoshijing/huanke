@@ -79,4 +79,11 @@ public class UserService {
         }
 
     }
+
+    public Boolean updataLocation(Integer id ,String location){
+        User user = userManagerMapper.selectById(id);
+        user.setLocation(location);
+        userManagerMapper.updateById(user);
+        return null;
+    }
 }
