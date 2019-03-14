@@ -28,10 +28,9 @@ public class UserController {
     private UserService userService;
 
     @ApiOperation("修改用户大数据看板地址信息")
-    @PostMapping(value = "updataLocation")
+    @PostMapping(value = "/updataLocation")
     public ApiResponse<Boolean> updataLocation(@RequestBody BaseRequest<String> request) {
         User currentUser = userService.getCurrentUser();
-        userService.updataLocation(currentUser.getId(),request.getValue());
-        return null;
+        return new ApiResponse<>(userService.updataLocation(currentUser.getId(),request.getValue()));
     }
 }
