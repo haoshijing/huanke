@@ -78,4 +78,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<LinkGroupDeviceRspPo> selectByGroupId(@Param("groupId") Integer groupId);
 
     List<DevicePo> selectByIdList(@Param("deviceIdList") List<Integer> deviceIdList);
+
+    DevicePo selectEnergyDevice(@Param("id") Integer id);
 }

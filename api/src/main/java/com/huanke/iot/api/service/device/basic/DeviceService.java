@@ -120,6 +120,7 @@ public class DeviceService {
         }
         //查询设备列表
         DeviceListVo deviceListVo = new DeviceListVo();
+
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
         queryDevicePo.setMasterUserId(userId);
         queryDevicePo.setStatus(CommonConstant.STATUS_YES);
@@ -178,9 +179,16 @@ public class DeviceService {
                     List<DeviceTeamItemPo> itemPos = deviceTeamMapper.queryTeamItems(queryDeviceTeamItem);
                     List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().map(deviceTeamItemPo -> {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
-
+                        if(deviceTeamItemPo.getManageName()!=null && deviceTeamItemPo.getManageName().equals("ENERGY")){
+                            DevicePo devicePo = deviceMapper.selectEnergyDevice(deviceTeamItemPo.getDeviceId());
+                            deviceItemPo.setMac(devicePo.getMac());
+                            deviceItemPo.setDeviceNo(devicePo.getDeviceNo());
+                            deviceItemPo.setDeviceName(devicePo.getName());
+                            return deviceItemPo;
+                        }
                         //1106
                         DeviceListDto deviceListDto = deviceMapper.queryDeviceList(deviceTeamItemPo.getDeviceId());
+
                         deviceItemPo.setDeviceId(deviceListDto.getDeviceId());
                         deviceItemPo.setMac(deviceListDto.getMac());
                         deviceItemPo.setWxDeviceId(deviceListDto.getWxDeviceId());

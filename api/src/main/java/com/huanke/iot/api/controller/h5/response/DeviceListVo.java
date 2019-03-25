@@ -52,6 +52,10 @@ public class DeviceListVo {
          */
         private String deviceName;
         /**
+         * 设备No
+         */
+        private String deviceNo;
+        /**
          * 客户名称
          */
         private String customerName;

@@ -30,6 +30,8 @@ public class DevicePo {
     private String mac;
     private String saNo;
 
+    private String deviceNo;
+
 
 
     //设备序列号

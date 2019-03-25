@@ -200,6 +200,14 @@
         LIMIT 1
     </select>
 
+    <select id="selectEnergyDevice" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
+        SELECT
+        *
+        FROM t_device
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
     <select id="selectByMac" parameterType="java.lang.String" resultType="com.huanke.iot.base.po.device.DevicePo">
         select
         *
