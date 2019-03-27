@@ -183,7 +183,9 @@ public class DeviceService {
                             DevicePo devicePo = deviceMapper.selectEnergyDevice(deviceTeamItemPo.getDeviceId());
                             deviceItemPo.setMac(devicePo.getMac());
                             deviceItemPo.setDeviceNo(devicePo.getDeviceNo());
+                            deviceItemPo.setDeviceId(Integer.valueOf(devicePo.getDeviceNo()));
                             deviceItemPo.setDeviceName(devicePo.getName());
+                            deviceItemPo.setFormatName(devicePo.getName());
                             return deviceItemPo;
                         }
                         //1106
