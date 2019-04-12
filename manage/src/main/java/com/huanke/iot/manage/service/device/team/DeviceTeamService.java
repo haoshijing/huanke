@@ -276,6 +276,7 @@ public class DeviceTeamService {
                 deviceTeamVo.setCreateTime(deviceTeamPo.getCreateTime());
             }
             //获取当前管理员的相关信息
+            System.out.println(deviceTeamPo.toString());
             customerUserPo = this.customerUserMapper.selectByUserId(deviceTeamPo.getMasterUserId());
             deviceTeamVo.setMasterOpenId(customerUserPo.getOpenId());
             deviceTeamVo.setMasterNickName(customerUserPo.getNickname());
