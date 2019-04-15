@@ -492,4 +492,8 @@ public class DeviceService {
         }
         return childDevicePos;
     }
+
+    public DevicePo selectByDeviceMac(String mac) {
+        return deviceMapper.selectByMac(mac);
+    }
 }

@@ -9,6 +9,7 @@ import com.huanke.iot.api.vo.SpeedConfigRequest;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.dao.device.data.DeviceOperLogMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -278,6 +279,13 @@ public class DeviceController extends BaseController {
         log.info("查询背景图片信息：customerId={}", customerId);
         List<String> bgImgs = deviceDataService.queryBgImgs(customerId);
         return new ApiResponse<>(bgImgs);
+    }
+
+    @RequestMapping("/getCurrData/{mac}")
+    public ApiResponse<Map<Object, Object>> getCurrData(@PathVariable("mac") String mac) {
+        DevicePo devicePo = deviceService.selectByDeviceMac(mac);
+        Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
+        return new ApiResponse<>(datas);
     }
 
 
