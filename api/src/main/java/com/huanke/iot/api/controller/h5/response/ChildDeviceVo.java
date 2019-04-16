@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class ChildDeviceVo {
     private Integer id;
+    private String customerName;
     private String deviceName;
     private String childId;
     private String deviceTypeName;

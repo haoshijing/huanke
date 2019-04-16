@@ -123,7 +123,8 @@ public class DeviceHighController extends BaseController{
     @RequestMapping("childDeviceList/{hostDeviceId}")
     public Object childDeviceList(@PathVariable("hostDeviceId") Integer hostDeviceId){
         log.info("从设备列表：hostDeviceId={}", hostDeviceId);
-        List<ChildDeviceVo> childDeviceVoList = deviceHighService.childDeviceList(hostDeviceId);
+        Integer customerId = getCurrentCustomerId();
+        List<ChildDeviceVo> childDeviceVoList = deviceHighService.childDeviceList(hostDeviceId,customerId);
         return new ApiResponse<>(childDeviceVoList);
     }
 
