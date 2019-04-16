@@ -24,7 +24,7 @@ public interface DeviceModelMapper extends BaseMapper<DeviceModelPo> {
 
     Integer getFormatIdById(Integer modelId);
 
-    List<DeviceModelPo> selectModelsByCustomerId(Integer customerId);
+    List<DeviceModelPo> selectModelsByParentModelId(Integer modelId);
 
     List selectModelPercent(@Param("customerId")Integer customerId);
 

@@ -152,13 +152,17 @@
         WHERE productId = #{productId} limit 1
     </select>
 
-    <select id="selectModelsByCustomerId" parameterType="java.lang.Integer"
+    <select id="selectModelsByParentModelId" parameterType="java.lang.Integer"
             resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelPo">
         select
         *
         FROM
         <include refid="tableName"/>
-        WHERE customerId = #{customerId}
+        WHERE id IN
+        (SELECT DISTINCT substring_index( substring_index( a.childModelIds, ',', b.help_topic_id + 1 ), ',',- 1 ) NAME
+        FROM t_device_model a
+        JOIN mysql.help_topic b ON b.help_topic_id &lt; ( length( a.childModelIds ) - length( REPLACE ( a.childModelIds, ',', '' ) ) + 1 )
+        WHERE a.id = #{modelId})
         AND status = 1
     </select>
 

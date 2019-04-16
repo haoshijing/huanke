@@ -22,9 +22,10 @@ public class DeviceModelService {
     @Autowired
     private DeviceModelMapper deviceModelMapper;
 
-    public List<DeviceModelTypeVo> selectByCustomerId(Integer customerId) {
+    public List<DeviceModelTypeVo> selectByCustomerId(Integer modelId) {
         List<DeviceModelTypeVo> deviceModelTypeVoList = new ArrayList<>();
-        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectModelsByCustomerId(customerId);
+        List<DeviceModelPo> deviceModelPos = deviceModelMapper.selectModelsByParentModelId(modelId);
+
         for (DeviceModelPo deviceModelPo : deviceModelPos) {
             DeviceModelTypeVo deviceModelTypeVo = new DeviceModelTypeVo();
             deviceModelTypeVo.setId(deviceModelPo.getId());
