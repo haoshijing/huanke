@@ -7,11 +7,13 @@ import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
 import com.huanke.iot.api.controller.h5.response.DeviceIconItem;
 import com.huanke.iot.api.gateway.MqttSendService;
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.WxConfigMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dao.format.WxFormatMapper;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.WxConfigPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
@@ -49,7 +51,8 @@ public class DeviceHighService {
 
     @Autowired
     private WxFormatMapper wxFormatMapper;
-
+    @Autowired
+    private CustomerMapper customerMapper;
     @Autowired
     private MqttSendService mqttSendService;
 
@@ -119,8 +122,9 @@ public class DeviceHighService {
      * @param hostDeviceId
      * @return
      */
-    public List<ChildDeviceVo> childDeviceList(Integer hostDeviceId) {
+    public List<ChildDeviceVo> childDeviceList(Integer hostDeviceId,Integer customerId) {
         DevicePo hostDevice = deviceMapper.selectById(hostDeviceId);
+        CustomerPo customerPo = customerMapper.selectById(customerId);
         Integer powerStatus = hostDevice.getPowerStatus();
         List<DevicePo> devicePoList = deviceMapper.selectChildDeviceListByHostDeviceId(hostDeviceId);
         List<ChildDeviceVo> childDeviceVos = new ArrayList<>();
@@ -141,6 +145,7 @@ public class DeviceHighService {
             }
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);
             childDeviceVo.setDeviceTypeName(deviceTypePo.getName());
+            childDeviceVo.setCustomerName(customerPo.getName());
         }
         return childDeviceVos;
     }
