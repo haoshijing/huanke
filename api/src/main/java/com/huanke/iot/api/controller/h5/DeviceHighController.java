@@ -92,10 +92,10 @@ public class DeviceHighController extends BaseController{
      * 返回客户类型列表
      * @return
      */
-    @RequestMapping("modelList/{customerId}")
-    public Object modelList(@PathVariable("customerId") Integer customerId){
-        log.info("返回客户型号列表：customerId={}", customerId);
-        List<DeviceModelTypeVo> deviceModelTypeVoList = deviceModelService.selectByCustomerId(customerId);
+    @RequestMapping("modelList/{modelId}")
+    public Object modelList(@PathVariable("modelId") Integer modelId){
+        log.info("返回客户从机型号列表,：parentModelId={}", modelId);
+        List<DeviceModelTypeVo> deviceModelTypeVoList = deviceModelService.selectByCustomerId(modelId);
         return new ApiResponse<>(deviceModelTypeVoList);
     }
 
