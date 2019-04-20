@@ -30,7 +30,7 @@ public enum SensorTypeEnums {
      * 30-浮尘,31-扬沙,32-强沙尘暴,33-霾
      */
 	WEATHER("17F","天气",""),
-    ANION_IN("180","室内负离子","个/m³");
+    ANION_IN("180","室内负离子","个/cm³");
 
     SensorTypeEnums(String code, String mark, String unit) {
         this.code = code;
