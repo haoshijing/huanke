@@ -8,6 +8,8 @@ import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppDeviceListVo;
 import com.huanke.iot.api.controller.h5.response.DeviceAbilitysVo;
+import com.huanke.iot.api.requestcontext.UserRequestContext;
+import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.DeviceTeamConstants;
 import com.huanke.iot.base.dao.customer.*;
@@ -100,7 +102,7 @@ public class AppDeviceDataService {
         CustomerUserPo customerUserPo = customerUserMapper.selectById(userId);
         CustomerPo customerPo = customerMapper.selectById(customerUserPo.getCustomerId());
         AppDeviceListVo deviceListVo = new AppDeviceListVo();
-
+        UserRequestContext requestContext = UserRequestContextHolder.get();
         DeviceTeamPo queryDevicePo = new DeviceTeamPo();
         queryDevicePo.setMasterUserId(userId);
         queryDevicePo.setStatus(CommonConstant.STATUS_YES);
@@ -116,7 +118,18 @@ public class AppDeviceDataService {
 
                 String icon = deviceTeamPo.getIcon();
                 if (StringUtils.isEmpty(icon)&&androidConfigPo!=null) {
-                    icon = JSON.parseArray(androidConfigPo.getAppInfos(),AndroidConfigPo.AppInfo.class).get(0).getLogo();
+                    if (StringUtils.isNotEmpty(requestContext.getAppNo())){
+                        List<AndroidConfigPo.AppInfo> appInfos = JSONObject.parseArray(androidConfigPo.getAppInfos(),AndroidConfigPo.AppInfo.class);
+                        if (appInfos!=null && appInfos.size()>0){
+                            for (int i = 0 ; i < appInfos.size(); i++){
+                                if (requestContext.getAppNo().equals(appInfos.get(i).getAppNo())){
+                                    icon = appInfos.get(i).getLogo();
+                                }
+                            }
+                        }
+                    }else {
+                        icon = JSON.parseArray(androidConfigPo.getAppInfos(), AndroidConfigPo.AppInfo.class).get(0).getLogo();
+                    }
                 }
                 String qrcode = deviceTeamPo.getQrcode();
                 if (StringUtils.isEmpty(qrcode)&&androidConfigPo!=null) {
