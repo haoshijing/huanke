@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huanke.iot.base.dao.data.DeviceExportDataMapper">
+
+    <sql id="tableName">
+        t_mail_data_device
+    </sql>
+    <!-- 插入一条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huanke.iot.base.po.data.DeviceExportDataPo">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        mac
+        )
+        VALUES
+        (
+        #{mac}
+        )
+    </insert>
+
+    <insert id="addMac">
+        INSERT INTO
+        <include refid="tableName"/>
+        (
+        mac
+        )
+        VALUES
+        <foreach collection="macList" item="mac" separator=",">
+            (
+            #{mac}
+            )
+        </foreach>
+    </insert>
+
+    <select id="queryExportDataDevice" resultType="com.huanke.iot.base.dto.DeviceIdMacDto">
+        SELECT d.id deviceId, d.mac mac FROM t_device d
+        INNER JOIN t_mail_data_device m ON d.mac = m.mac
+        WHERE 1=1
+    </select>
+
+    <select id="selectCount"  resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="tableName"/>
+        where 1=1
+    </select>
+
+    <select id="selectPageList" resultType="com.huanke.iot.base.po.data.DeviceExportDataPo">
+        SELECT d.id, d.mac
+        FROM t_mail_data_device d
+        WHERE 1=1
+        LIMIT #{start},#{limit}
+    </select>
+
+
+    <delete id="batchDelete">
+        DELETE FROM <include refid="tableName"/>
+        WHERE id IN
+        <foreach item="ids" collection="valueList" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+</mapper>

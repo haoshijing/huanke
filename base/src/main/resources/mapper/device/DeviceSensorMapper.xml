@@ -55,4 +55,15 @@
            ]]>
     </delete>
 
+    <select id="queryExportDataByDeviceId" resultType="com.huanke.iot.base.po.device.data.DeviceSensorPo">
+        select t.*
+        from <include refid="tableName"/> t
+        where createTime > #{startTime}
+        <![CDATA[
+         and createTime <= #{endTime}
+           ]]>
+        and deviceId = #{deviceId}
+        order by createTime
+    </select>
+
 </mapper>

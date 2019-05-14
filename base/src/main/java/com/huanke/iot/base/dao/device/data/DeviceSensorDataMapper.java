@@ -26,4 +26,6 @@ public interface DeviceSensorDataMapper extends BaseMapper<DeviceSensorPo> {
     );
 
     void clearData(@Param("lastTime")long millis);
+
+    List<DeviceSensorPo> queryExportDataByDeviceId(@Param("deviceId") Integer deviceId, @Param("startTime") long startTime,  @Param("endTime") long endTime);
 }

@@ -41,6 +41,7 @@ public class WebMvcConf extends WebMvcConfigurerAdapter {
                 excludePathPatterns("/api/device/updateDeviceId").
                 excludePathPatterns("/api/device/resetPid").
                 excludePathPatterns("/api/device/upload", "/api/upload").
-                excludePathPatterns("/api/customer/selectBackendConfigBySLD");
+                excludePathPatterns("/api/customer/selectBackendConfigBySLD").
+                excludePathPatterns("/api/test/**");
     }
 }

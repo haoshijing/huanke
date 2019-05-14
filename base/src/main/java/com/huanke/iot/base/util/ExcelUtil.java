@@ -1,4 +1,4 @@
-package com.huanke.iot.manage.common.util;
+package com.huanke.iot.base.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
