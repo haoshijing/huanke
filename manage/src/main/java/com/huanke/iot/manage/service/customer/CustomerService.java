@@ -1,5 +1,6 @@
 package com.huanke.iot.manage.service.customer;
 
+import com.alibaba.fastjson.JSON;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.constant.CommonConstant;
 import com.huanke.iot.base.constant.RetCode;
@@ -241,11 +242,13 @@ public class CustomerService {
         //如果存在该安卓配置，则进行更新 否则进行新增
         if (androidConfigPo != null) {
             BeanUtils.copyProperties(androidConfig, androidConfigPo);
+            androidConfigPo.setAppInfos(JSON.toJSONString(androidConfig.getAppInfos()));
             androidConfigPo.setLastUpdateTime(System.currentTimeMillis());
             androidConfigMapper.updateById(androidConfigPo);
         } else {
             androidConfigPo = new AndroidConfigPo();
             BeanUtils.copyProperties(androidConfig, androidConfigPo);
+            androidConfigPo.setAppInfos(JSON.toJSONString(androidConfig.getAppInfos()));
             androidConfigPo.setCreateTime(System.currentTimeMillis());
             androidConfigPo.setCustomerId(customerPo.getId());
             androidConfigPo.setStatus(CommonConstant.STATUS_YES);
@@ -474,6 +477,13 @@ public class CustomerService {
             AndroidConfigPo resultAndroidConfigPo = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
             if (resultAndroidConfigPo != null) {
                 BeanUtils.copyProperties(resultAndroidConfigPo, androidConfigVo);
+                if (StringUtils.isNotEmpty(resultAndroidConfigPo.getAppInfos())){
+                    androidConfigVo.setAppInfos(JSON.parseArray(resultAndroidConfigPo.getAppInfos(),AndroidConfigPo.AppInfo.class));
+                }else{
+                    List<AndroidConfigPo.AppInfo> appinfos = new ArrayList<>();
+                    appinfos.add(new AndroidConfigPo.AppInfo());
+                    androidConfigVo.setAppInfos(appinfos);
+                }
                 //查询 安卓场景
                 AndroidScenePo resultAndroidScenePo = androidSceneMapper.selectByConfigId(resultAndroidConfigPo.getId());
 
@@ -624,10 +634,7 @@ public class CustomerService {
         if(!customerPo.getLoginName().equals(userService.getCurrentUser().getUserName())){
             return new ApiResponse<>(RetCode.AUTH_ERROR,"权限不足");
         }
-        androidConfigPo.setName(androidConfig.getName());
-        androidConfigPo.setLogo(androidConfig.getLogo());
-        androidConfigPo.setVersion(androidConfig.getVersion());
-        androidConfigPo.setAppUrl(androidConfig.getAppUrl());
+        androidConfigPo.setAppInfos(JSON.toJSONString(androidConfig.getAppInfos()));
         androidConfigPo.setQrcode(androidConfig.getQrcode());
         androidConfigPo.setDeviceChangePassword(androidConfig.getDeviceChangePassword());
         androidConfigPo.setLastUpdateTime(System.currentTimeMillis());

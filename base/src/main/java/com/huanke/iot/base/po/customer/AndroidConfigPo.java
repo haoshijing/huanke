@@ -11,14 +11,19 @@ public class AndroidConfigPo {
 
     private Integer id;
     private Integer customerId; //客户ID
-    private String name;    //app名称
-    private String logo;    //logo图标
-    private String appUrl;  //app更新下载地址
+    private String appInfos;
     private String qrcode;  //二维码图标
-    private String version; //版本
     private Integer status = CommonConstant.STATUS_YES;   //
     private Long createTime;
     private Long lastUpdateTime;
     private String deviceChangePassword;    //设备切换时的密码
 
+    @Data
+    public static class AppInfo {
+        private String appNo;
+        private String name;
+        private String logo;
+        private String appUrl;
+        private String version;
+    }
 }

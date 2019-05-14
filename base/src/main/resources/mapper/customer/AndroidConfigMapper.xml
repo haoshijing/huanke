@@ -11,22 +11,16 @@
         INSERT INTO <include refid="tableName"/>
         (
         customerId,
-        name,
-        logo,
-        appUrl,
+        appInfos,
         qrcode,
-        version,
         status,
         createTime,
         deviceChangePassword
         )
         VALUES (
         #{customerId},
-        #{name},
-        #{logo},
-        #{appUrl},
+        #{appInfos},
         #{qrcode},
-        #{version},
         #{status},
         #{createTime},
         #{deviceChangePassword}
@@ -41,20 +35,11 @@
             <if test="customerId != null ">
                 customerId = #{customerId},
             </if>
-            <if test="name != null  and name != ''">
-                name = #{name},
-            </if>
-            <if test="logo != null  and logo != '' ">
-                logo = #{logo},
-            </if>
-            <if test="appUrl != null  and appUrl != '' ">
-                appUrl = #{appUrl},
+            <if test="appInfos != null  and appInfos != ''">
+                appInfos = #{appInfos},
             </if>
             <if test="qrcode != null">
                 qrcode = #{qrcode},
-            </if>
-            <if test="version != null  and version != '' ">
-                version = #{version},
             </if>
             <if test="deviceChangePassword != null  and deviceChangePassword != '' ">
                 deviceChangePassword = #{deviceChangePassword},

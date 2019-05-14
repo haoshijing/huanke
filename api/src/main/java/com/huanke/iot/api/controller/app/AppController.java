@@ -149,7 +149,8 @@ public class AppController extends BaseController {
 //        }
 //        return new ApiResponse<>();
         String appId = request.getParameter("appId");
-        return new ApiResponse<>(appBasicService.getApkInfo(appId));
+        String appNo = request.getParameter("appNo");
+        return new ApiResponse<>(appBasicService.getApkInfo(appId,appNo));
     }
 
     @RequestMapping("/sendFunc")

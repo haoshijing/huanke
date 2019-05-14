@@ -1,6 +1,7 @@
 package com.huanke.iot.manage.vo.request.customer;
 
 import com.huanke.iot.base.constant.CommonConstant;
+import com.huanke.iot.base.po.customer.AndroidConfigPo;
 import lombok.Data;
 
 import java.util.List;
@@ -87,14 +88,12 @@ public class CustomerVo {
     public static class AndroidConfig {
         //        private Integer id;
         private String qrcode;   //二维码
-        private String name;
-        private String logo;
-        private String appUrl;
-        private String version;
+        private List<AndroidConfigPo.AppInfo> appInfos;
         private String deviceChangePassword;    //设备切换密码
         private Integer status = CommonConstant.STATUS_YES;
         private AndroidScene androidScene;  //场景
     }
+
 
 
     /**

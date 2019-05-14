@@ -294,16 +294,29 @@ public class AppBasicService {
         return sensorDataVos;
     }
 
-    public AppInfoVo getApkInfo(String appId){
+    public AppInfoVo getApkInfo(String appId,String appNo){
         CustomerPo customerPo = customerMapper.selectByAppId(appId);
         if(customerPo != null){
             AndroidConfigPo androidConfig = androidConfigMapper.selectConfigByCustomerId(customerPo.getId());
             if(androidConfig!=null){
                 AppInfoVo appInfoVo = new AppInfoVo();
-                appInfoVo.setVersionName(androidConfig.getName());
-                appInfoVo.setApkUrl(androidConfig.getAppUrl());
-                appInfoVo.setVersionCode(androidConfig.getVersion());
-                return appInfoVo;
+                List<AndroidConfigPo.AppInfo> appInfos = JSONObject.parseArray(androidConfig.getAppInfos(),AndroidConfigPo.AppInfo.class);
+                if (appInfos!=null && appInfos.size()>0){
+                    if (StringUtils.isEmpty(appNo)){
+                        appInfoVo.setVersionName(appInfos.get(0).getName());
+                        appInfoVo.setApkUrl(appInfos.get(0).getAppUrl());
+                        appInfoVo.setVersionCode(appInfos.get(0).getVersion());
+                        return appInfoVo;
+                    }
+                    for (int i = 0 ; i < appInfos.size(); i++){
+                        if (appNo.equals(appInfos.get(i).getAppNo())){
+                            appInfoVo.setVersionName(appInfos.get(i).getName());
+                            appInfoVo.setApkUrl(appInfos.get(i).getAppUrl());
+                            appInfoVo.setVersionCode(appInfos.get(i).getVersion());
+                            return appInfoVo;
+                        }
+                    }
+                }
             }
         }
         return new AppInfoVo();
