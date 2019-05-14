@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.huanke.iot.api.constants.Constants;
@@ -115,7 +116,7 @@ public class AppDeviceDataService {
 
                 String icon = deviceTeamPo.getIcon();
                 if (StringUtils.isEmpty(icon)&&androidConfigPo!=null) {
-                    icon = androidConfigPo.getLogo();
+                    icon = JSON.parseArray(androidConfigPo.getAppInfos(),AndroidConfigPo.AppInfo.class).get(0).getLogo();
                 }
                 String qrcode = deviceTeamPo.getQrcode();
                 if (StringUtils.isEmpty(qrcode)&&androidConfigPo!=null) {
