@@ -9,6 +9,7 @@ public class UserRequestContext {
     private Integer currentId;
     private String openId;
     private CustomerVo customerVo;
+    private String appNo;
 
     private String requestInfo;
     @Data
