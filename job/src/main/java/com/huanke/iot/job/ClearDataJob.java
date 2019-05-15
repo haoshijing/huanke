@@ -19,7 +19,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import javax.mail.internet.MimeMessage;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -58,14 +57,14 @@ public class ClearDataJob {
         deviceSensorDataMapper.clearData(lastFiveTime);
     }
 
-    @Scheduled(cron = "0 12 21 * * ?")
+    @Scheduled(cron = "0 35 21 * * ?")
     public void exportDeviceData() throws Exception {
         log.info("export device data...");
         List<DeviceIdMacDto> deviceIdMacDtoList = deviceExportDataMapper.queryExportDataDevice();
 //        long startTime = System.currentTimeMillis() - (65 * 60 * 1000) - (60 * 24 * 60 * 1000) ;
 //        long endTime = System.currentTimeMillis() - (65 * 60 * 1000);
-        long startTime = System.currentTimeMillis() - (12 * 60 * 1000) - (60 * 11 * 60 * 1000) ;
-        long endTime = System.currentTimeMillis() - (12 * 60 * 1000) - (60 * 4 * 60 * 1000) ;
+        long startTime = System.currentTimeMillis() - (35 * 60 * 1000) - (60 * 11 * 60 * 1000) ;
+        long endTime = System.currentTimeMillis() - (35 * 60 * 1000) - (60 * 4 * 60 * 1000) ;
         for (DeviceIdMacDto deviceIdMacDto : deviceIdMacDtoList) {
             Integer deviceId = deviceIdMacDto.getDeviceId();
             List<DeviceSensorPo> deviceSensorPos = deviceSensorDataMapper.queryExportDataByDeviceId(deviceId, startTime, endTime);
@@ -90,7 +89,7 @@ public class ClearDataJob {
             titles[3] = "单位";
             titles[4] = "时间";
             String dateFormat = new DateTime().minusDays(1).toString("yyyy-MM-dd");
-            deviceListVoExcelUtil.exportExcel(new FileOutputStream("/usr/local/dev/daydatas/" + "设备传感器数据-" + deviceIdMacDto.getMac() + "-" + dateFormat + ".xls") , "test1", titles, deviceExportVoList, filterMap, "2007");
+            //deviceListVoExcelUtil.exportExcel(new FileOutputStream("/usr/local/dev/daydatas/" + "设备传感器数据-" + deviceIdMacDto.getMac() + "-" + dateFormat + ".xls") , "test1", titles, deviceExportVoList, filterMap, "2007");
             try {
                 InputStreamSource test1 = deviceListVoExcelUtil.createOutPutStream("test1", titles, deviceExportVoList, filterMap, "2007");
                 //发送邮件
