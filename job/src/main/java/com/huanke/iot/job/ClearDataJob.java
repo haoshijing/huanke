@@ -57,7 +57,7 @@ public class ClearDataJob {
         deviceSensorDataMapper.clearData(lastFiveTime);
     }
 
-    @Scheduled(cron = "0 51 9 * * ?")
+    @Scheduled(cron = "0 12 10 * * ?")
     public void exportDeviceData() throws Exception {
         log.info("export device data...");
         List<DeviceIdMacDto> deviceIdMacDtoList = deviceExportDataMapper.queryExportDataDevice();
