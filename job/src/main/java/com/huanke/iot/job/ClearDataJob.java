@@ -57,12 +57,12 @@ public class ClearDataJob {
         deviceSensorDataMapper.clearData(lastFiveTime);
     }
 
-    @Scheduled(cron = "0 17 10 * * ?")
+    @Scheduled(cron = "0 26 10 * * ?")
     public void exportDeviceData() throws Exception {
         log.info("export device data...");
         List<DeviceIdMacDto> deviceIdMacDtoList = deviceExportDataMapper.queryExportDataDevice();
         long startTime = System.currentTimeMillis() - (65 * 60 * 1000) - (60 * 24 * 60 * 1000) ;
-        long endTime = System.currentTimeMillis() - (65 * 60 * 1000);
+        long endTime = System.currentTimeMillis() /*- (65 * 60 * 1000)*/;
         for (DeviceIdMacDto deviceIdMacDto : deviceIdMacDtoList) {
             Integer deviceId = deviceIdMacDto.getDeviceId();
             List<DeviceSensorPo> deviceSensorPos = deviceSensorDataMapper.queryExportDataByDeviceId(deviceId, startTime, endTime);
