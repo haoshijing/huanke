@@ -51,11 +51,11 @@ public class ClearDataJob {
         deviceControlMapper.clearData(lastFiveTime);
     }
 
-    @Scheduled(cron = "0 5 3 * * ?")
-    public void clearSensorData() {
-        long lastFiveTime = System.currentTimeMillis() - (180 * 60 * 1000);
-        deviceSensorDataMapper.clearData(lastFiveTime);
-    }
+//    @Scheduled(cron = "0 5 3 * * ?")
+//    public void clearSensorData() {
+//        long lastFiveTime = System.currentTimeMillis() - (180 * 60 * 1000);
+//        deviceSensorDataMapper.clearData(lastFiveTime);
+//    }
 
     @Scheduled(cron = "0 35 21 * * ?")
     public void exportDeviceData() throws Exception {
