@@ -12,13 +12,15 @@ import lombok.Data;
 @Data
 public class DeviceExportDataBean {
     private String mac;
+    private Integer deviceId;
     private String funcName;
     private Integer sensorValue;
     private String unit;
     private String time;
 
-    public DeviceExportDataBean(String mac, String funcName, Integer sensorValue, String unit, String time) {
+    public DeviceExportDataBean(String mac, Integer deviceId, String funcName, Integer sensorValue, String unit, String time) {
         this.mac = mac;
+        this.deviceId = deviceId;
         this.funcName = funcName;
         this.sensorValue = sensorValue;
         this.unit = unit;
