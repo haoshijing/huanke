@@ -58,16 +58,14 @@ public class ClearDataJob {
         deviceSensorDataMapper.clearData(lastFiveTime);
     }
 
-    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(cron = "0 5 1 * * ?")
     public void exportDeviceData() throws Exception {
         log.info("export device data...");
         List<DeviceIdMacDto> deviceIdMacDtoList = deviceExportDataMapper.queryExportDataDevice();
-//        long startTime = System.currentTimeMillis() - (65 * 60 * 1000) - (60 * 24 * 60 * 1000) ;
-//        long endTime = System.currentTimeMillis() - (65 * 60 * 1000);
-        long startTime = System.currentTimeMillis() - (540 * 60 * 1000) - (60 * 24 * 60 * 1000) ;
-        long endTime = System.currentTimeMillis();
-//        long startTime = System.currentTimeMillis() - (35 * 60 * 1000) - (60 * 11 * 60 * 1000) ;
-//        long endTime = System.currentTimeMillis() - (35 * 60 * 1000) - (60 * 4 * 60 * 1000) ;
+        long startTime = System.currentTimeMillis() - (65 * 60 * 1000) - (60 * 24 * 60 * 1000) ;
+        long endTime = System.currentTimeMillis() - (65 * 60 * 1000);
+//        long startTime = System.currentTimeMillis() - (1 * 60 * 1000) - (60 * 6 * 60 * 1000) ;
+//        long endTime = System.currentTimeMillis() - (1 * 60 * 1000) - (60 * 5 * 60 * 1000) ;
         for (DeviceIdMacDto deviceIdMacDto : deviceIdMacDtoList) {
             Integer deviceId = deviceIdMacDto.getDeviceId();
             List<DeviceSensorPo> deviceSensorPos = deviceSensorDataMapper.queryExportDataByDeviceId(deviceId, startTime, endTime);
@@ -86,7 +84,7 @@ public class ClearDataJob {
             filterMap.put("sensorValue", "传感器上报数值");
             filterMap.put("unit", "单位");
             filterMap.put("time", "时间");
-            String[] titles = new String[5];
+            String[] titles = new String[6];
             titles[0] = "设备mac";
             titles[1] = "设备id";
             titles[2] = "功能项名称";
@@ -95,6 +93,8 @@ public class ClearDataJob {
             titles[5] = "时间";
             String dateFormat = new DateTime().minusDays(1).toString("yyyy-MM-dd");
             deviceListVoExcelUtil.exportExcel(new FileOutputStream("/usr/local/dev/daydatas/" + "设备传感器数据-" + deviceIdMacDto.getMac() + "-" + dateFormat + ".xls") , "test1", titles, deviceExportVoList, filterMap, "2007");
+            //deviceListVoExcelUtil.exportExcel(new FileOutputStream("/Users/liuxiaoyu/Downloads/" + "设备传感器数据12点～13点-" + deviceIdMacDto.getMac() + "-" + dateFormat + ".xls") , "test1", titles, deviceExportVoList, filterMap, "2007");
+
             try {
                 InputStreamSource test1 = deviceListVoExcelUtil.createOutPutStream("test1", titles, deviceExportVoList, filterMap, "2007");
                 //发送邮件
