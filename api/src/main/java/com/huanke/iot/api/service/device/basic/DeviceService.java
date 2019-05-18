@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,7 +96,6 @@ public class DeviceService {
     private WechartUtil wechartUtil;
 
 
-
     @Value("${speed}")
     private int speed;
 
@@ -104,7 +104,7 @@ public class DeviceService {
         CustomerPo customerPo = customerMapper.selectById(customerId);
         List<String> wxDeviceIdList = wechartUtil.obtainMyDeviceIdList(openId);
 
-        if(wxDeviceIdList != null && wxDeviceIdList.size() != 0){
+        if (wxDeviceIdList != null && wxDeviceIdList.size() != 0) {
             List<DeviceCustomerUserRelationPo> deviceCustomerUserRelationPos = deviceCustomerUserRelationMapper.selectByOpenId(openId);
             List<Integer> deviceIdList = deviceCustomerUserRelationPos.stream().map(deviceCustomerUserRelationPo -> deviceCustomerUserRelationPo.getDeviceId()).collect(Collectors.toList());
             List<DevicePo> devicePoList = deviceMapper.queryDeviceIdsByWxDeviceIdList(wxDeviceIdList);
@@ -179,7 +179,7 @@ public class DeviceService {
                     List<DeviceTeamItemPo> itemPos = deviceTeamMapper.queryTeamItems(queryDeviceTeamItem);
                     List<DeviceListVo.DeviceItemPo> deviceItemPos = itemPos.stream().map(deviceTeamItemPo -> {
                         DeviceListVo.DeviceItemPo deviceItemPo = new DeviceListVo.DeviceItemPo();
-                        if(deviceTeamItemPo.getManageName()!=null && deviceTeamItemPo.getManageName().equals("ENERGY")){
+                        if (deviceTeamItemPo.getManageName() != null && deviceTeamItemPo.getManageName().equals("ENERGY")) {
                             DevicePo devicePo = deviceMapper.selectEnergyDevice(deviceTeamItemPo.getDeviceId());
                             deviceItemPo.setMac(devicePo.getMac());
                             deviceItemPo.setDeviceNo(devicePo.getDeviceNo());
@@ -226,14 +226,14 @@ public class DeviceService {
                         deviceItemPo.setCustomerName(customerPo.getName());
                         deviceItemPo.setDeviceName(deviceListDto.getDeviceName() == null ? "默认名称" : deviceListDto.getDeviceName());
                         deviceItemPo.setDeviceTypeName(deviceListDto.getTypeName());
-                        if (StringUtils.isNotEmpty(deviceListDto.getModelIconList())){
+                        if (StringUtils.isNotEmpty(deviceListDto.getModelIconList())) {
                             String[] icons = deviceListDto.getModelIconList().split(",");
-                            if(deviceListDto.getIconSelect()!=null&&deviceListDto.getIconSelect()<icons.length){
+                            if (deviceListDto.getIconSelect() != null && deviceListDto.getIconSelect() < icons.length) {
                                 deviceItemPo.setIcon(icons[deviceListDto.getIconSelect()]);
-                            }else{
+                            } else {
                                 deviceItemPo.setIcon(icons[0]);
                             }
-                        }else{
+                        } else {
                             deviceItemPo.setIcon(deviceListDto.getTypeIcon());
                         }
                         if (StringUtils.isEmpty(deviceListDto.getLocation())) {
@@ -396,11 +396,24 @@ public class DeviceService {
         return deviceSpeedConfigVo;
     }
 
+    //更新设备位置
+    @Transactional
     public Boolean editDeviceLoc(Integer userId, Integer deviceId, String location, String mapGps) {
+        //判断设备是否是从设备，如果是，则无效
+        DevicePo nowDevicePo = deviceMapper.selectById(deviceId);
+        if (nowDevicePo.getHostDeviceId() != null) {
+            throw new BusinessException("从设备无法修改地址信息");
+        }
         DevicePo devicePo = new DevicePo();
         devicePo.setId(deviceId);
         devicePo.setLocation(location);
         devicePo.setMapGps(mapGps);
+        List<DevicePo> devicePos = deviceMapper.queryChildDevice(deviceId);
+        for (DevicePo childDevicePo : devicePos) {
+            childDevicePo.setLocation(location);
+            childDevicePo.setMapGps(mapGps);
+            deviceMapper.updateById(childDevicePo);
+        }
         return deviceMapper.updateById(devicePo) > 0;
     }
 
@@ -437,7 +450,7 @@ public class DeviceService {
             locationVo.setLocation(devicePo.getLocation());
         }
 
-        if (devicePo.getMapGps() != null){
+        if (devicePo.getMapGps() != null) {
             locationVo.setMapGps(devicePo.getMapGps());
         }
         return locationVo;
@@ -461,7 +474,7 @@ public class DeviceService {
         return weatherVo;
     }
 
-    public List<DeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId,Integer customerId) {
+    public List<DeviceListVo.DeviceItemPo> queryChildDevice(Integer hostDeviceId, Integer customerId) {
         List<DeviceListVo.DeviceItemPo> childDevicePos = new ArrayList<>();
         List<DevicePo> devicePoList = deviceMapper.queryChildDevice(hostDeviceId);
         CustomerPo customerPo = customerMapper.selectById(customerId);
