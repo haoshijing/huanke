@@ -192,7 +192,12 @@ public class DeviceModelService {
                         log.error("增加配额失败={}", "错误提示：" + addPoolResult.getMsg(), "错误代码：" + addPoolResult.getCode(), " 成功增加：" + addPoolResult.getData());
                     }
                 }
-
+                //定义h5页面列表显示功能项
+                Integer listShowModelAbilityId = modelRequest.getListShowModelAbilityId();
+                //此功能项展示
+                deviceModelAbilityMapper.updatelistShowAbility(deviceModelPo.getId(), listShowModelAbilityId);
+                //其他功能项不展示
+                deviceModelAbilityMapper.updatelistUnShowAbilitys(deviceModelPo.getId(), listShowModelAbilityId);
 
                 //随后保存型号的自定义功能
                 List<DeviceModelCreateOrUpdateRequest.DeviceModelAbilityRequest> deviceModelAbilityRequests = modelRequest.getDeviceModelAbilitys();

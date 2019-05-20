@@ -88,6 +88,18 @@ public class DeviceListVo {
         private Integer onlineStatus;
         private Integer powerStatus;
         private String location;
+        /**
+         * 列表展示传感项名称
+         */
+        private String listShowName;
+        /**
+         * 列表展示传感项值
+         */
+        private String listShowValue;
+        /**
+         * 列表展示传感单位
+         */
+        private String listShowUnit;
     }
 
 

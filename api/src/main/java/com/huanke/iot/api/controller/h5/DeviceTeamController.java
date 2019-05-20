@@ -14,13 +14,17 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author onlymark
@@ -33,6 +37,8 @@ public class DeviceTeamController extends BaseController {
 
     @Autowired
     DeviceTeamService deviceTeamService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @RequestMapping("/createTeam")
     public Object createDeviceTeam(@RequestBody DeviceTeamNewRequest deviceTeamNewRequest) {
@@ -144,5 +150,33 @@ public class DeviceTeamController extends BaseController {
         log.info("设置组内设备的关联状态,userId={}, deviceId={}", currentUserId, teamDeviceLinkRequest.getDeviceId());
         Boolean result = deviceTeamService.setLinkStatus(currentUserId, teamDeviceLinkRequest);
         return new ApiResponse<>(result);
+    }
+
+    /**
+     * 组分享token
+     * @param request
+     * @return
+     */
+    @ApiOperation("获取足分享token")
+    @RequestMapping("/token")
+    public ApiResponse<String> obtainShareToken(@RequestBody BaseRequest<String> request) {
+        String teamId = request.getValue();
+        String lastToken = stringRedisTemplate.opsForValue().get("teamtoken." + teamId);
+        if (StringUtils.isNotEmpty(lastToken)) {
+            return new ApiResponse<>(lastToken);
+        }
+        String token = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        stringRedisTemplate.opsForValue().set("teamtoken." + teamId, token);
+        stringRedisTemplate.expire("teamtoken." + teamId, 10, TimeUnit.HOURS);
+        return new ApiResponse<>(token);
+    }
+
+    @ApiOperation("组分享")
+    @RequestMapping("/share")
+    public Object shareDevice(@RequestBody TeamShareRequest request) throws InvocationTargetException, IllegalAccessException {
+        //public Object shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
+        Integer userId = getCurrentUserId();
+        Object shareOk = deviceTeamService.shareTeam(userId, request);
+        return new ApiResponse<>(shareOk);
     }
 }

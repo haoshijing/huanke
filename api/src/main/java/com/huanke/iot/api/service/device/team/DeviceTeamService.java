@@ -1,9 +1,6 @@
 package com.huanke.iot.api.service.device.team;
 
-import com.huanke.iot.api.controller.h5.req.DeviceFuncVo;
-import com.huanke.iot.api.controller.h5.req.OccRequest;
-import com.huanke.iot.api.controller.h5.req.TeamDeviceLinkRequest;
-import com.huanke.iot.api.controller.h5.req.TeamTrusteeRequest;
+import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamNewRequest;
 import com.huanke.iot.api.controller.h5.team.DeviceTeamRequest;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
@@ -23,8 +20,10 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -59,6 +58,8 @@ public class DeviceTeamService {
 
     @Autowired
     DeviceCustomerUserRelationMapper deviceCustomerUserRelationMapper;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Transactional
     public Object createDeviceTeam(Integer userId, DeviceTeamNewRequest newRequest) {
@@ -127,9 +128,9 @@ public class DeviceTeamService {
     @Transactional
     public Boolean updateDeviceTeam(Integer userId, DeviceTeamRequest deviceTeamRequest) {
         final Integer teamId = deviceTeamRequest.getTeamId();
-        log.info("添加设备至组，teamId={}，wxdeviceIds={}",teamId,deviceTeamRequest.getDeviceIds());
-        if(deviceTeamMapper.selectById(teamId) == null){
-            log.error("不存在的teamId={}",teamId);
+        log.info("添加设备至组，teamId={}，wxdeviceIds={}", teamId, deviceTeamRequest.getDeviceIds());
+        if (deviceTeamMapper.selectById(teamId) == null) {
+            log.error("不存在的teamId={}", teamId);
             return false;
         }
         deviceTeamRequest.getDeviceIds().forEach((deviceId) -> {
@@ -174,7 +175,7 @@ public class DeviceTeamService {
         List<String> wxDeviceIds = deviceTeamRequest.getDeviceIds();
         for (String wxDeviceId : wxDeviceIds) {
             DevicePo devicePo = deviceMapper.selectByWxDeviceId(wxDeviceId);
-            DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemMapper.selectByJoinId(devicePo.getId(),userId);
+            DeviceTeamItemPo deviceTeamItemPo = deviceTeamItemMapper.selectByJoinId(devicePo.getId(), userId);
             deviceTeamItemPo.setTeamId(teamId);
             deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
             deviceTeamItemPo.setLastUpdateTime(System.currentTimeMillis());
@@ -198,7 +199,7 @@ public class DeviceTeamService {
             deviceFuncVo.setDeviceId(device.getId());
             deviceDataService.sendFunc(deviceFuncVo, userId, operType);//H5操作，所以是1
             DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(device.getId());
-            if(null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)){
+            if (null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)) {
                 //对其他联动设备发送指令
                 List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
                 for (DeviceTeamItemPo eachPo : deviceTeamItemPoList) {
@@ -206,8 +207,8 @@ public class DeviceTeamService {
                     linkDeviceFuncVo.setDeviceId(eachPo.getDeviceId());
                     linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
                     linkDeviceFuncVo.setValue(deviceFuncVo.getValue());
-                    result = deviceDataService.sendFunc(linkDeviceFuncVo,userId, operType);
-                    if(result.equals("")){
+                    result = deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
+                    if (result.equals("")) {
                         throw new BusinessException("指令发送失败");
                     }
                 }
@@ -311,11 +312,63 @@ public class DeviceTeamService {
         deviceTeamItemPo.setStatus(CommonConstant.STATUS_YES);
         deviceTeamItemPo.setUserId(userId);
         DeviceTeamItemPo existdeviceTeamItemPo = deviceTeamItemMapper.selectExistByTeamIdAndDeviceId(teamId, deviceId);
-        if(existdeviceTeamItemPo == null){
+        if (existdeviceTeamItemPo == null) {
             throw new BusinessException("用户在改组下无此设备");
         }
         //修改组内设备的关联状态
         existdeviceTeamItemPo.setLinkAgeStatus(teamDeviceLinkRequest.getLinkAgeStatus());
         return deviceTeamItemMapper.updateById(existdeviceTeamItemPo) > 0;
+    }
+
+    /**
+     * 组分享
+     *
+     * @param toId
+     * @param request
+     * @return
+     */
+    @Transactional
+    public Object shareTeam(Integer toId, TeamShareRequest request) {
+        Integer teamId = request.getTeamId();
+        String master = request.getMasterOpenId();
+        String teamtoken = request.getToken();
+        DeviceTeamPo deviceTeamPo1 = deviceTeamMapper.selectById(teamId);
+        if (deviceTeamPo1 == null) {
+            log.error("找不到组，teamId={}", teamId);
+            throw new BusinessException("找不到组");
+        }
+        CustomerUserPo customerUserPo = customerUserMapper.selectByOpenId(master);
+        if (customerUserPo == null) {
+            log.error("找不到用户，openId={}", master);
+            throw new BusinessException("找不到用户");
+        }
+        String storeToken = stringRedisTemplate.opsForValue().get("teamtoken." + teamId);
+        if (StringUtils.isEmpty(storeToken) || !StringUtils.equals(storeToken, teamtoken)) {
+            log.error("找不到Token，teamId={}", teamId);
+            throw new BusinessException("此分享已过期");
+        }
+        DeviceTeamPo deviceTeamPo = new DeviceTeamPo();
+        String defaultTeamName = deviceTeamPo1.getName();
+        deviceTeamPo.setName(defaultTeamName);
+        deviceTeamPo.setMasterUserId(toId);
+        deviceTeamPo.setCreateUserId(toId);
+        deviceTeamPo.setCustomerId(customerUserPo.getCustomerId());
+        deviceTeamPo.setStatus(1);
+        int toTeamId = deviceTeamMapper.insert(deviceTeamPo);
+
+        //添加组下设备
+        List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(teamId);
+        if (deviceTeamItemPos.size() > 0) {
+            for (DeviceTeamItemPo DeviceTeamItemPo : deviceTeamItemPos) {
+                DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
+                queryItemPo.setDeviceId(DeviceTeamItemPo.getDeviceId());
+                queryItemPo.setUserId(toId);
+                queryItemPo.setTeamId(toTeamId);
+                queryItemPo.setStatus(1);
+                queryItemPo.setCreateTime(System.currentTimeMillis());
+                deviceTeamItemMapper.insert(queryItemPo);
+            }
+        }
+        return true;
     }
 }

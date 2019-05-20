@@ -22,6 +22,7 @@ public class DeviceModelAbilityPo implements Serializable{
     private String definedName;
     private Integer minVal;
     private Integer maxVal;
+    private Integer isListShow;
     private Integer status = CommonConstant.STATUS_YES;
     private Long createTime;
     private Long lastUpdateTime;

@@ -199,4 +199,36 @@
         </set>
         where modelId = #{modelId}
     </update>
+    
+    <update id="updatelistShowAbility">
+        update
+        <include refid="tableName"/>
+        <set>
+            isListShow = 1
+        </set>
+        where modelId = #{modelId}
+        AND abilityId = #{listShowModelAbilityId}
+        AND status = 1
+    </update>
+
+    <update id="updatelistUnShowAbilitys">
+        update
+        <include refid="tableName"/>
+        <set>
+            isListShow = 0
+        </set>
+        where modelId = #{modelId}
+        AND abilityId != #{listShowModelAbilityId}
+        AND status = 1
+    </update>
+
+    <select id="selectListShowAbilityByModelId" resultType="com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo">
+        select *
+        FROM <include refid="tableName"/>
+        where
+        modelId = #{modelId}
+        AND isListShow = 1
+        AND status = 1
+        limit 1
+    </select>
 </mapper>

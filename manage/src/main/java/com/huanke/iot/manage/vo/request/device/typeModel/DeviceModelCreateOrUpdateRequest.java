@@ -33,6 +33,7 @@ public class DeviceModelCreateOrUpdateRequest {
 //    private List<DeviceModelFormatConfigCreateRequest> deviceModelFormatConfigs;
 
     private List<DeviceModelAbilityRequest> deviceModelAbilitys;
+    private Integer listShowModelAbilityId;
 
     private DeviceModelFormatCreateRequest deviceModelFormat;
 

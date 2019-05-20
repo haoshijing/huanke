@@ -18,6 +18,8 @@ import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceCustomerUserRelationMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamMapper;
+import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
+import com.huanke.iot.base.dao.device.typeModel.DeviceModelAbilityMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.dao.device.typeModel.DeviceTypeMapper;
 import com.huanke.iot.base.dto.DeviceListDto;
@@ -27,8 +29,10 @@ import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DeviceCustomerUserRelationPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamPo;
+import com.huanke.iot.base.po.device.typeModel.DeviceModelAbilityPo;
 import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.util.LocationUtils;
 import io.netty.buffer.ByteBuf;
@@ -67,6 +71,12 @@ public class DeviceService {
 
     @Autowired
     private DeviceModelMapper deviceModelMapper;
+
+    @Autowired
+    private DeviceAbilityMapper deviceAbilityMapper;
+
+    @Autowired
+    private DeviceModelAbilityMapper deviceModelAbilityMapper;
 
     @Autowired
     private CustomerMapper customerMapper;
@@ -256,12 +266,13 @@ public class DeviceService {
                             deviceItemPo.setLocation(Joiner.on(" ").join(locationArray));
                         }
                         Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + deviceListDto.getDeviceId());
-                        deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
-                        deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
-                        deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
-                        deviceItemPo.setTem(getData(data, SensorTypeEnums.TEMPERATURE_IN.getCode()));
-                        deviceItemPo.setHcho(getData(data, SensorTypeEnums.HCHO_IN.getCode()));
-                        deviceItemPo.setTvoc(getData(data, SensorTypeEnums.TVOC_IN.getCode()));
+                        Integer modelId = deviceListDto.getModelId();
+                        DeviceModelAbilityPo deviceModelAbilityPo = deviceModelAbilityMapper.selectListShowAbilityByModelId(modelId);
+                        DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(deviceModelAbilityPo.getAbilityId());
+                        SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(String.valueOf(deviceAbilityPo.getDirValue()));
+                        deviceItemPo.setListShowName(sensorTypeEnums.getMark());
+                        deviceItemPo.setListShowUnit(sensorTypeEnums.getUnit());
+                        deviceItemPo.setListShowValue(getData(data, sensorTypeEnums.getCode()));
 
                         return deviceItemPo;
                     }).collect(Collectors.toList());

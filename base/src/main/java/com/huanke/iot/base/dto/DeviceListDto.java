@@ -19,6 +19,7 @@ public class DeviceListDto {
     private String deviceName;
     private String location;
     private String ip;
+    private Integer modelId;
     private String modelName;
     private Integer typeId;
     private String typeName;

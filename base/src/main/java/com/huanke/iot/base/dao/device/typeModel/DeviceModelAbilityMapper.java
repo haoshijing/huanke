@@ -32,4 +32,10 @@ public interface DeviceModelAbilityMapper extends BaseMapper<DeviceModelAbilityP
 
 
     void flushCache();
+
+    void updatelistShowAbility(@Param("modelId") Integer modelId, @Param("listShowModelAbilityId") Integer listShowModelAbilityId);
+
+    void updatelistUnShowAbilitys(@Param("modelId") Integer modelId, @Param("listShowModelAbilityId") Integer listShowModelAbilityId);
+
+    DeviceModelAbilityPo selectListShowAbilityByModelId(@Param("modelId") Integer modelId);
 }
