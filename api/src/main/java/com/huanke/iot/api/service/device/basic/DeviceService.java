@@ -268,11 +268,19 @@ public class DeviceService {
                         Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + deviceListDto.getDeviceId());
                         Integer modelId = deviceListDto.getModelId();
                         DeviceModelAbilityPo deviceModelAbilityPo = deviceModelAbilityMapper.selectListShowAbilityByModelId(modelId);
-                        DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(deviceModelAbilityPo.getAbilityId());
-                        SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(String.valueOf(deviceAbilityPo.getDirValue()));
-                        deviceItemPo.setListShowName(sensorTypeEnums.getMark());
-                        deviceItemPo.setListShowUnit(sensorTypeEnums.getUnit());
-                        deviceItemPo.setListShowValue(getData(data, sensorTypeEnums.getCode()));
+                        if(deviceModelAbilityPo != null){
+                            DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(deviceModelAbilityPo.getAbilityId());
+                            SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(String.valueOf(deviceAbilityPo.getDirValue()));
+                            deviceItemPo.setListShowName(sensorTypeEnums.getMark());
+                            deviceItemPo.setListShowUnit(sensorTypeEnums.getUnit());
+                            deviceItemPo.setListShowValue(getData(data, sensorTypeEnums.getCode()));
+                        }else{
+                            SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode("110");
+                            deviceItemPo.setListShowName(sensorTypeEnums.getMark());
+                            deviceItemPo.setListShowUnit(sensorTypeEnums.getUnit());
+                            deviceItemPo.setListShowValue(getData(data, sensorTypeEnums.getCode()));
+                        }
+
 
                         return deviceItemPo;
                     }).collect(Collectors.toList());
