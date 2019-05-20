@@ -530,7 +530,9 @@ public class DeviceModelService {
 
             List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());
             DeviceModelAbilityPo deviceModelAbilityPo = deviceModelAbilityMapper.selectListShowAbilityByModelId(deviceModelPo.getId());
-            deviceModelVo.setListShowModelAbilityId(deviceModelAbilityPo.getId());
+            if(deviceModelAbilityPo != null){
+                deviceModelVo.setListShowModelAbilityId(deviceModelAbilityPo.getId());
+            }
             //型号的功能集
             deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
 
