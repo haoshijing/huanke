@@ -25,6 +25,7 @@
         version,
         childModelIds,
         status,
+        helpFileUrl,
         remark,
         createTime,
         createUser,
@@ -45,6 +46,7 @@
         #{version},
         #{childModelIds},
         #{status},
+        #{helpFileUrl},
         #{remark},
         #{createTime},
         #{createUser},
@@ -94,6 +96,9 @@
             </if>
             <if test="status != null ">
                 status = #{status},
+            </if>
+            <if test="helpFileUrl != null ">
+                helpFileUrl = #{helpFileUrl},
             </if>
             <if test="remark != null and remark != ''">
                 remark = #{remark},

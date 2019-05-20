@@ -29,6 +29,7 @@ public class DeviceModelPo implements Serializable{
     private String version;
     private Integer status = CommonConstant.STATUS_YES; //默认正常状态
     private String remark;
+    private String helpFileUrl;
     private String childModelIds;
     private Long createTime;
     private Integer createUser;

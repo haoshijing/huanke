@@ -522,13 +522,16 @@ public class DeviceModelService {
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
             deviceModelVo.setModelCode(deviceModelPo.getModelCode());
+            deviceModelVo.setHelpFileUrl(deviceModelPo.getHelpFileUrl());
 
             deviceModelVo.setCreateUserName(userService.getUserName(deviceModelPo.getCreateUser()));
             deviceModelVo.setLastUpdateUserName(userService.getUserName(deviceModelPo.getLastUpdateUser()));
 
-            //型号的功能集
-            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());
 
+            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());
+            DeviceModelAbilityPo deviceModelAbilityPo = deviceModelAbilityMapper.selectListShowAbilityByModelId(deviceModelPo.getId());
+            deviceModelVo.setListShowModelAbilityId(deviceModelAbilityPo.getId());
+            //型号的功能集
             deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
 
             //型号的版式

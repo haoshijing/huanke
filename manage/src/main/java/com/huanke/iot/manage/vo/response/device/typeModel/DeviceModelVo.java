@@ -30,6 +30,7 @@ public class DeviceModelVo {
     private String childModelIds;
     private Integer status = CommonConstant.STATUS_YES;
     private String remark;
+    private String helpFileUrl;
 
     private Long createTime;
     private Integer createUser;
@@ -51,5 +52,7 @@ public class DeviceModelVo {
         private Long deviceCount;
         private String modelPercent;
     }
+
+    private Integer listShowModelAbilityId;
 
 }
