@@ -3,24 +3,18 @@ package com.huanke.iot.api.service.user;
 import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.constant.CommonConstant;
-import com.huanke.iot.base.dao.customer.AndroidUserInfoMapper;
 import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.customer.CustomerUserMapper;
 import com.huanke.iot.base.dao.device.DeviceMacMapper;
 import com.huanke.iot.base.po.customer.AndroidUserInfoPo;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
-import com.huanke.iot.base.po.device.DeviceMacPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
 
 @Repository
 @Slf4j
@@ -144,7 +138,7 @@ public class UserService {
                 }
             }
         }
-        log.info("APP, appid = {},imei = {} , User is null" ,appid,imei);
+//        log.info("APP, appid = {},imei = {} , User is null" ,appid,imei);
         return null;
     }
     public CustomerPo getCustomerByOpenId(String openId){

@@ -176,6 +176,7 @@ public class DeviceTeamController extends BaseController {
     public Object shareDevice(@RequestBody TeamShareRequest request) throws InvocationTargetException, IllegalAccessException {
         //public Object shareDevice(HttpServletRequest request, String masterOpenId, String deviceId, String token) {
         Integer userId = getCurrentUserId();
+        log.info("组分享，teamId:{}, 从{}到{}", request.getTeamId(), request.getMasterOpenId(), userId);
         Object shareOk = deviceTeamService.shareTeam(userId, request);
         return new ApiResponse<>(shareOk);
     }

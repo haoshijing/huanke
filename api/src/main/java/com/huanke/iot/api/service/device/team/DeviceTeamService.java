@@ -329,6 +329,10 @@ public class DeviceTeamService {
      */
     @Transactional
     public Object shareTeam(Integer toId, TeamShareRequest request) {
+        //查被分享人所有组下设备
+        List<DeviceTeamItemPo> toUserDeviceTeamItemPos = deviceTeamItemMapper.selectByUserId(toId);
+        List<Integer> itemDeviceIdList = toUserDeviceTeamItemPos.stream().filter(e-> e.getStatus() == 1).map(e->e.getDeviceId()).collect(Collectors.toList());
+
         Integer teamId = request.getTeamId();
         String master = request.getMasterOpenId();
         String teamtoken = request.getToken();
@@ -360,8 +364,12 @@ public class DeviceTeamService {
         List<DeviceTeamItemPo> deviceTeamItemPos = deviceTeamItemMapper.selectByTeamId(teamId);
         if (deviceTeamItemPos.size() > 0) {
             for (DeviceTeamItemPo DeviceTeamItemPo : deviceTeamItemPos) {
+                Integer deviceId = DeviceTeamItemPo.getDeviceId();
+                if(itemDeviceIdList.contains(deviceId)){
+                    deviceTeamItemMapper.deleteItemsByDeviceId(deviceId);
+                }
                 DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
-                queryItemPo.setDeviceId(DeviceTeamItemPo.getDeviceId());
+                queryItemPo.setDeviceId(deviceId);
                 queryItemPo.setUserId(toId);
                 queryItemPo.setTeamId(toTeamId);
                 queryItemPo.setStatus(1);
