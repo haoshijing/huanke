@@ -366,7 +366,7 @@ public class DeviceTeamService {
             for (DeviceTeamItemPo DeviceTeamItemPo : deviceTeamItemPos) {
                 Integer deviceId = DeviceTeamItemPo.getDeviceId();
                 if(itemDeviceIdList.contains(deviceId)){
-                    deviceTeamItemMapper.deleteItemsByDeviceId(deviceId);
+                    deviceTeamItemMapper.deleteByJoinId(deviceId, toId);
                 }
                 DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
                 queryItemPo.setDeviceId(deviceId);
