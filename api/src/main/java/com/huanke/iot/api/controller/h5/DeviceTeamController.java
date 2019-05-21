@@ -157,7 +157,7 @@ public class DeviceTeamController extends BaseController {
      * @param request
      * @return
      */
-    @ApiOperation("获取足分享token")
+    @ApiOperation("获取组分享token")
     @RequestMapping("/token")
     public ApiResponse<String> obtainShareToken(@RequestBody BaseRequest<String> request) {
         String teamId = request.getValue();
