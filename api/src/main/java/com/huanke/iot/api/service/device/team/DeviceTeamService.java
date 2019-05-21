@@ -371,7 +371,7 @@ public class DeviceTeamService {
                 DeviceTeamItemPo queryItemPo = new DeviceTeamItemPo();
                 queryItemPo.setDeviceId(deviceId);
                 queryItemPo.setUserId(toId);
-                queryItemPo.setTeamId(toTeamId);
+                queryItemPo.setTeamId(deviceTeamPo.getId());
                 queryItemPo.setStatus(1);
                 queryItemPo.setCreateTime(System.currentTimeMillis());
                 deviceTeamItemMapper.insert(queryItemPo);
