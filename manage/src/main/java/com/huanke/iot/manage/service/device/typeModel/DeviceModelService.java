@@ -166,6 +166,10 @@ public class DeviceModelService {
                     } else {
                         return new ApiResponse<>(RetCode.PARAM_ERROR, "设备类型不可为空。");
                     }
+                    //帮助文件
+                    if(modelRequest.getHelpFileUrlList() != null && modelRequest.getHelpFileUrlList().size() > 0){
+                        deviceModelPo.setHelpFileUrl(String.join(",", modelRequest.getHelpFileUrlList()));
+                    }
                     deviceModelPo.setLastUpdateUser(user.getId());
                     deviceModelPo.setLastUpdateTime(System.currentTimeMillis());
                     //如果不是删除，则设置成 正常状态
@@ -184,6 +188,10 @@ public class DeviceModelService {
                     deviceModelPo.setCreateTime(System.currentTimeMillis());
                     deviceModelPo.setCreateUser(user.getId());
                     deviceModelPo.setStatus(modelRequest.getStatus() == null ? CommonConstant.STATUS_YES : modelRequest.getStatus());
+                    //帮助文件
+                    if(modelRequest.getHelpFileUrlList() != null && modelRequest.getHelpFileUrlList().size() > 0){
+                        deviceModelPo.setHelpFileUrl(String.join(",", modelRequest.getHelpFileUrlList()));
+                    }
                     deviceModelMapper.insert(deviceModelPo);
 
                     //增加wxdeviceid配额 //todo 默认增加 100
@@ -522,7 +530,9 @@ public class DeviceModelService {
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
             deviceModelVo.setModelCode(deviceModelPo.getModelCode());
-            deviceModelVo.setHelpFileUrl(deviceModelPo.getHelpFileUrl());
+            if(deviceModelPo.getHelpFileUrl() != null){
+                deviceModelVo.setHelpFileUrlList(Arrays.asList(deviceModelPo.getHelpFileUrl().split(",")));
+            }
 
             deviceModelVo.setCreateUserName(userService.getUserName(deviceModelPo.getCreateUser()));
             deviceModelVo.setLastUpdateUserName(userService.getUserName(deviceModelPo.getLastUpdateUser()));

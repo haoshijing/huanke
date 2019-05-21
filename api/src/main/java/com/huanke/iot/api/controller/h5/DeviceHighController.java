@@ -1,10 +1,7 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSON;
-import com.huanke.iot.api.controller.h5.req.ChildDeviceRequest;
-import com.huanke.iot.api.controller.h5.req.DeviceIcon;
-import com.huanke.iot.api.controller.h5.req.DeviceRequest;
-import com.huanke.iot.api.controller.h5.req.HighTokenRequest;
+import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.response.ChildDeviceVo;
 import com.huanke.iot.api.controller.h5.response.DeviceIconItem;
 import com.huanke.iot.api.controller.h5.response.DeviceModelTypeVo;
@@ -151,5 +148,11 @@ public class DeviceHighController extends BaseController{
         Integer userId = getCurrentUserId();
         log.info("选择缩略图：deviceId={},select={}", deviceIcon.getDeviceId(),deviceIcon.getIconSelect());
         return new ApiResponse<>(deviceHighService.setDeviceIcon(deviceIcon,userId));
+    }
+
+    @RequestMapping("helpFiles")
+    public ApiResponse<List<String>> getModelHelpFile(@RequestBody BaseRequest<Integer> request){
+        Integer userId = getCurrentUserId();
+        return new ApiResponse<List<String>>(deviceModelService.getHelpFileUrls(request));
     }
 }

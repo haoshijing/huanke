@@ -28,7 +28,7 @@ public class DeviceModelCreateOrUpdateRequest {
     private String childModelIds;
     private String description;
     private Integer status = CommonConstant.STATUS_YES;
-    private String helpFileUrl;
+    private List<String> helpFileUrlList;
     private String remark;
     private Integer updateUserId;
 //    private List<DeviceModelFormatConfigCreateRequest> deviceModelFormatConfigs;

@@ -1,5 +1,6 @@
 package com.huanke.iot.api.service.device.basic;
 
+import com.huanke.iot.api.controller.h5.req.BaseRequest;
 import com.huanke.iot.api.controller.h5.response.DeviceModelTypeVo;
 import com.huanke.iot.base.dao.device.typeModel.DeviceModelMapper;
 import com.huanke.iot.base.po.device.typeModel.DeviceModelPo;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,5 +35,10 @@ public class DeviceModelService {
             deviceModelTypeVoList.add(deviceModelTypeVo);
         }
         return deviceModelTypeVoList;
+    }
+
+    public List<String> getHelpFileUrls(BaseRequest<Integer> request) {
+        DeviceModelPo deviceModelPo = deviceModelMapper.selectById(request.getValue());
+        return Arrays.asList(deviceModelPo.getHelpFileUrl().split(","));
     }
 }

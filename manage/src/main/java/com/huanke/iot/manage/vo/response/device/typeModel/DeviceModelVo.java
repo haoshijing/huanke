@@ -30,7 +30,7 @@ public class DeviceModelVo {
     private String childModelIds;
     private Integer status = CommonConstant.STATUS_YES;
     private String remark;
-    private String helpFileUrl;
+    private List<String> helpFileUrlList;
 
     private Long createTime;
     private Integer createUser;
