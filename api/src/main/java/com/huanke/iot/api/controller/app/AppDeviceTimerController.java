@@ -12,10 +12,7 @@ import com.huanke.iot.base.constant.RetCode;
 import com.huanke.iot.base.constant.TimerConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -24,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RestController
 public class AppDeviceTimerController extends BaseController {
-    @RequestMapping("/timerType")
+    @PostMapping("/timerType")
     public List<DictVo> timerType(){
         List<DictVo> dictVoList = deviceTimerService.getTimeTypes();
         return dictVoList;
@@ -32,7 +29,7 @@ public class AppDeviceTimerController extends BaseController {
 
     @Autowired
     private DeviceTimerService deviceTimerService;
-    @RequestMapping("/addTimer")
+    @PostMapping("/addTimer")
     public ApiResponse<Integer> addTimer(@RequestBody DeviceTimerRequest request){
         List<Integer> daysOfWeek = request.getDaysOfWeek();
         Integer type = request.getType();
@@ -50,7 +47,7 @@ public class AppDeviceTimerController extends BaseController {
         return new ApiResponse<>(timeId);
     }
 
-    @RequestMapping("/queryTimerList")
+    @PostMapping("/queryTimerList")
     public Object queryTimerList(@RequestBody QueryTimerRequest request){
         Integer userId = getCurrentUserIdForApp();
         Integer deviceId = request.getDeviceId();
@@ -63,7 +60,7 @@ public class AppDeviceTimerController extends BaseController {
         return new ApiResponse<>(deviceTimerVos);
     }
 
-    @RequestMapping("/editTimer")
+    @PostMapping("/editTimer")
     public ApiResponse<Boolean> editDeviceTimer(HttpServletRequest request, @RequestBody DeviceTimerRequest deviceTimerRequest){
         Integer userId = getCurrentUserIdForApp();
         deviceTimerRequest.setUserId(userId);
@@ -71,12 +68,12 @@ public class AppDeviceTimerController extends BaseController {
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/timerDetail/{timerId}")
+    @PostMapping("/timerDetail/{timerId}")
     public ApiResponse<DeviceTimerVo> detail(@PathVariable("timerId") Integer timerId){
         return new ApiResponse<>(deviceTimerService.getById(timerId));
     }
 
-    @RequestMapping("/cancelTimer")
+    @PostMapping("/cancelTimer")
     public ApiResponse<Boolean> cancelTimer(@RequestBody TimerStatusRequest request){
         Integer userId = getCurrentUserIdForApp();
         Integer timerId = request.getTimerId();
@@ -88,7 +85,7 @@ public class AppDeviceTimerController extends BaseController {
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/deleteTimer/{timerId}")
+    @PostMapping("/deleteTimer/{timerId}")
     public ApiResponse<Boolean> deleteTimer(@PathVariable("timerId") Integer timerId){
         Integer userId = getCurrentUserIdForApp();
         Boolean ret =  deviceTimerService.updateTimerStatus(userId,timerId,3);

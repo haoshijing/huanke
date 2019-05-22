@@ -15,6 +15,7 @@ import com.huanke.iot.base.po.device.team.DeviceTeamPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,14 +30,14 @@ public class AppDeviceTeamController extends BaseController {
     @Autowired
     DeviceTeamService deviceTeamService;
 
-    @RequestMapping("/createTeam")
+    @PostMapping("/createTeam")
     public Object createDeviceTeam(@RequestBody DeviceTeamNewRequest deviceTeamNewRequest) {
         Integer userId = getCurrentUserIdForApp();
         Object result = deviceTeamService.createDeviceTeam(userId, deviceTeamNewRequest);
         return result;
     }
 
-    @RequestMapping("/deleteTeam")
+    @PostMapping("/deleteTeam")
     public Object delDeviceTeam(@RequestBody BaseRequest<Integer> request) {
         Integer teamId = request.getValue();
         Integer userId = getCurrentUserIdForApp();
@@ -45,7 +46,7 @@ public class AppDeviceTeamController extends BaseController {
         return result;
     }
 
-    @RequestMapping("/addTeamDevices")
+    @PostMapping("/addTeamDevices")
     public Object addTeamDevices(@RequestBody DeviceTeamRequest deviceTeamRequest) {
         Integer userId = getCurrentUserIdForApp();
         log.info("添加组设备:userId={}, request={}", userId, JSON.toJSON(deviceTeamRequest));
@@ -53,14 +54,14 @@ public class AppDeviceTeamController extends BaseController {
         return result;
     }
 
-    @RequestMapping("/updateDeviceTeam")
+    @PostMapping("/updateDeviceTeam")
     public ApiResponse<Boolean> updateDeviceTeam(@RequestBody DeviceTeamRequest deviceTeamRequest) {
         Integer userId = getCurrentUserIdForApp();
         Boolean ret = deviceTeamService.updateDeviceTeam(userId, deviceTeamRequest);
         return new ApiResponse<>(ret);
     }
 
-    @RequestMapping("/updateTeamName")
+    @PostMapping("/updateTeamName")
     public ApiResponse<Boolean> updateTeamName(@RequestBody UpdateDeviceTeamRequest deviceTeamRequest) {
         Integer teamId = deviceTeamRequest.getTeamId();
         String teamName = deviceTeamRequest.getTeamName();
@@ -80,7 +81,7 @@ public class AppDeviceTeamController extends BaseController {
         return apiResponse;
     }
 
-    @RequestMapping("/list")
+    @PostMapping("/list")
     public Object teamList() {
         Integer userId = getCurrentUserIdForApp();
         List<DeviceTeamPo> deviceTeamPoList = deviceTeamService.selectByUserId(userId);
@@ -99,7 +100,7 @@ public class AppDeviceTeamController extends BaseController {
      * 组开/关 occ = openCloseControl
      * @return
      */
-    @RequestMapping("/occ")
+    @PostMapping("/occ")
     public ApiResponse<Boolean> occ(@RequestBody OccRequest occRequest) {
         Integer teamId = occRequest.getTeamId();
         Integer openCloseStatus = occRequest.getOpenCloseStatus();
