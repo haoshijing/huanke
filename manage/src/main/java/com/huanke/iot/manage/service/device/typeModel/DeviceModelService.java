@@ -487,7 +487,9 @@ public class DeviceModelService {
             deviceModelVo.setStatus(deviceModelPo.getStatus());
             deviceModelVo.setVersion(deviceModelPo.getVersion());
             deviceModelVo.setChildModelIds(deviceModelPo.getChildModelIds());
-            deviceModelVo.setIcons(deviceModelPo.getIconList().split(","));
+            if(deviceModelPo.getIconList()!=null){
+                deviceModelVo.setIcons(deviceModelPo.getIconList().split(","));
+            }
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
 
