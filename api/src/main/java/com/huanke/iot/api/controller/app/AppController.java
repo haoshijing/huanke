@@ -112,9 +112,11 @@ public class AppController extends BaseController {
         log.debug("查询设备天气，设备ID={}",deviceId);
         WeatherVo weatherVo = deviceService.queryDeviceWeather(deviceId);
         LocationVo locationVo = deviceService.queryDeviceLocation(deviceId);
-        String[] s = locationVo.getArea().split(" ");
-        if(s.length>3) {
-            locationVo.setArea(StringUtils.isEmpty(s[1])?s[2]:s[1]);
+        if (StringUtils.isNotEmpty(locationVo.getArea())){
+            String[] s = locationVo.getArea().split(" ");
+            if(s.length>3) {
+                locationVo.setArea(StringUtils.isEmpty(s[1])?s[2]:s[1]);
+            }
         }
         List resp = new ArrayList();
         resp.add(weatherVo);
