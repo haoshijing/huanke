@@ -59,7 +59,7 @@ public class AppController extends BaseController {
         return appBasicService.removeIMeiInfo(request);
     }
 
-    @PostMapping("/setApkInfo")
+    @GetMapping("/setApkInfo")
     public void setApkInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String objectApiResponse = appBasicService.addUserAppInfo(request);
         response.setContentType(ContentType.TEXT_HTML.getMimeType());
