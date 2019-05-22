@@ -39,10 +39,6 @@ public class DeviceModelService {
 
     public List<String> getHelpFileUrls(BaseRequest<Integer> request) {
         DeviceModelPo deviceModelPo = deviceModelMapper.selectById(request.getValue());
-        String helpFileUrl = deviceModelPo.getHelpFileUrl();
-        if(helpFileUrl != null){
-            return Arrays.asList(deviceModelPo.getHelpFileUrl().split(","));
-        }
-        return null;
+        return Arrays.asList(deviceModelPo.getHelpFileUrl().split(","));
     }
 }
