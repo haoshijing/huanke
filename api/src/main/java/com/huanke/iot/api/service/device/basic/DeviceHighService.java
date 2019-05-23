@@ -135,6 +135,7 @@ public class DeviceHighService {
             childDeviceVo.setChildId(devicePo.getChildId());
             childDeviceVo.setOnlineStatus(devicePo.getOnlineStatus());
             childDeviceVo.setHostPowerStatus(powerStatus);
+            childDeviceVo.setPowerStatus(devicePo.getPowerStatus());
             childDeviceVos.add(childDeviceVo);
             Integer modelId = devicePo.getModelId();
             DeviceModelPo deviceModelPo = deviceModelMapper.selectById(modelId);
