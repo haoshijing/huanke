@@ -270,10 +270,18 @@ public class DeviceService {
                         DeviceModelAbilityPo deviceModelAbilityPo = deviceModelAbilityMapper.selectListShowAbilityByModelId(modelId);
                         if(deviceModelAbilityPo != null){
                             DeviceAbilityPo deviceAbilityPo = deviceAbilityMapper.selectById(deviceModelAbilityPo.getAbilityId());
-                            SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(String.valueOf(deviceAbilityPo.getDirValue()));
+                            String dirValue = deviceAbilityPo.getDirValue();
+                            SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode(String.valueOf(dirValue));
                             deviceItemPo.setListShowName(sensorTypeEnums.getMark());
                             deviceItemPo.setListShowUnit(sensorTypeEnums.getUnit());
-                            deviceItemPo.setListShowValue(getData(data, sensorTypeEnums.getCode()));
+                            //处理特殊功能项数值，设备上传不准确问题
+                            if(dirValue.equals("140")){
+                                deviceItemPo.setListShowValue(String.valueOf(Integer.valueOf(getData(data, sensorTypeEnums.getCode())) / 10));
+                            }else if (dirValue.equals("150") || dirValue.equals("160")){
+                                deviceItemPo.setListShowValue(String.valueOf(Integer.valueOf(getData(data, sensorTypeEnums.getCode())) / 100));
+                            }else{
+                                deviceItemPo.setListShowValue(getData(data, sensorTypeEnums.getCode()));
+                            }
                         }else{
                             SensorTypeEnums sensorTypeEnums = SensorTypeEnums.getByCode("110");
                             deviceItemPo.setListShowName(sensorTypeEnums.getMark());
