@@ -4,10 +4,10 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +24,7 @@ public class RedisSessionDAO extends EnterpriseCacheSessionDAO {
 
     private static String prefix = "osmcs-shiro-session:";
 
-    @Resource
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     // 创建session，保存到数据库

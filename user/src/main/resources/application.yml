@@ -5,9 +5,9 @@ spring:
     name: user
   # redis
 #  redis:
-#    host: 39.104.96.141
+#    host: 47.105.36.111
 #    port: 8379
-#    password:
+#    password:K@ong198818
   http:
     multipart:
       max-file-size: 10MB

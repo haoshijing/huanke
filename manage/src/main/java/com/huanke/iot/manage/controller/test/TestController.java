@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,9 @@ public class TestController {
     private JavaMailSender mailSender;
     @Value("${spring.mail.username}")
     private String username;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
 
     @ApiOperation("测试poi")
@@ -69,6 +73,15 @@ public class TestController {
         helper.setText("每日数据文件");
         helper.addAttachment("1111.xls", test1);
         mailSender.send(mimeMessage);
+        return new ApiResponse<>(true);
+    }
+
+
+    @ApiOperation("测试poi")
+    @PostMapping(value = "/test2")
+    public ApiResponse<Boolean> test2(HttpServletResponse response) throws Exception {
+        String asdf = stringRedisTemplate.opsForValue().get("asdf");
+        System.out.println("asdf->" + asdf);
         return new ApiResponse<>(true);
     }
 }

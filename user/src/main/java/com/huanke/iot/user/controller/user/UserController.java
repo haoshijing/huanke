@@ -46,6 +46,7 @@ public class UserController {
               userHost = requestHost.substring(7,userHostIdx);
           }
         }
+        System.out.println("userHost->" + userHost);
         return new ApiResponse<>(userService.login(userHost,userName, pwd));
     }
 

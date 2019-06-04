@@ -5,8 +5,12 @@ import com.huanke.iot.manage.common.inteceptor.ProcessInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import javax.annotation.Resource;
 
 /**
  * @author albert
@@ -24,6 +28,12 @@ public class WebMvcConf extends WebMvcConfigurerAdapter {
     @Autowired
     private ProcessInterceptor processInterceptor;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
+
     /**
      * 请求拦截器
      *
@@ -31,6 +41,13 @@ public class WebMvcConf extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        redisTemplate.opsForValue().set("asd1", "liuxiaoyu");
+        Object asdf1 = redisTemplate.opsForValue().get("asd1");
+        System.out.println("asdf1->" + asdf1);
+
+        String asdf = stringRedisTemplate.opsForValue().get("asdf");
+        System.out.println("asdf->" + asdf);
+
         // 注册监控拦截器
         registry.addInterceptor(processInterceptor)
                 .addPathPatterns("/**")

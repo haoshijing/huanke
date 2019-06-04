@@ -1,3 +1,11 @@
 # 生产环境配置
 
 skipRemoteHost: pro
+
+spring:
+  redis:
+    host: 47.105.36.111
+    port: 8379
+    password: K@ong198818
+
+server:

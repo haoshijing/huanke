@@ -813,6 +813,7 @@ public class CustomerService {
                     if (!fromServer) {
                         try {
                             customerId = stringRedisTemplate.opsForValue().get(customerKey);
+                            System.out.println("获取cutomerKey---->" + customerKey +",customerId->" + customerId);
                             if (null != customerId) {
                                 return Integer.parseInt(customerId);
                             } else {
@@ -829,6 +830,7 @@ public class CustomerService {
                         if (customerPo != null) {
                             customerId = customerPo.getId().toString();
                             try {
+                                System.out.println("初始化cutomerKey---->" + customerKey +",customerId->" + customerId);
                                 stringRedisTemplate.opsForValue().set(customerKey, customerId);
                                 stringRedisTemplate.expire(customerKey, 7000, TimeUnit.SECONDS);
                             } catch (Exception e) {
