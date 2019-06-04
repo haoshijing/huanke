@@ -152,7 +152,6 @@ public class DeviceHighController extends BaseController{
 
     @RequestMapping("helpFiles")
     public ApiResponse<List<String>> getModelHelpFile(@RequestBody BaseRequest<Integer> request){
-        Integer userId = getCurrentUserId();
         return new ApiResponse<List<String>>(deviceModelService.getHelpFileUrls(request));
     }
 }
