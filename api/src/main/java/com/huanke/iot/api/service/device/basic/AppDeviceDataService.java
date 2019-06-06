@@ -180,6 +180,7 @@ public class AppDeviceDataService {
                     DevicePo devicePo = deviceMapper.selectById(deviceTeamItemPo.getDeviceId());
                     deviceItemPo.setDeviceId(devicePo.getId());
                     deviceItemPo.setMac(devicePo.getMac());
+                    deviceItemPo.setDeviceType(deviceItemPo.getDeviceType());
                     deviceItemPo.setWxDeviceId(devicePo.getWxDeviceId());
                     int childDeviceCount = deviceMapper.queryChildDeviceCount(devicePo.getId());
                     deviceItemPo.setChildDeviceCount(childDeviceCount);

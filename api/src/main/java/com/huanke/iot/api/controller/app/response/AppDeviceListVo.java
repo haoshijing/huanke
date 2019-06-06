@@ -36,6 +36,8 @@ public class AppDeviceListVo {
          * 设备id
          */
         private Integer deviceId;
+
+        private String deviceType;
         /**
          * MAC
          */
