@@ -274,6 +274,7 @@ public class AppDeviceDataService {
                 deviceItemPo.setDeviceTypeName(deviceTypePo.getName());
                 deviceItemPo.setIcon(deviceTypePo.getIcon());
             }
+            deviceItemPo.setDeviceModelName(deviceModelPo.getName());
             Integer androidFormatId = deviceModelPo.getAndroidFormatId();
             if(androidFormatId != null) {
                 WxFormatPo wxFormatPo = wxFormatMapper.selectById(androidFormatId);
