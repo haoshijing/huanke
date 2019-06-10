@@ -14,6 +14,7 @@ public class ChildDeviceVo {
     private String customerName;
     private String deviceName;
     private String childId;
+    private String deviceModelName;
     private String deviceTypeName;
     private String formatName;
     private Integer onlineStatus;//从机在线状态

@@ -96,9 +96,13 @@ public class DeviceFormatService {
             DeviceModelVo.FormatItems formatItems = new DeviceModelVo.FormatItems();
             DeviceModelFormatItemPo deviceModelFormatItemPo = deviceModelFormatItemPoMap.get(wxFormatItemPo.getId());
             formatItems.setItemId(wxFormatItemPo.getId());
-            formatItems.setShowName(deviceModelFormatItemPo.getShowName());
-            formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
-            formatItems.setAbilityId(deviceModelFormatItemPo.getAbilityIds());
+            if(deviceModelFormatItemPo != null) {
+                formatItems.setShowName(deviceModelFormatItemPo.getShowName());
+                formatItems.setShowStatus(deviceModelFormatItemPo.getShowStatus());
+                formatItems.setAbilityId(deviceModelFormatItemPo.getAbilityIds());
+            }else{
+                log.warn("wxFormatItemPo.getId() = [{}]is null", wxFormatItemPo.getId());
+            }
             formatItemsList.add(formatItems);
         }
         deviceModelVo.setFormatItemsList(formatItemsList);

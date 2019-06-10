@@ -1950,29 +1950,29 @@ public class DeviceOperateService {
             }
             deviceAbilitysVoList.add(deviceAbilitysVo);
         }
-        //添加空气质量判定
-        if (datas.containsKey(SensorTypeEnums.PM25_IN.getCode())) {
-            DeviceAbilityVo.DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilityVo.DeviceAbilitysVo();
-            deviceAbilitysVo.setDirValue("0");
-            deviceAbilitysVo.setAbilityName("空气质量");
-
-            String data = getData(datas, SensorTypeEnums.PM25_IN.getCode());
-            if (StringUtils.isNotEmpty(data)) {
-                Integer diData = Integer.valueOf(data);
-                if (diData >= 0 && diData <= 35) {
-                    deviceAbilitysVo.setCurrValue("优");
-                } else if (diData > 35 && diData <= 75) {
-                    deviceAbilitysVo.setCurrValue("良");
-                } else if (diData > 75 && diData <= 150) {
-                    deviceAbilitysVo.setCurrValue("中");
-                } else {
-                    deviceAbilitysVo.setCurrValue("差");
-                }
-            } else {
-                deviceAbilitysVo.setCurrValue("优");
-            }
-            deviceAbilitysVoList.add(deviceAbilitysVo);
-        }
+//        //添加空气质量判定
+//        if (datas.containsKey(SensorTypeEnums.PM25_IN.getCode())) {
+//            DeviceAbilityVo.DeviceAbilitysVo deviceAbilitysVo = new DeviceAbilityVo.DeviceAbilitysVo();
+//            deviceAbilitysVo.setDirValue("0");
+//            deviceAbilitysVo.setAbilityName("空气质量");
+//
+//            String data = getData(datas, SensorTypeEnums.PM25_IN.getCode());
+//            if (StringUtils.isNotEmpty(data)) {
+//                Integer diData = Integer.valueOf(data);
+//                if (diData >= 0 && diData <= 35) {
+//                    deviceAbilitysVo.setCurrValue("优");
+//                } else if (diData > 35 && diData <= 75) {
+//                    deviceAbilitysVo.setCurrValue("良");
+//                } else if (diData > 75 && diData <= 150) {
+//                    deviceAbilitysVo.setCurrValue("中");
+//                } else {
+//                    deviceAbilitysVo.setCurrValue("差");
+//                }
+//            } else {
+//                deviceAbilitysVo.setCurrValue("优");
+//            }
+//            deviceAbilitysVoList.add(deviceAbilitysVo);
+//        }
         return deviceAbilitysVoList;
     }
 
