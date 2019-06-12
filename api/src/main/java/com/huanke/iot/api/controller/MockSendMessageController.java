@@ -60,7 +60,7 @@ public class MockSendMessageController {
     public String sendData(@RequestBody SwitchData switchData ){
         switchData.getKey().setRequestId(UUID.randomUUID().toString().replace("-",""));
         String topic = "/down/control/1";
-        mqttSendService.sendMessage(topic,JSON.toJSONString(switchData));
+        mqttSendService.sendMessage(topic,JSON.toJSONString(switchData),true);
         return "ok";
     }
 
@@ -83,7 +83,7 @@ public class MockSendMessageController {
         item.setHeater(1);
         switchDataItem.setKey(item);
         String topic = "/down/control/1";
-        mqttSendService.sendMessage(topic,JSON.toJSONString(switchDataItem));
+        mqttSendService.sendMessage(topic,JSON.toJSONString(switchDataItem),true);
         return "ok";
     }
 
@@ -98,7 +98,7 @@ public class MockSendMessageController {
         AlarmListMessage alarmListMessage = new AlarmListMessage();
         alarmListMessage.setAlarm(Lists.newArrayList(alarmMessage));
         String message = JSON.toJSONString(alarmListMessage);
-        mqttSendService.sendMessage("/up/alarm/1",message);
+        mqttSendService.sendMessage("/up/alarm/1",message,true);
         return "111";
     }
 }

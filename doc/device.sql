@@ -37,6 +37,8 @@ alter table t_device  add COLUMN location varchar(500) DEFAULT '' comment '位�
 alter table t_device  add COLUMN wxProductId varchar(200) DEFAULT '' comment '微信生成的productId';
 alter table t_device  add COLUMN mode varchar(20) DEFAULT '' comment '模式';
 
+alter table t_device add column old int  comment '是否为旧机器' DEFAULT 2 ;
+
 drop table if  EXISTS  t_device_type;
 create table t_device_type
 (

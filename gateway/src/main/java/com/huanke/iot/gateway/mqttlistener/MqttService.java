@@ -20,15 +20,28 @@ import javax.annotation.PostConstruct;
 public class MqttService {
 
 
-    @Value("${mqttServerUrl}")
-    private String mqttServerUrl;
+    @Value("${mqttOldServerUrl}")
+    private String mqttOldServerUrl;
 
-    MqttClient mqttClient;
+    @Value("${mqttNewServerUrl}")
+    private String mqttNewServerUrl;
+
+    MqttClient oldServerClient;
+
+    MqttClient newServerClient;
     @PostConstruct
     public void init(){
-        if(mqttClient == null){
+        if(oldServerClient == null){
             try {
-                mqttClient = new MqttClient(mqttServerUrl, "ServerClient");
+                oldServerClient = new MqttClient(mqttOldServerUrl, "ServerClient");
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
+
+        if(newServerClient == null){
+            try {
+                newServerClient = new MqttClient(mqttNewServerUrl, "ServerClient");
             }catch (Exception e){
                 log.error("",e);
             }
@@ -36,14 +49,27 @@ public class MqttService {
     }
     @EventListener
     public void start(ApplicationReadyEvent  event){
-        if(mqttClient != null){
+        if(oldServerClient != null){
             try {
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
                 connOpts.setAutomaticReconnect(true);
-                mqttClient.connect(connOpts);
+                oldServerClient.connect(connOpts);
                 MqttMessageListener listener = new MqttMessageListener();
-                mqttClient.subscribe("/up2/#",listener);
+                oldServerClient.subscribe("/up2/#",listener);
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
+
+        if(newServerClient != null){
+            try {
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
+                connOpts.setAutomaticReconnect(true);
+                newServerClient.connect(connOpts);
+                MqttMessageListener listener = new MqttMessageListener();
+                newServerClient.subscribe("/up2/#",listener);
             }catch (Exception e){
                 log.error("",e);
             }
@@ -65,7 +91,8 @@ public class MqttService {
         }
     }
 
-    public void sendMessage(String topic,String message){
+    public void sendMessage(String topic,String message,boolean isOld){
+        MqttClient mqttClient = getClient(isOld);
         if(mqttClient != null){
             try {
                 mqttClient.publish(topic, new MqttMessage(message.getBytes()));
@@ -73,5 +100,13 @@ public class MqttService {
                 log.error("",e);
             }
         }
+    }
+
+    private MqttClient getClient(boolean isOld){
+        MqttClient mqttClient = oldServerClient;
+        if(!isOld){
+            mqttClient = newServerClient;
+        }
+        return mqttClient;
     }
 }

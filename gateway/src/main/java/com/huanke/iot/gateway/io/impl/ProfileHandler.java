@@ -1,6 +1,8 @@
 package com.huanke.iot.gateway.io.impl;
 
+import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.DeviceTeamItemMapper;
+import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
 import com.huanke.iot.gateway.io.AbstractHandler;
 import com.huanke.iot.gateway.mqttlistener.MqttService;
@@ -24,6 +26,9 @@ public class ProfileHandler extends AbstractHandler {
     private DeviceTeamItemMapper deviceTeamItemMapper;
     @Autowired
     private MqttService mqttService;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
     @Data
     public static class FuncItemMessage{
         private String type;
@@ -55,7 +60,10 @@ public class ProfileHandler extends AbstractHandler {
 
                 String sendTopic = "/down2/profile/" + eachPo.getDeviceId();
                 String message = "";
-                mqttService.sendMessage(sendTopic,message);
+                DevicePo devicePo = deviceMapper.selectById(deviceId);
+                if(devicePo != null) {
+                    mqttService.sendMessage(sendTopic, message, devicePo.isOld());
+                }
             });
         }
     }

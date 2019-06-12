@@ -95,4 +95,10 @@ public class DevicePo {
     private Long lastUpdateTime;
     private Long lastOnlineTime;
 
+    private Integer old;
+
+    public boolean isOld(){
+        return old == 1;
+    }
+
 }

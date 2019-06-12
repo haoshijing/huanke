@@ -77,7 +77,7 @@ public class SensorHandler  extends AbstractHandler {
         if(deviceIdPower == 444){
             //能源管理后台测试
             String topicPower = "/down2/powerManage/" + deviceIdPower;
-            mqttService.sendMessage(topicPower, JSON.toJSONString(sensorListMessage));
+            mqttService.sendMessage(topicPower, JSON.toJSONString(sensorListMessage),true);
         }
 
         List<SensorHandler.SensorMessage> datasPower = new ArrayList<>();

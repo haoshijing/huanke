@@ -77,6 +77,9 @@ public class StopWatchHandler extends AbstractHandler {
         mbMap.put("n", childIdList);
         mb.put("mb", mbMap);
         String sendTopic = "/down2/stopWatch/" + deviceId;
-        mqttService.sendMessage(sendTopic,  mb.toString());
+        DevicePo currentDevicePo = deviceMapper.selectById(deviceId);
+        if(currentDevicePo != null) {
+            mqttService.sendMessage(sendTopic, mb.toString(),currentDevicePo.isOld());
+        }
     }
 }

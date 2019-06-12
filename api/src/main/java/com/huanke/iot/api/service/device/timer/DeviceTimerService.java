@@ -40,12 +40,6 @@ public class DeviceTimerService {
     @Autowired
     private DictMapper dictMapper;
 
-    @Autowired
-    private DeviceOperLogMapper deviceOperLogMapper;
-
-    @Autowired
-    private MqttSendService mqttSendService;
-
     @Transactional
     public Integer insertTimer(DeviceTimerRequest request) {
         String name = request.getName();

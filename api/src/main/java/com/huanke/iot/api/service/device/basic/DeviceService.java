@@ -365,7 +365,7 @@ public class DeviceService {
             byteBuf.writeShort(speed);
         });
         String topic = "/down/cfg/" + deviceId;
-        mqttSendService.sendMessage(topic, byteBuf.array());
+        mqttSendService.sendMessage(topic, byteBuf.array(),devicePo.isOld());
         return true;
     }
 

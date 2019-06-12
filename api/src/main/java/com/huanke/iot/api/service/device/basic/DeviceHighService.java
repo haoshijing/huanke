@@ -160,6 +160,7 @@ public class DeviceHighService {
         return deviceMapper.updateById(devicePo) > 0;
     }
     public Boolean sendMb(Integer deviceId){
+        DevicePo currentDevicePo = deviceMapper.selectById(deviceId);
         List<Integer> childIds = deviceMapper.queryChildDeviceIds(deviceId);
         //拼接码表
         JSONObject mb = new JSONObject();
@@ -193,7 +194,7 @@ public class DeviceHighService {
         mbMap.put("n", childIdList);
         mb.put("mb", mbMap);
         String topic = "/down2/stopWatch/" + deviceId;
-        mqttSendService.sendMessage(topic, mb.toString());
+        mqttSendService.sendMessage(topic, mb.toString(), currentDevicePo.isOld());
         return true;
     }
 

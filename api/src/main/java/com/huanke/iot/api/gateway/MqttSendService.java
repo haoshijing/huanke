@@ -18,15 +18,29 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class MqttSendService {
 
-    @Value("${mqttServerUrl}")
-    private String mqttServerUrl;
+    @Value("${mqttOldServerUrl}")
+    private String mqttOldServerUrl;
 
-    MqttClient mqttClient;
+    @Value("${mqttNewServerUrl}")
+    private String mqttNewServerUrl;
+
+    MqttClient oldServerClient;
+
+    MqttClient newServerClient;
+
     @PostConstruct
     public void init(){
-        if(mqttClient == null){
+        if(oldServerClient == null){
             try {
-                mqttClient = new MqttClient(mqttServerUrl, "MessageProducer");
+                oldServerClient = new MqttClient(mqttOldServerUrl, "MessageProducer");
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
+
+        if(newServerClient == null){
+            try {
+                newServerClient = new MqttClient(mqttNewServerUrl, "MessageProducer");
             }catch (Exception e){
                 log.error("",e);
             }
@@ -34,19 +48,31 @@ public class MqttSendService {
     }
     @EventListener
     public void start(ApplicationReadyEvent event){
-        if(mqttClient != null){
+        if(oldServerClient != null){
             try {
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setAutomaticReconnect(true);
                 connOpts.setCleanSession(true);
-                mqttClient.connect(connOpts);
+                oldServerClient.connect(connOpts);
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
+
+        if(newServerClient != null){
+            try {
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setAutomaticReconnect(true);
+                connOpts.setCleanSession(true);
+                newServerClient.connect(connOpts);
             }catch (Exception e){
                 log.error("",e);
             }
         }
     }
 
-    public void sendMessage(String topic,String message){
+    public void sendMessage(String topic,String message,boolean isOld){
+        MqttClient mqttClient = getClient(isOld);
         if(mqttClient != null){
             try {
                 mqttClient.publish(topic, new MqttMessage(message.getBytes()));
@@ -56,7 +82,10 @@ public class MqttSendService {
         }
     }
 
-    public void sendMessage(String topic,byte[] datas){
+
+
+    public void sendMessage(String topic,byte[] datas,boolean isOld){
+        MqttClient mqttClient = getClient(isOld);
         if(mqttClient != null){
             try {
                 mqttClient.publish(topic, new MqttMessage(datas));
@@ -64,5 +93,13 @@ public class MqttSendService {
                 log.error("",e);
             }
         }
+    }
+
+    private MqttClient getClient(boolean isOld){
+        MqttClient mqttClient = oldServerClient;
+        if(!isOld){
+            mqttClient = newServerClient;
+        }
+        return mqttClient;
     }
 }
