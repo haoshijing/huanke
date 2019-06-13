@@ -49,7 +49,8 @@
         lastUpdateTime,
         lastOnlineTime,
         createUser,
-        lastUpdateUser
+        lastUpdateUser,
+        old
         )
         VALUES
         (
@@ -91,7 +92,8 @@
         #{lastUpdateTime},
         #{lastOnlineTime},
         #{createUser},
-        #{lastUpdateUser}
+        #{lastUpdateUser},
+        2
         )
     </insert>
 
@@ -138,7 +140,8 @@
         lastUpdateTime,
         lastOnlineTime,
         createUser,
-        lastUpdateUser
+        lastUpdateUser,
+        old
         )
         VALUES
         <foreach collection="list" item="device" separator=",">
@@ -181,7 +184,8 @@
             #{device.lastUpdateTime},
             #{device.lastOnlineTime},
             #{device.createUser},
-            #{device.lastUpdateUser}
+            #{device.lastUpdateUser},
+            2
             )
         </foreach>
     </insert>
@@ -410,6 +414,9 @@
             </if>
             <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
+            </if>
+            <if test="old != null  ">
+                old = #{old},
             </if>
             <if test="wxDevicelicence != null and wxDevicelicence!='' ">
                 wxDevicelicence = #{wxDevicelicence},

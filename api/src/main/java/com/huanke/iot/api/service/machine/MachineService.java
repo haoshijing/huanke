@@ -61,6 +61,7 @@ public class MachineService {
             DevicePo updatePo = new DevicePo();
             updatePo.setId(devicePo.getId());
             updatePo.setIp(ip);
+            updatePo.setOld(2);
             deviceMapper.updateById(updatePo);
             return machineDeviceVo;
         }
