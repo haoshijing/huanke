@@ -48,7 +48,6 @@ public class ControlHandler extends AbstractHandler {
     @Override
     public void doHandler(String topic, byte[] payloads) {
 
-        String message = new String(payloads);
         ControlHandler.FuncListMessage funcListMessage = JSON.parseObject(new String(payloads),ControlHandler.FuncListMessage.class);
 
         funcListMessage.getDatas().forEach(funcItemMessage -> {

@@ -158,6 +158,7 @@ public class DeviceParamsService {
     private String sendFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, Map<Integer, List<String>> configMap, int operType) {
         List<ConfigFuncMessage> configFuncMessages = new ArrayList<>();
         String topic = "/down2/cfgC/" + deviceId;
+        DevicePo devicePo =deviceMapper.selectById(deviceId);
         String requestId = UUID.randomUUID().toString().replace("-", "");
         DeviceOperLogPo deviceOperLogPo = new DeviceOperLogPo();
         deviceOperLogPo.setFuncId(abilityTypeName);
@@ -179,12 +180,13 @@ public class DeviceParamsService {
         }
         Map<String, List> req = new HashMap<String, List>();
         req.put("datas", configFuncMessages);
-        mqttSendService.sendMessage(topic, JSON.toJSONString(req));
+        mqttSendService.sendMessage(topic, JSON.toJSONString(req),devicePo.isOldDevice());
         return requestId;
     }
     public String sendOldFuncToDevice(Integer userId, Integer deviceId, String abilityTypeName, List<DeviceParamConfigRequest.ParamConfig> paramConfigList){
         List<Integer> inSpeed = new ArrayList();
         List<Integer> outSpeed = new ArrayList();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
         if(abilityTypeName.equals("C10")){
             for (DeviceParamConfigRequest.ParamConfig paramConfig : paramConfigList) {
                 if(paramConfig.getSort() == 0){
@@ -215,7 +217,7 @@ public class DeviceParamsService {
                 byteBuf.writeShort(speed);
             });
             String topic = "/down2/cfg/" + deviceId;
-            mqttSendService.sendMessage(topic, byteBuf.array());
+            mqttSendService.sendMessage(topic, byteBuf.array(),devicePo.isOldDevice());
         }
         return null;
     }

@@ -62,7 +62,7 @@ public class ProfileHandler extends AbstractHandler {
                 String message = "";
                 DevicePo devicePo = deviceMapper.selectById(deviceId);
                 if(devicePo != null) {
-                    mqttService.sendMessage(sendTopic, message, devicePo.isOld());
+                    mqttService.sendMessage(sendTopic, message, devicePo.isOldDevice());
                 }
             });
         }

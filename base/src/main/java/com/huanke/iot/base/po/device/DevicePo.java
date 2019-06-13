@@ -97,7 +97,7 @@ public class DevicePo {
 
     private Integer old;
 
-    public boolean isOld(){
+    public boolean isOldDevice(){
         return old == 1;
     }
 

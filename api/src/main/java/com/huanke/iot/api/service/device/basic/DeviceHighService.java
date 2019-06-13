@@ -194,7 +194,7 @@ public class DeviceHighService {
         mbMap.put("n", childIdList);
         mb.put("mb", mbMap);
         String topic = "/down2/stopWatch/" + deviceId;
-        mqttSendService.sendMessage(topic, mb.toString(), currentDevicePo.isOld());
+        mqttSendService.sendMessage(topic, mb.toString(), currentDevicePo.isOldDevice());
         return true;
     }
 

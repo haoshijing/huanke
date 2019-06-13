@@ -848,7 +848,7 @@ public class DeviceDataService {
             funcItemMessage.setValue(actualValue);
             funcItemMessage.setChildid(devicePo.getChildId());
             funcListMessage.setDatas(Lists.newArrayList(funcItemMessage));
-            mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
+            mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage),devicePo.isOldDevice());
             stringRedisTemplate.opsForHash().put("control2." + devicePo.getId(), funcItemMessage.getType(), String.valueOf(funcItemMessage.getValue()));
             return requestId;
         }
