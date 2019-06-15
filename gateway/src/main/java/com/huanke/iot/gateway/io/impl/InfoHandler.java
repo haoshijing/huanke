@@ -66,7 +66,7 @@ public class InfoHandler extends AbstractHandler {
             try {
                 DevicePo devicePo = deviceMapper.selectByWxDeviceId(devId);
                 if (devicePo == null) {
-                    log.warn("devId {} :is not belong a exist device ", devId);
+                    //log.warn("devId {} :is not belong a exist device ", devId);
                     return;
                 } else {
                     devicePo.setImei(infoItem.getInfo().getImei());

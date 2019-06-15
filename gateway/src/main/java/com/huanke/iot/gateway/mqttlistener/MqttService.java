@@ -33,7 +33,7 @@ public class MqttService {
     public void init(){
         if(oldServerClient == null){
             try {
-                oldServerClient = new MqttClient(mqttOldServerUrl, "ServerClientNew");
+                oldServerClient = new MqttClient(mqttOldServerUrl, "ServerClientNew1");
             }catch (Exception e){
                 log.error("",e);
             }
@@ -41,7 +41,7 @@ public class MqttService {
 
         if(newServerClient == null){
             try {
-                newServerClient = new MqttClient(mqttNewServerUrl, "ServerClientNew");
+                newServerClient = new MqttClient(mqttNewServerUrl, "ServerClientNew2");
             }catch (Exception e){
                 log.error("",e);
             }
@@ -78,7 +78,7 @@ public class MqttService {
 
     public class MqttMessageListener implements IMqttMessageListener{
 
-        DefaultEventLoopGroup defaultEventLoopGroup = new DefaultEventLoopGroup(9,new DefaultThreadFactory("MqttMessageThread"));
+        DefaultEventLoopGroup defaultEventLoopGroup = new DefaultEventLoopGroup(120,new DefaultThreadFactory("MqttMessageThread"));
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
 

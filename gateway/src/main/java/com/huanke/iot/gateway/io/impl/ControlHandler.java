@@ -41,6 +41,7 @@ public class ControlHandler extends AbstractHandler {
         private List<ControlHandler.FuncItemMessage> datas;
     }
 
+    @Override
     protected String getTopicType() {
         return "control";
     }
@@ -65,8 +66,12 @@ public class ControlHandler extends AbstractHandler {
             deviceControlData.setDeviceId(deviceId);
             try {
                 //上报指令为210且值不为0,重置为开机状态
-                if(deviceControlData.getFuncId().equals("210") && (!deviceControlData.getFuncValue().equals(0))){
-                    this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
+                if(deviceControlData.getFuncId().equals("210")){
+                    if(!deviceControlData.getFuncValue().equals(0)) {
+                        this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
+                    }else{
+                        //log.info("deviceId = {}, send close machine ", deviceControlData.getDeviceId());
+                    }
                 }
                 deviceControlMapper.insert(deviceControlData);
                 //如果上报状态为开关机状态则进行记录
