@@ -32,7 +32,7 @@ public class MqttSendService {
     public void init(){
         if(oldServerClient == null){
             try {
-                oldServerClient = new MqttClient(mqttOldServerUrl, "MessageProducer");
+                oldServerClient = new MqttClient(mqttOldServerUrl, "MessageProducer1");
             }catch (Exception e){
                 log.error("",e);
             }
@@ -40,7 +40,7 @@ public class MqttSendService {
 
         if(newServerClient == null){
             try {
-                newServerClient = new MqttClient(mqttNewServerUrl, "MessageProducer");
+                newServerClient = new MqttClient(mqttNewServerUrl, "MessageProducer2");
             }catch (Exception e){
                 log.error("",e);
             }

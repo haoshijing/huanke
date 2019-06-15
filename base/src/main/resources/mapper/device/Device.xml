@@ -415,9 +415,7 @@
             <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
             </if>
-            <if test="old != null  ">
-                old = #{old},
-            </if>
+
             <if test="wxDevicelicence != null and wxDevicelicence!='' ">
                 wxDevicelicence = #{wxDevicelicence},
             </if>
@@ -502,6 +500,7 @@
             <if test="mac != null  and mac!='' ">
                 mac = #{mac},
             </if>
+
             <if test="wxDeviceId != null and wxDeviceId!='' ">
                 wxDeviceId = #{wxDeviceId},
             </if>
