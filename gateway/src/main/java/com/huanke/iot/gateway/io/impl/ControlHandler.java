@@ -9,6 +9,7 @@ import com.huanke.iot.gateway.io.AbstractHandler;
 import com.huanke.iot.gateway.powercheck.PowerCheckService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -54,6 +55,7 @@ public class ControlHandler extends AbstractHandler {
         funcListMessage.getDatas().forEach(funcItemMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
             if(funcItemMessage.getChildid() != null && !funcItemMessage.getChildid().equals("0")){
+                String childId = funcItemMessage.getChildid();
                 DevicePo childDevice = deviceMapper.getChildDevice(deviceId, funcItemMessage.getChildid());
                 if(childDevice != null){
                     deviceId = childDevice.getId();

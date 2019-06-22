@@ -27,15 +27,9 @@ public abstract  class AbstractHandler {
 
     public  void  handler(String topic, byte[] payloads){
 
-        Long t1 = System.currentTimeMillis();
         Integer id = getDeviceIdFromTopic(topic);
         onlineCheckService.resetOnline(id);
         doHandler(topic,payloads);
-
-        Long t2 = System.currentTimeMillis();
-
-
-        log.info("topic = [" + topic + "], cost = [" + (t2-t1) + "]");
 
     }
     public abstract void  doHandler(String topic, byte[] payloads);
