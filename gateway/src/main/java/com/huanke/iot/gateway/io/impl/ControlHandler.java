@@ -50,15 +50,20 @@ public class ControlHandler extends AbstractHandler {
     @Override
     public void doHandler(String topic, byte[] payloads) {
 
-        ControlHandler.FuncListMessage funcListMessage = JSON.parseObject(new String(payloads),ControlHandler.FuncListMessage.class);
+        String datas = new String(payloads);
+        ControlHandler.FuncListMessage funcListMessage = JSON.parseObject(datas,ControlHandler.FuncListMessage.class);
 
         funcListMessage.getDatas().forEach(funcItemMessage -> {
             Integer deviceId = getDeviceIdFromTopic(topic);
-            if(funcItemMessage.getChildid() != null && !funcItemMessage.getChildid().equals("0")){
-                String childId = funcItemMessage.getChildid();
-                DevicePo childDevice = deviceMapper.getChildDevice(deviceId, funcItemMessage.getChildid());
+            String childId = funcItemMessage.getChildid();
+            if (!StringUtils.equals("0",childId)){
+                DevicePo childDevice = deviceMapper.getChildDevice(deviceId, childId);
                 if(childDevice != null){
                     deviceId = childDevice.getId();
+                }
+            }else{
+                if(StringUtils.equals("2006",deviceId.toString())){
+                    log.info("data = {},devcieId = {}",datas,deviceId);
                 }
             }
             DeviceControlData deviceControlData = new DeviceControlData();
