@@ -431,7 +431,9 @@ public class DeviceDataService {
      * @return
      */
     public List<DeviceAbilitysVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds) {
-        Integer modelId = deviceMapper.selectById(deviceId).getModelId();
+        DevicePo devicePo = deviceMapper.selectById(deviceId);
+        Integer modelId = devicePo.getModelId();
+        boolean isOld = devicePo.getOld() == 1;
         List<DeviceAbilitysVo> deviceAbilitysVoList = new ArrayList<>();
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
@@ -451,16 +453,22 @@ public class DeviceDataService {
             deviceAbilitysVo.setDirValue(dirValue);
             switch (abilityType) {
                 case DeviceAbilityTypeContants.ability_type_text:
-                    if (deviceabilityPo.getWriteStatus() == 1){
+                    if(!isOld){
                         String data = getData(controlDatas, dirValue);
-                        if (data.equals("0") ){
-                            data = getData(datas, dirValue);
-                        }
                         deviceAbilitysVo.setCurrValue(data);
                         deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
                     }else {
-                        deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
-                        deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
+                        if (deviceabilityPo.getWriteStatus() == 1) {
+                            String data = getData(controlDatas, dirValue);
+                            if (data.equals("0")) {
+                                data = getData(datas, dirValue);
+                            }
+                            deviceAbilitysVo.setCurrValue(data);
+                            deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
+                        } else {
+                            deviceAbilitysVo.setCurrValue(getData(datas, dirValue));
+                            deviceAbilitysVo.setUnit(deviceabilityPo.getRemark());
+                        }
                     }
                     break;
                 case DeviceAbilityTypeContants.ability_type_single:
