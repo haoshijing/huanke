@@ -3,6 +3,7 @@ package com.huanke.iot.api.service.device.basic;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
@@ -281,7 +282,14 @@ public class AppDeviceDataService {
                 deviceItemPo.setAndroidFormatId(wxFormatPo.getVersion());
                 deviceItemPo.setAndroidFormatName(wxFormatPo.getName());
             }
-            Map<Object, Object> data = stringRedisTemplate.opsForHash().entries("sensor2." + devicePo.getId());
+            String key = "sensor2.";
+            Map<Object, Object> data = Maps.newHashMap();
+            boolean isNew = devicePo.getOld() == 2;
+            if(isNew){
+                key ="control2.";
+
+            }
+            data = stringRedisTemplate.opsForHash().entries(key + devicePo.getId());
             deviceItemPo.setPm(getData(data, SensorTypeEnums.PM25_IN.getCode()));
             deviceItemPo.setCo2(getData(data, SensorTypeEnums.CO2_IN.getCode()));
             deviceItemPo.setHum(getData(data, SensorTypeEnums.HUMIDITY_IN.getCode()));
@@ -293,10 +301,15 @@ public class AppDeviceDataService {
         return childDevicePos;
     }
     public List<AppDeviceDataVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds){
-        Integer modelId = deviceMapper.selectById(deviceId).getModelId();
+        DevicePo devicePo =  deviceMapper.selectById(deviceId);
+        Integer modelId = devicePo.getModelId();
+        boolean isNew = devicePo.getOld() == 2;
         List<AppDeviceDataVo> deviceAbilitysVoList = new ArrayList<>();
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
+        if(isNew){
+            datas = controlDatas;
+        }
         if(abilityIds == null || abilityIds.size()<1){
             abilityIds = new ArrayList<Integer>();
             List<DeviceModelAbilityPo> deviceModelAbilityPos = deviceModelAbilityMapper.selectByModelId(modelId);
