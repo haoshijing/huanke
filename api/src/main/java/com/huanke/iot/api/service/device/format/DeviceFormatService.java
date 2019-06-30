@@ -1,8 +1,8 @@
 package com.huanke.iot.api.service.device.format;
 
+import com.huanke.iot.api.cache.CustomerNameCache;
 import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
-import com.huanke.iot.base.dao.customer.CustomerMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityMapper;
 import com.huanke.iot.base.dao.device.ability.DeviceAbilityOptionMapper;
@@ -14,7 +14,6 @@ import com.huanke.iot.base.dao.format.DeviceModelFormatItemMapper;
 import com.huanke.iot.base.dao.format.DeviceModelFormatMapper;
 import com.huanke.iot.base.dao.format.WxFormatItemMapper;
 import com.huanke.iot.base.dao.format.WxFormatPageMapper;
-import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityOptionPo;
 import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
@@ -66,8 +65,9 @@ public class DeviceFormatService {
     private DeviceTypeAbilitysMapper deviceTypeabilitysMapper;
     @Autowired
     private WxFormatPageMapper wxFormatPageMapper;
+
     @Autowired
-    private CustomerMapper customerMapper;
+    private CustomerNameCache customerNameCache;
 
     public DeviceModelVo getModelVo(Integer deviceId, Integer pageNo) {
         DeviceModelVo deviceModelVo = new DeviceModelVo();
@@ -83,8 +83,8 @@ public class DeviceFormatService {
         DeviceModelFormatPo deviceModelFormatPo = deviceModelFormatMapper.selectByJoinId(modelId, formatId, wxFormatPagePo.getId());
         Integer modelFormatId = deviceModelFormatPo.getId();
         deviceModelVo.setFormatShowName(deviceModelFormatPo.getShowName());
-        CustomerPo customerPo = customerMapper.selectById(UserRequestContextHolder.get().getCustomerVo().getCustomerId());
-        deviceModelVo.setCompanyName(customerPo.getPublicName());
+        String customerNameCacheName = customerNameCache.getName(UserRequestContextHolder.get().getCustomerVo().getCustomerId());
+        deviceModelVo.setCompanyName(customerNameCacheName);
         //查型号版式配置项
         List<DeviceModelVo.FormatItems> formatItemsList = new ArrayList<>();
         deviceModelVo.setPageName(wxFormatPagePo.getName());

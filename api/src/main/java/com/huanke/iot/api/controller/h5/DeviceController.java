@@ -1,6 +1,7 @@
 package com.huanke.iot.api.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huanke.iot.api.cache.DeviceAbilityCache;
 import com.huanke.iot.api.controller.h5.req.*;
 import com.huanke.iot.api.controller.h5.response.*;
 import com.huanke.iot.api.service.device.basic.DeviceDataService;
@@ -44,6 +45,9 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private DeviceAbilityCache deviceAbilityCache;
 
     /**
      * 首页查询我的设备
@@ -104,7 +108,7 @@ public class DeviceController extends BaseController {
     @RequestMapping("/newQueryDetailByDeviceId")
     public ApiResponse<List<DeviceAbilitysVo>> newQueryDetailByDeviceId(@RequestBody DeviceAbilitysRequest request) {
         Integer deviceId = request.getDeviceId();
-        List<Integer> abilityIds = request.getAbilityIds();
+        List<Integer> abilityIds = deviceAbilityCache.getAbilitys(deviceId);
         if(deviceId == null || abilityIds.isEmpty()){
             return new ApiResponse<>(RetCode.PARAM_ERROR, "设备功能不能为空");
         }
