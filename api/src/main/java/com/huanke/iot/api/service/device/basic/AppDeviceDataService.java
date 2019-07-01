@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.huanke.iot.api.cache.DeviceAbilityCache;
 import com.huanke.iot.api.constants.Constants;
 import com.huanke.iot.api.constants.DeviceAbilityTypeContants;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
@@ -92,6 +93,9 @@ public class AppDeviceDataService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private DeviceAbilityCache deviceAbilityCache;
     @Value("${speed}")
     private int speed;
     @Value("${oss.url}")
@@ -304,25 +308,14 @@ public class AppDeviceDataService {
         DevicePo devicePo =  deviceMapper.selectById(deviceId);
         Integer modelId = devicePo.getModelId();
         boolean isNew = devicePo.getOld() == 2;
+        abilityIds = deviceAbilityCache.getAbilitys(deviceId);
         List<AppDeviceDataVo> deviceAbilitysVoList = new ArrayList<>();
         Map<Object, Object> datas = stringRedisTemplate.opsForHash().entries("sensor2." + deviceId);
         Map<Object, Object> controlDatas = stringRedisTemplate.opsForHash().entries("control2." + deviceId);
         if(isNew){
             datas = controlDatas;
         }
-        if(abilityIds == null || abilityIds.size()<1){
-            abilityIds = new ArrayList<Integer>();
-            List<DeviceModelAbilityPo> deviceModelAbilityPos = deviceModelAbilityMapper.selectByModelId(modelId);
-            if(deviceModelAbilityPos != null && deviceModelAbilityPos.size()>0){
-                for(DeviceModelAbilityPo temp : deviceModelAbilityPos){
-                    if(temp.getStatus()!=null && temp.getStatus()==1) {
-                        abilityIds.add(temp.getAbilityId());
-                    }
-                }
-            }else{
-                return null;
-            }
-        }
+
         for (Integer abilityId : abilityIds) {
             DeviceAbilityPo deviceabilityPo = deviceAbilityMapper.selectById(abilityId);
             String dirValue = deviceabilityPo.getDirValue();
