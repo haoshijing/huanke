@@ -306,6 +306,9 @@ public class AppDeviceDataService {
     }
     public List<AppDeviceDataVo> queryDetailAbilitysValue(Integer deviceId, List<Integer> abilityIds){
         DevicePo devicePo =  deviceMapper.selectById(deviceId);
+        if(deviceId == null){
+            return Lists.newArrayList();
+        }
         Integer modelId = devicePo.getModelId();
         boolean isNew = devicePo.getOld() == 2;
         abilityIds = deviceAbilityCache.getAbilitys(deviceId);
