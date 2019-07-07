@@ -340,6 +340,36 @@
         limit #{offset},#{limit}
     </select>
 
+    <select id="selectChildList" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select d.`id`, d.`name`,d.`manageName` ,d.`mac`,
+        d.`wxDeviceId`,d.`wxDevicelicence`,d.`wxQrticket`,
+        d.`imei`,d.`imsi`,d.`saNo`,d.`typeId`,d.`modelId`,
+        d.`productId`,c.`id` customerId ,
+        d.`onlineStatus`,d.`powerStatus`,d.`bindStatus`,d.`bindTime`,d.`assignStatus`,
+        d.`assignTime`,d.`enableStatus`,d.`workStatus`,d.`ip`,d.`mapGps`,
+        d.`speedConfig`,d.`version`,d.`location`,d.`status`,
+        d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
+        d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
+        d.`createTime`,d.`lastUpdateTime`,d.`lastOnlineTime`,d.`createUser`,d.`lastUpdateUser`
+        ,c.name customerName,t.`name` typeName ,m.`name` modelName,m.`modelNo`,m.`modelCode`,t.`typeNo`
+        from
+        t_device d
+        <if test="param.customerId == null">
+            LEFT JOIN ( SELECT r.*, cc.name FROM t_device_customer_relation r, t_customer cc WHERE r.customerId = cc.id
+            ) c ON d.id = c.deviceId
+        </if>
+        LEFT JOIN t_device_model m ON d.modelId = m.id
+        LEFT JOIN t_device_type t ON m.typeId = t.id
+        <if test="param.customerId != null">
+            ,t_device_customer_relation r,t_customer c
+        </if>
+        <where>
+            1=1
+            AND d.hostDeviceId is NOT null
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1) from
         t_device d

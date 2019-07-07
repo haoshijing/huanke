@@ -111,6 +111,64 @@ public class DeviceSensorStatWorker {
         log.info("DeviceSensorStatWorker end work");
     }
 
+    @Scheduled(cron = "0 10/30 * * * ?")
+    public void doWork1() {
+        log.info("ChildDeviceSensorStatWorker start work");
+        DevicePo queryPo = new DevicePo();
+        int offset = 0;
+        List<DevicePo> devicePoList = deviceMapper.selectChildList(queryPo, 100, offset);
+        final Long startTime = new DateTime().withMillisOfSecond(0).plusMinutes(-40).getMillis();
+        final Long endTime = new DateTime().withMillisOfSecond(0).plusMinutes(-10).getMillis();
+        do {
+            devicePoList.forEach(devicePo -> {
+                //未被分配的设备不记录
+                Integer customerId = devicePo.getCustomerId();
+                if(customerId == null){
+                    return;
+                }
+                Future<Integer> co2 = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(), startTime, endTime, SensorTypeEnums.CO2_IN.getCode()));
+                Future<Integer>  hcho = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.HCHO_IN.getCode()));
+                Future<Integer>  tvoc = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.TVOC_IN.getCode()));
+                Future<Integer>  hum = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.HUMIDITY_IN.getCode()));
+                Future<Integer>  tem = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.TEMPERATURE_IN.getCode()));
+                Future<Integer>  pm = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.PM25_IN.getCode()));
+                Future<Integer>  nh3 = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.NH3_IN.getCode()));
+                Future<Integer>  anion = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.ANION_IN.getCode()));
+
+                DeviceSensorStatPo deviceSensorStatPo = new DeviceSensorStatPo();
+                deviceSensorStatPo.setDeviceId(devicePo.getId());
+                deviceSensorStatPo.setStartTime(startTime);
+                deviceSensorStatPo.setEndTime(endTime);
+                deviceSensorStatPo.setInsertTime(System.currentTimeMillis());
+                try {
+                    deviceSensorStatPo.setCo2(co2.get());
+                    deviceSensorStatPo.setHum(hum.get());
+                    deviceSensorStatPo.setPm(pm.get());
+                    deviceSensorStatPo.setHcho(hcho.get());
+                    deviceSensorStatPo.setTvoc(tvoc.get());
+                    deviceSensorStatPo.setTem(tem.get());
+                    deviceSensorStatPo.setNh3(nh3.get());
+                    deviceSensorStatPo.setAnion(anion.get());
+                    //根据传感器数值大小，判断是否设备报警
+                    if(customerId == 3 && devicePo.getPowerStatus() == 1){//韩师傅 和 开机设备开启设备报警
+                        deviceWarn(devicePo.getId(), customerId, deviceSensorStatPo);
+                    }
+                }catch (Exception e){
+                    log.error("",e);
+                }
+                try {
+                    deviceSensorStatMapper.insert(deviceSensorStatPo);
+                }catch (Exception e){
+                    log.error("",e);
+                }
+            });
+
+            offset += devicePoList.size();
+            devicePoList = deviceMapper.selectChildList(queryPo, 100, offset);
+        } while (devicePoList.size() > 0);
+        log.info("ChildDeviceSensorStatWorker end work");
+    }
+
     private void deviceWarn(Integer deviceId, Integer customerId, DeviceSensorStatPo deviceSensorStatPo) {
         DeviceSensorWarnPo deviceSensorWarnPo = (DeviceSensorWarnPo)template.opsForValue().get("sensorWarn" + customerId);
         if(deviceSensorWarnPo == null){
