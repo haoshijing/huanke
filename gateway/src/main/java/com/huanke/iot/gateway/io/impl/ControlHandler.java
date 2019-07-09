@@ -1,6 +1,7 @@
 package com.huanke.iot.gateway.io.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.device.data.DeviceControlMapper;
 import com.huanke.iot.base.po.device.DevicePo;
@@ -75,6 +76,10 @@ public class ControlHandler extends AbstractHandler {
                         this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
                     }else{
                         //log.info("deviceId = {}, send close machine ", deviceControlData.getDeviceId());
+                        DevicePo updatePo = new DevicePo();
+                        updatePo.setId(deviceId);
+                        updatePo.setPowerStatus(DeviceConstant.POWER_STATUS_YES);
+                        deviceMapper.updateById(updatePo);
                     }
                 }
                 deviceControlMapper.insert(deviceControlData);
