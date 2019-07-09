@@ -10,6 +10,7 @@ import com.huanke.iot.base.po.device.DevicePo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorWarnPo;
 import com.huanke.iot.base.po.project.ProjectJobInfo;
+import com.huanke.iot.base.util.RedisUtil;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
@@ -47,7 +47,8 @@ public class DeviceSensorStatWorker {
     @Autowired
     private DeviceSensorStatMapper deviceSensorStatMapper;
     @Autowired
-    private RedisTemplate<Object,Object> template;
+    private RedisUtil redisUtil;
+
 
 
     private DefaultEventExecutorGroup defaultEventExecutorGroup = new DefaultEventExecutorGroup(16,
@@ -123,9 +124,7 @@ public class DeviceSensorStatWorker {
             devicePoList.forEach(devicePo -> {
                 //未被分配的设备不记录
                 Integer customerId = devicePo.getCustomerId();
-                if(customerId == null){
-                    return;
-                }
+
                 Future<Integer> co2 = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(), startTime, endTime, SensorTypeEnums.CO2_IN.getCode()));
                 Future<Integer>  hcho = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.HCHO_IN.getCode()));
                 Future<Integer>  tvoc = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.TVOC_IN.getCode()));
@@ -170,14 +169,14 @@ public class DeviceSensorStatWorker {
     }
 
     private void deviceWarn(Integer deviceId, Integer customerId, DeviceSensorStatPo deviceSensorStatPo) {
-        DeviceSensorWarnPo deviceSensorWarnPo = (DeviceSensorWarnPo)template.opsForValue().get("sensorWarn" + customerId);
+        DeviceSensorWarnPo deviceSensorWarnPo = (DeviceSensorWarnPo)redisUtil.get("sensorWarn" + customerId);
         if(deviceSensorWarnPo == null){
             deviceSensorWarnPo = deviceSensorWarnMapper.selectByCustomerId(customerId);
             if(deviceSensorWarnPo == null){
                 log.info("该公众号没有配置");
                 return;
             }
-            template.opsForValue().set("sensorWarn" + customerId, deviceSensorWarnPo);
+            redisUtil.set("sensorWarn" + customerId, deviceSensorWarnPo);
         }
         StringBuilder sb = new StringBuilder();
         //判断温度
