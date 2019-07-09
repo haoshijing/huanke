@@ -80,4 +80,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DevicePo> selectByIdList(@Param("deviceIdList") List<Integer> deviceIdList);
 
     DevicePo selectEnergyDevice(@Param("id") Integer id);
+
+    List<DevicePo> selectChildList(@Param("param") DevicePo devicePo, @Param("limit") int limit , @Param("offset") int offset);
 }
