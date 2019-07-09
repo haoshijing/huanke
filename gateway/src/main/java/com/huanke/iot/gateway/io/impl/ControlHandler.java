@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class ControlHandler extends AbstractHandler {
 
-    private static final List<String> sensor_datas = Arrays.asList("111", "120", "130", "131", "140", "141", "150", "160", "110", "170", "180");
+    private static final List<String> sensor_datas = Arrays.asList("111", "120", "130", "131", "140", "141", "150", "160", "110", "170", "180", "142", "143");
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
