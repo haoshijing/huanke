@@ -121,7 +121,7 @@ public class DeviceRemoteJob {
 	                        funcListMessage.setMsg_type("control");
 	                        funcListMessage.setMsg_id(requestId);
 	                        funcListMessage.setDatas(funcItemMessages);
-	                        log.info(" push weather work diviceId:{}",devicePo.getId());
+	                        //log.info(" push weather work diviceId:{}",devicePo.getId());
 	                        mqttSendService.sendMessage(topic, JSON.toJSONString(funcListMessage));
                         }
                     }
