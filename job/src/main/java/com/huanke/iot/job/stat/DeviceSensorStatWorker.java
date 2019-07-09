@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -46,7 +47,7 @@ public class DeviceSensorStatWorker {
     private DeviceSensorDataMapper deviceSensorDataMapper;
     @Autowired
     private DeviceSensorStatMapper deviceSensorStatMapper;
-    @Autowired
+    @Resource(name="myRedisTemplate")
     private RedisTemplate<Object,Object> template;
 
 
