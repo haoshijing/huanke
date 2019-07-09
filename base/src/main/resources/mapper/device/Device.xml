@@ -982,4 +982,12 @@
 
     </update>
 
+    <update id="batchUpdatePowerStatus">
+        <foreach collection="devices" index="index" item="item" open="(" separator=";" close=")">
+           update <include refid="tableName"/> set powerStatus = #{item.powerStatus}
+            where id = #{item.id}
+        </foreach>
+
+    </update>
+
 </mapper>

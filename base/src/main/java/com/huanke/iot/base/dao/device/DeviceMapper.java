@@ -84,4 +84,6 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
     List<DevicePo> selectChildList(@Param("param") DevicePo devicePo, @Param("limit") int limit , @Param("offset") int offset);
 
     void batchUpdatePowerStatus(@Param("ids") List<Integer> ids);
+
+    void batchUpdateDevice(@Param("devices") List<DevicePo> updateDevicePos);
 }

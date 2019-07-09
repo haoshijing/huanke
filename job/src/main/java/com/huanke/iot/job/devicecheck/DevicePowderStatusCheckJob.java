@@ -1,16 +1,12 @@
 package com.huanke.iot.job.devicecheck;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huanke.iot.base.constant.DeviceConstant;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.po.device.DevicePo;
-import com.huanke.iot.base.util.LocationUtils;
-import com.huanke.iot.job.gateway.MqttSendService;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,7 +31,7 @@ public class DevicePowderStatusCheckJob {
     }
 
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "* 0/2 * * * ?")
     public void doWork(){
         updatePowderStatus();
     }
@@ -43,16 +39,24 @@ public class DevicePowderStatusCheckJob {
 
         private void updatePowderStatus(){
             DevicePo queryPo = new DevicePo();
-            queryPo.setPowerStatus(DeviceConstant.POWER_STATUS_YES);
             List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,100000,0);
-            List<Integer> ids = devicePoList.stream().filter(devicePo -> {
+            List<DevicePo> updateDevicePos = Lists.newArrayList();
+            devicePoList.stream().forEach(devicePo -> {
                String values = (String)stringRedisTemplate.opsForHash().get("control2."+devicePo.getId(),"210");
-                return values.equals("0");
-            }).map(DevicePo::getId).collect(Collectors.toList());
+                DevicePo updatePo = new DevicePo();
+                updatePo.setId(devicePo.getId());
+               if(StringUtils.equalsIgnoreCase(values,"0")){
 
-            if(CollectionUtils.isNotEmpty(ids)) {
-                deviceMapper.batchUpdatePowerStatus(ids);
-            }
+                   updatePo.setPowerStatus(0);
+               }else{
+                   updatePo.setPowerStatus(1);
+               }
+                updateDevicePos.add(updatePo);
+            });
+
+
+            deviceMapper.batchUpdateDevice(updateDevicePos);
+
 
     }
 }
