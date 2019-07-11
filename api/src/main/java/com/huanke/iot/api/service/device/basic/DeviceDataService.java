@@ -302,34 +302,34 @@ public class DeviceDataService {
                 xdata.add(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:mm:ss"));
                 switch (sensorTypeEnums){
                     case CO2_IN:
-                        ydata.add(deviceSensorPo.getCo2().toString());
+                        ydata.add(deviceSensorPo.getCo2()!=null? deviceSensorPo.getCo2().toString(): "0");
                         break;
                     case HUMIDITY_IN:
-                        ydata.add(deviceSensorPo.getHum().toString());
+                        ydata.add(deviceSensorPo.getHum()!=null? deviceSensorPo.getHum().toString(): "0");
                         break;
                     case TEMPERATURE_IN:
-                        ydata.add(deviceSensorPo.getTem().toString());
+                        ydata.add(deviceSensorPo.getTem()!=null? deviceSensorPo.getTem().toString(): "0");
                         break;
                     case HCHO_IN:
                         ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getHcho()));
                         break;
                     case PM25_IN:
-                        ydata.add(deviceSensorPo.getPm().toString());
+                        ydata.add(deviceSensorPo.getPm()!=null? deviceSensorPo.getPm().toString(): "0");
                         break;
                     case TVOC_IN:
                         ydata.add(FloatDataUtil.getFloat(deviceSensorPo.getTvoc()));
                         break;
                     case NH3_IN:
-                        ydata.add(deviceSensorPo.getNh3().toString());
+                        ydata.add(deviceSensorPo.getNh3()!=null? deviceSensorPo.getNh3().toString(): "0");
                         break;
                     case ANION_IN:
-                        ydata.add(deviceSensorPo.getAnion().toString());
+                        ydata.add(deviceSensorPo.getAnion()!=null? deviceSensorPo.getAnion().toString(): "0");
                         break;
                     case OUT_WATER_TEM:
-                        ydata.add(deviceSensorPo.getOutWaterTem().toString());
+                        ydata.add(deviceSensorPo.getOutWaterTem()!=null? deviceSensorPo.getOutWaterTem().toString(): "0");
                         break;
                     case IN_WATER_TEM:
-                        ydata.add(deviceSensorPo.getInWaterTem().toString());
+                        ydata.add(deviceSensorPo.getInWaterTem()!=null? deviceSensorPo.getInWaterTem().toString(): "0");
                         break;
                     default:
                         break;

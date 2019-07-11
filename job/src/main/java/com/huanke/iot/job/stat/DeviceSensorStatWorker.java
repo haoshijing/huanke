@@ -126,6 +126,14 @@ public class DeviceSensorStatWorker {
                 Integer customerId = devicePo.getCustomerId();
                 Future<Integer> inWaterTem = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(), startTime, endTime, SensorTypeEnums.IN_WATER_TEM.getCode()));
                 Future<Integer>  outWaterTem = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.OUT_WATER_TEM.getCode()));
+                Future<Integer> co2 = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(), startTime, endTime, SensorTypeEnums.CO2_IN.getCode()));
+                Future<Integer>  hcho = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.HCHO_IN.getCode()));
+                Future<Integer>  tvoc = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.TVOC_IN.getCode()));
+                Future<Integer>  hum = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.HUMIDITY_IN.getCode()));
+                Future<Integer>  tem = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.TEMPERATURE_IN.getCode()));
+                Future<Integer>  pm = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.PM25_IN.getCode()));
+                Future<Integer>  nh3 = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.NH3_IN.getCode()));
+                Future<Integer>  anion = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.ANION_IN.getCode()));
 
                 DeviceSensorStatPo deviceSensorStatPo = new DeviceSensorStatPo();
                 deviceSensorStatPo.setDeviceId(devicePo.getId());
@@ -135,7 +143,14 @@ public class DeviceSensorStatWorker {
                 try {
                     deviceSensorStatPo.setInWaterTem(inWaterTem.get());
                     deviceSensorStatPo.setOutWaterTem(outWaterTem.get());
-
+                    deviceSensorStatPo.setCo2(co2.get());
+                    deviceSensorStatPo.setHum(hum.get());
+                    deviceSensorStatPo.setPm(pm.get());
+                    deviceSensorStatPo.setHcho(hcho.get());
+                    deviceSensorStatPo.setTvoc(tvoc.get());
+                    deviceSensorStatPo.setTem(tem.get());
+                    deviceSensorStatPo.setNh3(nh3.get());
+                    deviceSensorStatPo.setAnion(anion.get());
                     //根据传感器数值大小，判断是否设备报警
                     if(customerId == 3 && devicePo.getPowerStatus() == 1){//韩师傅 和 开机设备开启设备报警
                         deviceWarn(devicePo.getId(), customerId, deviceSensorStatPo);
