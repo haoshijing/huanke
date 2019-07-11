@@ -124,9 +124,6 @@ public class DeviceSensorStatWorker {
             devicePoList.forEach(devicePo -> {
                 //未被分配的设备不记录
                 Integer customerId = devicePo.getCustomerId();
-                if(customerId == null){
-                    return;
-                }
                 Future<Integer> inWaterTem = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(), startTime, endTime, SensorTypeEnums.IN_WATER_TEM.getCode()));
                 Future<Integer>  outWaterTem = defaultEventExecutorGroup.submit(new QueryTask(devicePo.getId(),startTime,endTime,SensorTypeEnums.OUT_WATER_TEM.getCode()));
 
