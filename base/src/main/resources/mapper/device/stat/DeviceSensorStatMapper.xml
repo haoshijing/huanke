@@ -19,6 +19,8 @@
         tvoc,
         nh3,
         anion,
+        inWaterTem,
+        outWaterTem,
         startTime,
         endTime,
         insertTime
@@ -33,6 +35,8 @@
         #{tvoc},
         #{nh3},
         #{anion},
+        #{inWaterTem},
+        #{outWaterTem},
         #{startTime},
         #{endTime},
         #{insertTime}

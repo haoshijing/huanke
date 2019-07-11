@@ -21,4 +21,6 @@ public class DeviceSensorStatPo {
     private Long startTime;
     private Long endTime;
     private Long insertTime;
+    private Integer inWaterTem;
+    private Integer outWaterTem;
 }
