@@ -296,7 +296,7 @@ public class DeviceDataService {
             List<String> xdata = Lists.newArrayList();
             List<String> ydata = Lists.newArrayList();
             for (DeviceSensorStatPo deviceSensorPo : deviceSensorPos) {
-                if (deviceSensorPo.getPm() == null) {
+                if (deviceSensorPo.getPm() == null && devicePo.getHostDeviceId() == null) {
                     continue;
                 }
                 xdata.add(new DateTime(deviceSensorPo.getStartTime()).toString("yyyy-MM-dd HH:mm:ss"));
@@ -324,6 +324,12 @@ public class DeviceDataService {
                         break;
                     case ANION_IN:
                         ydata.add(deviceSensorPo.getAnion().toString());
+                        break;
+                    case OUT_WATER_TEM:
+                        ydata.add(deviceSensorPo.getOutWaterTem().toString());
+                        break;
+                    case IN_WATER_TEM:
+                        ydata.add(deviceSensorPo.getInWaterTem().toString());
                         break;
                     default:
                         break;
