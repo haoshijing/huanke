@@ -29,7 +29,7 @@ public class DevicePowderStatusCheckJob {
     }
 
 
-    @Scheduled(cron = "* 0/10 * * * ?")
+    @Scheduled(cron = "* 0/1 * * * ?")
     public void doWork() {
         updatePowderStatus();
     }
@@ -44,7 +44,6 @@ public class DevicePowderStatusCheckJob {
             DevicePo updatePo = new DevicePo();
             updatePo.setId(id);
             if (StringUtils.equalsIgnoreCase(value210, "0") || StringUtils.equalsIgnoreCase(value2C0, "0")) {
-
                 updatePo.setPowerStatus(0);
             } else {
                 updatePo.setPowerStatus(1);
