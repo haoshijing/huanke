@@ -987,7 +987,9 @@
 
     <update id="batchUpdateDevice">
         <foreach collection="devices" index="index" item="item"  open="" close="" separator=";" >
-           update <include refid="tableName"/> <set> powerStatus = #{item.powerStatus}
+           update <include refid="tableName"/> <set> powerStatus = #{item.powerStatus},
+
+            onlineStatus = #{item.onlineStatus}
         </set>
             where id = #{item.id}
         </foreach>

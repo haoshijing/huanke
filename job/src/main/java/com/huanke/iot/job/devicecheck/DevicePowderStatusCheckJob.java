@@ -53,8 +53,10 @@ public class DevicePowderStatusCheckJob {
 
             if (isClose) {
                 updatePo.setPowerStatus(0);
+                updatePo.setOnlineStatus(0);
             } else {
                 updatePo.setPowerStatus(1);
+                updatePo.setOnlineStatus(1);
             }
             updateDevicePos.add(updatePo);
         });
