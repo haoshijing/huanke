@@ -23,38 +23,37 @@ public class DevicePowderStatusCheckJob {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
     @PostConstruct
-    public void init(){
+    public void init() {
     }
 
 
-    @Scheduled(cron = "* 0/1 * * * ?")
-    public void doWork(){
+    @Scheduled(cron = "* 0/10 * * * ?")
+    public void doWork() {
         updatePowderStatus();
     }
 
 
-        private void updatePowderStatus(){
-            DevicePo queryPo = new DevicePo();
-            List<Integer> deviceIds = deviceMapper.queryAllDeviceId();
-            List<DevicePo> updateDevicePos = Lists.newArrayList();
-            deviceIds.stream().forEach(id -> {
-                String value210 = (String)stringRedisTemplate.opsForHash().get("control2."+id,"210");
-                String value2C0 = (String)stringRedisTemplate.opsForHash().get("control2."+id,"2C0");
-                DevicePo updatePo = new DevicePo();
-                updatePo.setId(id);
-               if(StringUtils.equalsIgnoreCase(value210,"0")  || StringUtils.equalsIgnoreCase(value2C0,"0")){
+    private void updatePowderStatus() {
+        List<Integer> deviceIds = deviceMapper.queryAllDeviceId();
+        List<DevicePo> updateDevicePos = Lists.newArrayList();
+        deviceIds.stream().forEach(id -> {
+            String value210 = (String) stringRedisTemplate.opsForHash().get("control2." + id, "210");
+            String value2C0 = (String) stringRedisTemplate.opsForHash().get("control2." + id, "2C0");
+            DevicePo updatePo = new DevicePo();
+            updatePo.setId(id);
+            if (StringUtils.equalsIgnoreCase(value210, "0") || StringUtils.equalsIgnoreCase(value2C0, "0")) {
 
-                   updatePo.setPowerStatus(0);
-               }else{
-                   updatePo.setPowerStatus(1);
-               }
-               log.info(" deviceid = {}, powerStatus = {}",id,updatePo.getPowerStatus());
-                updateDevicePos.add(updatePo);
-            });
+                updatePo.setPowerStatus(0);
+            } else {
+                updatePo.setPowerStatus(1);
+            }
+            updateDevicePos.add(updatePo);
+        });
 
 
-            deviceMapper.batchUpdateDevice(updateDevicePos);
+        deviceMapper.batchUpdateDevice(updateDevicePos);
 
 
     }
