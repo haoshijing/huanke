@@ -36,14 +36,22 @@ public class DevicePowderStatusCheckJob {
 
 
     private void updatePowderStatus() {
-        List<Integer> deviceIds = deviceMapper.queryAllDeviceId();
+        List<DevicePo> deviceIds = deviceMapper.queryAllDeviceId();
         List<DevicePo> updateDevicePos = Lists.newArrayList();
-        deviceIds.stream().forEach(id -> {
+        deviceIds.stream().forEach(devicePo -> {
+            Integer id = devicePo.getId();
             String value210 = (String) stringRedisTemplate.opsForHash().get("control2." + id, "210");
             String value2C0 = (String) stringRedisTemplate.opsForHash().get("control2." + id, "2C0");
             DevicePo updatePo = new DevicePo();
-            updatePo.setId(id);
-            if (StringUtils.equalsIgnoreCase(value210, "0") || StringUtils.equalsIgnoreCase(value2C0, "0")) {
+            updatePo.setId(devicePo.getId());
+            boolean isClose = StringUtils.equals(value210,"0") &&
+                    devicePo.getOld() == 0;
+
+             if(devicePo.getOld() == 1){
+                 isClose =  StringUtils.equals(value2C0,"0");
+             }
+
+            if (isClose) {
                 updatePo.setPowerStatus(0);
             } else {
                 updatePo.setPowerStatus(1);

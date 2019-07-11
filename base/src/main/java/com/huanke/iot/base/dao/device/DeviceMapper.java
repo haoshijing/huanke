@@ -87,5 +87,5 @@ public interface DeviceMapper extends BaseMapper<DevicePo>{
 
     void batchUpdateDevice(@Param("devices") List<DevicePo> updateDevicePos);
 
-    List<Integer> queryAllDeviceId();
+    List<DevicePo> queryAllDeviceId();
 }

@@ -252,8 +252,8 @@
         WHERE saNo = #{saNo} limit 1
     </select>
 
-    <select id = "queryAllDeviceId" resultType="java.lang.Integer">
-        select id from  <include refid="tableName"/>
+    <select id = "queryAllDeviceId" resultType="com.huanke.iot.base.po.device.DevicePo">
+        select id , old from  <include refid="tableName"/>
     </select>
 
     <select id="selectByModelId" parameterType="java.lang.Integer" resultType="com.huanke.iot.base.po.device.DevicePo">
