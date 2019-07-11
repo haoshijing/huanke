@@ -39,8 +39,8 @@ public class DevicePowderStatusCheckJob {
             List<Integer> deviceIds = deviceMapper.queryAllDeviceId();
             List<DevicePo> updateDevicePos = Lists.newArrayList();
             deviceIds.stream().forEach(id -> {
-                String value210 = (String)stringRedisTemplate.opsForHash().get("control2."+devicePo.getId(),"210");
-                String value2C0 = (String)stringRedisTemplate.opsForHash().get("control2."+devicePo.getId(),"2C0");
+                String value210 = (String)stringRedisTemplate.opsForHash().get("control2."+id,"210");
+                String value2C0 = (String)stringRedisTemplate.opsForHash().get("control2."+id,"2C0");
                 DevicePo updatePo = new DevicePo();
                 updatePo.setId(id);
                if(StringUtils.equalsIgnoreCase(value210,"0")  || StringUtils.equalsIgnoreCase(value2C0,"0")){
