@@ -28,7 +28,7 @@ public class DevicePowderStatusCheckJob {
     }
 
 
-    @Scheduled(cron = "* 0/2 * * * ?")
+    @Scheduled(cron = "* 0/1 * * * ?")
     public void doWork(){
         updatePowderStatus();
     }
@@ -36,19 +36,20 @@ public class DevicePowderStatusCheckJob {
 
         private void updatePowderStatus(){
             DevicePo queryPo = new DevicePo();
-            List<DevicePo> devicePoList = deviceMapper.selectList(queryPo,100000,0);
+            List<Integer> deviceIds = deviceMapper.queryAllDeviceId();
             List<DevicePo> updateDevicePos = Lists.newArrayList();
-            devicePoList.stream().forEach(devicePo -> {
+            deviceIds.stream().forEach(id -> {
                 String value210 = (String)stringRedisTemplate.opsForHash().get("control2."+devicePo.getId(),"210");
                 String value2C0 = (String)stringRedisTemplate.opsForHash().get("control2."+devicePo.getId(),"2C0");
                 DevicePo updatePo = new DevicePo();
-                updatePo.setId(devicePo.getId());
+                updatePo.setId(id);
                if(StringUtils.equalsIgnoreCase(value210,"0")  || StringUtils.equalsIgnoreCase(value2C0,"0")){
 
                    updatePo.setPowerStatus(0);
                }else{
                    updatePo.setPowerStatus(1);
                }
+               log.info(" deviceid = {}, powerStatus = {}",id,updatePo.getPowerStatus());
                 updateDevicePos.add(updatePo);
             });
 

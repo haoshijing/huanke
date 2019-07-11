@@ -248,7 +248,6 @@ public class DeviceSensorStatWorker {
             if (data == null) {
                 data = 0;
             }
-            log.info("data = {}",data);
             return data;
         }
     }
