@@ -81,8 +81,8 @@ public class OnlineCheckService {
         l = temp;
     }
 
-    public void resetOnline(Integer id){
-        OnlineCheckData data = idMap.get(id);
+    public void resetOnline(Integer deviceId){
+        OnlineCheckData data = idMap.get(deviceId);
         boolean needUpdateDd  = false;
         if(data == null){
             data = new OnlineCheckData();
@@ -95,17 +95,17 @@ public class OnlineCheckService {
         data.setOnline(true);
         log.debug("当前设备状态:",data.isOnline());
         //上次记录为离线时才更新状态
-        data.setId(id);
-        idMap.put(id,data);
+        data.setId(deviceId);
+        idMap.put(deviceId,data);
        if(needUpdateDd){
            DevicePo updatePo = new DevicePo();
-           updatePo.setId(id);
+           updatePo.setId(deviceId);
            updatePo.setOnlineStatus(DeviceConstant.ONLINE_STATUS_YES);
            updatePo.setLastOnlineTime(System.currentTimeMillis());
            deviceMapper.updateById(updatePo);
            //记录离线后的首次上线时间
            DeviceOperLogPo deviceOperLogPo= new DeviceOperLogPo();
-           deviceOperLogPo.setDeviceId(id);
+           deviceOperLogPo.setDeviceId(deviceId);
            deviceOperLogPo.setFuncId("410");
            deviceOperLogPo.setFuncValue("1");
            deviceOperLogPo.setCreateTime(System.currentTimeMillis());

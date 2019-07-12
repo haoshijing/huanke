@@ -115,10 +115,10 @@ public class SensorHandler  extends AbstractHandler {
             }catch (Exception e){
                 log.error("",e);
             }
-            //从传感器上传设备开关机状态处理
-            if(type.equals("210") || type.equals("2C0")){
-                stringRedisTemplate.opsForHash().put("control2." + deviceId, type, String.valueOf(value));
-            }
+//            //从传感器上传设备开关机状态处理
+//            if(type.equals("210") || type.equals("2C0")){
+//                stringRedisTemplate.opsForHash().put("control2." + deviceId, type, String.valueOf(value));
+//            }
         });
     }
 
