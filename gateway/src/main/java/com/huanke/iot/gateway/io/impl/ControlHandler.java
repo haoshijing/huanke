@@ -34,8 +34,7 @@ public class ControlHandler extends AbstractHandler {
     private DeviceSensorDataMapper deviceSensorDataMapper;
     @Autowired
     private DeviceMapper deviceMapper;
-    @Autowired
-    private PowerCheckService powerCheckService;
+
     @Data
     public static class FuncItemMessage{
         private String type;
@@ -80,7 +79,7 @@ public class ControlHandler extends AbstractHandler {
                 //上报指令为210且值不为0,重置为开机状态
                 if(deviceControlData.getFuncId().equals("210")){
                     if(!deviceControlData.getFuncValue().equals(0)) {
-                        this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
+                        //this.powerCheckService.resetPowerStatus(deviceControlData.getDeviceId());
                     }else{
                         //log.info("deviceId = {}, send close machine ", deviceControlData.getDeviceId());
                         DevicePo updatePo = new DevicePo();
