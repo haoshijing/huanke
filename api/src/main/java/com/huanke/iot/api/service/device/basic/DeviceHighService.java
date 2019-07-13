@@ -143,6 +143,7 @@ public class DeviceHighService {
             if(StringUtils.isNotEmpty(deviceModelPo.getFormatId().toString())) {
                 WxFormatPo wxFormatPo = wxFormatMapper.selectById(deviceModelPo.getFormatId());
                 childDeviceVo.setFormatName(wxFormatPo.getName());
+                childDeviceVo.setIconList(deviceModelPo.getIconList());
                 childDeviceVo.setDeviceModelName(deviceModelPo.getName());
             }
             DeviceTypePo deviceTypePo = deviceTypeMapper.selectById(typeId);

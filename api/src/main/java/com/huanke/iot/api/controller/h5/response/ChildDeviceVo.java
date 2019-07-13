@@ -16,6 +16,7 @@ public class ChildDeviceVo {
     private String childId;
     private String deviceModelName;
     private String deviceTypeName;
+    private String iconList;
     private String formatName;
     private Integer onlineStatus;//从机在线状态
     private Integer powerStatus;//从机开关状态
