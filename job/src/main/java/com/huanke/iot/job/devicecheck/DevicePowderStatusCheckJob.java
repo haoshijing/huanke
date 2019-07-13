@@ -45,9 +45,9 @@ public class DevicePowderStatusCheckJob {
             DevicePo updatePo = new DevicePo();
             updatePo.setId(devicePo.getId());
             boolean isClose = StringUtils.equals(value210,"0") &&
-                    devicePo.getOld() == 0;
+                    devicePo.getOld() == 1;
 
-             if(devicePo.getOld() == 1){
+             if(devicePo.getOld() == 2){
                  isClose =  StringUtils.equals(value2C0,"0");
              }
 
