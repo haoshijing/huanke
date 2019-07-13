@@ -29,7 +29,7 @@ public class DevicePowderStatusCheckJob {
     }
 
 
-    @Scheduled(cron = "* 0/1 * * * ?")
+    @Scheduled(cron = "0/8 * * * * ?")
     public void doWork() {
         updatePowderStatus();
     }
