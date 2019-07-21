@@ -13,6 +13,8 @@ public class DeviceListQueryRequest {
 
 
     private Integer customerId;
+
+    private Integer id;
     /**
      * 设备id
      */

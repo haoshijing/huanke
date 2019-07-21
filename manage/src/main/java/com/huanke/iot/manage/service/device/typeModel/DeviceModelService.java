@@ -47,6 +47,9 @@ import com.huanke.iot.manage.vo.request.device.typeModel.DeviceModelQueryRequest
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelAbilityVo;
 import com.huanke.iot.manage.vo.response.device.typeModel.DeviceModelVo;
 import com.huanke.iot.manage.vo.response.format.ModelFormatVo;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -113,6 +116,8 @@ public class DeviceModelService {
 
     @Autowired
     private ProjectMapper projectMapper;
+
+    private DefaultEventExecutorGroup defaultEventExecutorGroup = new DefaultEventExecutorGroup(16,new DefaultThreadFactory("QueryAblity"));
 
     @Autowired
     private UserManagerMapper userManagerMapper;
@@ -492,9 +497,15 @@ public class DeviceModelService {
             }
             deviceModelVo.setModelNo(deviceModelPo.getModelNo());
             deviceModelVo.setId(deviceModelPo.getId());
+            Future<  List<DeviceModelAbilityVo>> future = defaultEventExecutorGroup.submit(()->{
+              return   selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());
+            });
+            try {
+                deviceModelVo.setDeviceModelAbilitys(future.get());
+            }catch (Exception e){
 
-            List<DeviceModelAbilityVo> deviceModelAbilityVos = selectModelAbilitysByModelId(deviceModelPo.getId(), deviceModelPo.getTypeId());
-            deviceModelVo.setDeviceModelAbilitys(deviceModelAbilityVos);
+            }
+
 
             return deviceModelVo;
         }).collect(Collectors.toList());
