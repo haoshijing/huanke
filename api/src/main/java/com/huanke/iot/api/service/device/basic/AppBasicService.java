@@ -278,6 +278,12 @@ public class AppBasicService {
                     case ANION_IN:
                         value = Float.valueOf(deviceSensorPo.getAnion()==null?0:deviceSensorPo.getAnion());
                         break;
+                    case OUT_WATER_TEM:
+                        value = Float.valueOf(deviceSensorPo.getOutWaterTem()==null?0:deviceSensorPo.getOutWaterTem());
+                        break;
+                    case IN_WATER_TEM:
+                        value = Float.valueOf(deviceSensorPo.getInWaterTem()==null?0:deviceSensorPo.getInWaterTem());
+                        break;
                         default:
                             value = Float.valueOf(0);
                 }
