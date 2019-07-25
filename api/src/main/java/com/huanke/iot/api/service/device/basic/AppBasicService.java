@@ -7,7 +7,6 @@ import com.huanke.iot.api.controller.h5.response.DeviceModelVo;
 import com.huanke.iot.api.controller.h5.response.SensorDataVo;
 import com.huanke.iot.api.requestcontext.UserRequestContext;
 import com.huanke.iot.api.requestcontext.UserRequestContextHolder;
-import com.huanke.iot.api.util.FloatDataUtil;
 import com.huanke.iot.api.wechat.WechartUtil;
 import com.huanke.iot.base.api.ApiResponse;
 import com.huanke.iot.base.dao.customer.*;
@@ -90,6 +89,8 @@ public class AppBasicService {
             SensorTypeEnums.HCHO_IN.getCode(),
             SensorTypeEnums.TVOC_IN.getCode(),
             SensorTypeEnums.NH3_IN.getCode(),
+            SensorTypeEnums.OUT_WATER_TEM.getCode(),
+            SensorTypeEnums.IN_WATER_TEM.getCode(),
             SensorTypeEnums.ANION_IN.getCode()));
     @Transactional
     public ApiResponse<Object> removeIMeiInfo(HttpServletRequest request){
