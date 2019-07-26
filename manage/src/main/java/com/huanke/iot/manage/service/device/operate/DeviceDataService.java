@@ -15,6 +15,7 @@ import com.huanke.iot.base.enums.FuncTypeEnums;
 import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.customer.CustomerUserPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.ability.DeviceAbilityPo;
 import com.huanke.iot.base.po.device.data.DeviceOperLogPo;
 import com.huanke.iot.base.po.device.stat.DeviceSensorStatPo;
 import com.huanke.iot.base.po.device.team.DeviceTeamItemPo;
@@ -34,6 +35,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +65,8 @@ public class DeviceDataService {
     private DeviceMapper deviceMapper;
 
     @Autowired
-    private DeviceTeamItemMapper deviceTeamItemMapper;
+    private DeviceAbilityMapper deviceAbilityMapper;
+
 
 
     public ApiResponse<List<DeviceOperLogVo>> queryOperLog(DeviceDataQueryRequest request) throws Exception{
@@ -72,12 +75,12 @@ public class DeviceDataService {
         Integer offset = (request.getPage() - 1)*request.getLimit();
         Integer limit = request.getLimit();
         List<DeviceOperLogPo> deviceOperLogPoList = deviceOperLogMapper.selectList(queryPo,limit,offset);
+        List<DeviceAbilityPo> deviceAbilityPos = deviceAbilityMapper.selectList(new DeviceAbilityPo(),0 ,100000);
         if(null == deviceOperLogPoList || 0 == deviceOperLogPoList.size()){
             return new ApiResponse<>(RetCode.OK,"暂无数据");
         }
         List<DeviceOperLogVo> deviceOperLogVoList = deviceOperLogPoList.stream().filter(temp ->{
-            FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(temp.getFuncId());
-            return funcTypeEnums!=null;
+           return deviceAbilityPos.stream().anyMatch(deviceAbilityPo -> deviceAbilityPo.getAbilityCode().equals(temp.getFuncId()));
         }).map(deviceOperLogPo -> {
             DeviceOperLogVo deviceOperLogVo = new DeviceOperLogVo();
             BeanUtils.copyProperties(deviceOperLogPo,deviceOperLogVo);
@@ -101,23 +104,11 @@ public class DeviceDataService {
                     }
                 }
             }
-            FuncTypeEnums funcTypeEnums = FuncTypeEnums.getByCode(deviceOperLogVo.getFuncId());
+            Optional<DeviceAbilityPo> optional = deviceAbilityPos.stream().filter(deviceAbilityPo -> deviceAbilityPo.getAbilityCode().equals(deviceOperLogPo.getFuncId()))
+                    .findFirst();
             //设置操作名称名称
-            deviceOperLogVo.setFuncName(funcTypeEnums.getMark());
-            if(!funcTypeEnums.getRange().equals("") && null != deviceOperLogPo.getFuncValue()){
-                String[] ranges = funcTypeEnums.getRange().split(",");
-                Integer valueIndex = Integer.parseInt(deviceOperLogPo.getFuncValue());
-                if(null != deviceOperLogPo.getFuncValue() && valueIndex < ranges.length) {
-                    //设置操作的具体值
-                    deviceOperLogVo.setFuncValue(ranges[valueIndex]);
-                }else {
-                    deviceOperLogVo.setFuncValue("无操作值记录");
-                }
-            }
-            else {
-                //设置操作的具体值
-                deviceOperLogVo.setFuncValue("暂未定义");
-            }
+            deviceOperLogVo.setFuncName(optional.get().getAbilityName());
+            deviceOperLogPo.setFuncValue(deviceOperLogPo.getFuncValue());
             return deviceOperLogVo;
         }).collect(Collectors.toList());
         return new ApiResponse<>(RetCode.OK,"设备日志查询成功",deviceOperLogVoList);
