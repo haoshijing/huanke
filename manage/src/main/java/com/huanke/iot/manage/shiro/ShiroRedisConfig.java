@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
  */
 @Configuration
 @EnableCaching
-public class RedisConfig extends CachingConfigurerSupport {
+public class ShiroRedisConfig extends CachingConfigurerSupport {
 
     @Override
     @Bean
