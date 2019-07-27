@@ -101,7 +101,8 @@ public class DeviceDataService {
                     }
                 }
             }
-            Optional<DeviceAbilityPo> optional = deviceAbilityPos.stream().filter(deviceAbilityPo -> deviceAbilityPo.getAbilityCode().equals(deviceOperLogPo.getFuncId()))
+
+            Optional<DeviceAbilityPo> optional = deviceAbilityPos.stream().filter(deviceAbilityPo -> deviceAbilityPo.getDirValue().equals(deviceOperLogPo.getFuncId()))
                     .findFirst();
             //设置操作名称名称
             deviceOperLogVo.setFuncName(optional.get().getAbilityName());
