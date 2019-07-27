@@ -72,12 +72,12 @@ public class DeviceDataService {
         Integer offset = (request.getPage() - 1)*request.getLimit();
         Integer limit = request.getLimit();
         List<DeviceOperLogPo> deviceOperLogPoList = deviceOperLogMapper.selectList(queryPo,limit,offset);
-        List<DeviceAbilityPo> deviceAbilityPos = deviceAbilityMapper.selectList(new DeviceAbilityPo(),0 ,100000);
+        List<DeviceAbilityPo> deviceAbilityPos = deviceAbilityMapper.queryAll();
         if(null == deviceOperLogPoList || 0 == deviceOperLogPoList.size()){
             return new ApiResponse<>(RetCode.OK,"暂无数据");
         }
         List<DeviceOperLogVo> deviceOperLogVoList = deviceOperLogPoList.stream().filter(temp ->{
-           return deviceAbilityPos.stream().anyMatch(deviceAbilityPo -> deviceAbilityPo.getAbilityCode().equals(temp.getFuncId()));
+           return deviceAbilityPos.stream().anyMatch(deviceAbilityPo -> deviceAbilityPo.getDirValue().equals(temp.getFuncId()));
         }).map(deviceOperLogPo -> {
             DeviceOperLogVo deviceOperLogVo = new DeviceOperLogVo();
             BeanUtils.copyProperties(deviceOperLogPo,deviceOperLogVo);

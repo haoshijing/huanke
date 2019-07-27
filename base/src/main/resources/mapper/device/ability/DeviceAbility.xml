@@ -265,4 +265,8 @@
         AND tdm.abilityId = tda.id
         AND tda.status = 1
     </select>
+
+    <select id="queryAll"  resultType="com.huanke.iot.base.po.device.ability.DeviceAbilityPo">
+        select * from  <include refid="tableName"/>
+    </select>
 </mapper>

@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface DeviceAbilityMapper extends BaseMapper<DeviceAbilityPo> {
 
+    List<DeviceAbilityPo> queryAll();
+
     Integer deleteOptionByAbilityId(Integer AbilityId);
 
     Integer deleteOptionByOptionId(Integer OptionId);
