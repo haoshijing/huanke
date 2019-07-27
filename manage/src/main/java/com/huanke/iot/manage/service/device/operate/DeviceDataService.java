@@ -56,9 +56,6 @@ public class DeviceDataService {
     private CustomerUserMapper customerUserMapper;
 
     @Autowired
-    private DeviceAbilityMapper deviceAbilityMapper;
-
-    @Autowired
     private UserManagerMapper userMapper;
 
     @Autowired
