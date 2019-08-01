@@ -135,6 +135,11 @@ public class DeviceHighService {
             childDeviceVo.setChildId(devicePo.getChildId());
             childDeviceVo.setOnlineStatus(devicePo.getOnlineStatus());
             childDeviceVo.setHostPowerStatus(powerStatus);
+            String location = devicePo.getLocation();
+            if(StringUtils.isEmpty(location)){
+                location = "";
+            }
+            childDeviceVo.setLocation(location);
             childDeviceVo.setPowerStatus(devicePo.getPowerStatus());
             childDeviceVos.add(childDeviceVo);
             Integer modelId = devicePo.getModelId();
@@ -151,6 +156,9 @@ public class DeviceHighService {
             childDeviceVo.setDeviceTypeName(deviceTypePo.getName());
             childDeviceVo.setCustomerName(customerPo.getName());
         }
+        childDeviceVos.sort((c1,c2)->{
+            return c1.getLocation().compareTo(c2.getLocation());
+        });
         return childDeviceVos;
     }
 
