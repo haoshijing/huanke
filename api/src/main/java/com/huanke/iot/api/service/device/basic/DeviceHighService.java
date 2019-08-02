@@ -157,7 +157,7 @@ public class DeviceHighService {
             childDeviceVo.setCustomerName(customerPo.getName());
         }
         childDeviceVos.sort((c1,c2)->{
-            return c1.getLocation().compareTo(c2.getLocation());
+            return c1.getChildId().compareTo(c2.getChildId());
         });
         return childDeviceVos;
     }
