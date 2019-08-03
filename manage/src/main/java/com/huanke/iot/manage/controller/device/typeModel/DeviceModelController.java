@@ -178,6 +178,20 @@ public class DeviceModelController {
         }
     }
 
+
+    @ApiOperation("根据客户id查好型号")
+    @GetMapping(value = "/queryTypeByCustomerId /{customerId}")
+    public ApiResponse<List<DeviceModelVo>> queryTypeByCustomerId(@PathVariable("customerId") Integer customerId) throws Exception {
+        try {
+            List<DeviceModelVo> deviceModelVos =  deviceModelService.queryTypeByCustomerId(customerId);
+            return new ApiResponse<>(deviceModelVos);
+        } catch (Exception e) {
+            log.error("根据客户id查好型号={}", e);
+            return new ApiResponse<>(RetCode.ERROR, StringUtils.isNotBlank(e.getMessage())?e.getMessage():"删除设备型号失败");
+        }
+    }
+
+
     @ApiOperation("根据设备类型主键集合，查询所有设备型号")
     @GetMapping(value = "/selectModelsByTypeIds/{typeIds}")
     public ApiResponse<List<DeviceModelVo>> selectModelsByTypeIds(@PathVariable("typeIds") String typeIds) {

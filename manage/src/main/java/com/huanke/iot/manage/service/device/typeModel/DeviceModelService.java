@@ -69,8 +69,6 @@ public class DeviceModelService {
     @Autowired
     private DeviceOperateService deviceOperateService;
 
-    @Autowired
-    private DeviceModelMapper deviceModelMapper;
 
     @Autowired
     private DeviceModelAbilityMapper deviceModelAbilityMapper;
@@ -101,6 +99,9 @@ public class DeviceModelService {
 
     @Autowired
     private WxFormatPageMapper wxFormatPageMapper;
+
+    @Autowired
+    private DeviceModelMapper deviceModelMapper;
 
     @Autowired
     private CustomerService customerService;
@@ -1080,5 +1081,16 @@ public class DeviceModelService {
         List<DevicePo> devicePoList = deviceGroupItemMapper.selectByGroupIds(projectBaseInfo.getGroupIds());
         List<Integer> deviceIdList = devicePoList.stream().map(e -> e.getId()).distinct().collect(Collectors.toList());
         return deviceModelMapper.queryModelPercent(deviceIdList);
+    }
+
+    public List<DeviceModelVo> queryTypeByCustomerId(Integer customerId) {
+      List<DeviceModelPo> deviceModelVos =   deviceModelMapper.queryTypeByCustomerId(customerId);
+      return deviceModelVos.stream().map(deviceModelPo -> {
+          DeviceModelVo deviceModelVo = new DeviceModelVo();
+          deviceModelPo.setId(deviceModelPo.getId());
+          deviceModelPo.setName(deviceModelPo.getName());
+          deviceModelPo.setTypeId(deviceModelPo.getTypeId());
+          return deviceModelVo;
+      }).collect(Collectors.toList());
     }
 }
