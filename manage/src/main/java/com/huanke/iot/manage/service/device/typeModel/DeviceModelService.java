@@ -1087,9 +1087,9 @@ public class DeviceModelService {
       List<DeviceModelPo> deviceModelVos =   deviceModelMapper.queryTypeByCustomerId(customerId);
       return deviceModelVos.stream().map(deviceModelPo -> {
           DeviceModelVo deviceModelVo = new DeviceModelVo();
-          deviceModelPo.setId(deviceModelPo.getId());
-          deviceModelPo.setName(deviceModelPo.getName());
-          deviceModelPo.setTypeId(deviceModelPo.getTypeId());
+          deviceModelVo.setId(deviceModelPo.getId());
+          deviceModelVo.setName(deviceModelPo.getName());
+          deviceModelVo.setTypeId(deviceModelPo.getTypeId());
           return deviceModelVo;
       }).collect(Collectors.toList());
     }

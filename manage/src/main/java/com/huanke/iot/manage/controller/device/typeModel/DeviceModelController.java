@@ -180,7 +180,7 @@ public class DeviceModelController {
 
 
     @ApiOperation("根据客户id查好型号")
-    @GetMapping(value = "/queryTypeByCustomerId /{customerId}")
+    @GetMapping(value = "/queryTypeByCustomerId/{customerId}")
     public ApiResponse<List<DeviceModelVo>> queryTypeByCustomerId(@PathVariable("customerId") Integer customerId) throws Exception {
         try {
             List<DeviceModelVo> deviceModelVos =  deviceModelService.queryTypeByCustomerId(customerId);

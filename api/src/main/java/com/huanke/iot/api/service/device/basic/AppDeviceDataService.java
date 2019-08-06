@@ -40,6 +40,7 @@ import com.huanke.iot.base.po.device.typeModel.DeviceTypePo;
 import com.huanke.iot.base.po.format.WxFormatPo;
 import com.huanke.iot.base.util.LocationUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -338,10 +339,11 @@ public class AppDeviceDataService {
                     String optionValue = getData(controlDatas, dirValue);
                     List<DeviceAbilitysVo.abilityOption> abilityOptionList = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos) {
-                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
-                        if(deviceModelAbilityOptionPo == null){
+                        List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
+                        if(CollectionUtils.isEmpty(deviceModelAbilityOptionPos)){
                             continue;
                         }
+                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPos.get(0);
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
                         abilityOption.setDirValue(deviceabilityOptionPo.getOptionValue());
                         if ((StringUtils.isNotEmpty(deviceModelAbilityOptionPo.getActualOptionValue())&&optionValue.equals(deviceModelAbilityOptionPo.getActualOptionValue()))
@@ -359,10 +361,11 @@ public class AppDeviceDataService {
                     List<DeviceAbilityOptionPo> deviceabilityOptionPos1 = deviceAbilityOptionMapper.selectOptionsByAbilityId(abilityId);
                     List<DeviceAbilitysVo.abilityOption> abilityOptionList1 = new ArrayList<>();
                     for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos1) {
-                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
-                        if(deviceModelAbilityOptionPo == null){
+                        List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
+                        if(CollectionUtils.isEmpty(deviceModelAbilityOptionPos)){
                             continue;
                         }
+                        DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionPos.get(0);
                         String targetOptionValue = deviceabilityOptionPo.getOptionValue();
                         String finalOptionValue = getData(controlDatas, targetOptionValue);
                         DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();
@@ -398,8 +401,8 @@ public class AppDeviceDataService {
                         String optionValue5 = getData(controlDatas, dirValue);
                         List<DeviceAbilitysVo.abilityOption> abilityOptionList5 = new ArrayList<>();
                         for (DeviceAbilityOptionPo deviceabilityOptionPo : deviceabilityOptionPos5) {
-                            DeviceModelAbilityOptionPo deviceModelAbilityOptionPo = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
-                            if(deviceModelAbilityOptionPo == null){
+                            List<DeviceModelAbilityOptionPo> deviceModelAbilityOptionPos = deviceModelAbilityOptionMapper.queryByUnionModelAbility(modelId, abilityId, deviceabilityOptionPo.getId());
+                            if(CollectionUtils.isEmpty(deviceModelAbilityOptionPos)){
                                 continue;
                             }
                             DeviceAbilitysVo.abilityOption abilityOption = new DeviceAbilitysVo.abilityOption();

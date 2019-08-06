@@ -34,5 +34,5 @@ public interface DeviceModelMapper extends BaseMapper<DeviceModelPo> {
 
     List<ProjectModelPercentVo> queryModelPercent(@Param("deviceIdList") List<Integer> deviceIdList);
 
-    List<DeviceModelPo> queryTypeByCustomerId(Integer customerId);
+    List<DeviceModelPo> queryTypeByCustomerId(@Param("customerId") Integer customerId);
 }

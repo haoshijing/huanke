@@ -279,9 +279,10 @@
         SELECT
         typeId,name,id
         FROM
-        t_device_model m
+        t_device_model
         where
-            and m.customerId =  #{customerId}
+             customerId =  #{customerId}
+             and status = 1
 
     </select>
     <select id="flushCache" parameterType="java.lang.Integer" resultType="java.lang.Integer" flushCache="true">
