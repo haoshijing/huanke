@@ -63,6 +63,9 @@ public class MachineService {
             updatePo.setIp(ip);
             updatePo.setOld(2);
             deviceMapper.updateById(updatePo);
+            String path = (String)stringRedisTemplate.opsForHash().get("mabiaoconfig", devicePo
+            .getId().toString());
+            machineDeviceVo.setMb(path);
             return machineDeviceVo;
         }
         return null;

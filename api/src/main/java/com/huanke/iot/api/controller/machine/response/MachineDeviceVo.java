@@ -12,4 +12,5 @@ public class MachineDeviceVo {
     private String wechatDeviceId;
     private String devicelicence;
     private String deviceType;
+    private String mb;
 }
