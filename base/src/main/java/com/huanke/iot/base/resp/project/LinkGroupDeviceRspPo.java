@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class LinkGroupDeviceRspPo {
     private String name;
+    private String modelName;
     private String mac;
     private Integer workStatus;
     private String belongTo;

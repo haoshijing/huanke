@@ -285,7 +285,7 @@
         d.`hardVersion`,d.`communicationVersion`,d.`softVersion`,
         d.`birthTime`,d.`hostStatus`,d.`hostDeviceId`,d.`childId`,
         d.`createTime`,d.`lastUpdateTime`,d.`lastOnlineTime`,d.`createUser`,d.`lastUpdateUser`
-        ,c.name customerName,t.`name` typeName ,m.`name` modelName,m.`modelNo`,m.`modelCode`,t.`typeNo`
+        ,c.name customerName,t.`name` typeName ,m.`name` as modelName,m.`modelNo`,m.`modelCode`,t.`typeNo`
         from
         t_device d
         <if test="param.customerId == null">
@@ -294,13 +294,25 @@
         </if>
         LEFT JOIN t_device_model m ON d.modelId = m.id
         LEFT JOIN t_device_type t ON m.typeId = t.id
+        LEFT JOIN t_device_group_item  gdi ON gdi.deviceId = d.id
+
         <if test="param.customerId != null">
             ,t_device_customer_relation r,t_customer c
         </if>
+
         <where>
-            1=1
+            1=1 and gdi.deviceId = d.id
             <if test="param.mac != null and param.mac != ''">
                 AND d.mac = #{param.mac}
+            </if>
+            <if test="param.groupName != null and param.groupName != ''">
+                AND gdi.groupId IN( select id from t_device_group where name  LIKE  CONCAT('%',CONCAT(#{ param.groupName},'%')))
+            </if>
+            <if test="param.modelName != null and param.modelName != ''">
+                AND  LIKE  CONCAT('%',CONCAT(#{ param.modelName},'%'))
+            </if>
+            <if test="param.id != null">
+                AND d.id = #{param.id}
             </if>
             <if test="param.saNo != null and param.saNo != ''">
                 AND d.saNo = #{param.saNo}
@@ -376,6 +388,7 @@
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1) from
         t_device d
+        LEFT JOIN t_device_group_item  gdi ON gdi.deviceId = d.id
         <if test="param.customerId != null">
             ,t_device_customer_relation r
         </if>
@@ -392,6 +405,15 @@
             </if>
             <if test="param.manageName != null  and param.manageName != ''  ">
                 AND d.manageName like CONCAT('%',CONCAT(#{param.manageName},'%'))
+            </if>
+            <if test="param.groupName != null and param.groupName != ''">
+                AND gdi.groupId IN( select id from t_device_group where name  LIKE  CONCAT('%',CONCAT(#{ param.groupName},'%')))
+            </if>
+            <if test="param.modelName != null and param.modelName != ''">
+                AND d.modelId in ( select id from  t_device_model where name  LIKE  CONCAT('%',CONCAT(#{ param.modelName},'%')) )
+            </if>
+            <if test="param.id != null">
+                AND d.id = #{param.id}
             </if>
             <if test="param.customerId != null">
                 AND r.customerId = #{param.customerId}
@@ -953,7 +975,7 @@
     </select>
 
     <select id="selectByGroupId" resultType="com.huanke.iot.base.resp.project.LinkGroupDeviceRspPo">
-        SELECT td.*, tc.name belongTo FROM t_device td
+        SELECT td.*, (select name from t_device_model where id = td.id) modelName, tc.name belongTo FROM t_device td
         LEFT JOIN t_device_group_item tdgi ON td.id = tdgi.deviceId
         LEFT JOIN t_customer tc ON td.customerId = tc.id
         WHERE td.status = 1

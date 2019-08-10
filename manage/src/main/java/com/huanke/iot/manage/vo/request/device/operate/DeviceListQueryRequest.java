@@ -46,6 +46,9 @@ public class DeviceListQueryRequest {
 
     private Integer powerStatus;
 
+    private String groupName;
+    private String modelName;
+
     private Integer status;
 
     private Integer page = 1;

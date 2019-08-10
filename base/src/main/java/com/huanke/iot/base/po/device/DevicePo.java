@@ -13,6 +13,7 @@ public class DevicePo {
     private Integer customerId;
     private String customerName;
     private String modelName;
+    private String groupName;
     private String modelNo;
     private String modelCode;
     private String typeName;
