@@ -975,7 +975,7 @@
     </select>
 
     <select id="selectByGroupId" resultType="com.huanke.iot.base.resp.project.LinkGroupDeviceRspPo">
-        SELECT td.*, (select name from t_device_model where id = td.id) modelName, tc.name belongTo FROM t_device td
+        SELECT td.*, (select name from t_device_model where id = td.modelId) modelName, tc.name belongTo FROM t_device td
         LEFT JOIN t_device_group_item tdgi ON td.id = tdgi.deviceId
         LEFT JOIN t_customer tc ON td.customerId = tc.id
         WHERE td.status = 1

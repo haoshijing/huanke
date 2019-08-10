@@ -14,6 +14,8 @@ import java.util.List;
 @Data
 public class ProjectGroupsRsp {
     private Integer id;
+    private Integer groupId;
+    private String projectNo;
     private String name;
     private String introduction;
     private String location;

@@ -25,6 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -97,6 +98,10 @@ public class ProjectService {
         }
         projectRsp.setProjectRspPoList(projectPoList);
         return projectRsp;
+    }
+
+    public Integer deleteById(Integer id){
+        return projectMapper.deleteById(id);
     }
 
     /**

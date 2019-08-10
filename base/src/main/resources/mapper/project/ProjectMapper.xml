@@ -218,7 +218,7 @@
     </select>
 
     <select id="selectGroups" resultType="com.huanke.iot.base.resp.project.ProjectGroupsRsp">
-        SELECT tdg.*, tc.name belongTo FROM t_device_group tdg
+        SELECT tdg.*, tc.name belongTo  FROM t_device_group tdg
         LEFT JOIN t_customer tc ON tdg.customerId = tc.id
         WHERE tdg.status = 1
         AND tc.status = 1

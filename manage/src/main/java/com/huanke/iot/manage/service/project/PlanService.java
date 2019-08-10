@@ -275,4 +275,10 @@ public class PlanService {
 
         return true;
     }
+
+    public Boolean removeMaintenance(List<Integer> valueList) {
+        Integer userId = userService.getCurrentUser().getId();
+        return  planMapper.batchDelete(userId, valueList);
+
+    }
 }

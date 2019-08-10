@@ -103,6 +103,17 @@ public class PlanController {
         return new ApiResponse<>(planRsp);
     }
 
+    @ApiOperation("删除工程维保")
+    @PostMapping(value = "/deleteMaintenance")
+    public ApiResponse<Boolean> deleteMaintenance(BaseListRequest<Integer> request) {
+        List<Integer> valueList = request.getValueList();
+        if(valueList.size() == 0){
+            throw new BusinessException("没有要工程维保的信息");
+        }
+        Boolean result = planService.removeMaintenance(valueList);
+        return new ApiResponse<>(result);
+    }
+
     @ApiOperation("导出工程维保列表")
     @GetMapping(value = "/exportMaintenance/{projectId}")
     public ApiResponse<Boolean> exportMaintenance(@PathVariable("projectId") Integer projectId, HttpServletResponse response) throws Exception {
