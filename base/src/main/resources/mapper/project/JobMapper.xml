@@ -118,6 +118,7 @@
             AND (find_in_set(#{projectJobInfo.enableUsers}, enableUsers)
             OR enableUsers is null)
         </if>
+        order by finalTime DESC
     </select>
 
     <select id="selectList" resultType="com.huanke.iot.base.po.project.ProjectJobInfo">
@@ -126,6 +127,7 @@
         <where>
             1=1
         </where>
+        order by finalTime DESC
         limit #{offset},#{limit}
     </select>
 
