@@ -301,7 +301,7 @@
         </if>
 
         <where>
-            1=1 and gdi.deviceId = d.id
+            1=1
             <if test="param.mac != null and param.mac != ''">
                 AND d.mac = #{param.mac}
             </if>
@@ -309,7 +309,7 @@
                 AND gdi.groupId IN( select id from t_device_group where name  LIKE  CONCAT('%',CONCAT(#{ param.groupName},'%')))
             </if>
             <if test="param.modelName != null and param.modelName != ''">
-                AND  LIKE  CONCAT('%',CONCAT(#{ param.modelName},'%'))
+                AND d.modelId in ( select id from  t_device_model where name  LIKE  CONCAT('%',CONCAT(#{ param.modelName},'%')) )
             </if>
             <if test="param.id != null">
                 AND d.id = #{param.id}
@@ -352,6 +352,7 @@
             </if>
             AND d.hostDeviceId is null
         </where>
+        ORDER  BY d.id DESC
         limit #{offset},#{limit}
     </select>
 

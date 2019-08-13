@@ -105,7 +105,7 @@ public class PlanController {
 
     @ApiOperation("删除工程维保")
     @PostMapping(value = "/deleteMaintenance")
-    public ApiResponse<Boolean> deleteMaintenance(BaseListRequest<Integer> request) {
+    public ApiResponse<Boolean> deleteMaintenance(@RequestBody BaseListRequest<Integer> request) {
         List<Integer> valueList = request.getValueList();
         if(valueList.size() == 0){
             throw new BusinessException("没有要工程维保的信息");

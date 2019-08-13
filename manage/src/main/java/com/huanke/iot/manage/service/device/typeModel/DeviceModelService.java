@@ -1090,6 +1090,7 @@ public class DeviceModelService {
           deviceModelVo.setId(deviceModelPo.getId());
           deviceModelVo.setName(deviceModelPo.getName());
           deviceModelVo.setTypeId(deviceModelPo.getTypeId());
+          deviceModelVo.setProductId(deviceModelPo.getProductId());
           return deviceModelVo;
       }).collect(Collectors.toList());
     }
