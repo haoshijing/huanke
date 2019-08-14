@@ -198,22 +198,29 @@ public class DeviceTeamService {
             BeanUtils.copyProperties(occRequest, deviceFuncVo);
             deviceFuncVo.setDeviceId(device.getId());
             deviceDataService.sendFunc(deviceFuncVo, userId, operType);//H5操作，所以是1
-            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(device.getId());
-            if (null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)) {
+//            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(device.getId());
+//            if (null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)) {
                 //对其他联动设备发送指令
                 //List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
+                String funcId = deviceFuncVo.getFuncId();
                 List<DevicePo> childsDevicePos = deviceMapper.queryChildDevice(device.getId());
                 for (DevicePo eachPo : childsDevicePos) {
                     DeviceFuncVo linkDeviceFuncVo = new DeviceFuncVo();
                     linkDeviceFuncVo.setDeviceId(eachPo.getId());
-                    linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
+                    if(StringUtils.equalsIgnoreCase(funcId, "210")) {
+                        linkDeviceFuncVo.setFuncId("2C0");
+                    }else{
+                        linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
+                    }
                     linkDeviceFuncVo.setValue(deviceFuncVo.getValue());
                     result = deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
                     if (result.equals("")) {
                         throw new BusinessException("指令发送失败");
                     }
+
+                    log.info("occ childId = {}",linkDeviceFuncVo);
                 }
-            }
+      //      }
         }
         return true;
     }
