@@ -311,7 +311,7 @@
 
     <!--返回当前列表集合-->
     <select id="selectPageList" resultType="com.huanke.iot.base.resp.project.JobRspPo">
-      SELECT pji.id, pji.name, pji.type, pji.linkProjectId, pji.description, tpr.name ruleName, td.label projectTypeName, pji.isRule, pji.ruleId, pji.sourceType,pji.finalTime,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName,
+      SELECT pji.id, pji.name, pji.type, pji.customerId ,pji.linkDeviceId ,pji.linkProjectId, pji.description, tpr.name ruleName, td.label projectTypeName, pji.isRule, pji.ruleId, pji.sourceType,pji.finalTime,pji.warnLevel, pji.flowStatus, pji.createTime, pji.updateTime, u.nickName createName,u1.nickName updateName,
         (find_in_set(#{userId}, pji.enableUsers) OR pji.enableUsers is null) editEnable
       FROM t_project_job_info pji
       left join t_user u on pji.createUser = u.id
@@ -356,7 +356,7 @@
             OR find_in_set(#{userId}, pji.viewUsers))
         </if>
         AND pji.status != 2
-      ORDER BY pji.finalTime ASC
+      ORDER BY pji.finalTime DESC
       LIMIT #{start},#{limit}
     </select>
 

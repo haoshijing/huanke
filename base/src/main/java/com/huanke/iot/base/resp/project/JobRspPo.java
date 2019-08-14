@@ -16,10 +16,13 @@ public class JobRspPo {
     private String name;
     private Integer type;   //关联类型：0-不关联；1-关联设备；2-关联工程
     private Integer linkProjectId;
+    private Integer linkDeviceId;
+    private Integer customerId;
     private String linkProjectName;
     private String description;
     private String ruleName;
     private String projectTypeName;
+    private String customerName;
     private Integer isRule;
     private Integer ruleId;
     private Integer warnLevel;

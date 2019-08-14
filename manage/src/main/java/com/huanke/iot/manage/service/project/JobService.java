@@ -2,20 +2,27 @@ package com.huanke.iot.manage.service.project;
 
 import com.google.common.collect.Lists;
 import com.huanke.iot.base.constant.JobFlowStatusConstants;
+import com.huanke.iot.base.dao.device.DeviceGroupItemMapper;
+import com.huanke.iot.base.dao.device.DeviceGroupMapper;
 import com.huanke.iot.base.dao.device.DeviceMapper;
 import com.huanke.iot.base.dao.project.*;
 import com.huanke.iot.base.dto.project.JobHistoryDataDto;
 import com.huanke.iot.base.exception.BusinessException;
+import com.huanke.iot.base.po.customer.CustomerPo;
 import com.huanke.iot.base.po.device.DevicePo;
+import com.huanke.iot.base.po.device.group.DeviceGroupItemPo;
+import com.huanke.iot.base.po.device.group.DeviceGroupPo;
 import com.huanke.iot.base.po.project.*;
 import com.huanke.iot.base.po.user.User;
 import com.huanke.iot.base.request.project.*;
 import com.huanke.iot.base.resp.project.*;
 import com.huanke.iot.manage.service.customer.CustomerService;
 import com.huanke.iot.manage.service.user.UserService;
+import com.huanke.iot.manage.vo.request.customer.CustomerVo;
 import com.huanke.iot.manage.vo.response.device.data.DashJobVo;
 import com.huanke.iot.manage.vo.response.device.data.WarnDataVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +62,9 @@ public class JobService {
     @Autowired
     private PlanMapper planMapper;
 
+    @Autowired
+    private DeviceGroupItemMapper deviceGroupItemMapper;
+
 
     public JobRsp selectList(JobQueryRequest request) {
         Integer userId = userService.getCurrentUser().getId();
@@ -75,14 +85,32 @@ public class JobService {
 
         List<JobRspPo> jobPoList = jobMapper.selectPageList(projectJob, start, limit, userId, projectName);
         for (JobRspPo jobRspPo : jobPoList) {
-            if(jobRspPo.getType() == 2){
-                if(jobRspPo.getLinkProjectId() != null) {
-                    ProjectBaseInfo projectBaseInfo = projectMapper.selectById(jobRspPo.getLinkProjectId());
-                    if (projectBaseInfo != null){
-                        jobRspPo.setLinkProjectName(projectMapper.selectById(jobRspPo.getLinkProjectId()).getName());
+            Integer deviceId = jobRspPo.getLinkDeviceId();
+            DevicePo devicePo = deviceMapper.selectById(deviceId);
+            if (devicePo != null && devicePo.getHostDeviceId() != null) {
+                deviceId = devicePo.getHostDeviceId();
+            }
+            if (devicePo != null) {
+                Integer deviceCustomerId = jobRspPo.getCustomerId();
+                if(deviceCustomerId != null){
+                    CustomerVo deviceCustomerVo = customerService.selectById(deviceCustomerId);
+                    if(deviceCustomerVo != null){
+                        jobRspPo.setCustomerName(deviceCustomerVo.getName());
                     }
                 }
+                DeviceGroupItemPo deviceGroupItemPo = deviceGroupItemMapper.selectByDeviceId(deviceId);
+                if (deviceGroupItemPo != null) {
+                    Integer groupId = deviceGroupItemPo.getGroupId();
+                    List<ProjectGroupsRsp> projectGroupsRsps = projectMapper.selectGroups(Lists.newArrayList(groupId));
+                    if (CollectionUtils.isNotEmpty(projectGroupsRsps)) {
+                        jobRspPo.setLinkProjectId(projectGroupsRsps.get(0).getId());
+                        jobRspPo.setLinkProjectName(projectGroupsRsps.get(0).getName());
+                    }
+
+                }
+
             }
+
         }
         jobRsp.setJobRspPoList(jobPoList);
         return jobRsp;
@@ -118,12 +146,12 @@ public class JobService {
         Integer userId = userService.getCurrentUser().getId();
         ProjectJobInfo projectJobInfo = jobMapper.selectById(jobId);
         if (StringUtils.isNotEmpty(projectJobInfo.getEnableUsers())) {
-            if(!Arrays.asList(projectJobInfo.getEnableUsers().split(",")).contains(userId.toString()))
+            if (!Arrays.asList(projectJobInfo.getEnableUsers().split(",")).contains(userId.toString()))
                 return "无权操作该任务！";
         }
         //判断当前任务是否可以执行当前操作。
         String checkResult = operateCheck(request, projectJobInfo);
-        if(StringUtils.isNotEmpty(checkResult)){
+        if (StringUtils.isNotEmpty(checkResult)) {
             return checkResult;
         }
         Integer operateType = request.getOperateType();
@@ -146,14 +174,14 @@ public class JobService {
             case JobFlowStatusConstants.OPERATE_TYPE_ALLOT:
                 //分配者和执行者，审核者有操作权限，分配者有查看权限
                 projectJobInfo.setEnableUsers(targetUserStr);
-                projectJobInfo.setViewUsers(mergerList(targetUserStr,userId.toString()));
-                projectJobInfo.setWorkUsers(mergerList(workUserStr,userId.toString()));
+                projectJobInfo.setViewUsers(mergerList(targetUserStr, userId.toString()));
+                projectJobInfo.setWorkUsers(mergerList(workUserStr, userId.toString()));
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_ALLOTTED;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_ALLOW:
                 //分配者和执行者都有操作权限和查看权限
                 projectJobInfo.setEnableUsers(projectJobInfo.getWorkUsers());
-                projectJobInfo.setViewUsers(mergerList(projectJobInfo.getViewUsers(),projectJobInfo.getWorkUsers()));
+                projectJobInfo.setViewUsers(mergerList(projectJobInfo.getViewUsers(), projectJobInfo.getWorkUsers()));
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_PERMIT;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_REJECT:
@@ -169,7 +197,7 @@ public class JobService {
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_SUBMIT;
                 break;
             case JobFlowStatusConstants.OPERATE_TYPE_PASS:
-                projectJobInfo.setViewUsers(mergerList(projectJobInfo.getViewUsers(),projectJobInfo.getEnableUsers()));
+                projectJobInfo.setViewUsers(mergerList(projectJobInfo.getViewUsers(), projectJobInfo.getEnableUsers()));
                 projectJobInfo.setEnableUsers("");
                 flowStatus = JobFlowStatusConstants.FLOW_STATUS_FINISH;
                 break;
@@ -183,7 +211,7 @@ public class JobService {
             default:
                 break;
         }
-        if (flowStatus == projectJobInfo.getFlowStatus()||flowStatus==0) {
+        if (flowStatus == projectJobInfo.getFlowStatus() || flowStatus == 0) {
             return "错误的操作，任务状态已被更改，请刷新！";
         }
         String description = request.getDescription();
@@ -196,7 +224,9 @@ public class JobService {
         projectJobLog.setCreateUser(userId);
         List<String> imgList = request.getImgList();
         if (imgList != null) {
-            imgList = imgList.stream().filter(temp->{return StringUtils.isNotEmpty(temp)&&!"null".equals(temp);}).collect(Collectors.toList());
+            imgList = imgList.stream().filter(temp -> {
+                return StringUtils.isNotEmpty(temp) && !"null".equals(temp);
+            }).collect(Collectors.toList());
             String imgListStr = String.join(",", imgList);
             projectJobLog.setImgList(imgListStr);
         }
@@ -213,7 +243,7 @@ public class JobService {
         return "操作成功！";
     }
 
-    public String operateCheck(JobFlowStatusRequest request,ProjectJobInfo projectJobInfo){
+    public String operateCheck(JobFlowStatusRequest request, ProjectJobInfo projectJobInfo) {
         Integer operateType = request.getOperateType();
         List<Integer> targetUsers = request.getTargetUsers();
         String targetUserStr = null;
@@ -223,15 +253,15 @@ public class JobService {
         }
         String workUserStr = null;
         if (request.getWorkUsers() != null && request.getWorkUsers().size() > 0) {
-        List<String> workUserStrList = request.getWorkUsers().stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
-        workUserStr = String.join(",", workUserStrList);
+            List<String> workUserStrList = request.getWorkUsers().stream().map(e -> String.valueOf(e)).collect(Collectors.toList());
+            workUserStr = String.join(",", workUserStrList);
         }
         switch (projectJobInfo.getFlowStatus()) {
             case JobFlowStatusConstants.FLOW_STATUS_CREATED:
                 //待分配任务只允许分配或者忽略
                 if (operateType != JobFlowStatusConstants.OPERATE_TYPE_ALLOT && operateType != JobFlowStatusConstants.OPERATE_TYPE_IGNORE)
                     return "错误的操作！请刷新任务状态。";
-                if (operateType == JobFlowStatusConstants.OPERATE_TYPE_ALLOT && (StringUtils.isEmpty(workUserStr)||StringUtils.isEmpty(targetUserStr)))
+                if (operateType == JobFlowStatusConstants.OPERATE_TYPE_ALLOT && (StringUtils.isEmpty(workUserStr) || StringUtils.isEmpty(targetUserStr)))
                     return "指定人不能为空！";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_ALLOTTED:
@@ -241,10 +271,8 @@ public class JobService {
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_PERMIT:
                 //已出任务只允许提交归档审核
-                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_COMMIT)
-                    return "错误的操作！请刷新任务状态。";
-                if (StringUtils.isEmpty(targetUserStr))
-                    return "指定人不能为空";
+                if (operateType != JobFlowStatusConstants.OPERATE_TYPE_COMMIT) return "错误的操作！请刷新任务状态。";
+                if (StringUtils.isEmpty(targetUserStr)) return "指定人不能为空";
                 break;
             case JobFlowStatusConstants.FLOW_STATUS_SUBMIT:
                 //已提交归档审核只允许通过或拒绝
@@ -258,27 +286,28 @@ public class JobService {
         return null;
     }
 
-    public String mergerList(String a,String b){
-        if(StringUtils.isEmpty(a)){
+    public String mergerList(String a, String b) {
+        if (StringUtils.isEmpty(a)) {
             return b;
         }
-        if(StringUtils.isEmpty(b)){
+        if (StringUtils.isEmpty(b)) {
             return a;
         }
         List<String> list1 = new ArrayList(Arrays.asList(a.split(",")));
         List<String> list2 = new ArrayList(Arrays.asList(b.split(",")));
-        for(int i = 0 ; i<list2.size(); i++){
-            if (!list1.contains(list2.get(i))){
+        for (int i = 0; i < list2.size(); i++) {
+            if (!list1.contains(list2.get(i))) {
                 list1.add(list2.get(i));
             }
         }
         return String.join(",", list1);
     }
+
     @Transactional
-    public String editJobWarnLevel(JobRequest request){
+    public String editJobWarnLevel(JobRequest request) {
         Integer userId = userService.getCurrentUser().getId();
         ProjectJobInfo projectJobInfo = jobMapper.selectById(request.getId());
-        if (projectJobInfo.getSourceType()!=2){
+        if (projectJobInfo.getSourceType() != 2) {
             return "该任务不允许修改告警等级";
         }
         projectJobInfo.setUpdateTime(new Date());
@@ -316,8 +345,10 @@ public class JobService {
             jobDetailRsp.setRuleName(projectRule.getName());
             jobDetailRsp.setRuleDescription(projectRule.getDescription());
         }
-        if(StringUtils.isNotEmpty(projectJobInfo.getWorkUsers()))
-            jobDetailRsp.setWorkUsers(Lists.transform(Arrays.asList(projectJobInfo.getWorkUsers().split(",")),(a->{return Integer.valueOf(a);})));
+        if (StringUtils.isNotEmpty(projectJobInfo.getWorkUsers()))
+            jobDetailRsp.setWorkUsers(Lists.transform(Arrays.asList(projectJobInfo.getWorkUsers().split(",")), (a -> {
+                return Integer.valueOf(a);
+            })));
         //任务历史记录信息
         List<JobHistoryDataDto> jobHistoryDataDtos = jobLogMapper.selectByJobId(jobId);
         List<JobDetailRsp.HistoryData> historyDataList = new ArrayList<>();
@@ -330,7 +361,7 @@ public class JobService {
                 String imgListStr = jobHistoryDataDto.getImgListStr();
                 List<String> imgList = Arrays.asList(imgListStr.split(","));
                 historyData.setImgList(imgList);
-            }else{
+            } else {
                 historyData.setImgList(new ArrayList<>());
             }
             historyDataList.add(historyData);
@@ -491,7 +522,7 @@ public class JobService {
         //查最近一年内的数据
         List<ProjectJobInfo> projectJobInfoList = jobMapper.queryJobDash();
         DateTime dateTime = new DateTime();
-        for (int minusMonths = 11; minusMonths>=0; minusMonths--){
+        for (int minusMonths = 11; minusMonths >= 0; minusMonths--) {
             DateTime currDateTime = dateTime.minusMonths(minusMonths);
             int year = currDateTime.getYear();
             int monthOfYear = currDateTime.getMonthOfYear();
@@ -499,7 +530,7 @@ public class JobService {
             monthData = projectJobInfoList.stream().filter(e -> {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(e.getCreateTime());
-                if(cal.get(Calendar.YEAR)== year && cal.get(Calendar.MONTH) + 1 == monthOfYear){
+                if (cal.get(Calendar.YEAR) == year && cal.get(Calendar.MONTH) + 1 == monthOfYear) {
                     return true;
                 }
                 return false;

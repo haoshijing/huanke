@@ -201,10 +201,11 @@ public class DeviceTeamService {
             DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(device.getId());
             if (null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)) {
                 //对其他联动设备发送指令
-                List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
-                for (DeviceTeamItemPo eachPo : deviceTeamItemPoList) {
+                //List<DeviceTeamItemPo> deviceTeamItemPoList = this.deviceTeamItemMapper.selectLinkDevice(deviceTeamItemPo);
+                List<DevicePo> childsDevicePos = deviceMapper.queryChildDevice(device.getId());
+                for (DevicePo eachPo : childsDevicePos) {
                     DeviceFuncVo linkDeviceFuncVo = new DeviceFuncVo();
-                    linkDeviceFuncVo.setDeviceId(eachPo.getDeviceId());
+                    linkDeviceFuncVo.setDeviceId(eachPo.getId());
                     linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
                     linkDeviceFuncVo.setValue(deviceFuncVo.getValue());
                     result = deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
