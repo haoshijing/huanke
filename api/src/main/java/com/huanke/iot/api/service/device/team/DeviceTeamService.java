@@ -207,13 +207,20 @@ public class DeviceTeamService {
                 for (DevicePo eachPo : childsDevicePos) {
                     DeviceFuncVo linkDeviceFuncVo = new DeviceFuncVo();
                     linkDeviceFuncVo.setDeviceId(eachPo.getId());
-                    if(StringUtils.equalsIgnoreCase(funcId, "210")) {
-                        linkDeviceFuncVo.setFuncId("2C0");
-                    }else{
-                        linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
-                    }
+                    linkDeviceFuncVo.setFuncId(deviceFuncVo.getFuncId());
+
                     linkDeviceFuncVo.setValue(deviceFuncVo.getValue());
                     result = deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
+                    if(StringUtils.equalsIgnoreCase(funcId, "210")) {
+                        linkDeviceFuncVo.setFuncId("2C0");
+                        deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
+                    }
+                    if(StringUtils.equalsIgnoreCase(funcId, "2C0")) {
+                        linkDeviceFuncVo.setFuncId("210");
+                        deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
+                    }
+
+
                     if (result.equals("")) {
                         throw new BusinessException("指令发送失败");
                     }
