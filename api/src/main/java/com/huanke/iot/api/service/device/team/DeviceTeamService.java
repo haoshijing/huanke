@@ -198,6 +198,15 @@ public class DeviceTeamService {
             BeanUtils.copyProperties(occRequest, deviceFuncVo);
             deviceFuncVo.setDeviceId(device.getId());
             deviceDataService.sendFunc(deviceFuncVo, userId, operType);//H5操作，所以是1
+            String funcId1 = deviceFuncVo.getFuncId();
+            if(StringUtils.equalsIgnoreCase(funcId1, "210")) {
+                deviceFuncVo.setFuncId("2C0");
+                deviceDataService.sendFunc(deviceFuncVo, userId, operType);
+            }
+            if(StringUtils.equalsIgnoreCase(funcId1, "2C0")) {
+                deviceFuncVo.setFuncId("210");
+                deviceDataService.sendFunc(deviceFuncVo, userId, operType);
+            }
 //            DeviceTeamItemPo deviceTeamItemPo = this.deviceTeamItemMapper.selectByDeviceId(device.getId());
 //            if (null != deviceTeamItemPo && deviceTeamItemPo.getLinkAgeStatus().equals(1)) {
                 //对其他联动设备发送指令
@@ -213,11 +222,11 @@ public class DeviceTeamService {
                     result = deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
                     if(StringUtils.equalsIgnoreCase(funcId, "210")) {
                         linkDeviceFuncVo.setFuncId("2C0");
-                        deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
+                        result = deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
                     }
                     if(StringUtils.equalsIgnoreCase(funcId, "2C0")) {
                         linkDeviceFuncVo.setFuncId("210");
-                        deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
+                        result =deviceDataService.sendFunc(linkDeviceFuncVo, userId, operType);
                     }
 
 
