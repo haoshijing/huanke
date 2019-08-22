@@ -198,6 +198,8 @@ public class StatisticService {
             }
         }
 
+        deviceTypePercents.sort((d1,d2)->d1.getTypePercent().compareTo(d2.getTypePercent()));
+
         return deviceTypePercents;
 
     }
