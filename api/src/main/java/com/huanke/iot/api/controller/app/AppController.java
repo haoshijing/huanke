@@ -1,5 +1,6 @@
 package com.huanke.iot.api.controller.app;
 
+import com.google.common.collect.Lists;
 import com.huanke.iot.api.controller.app.response.AppDeviceDataVo;
 import com.huanke.iot.api.controller.app.response.AppDeviceListVo;
 import com.huanke.iot.api.controller.app.response.AppInfoVo;
@@ -77,8 +78,13 @@ public class AppController extends BaseController {
     public ApiResponse<AppDeviceListVo> queryDeviceList() {
         Integer userId = getCurrentUserIdForApp();
         log.debug("查询我的设备列表，userId={}", userId);
-        AppDeviceListVo deviceListVo = appDeviceDataService.obtainMyDevice(userId);
-        return new ApiResponse<>(deviceListVo);
+        try {
+            AppDeviceListVo deviceListVo = appDeviceDataService.obtainMyDevice(userId);
+            return new ApiResponse<>(deviceListVo);
+        }catch (Exception e){
+            log.error("queryData error {}",userId ,e);
+        }
+        return   new ApiResponse(Lists.newArrayList());
     }
 
     @PostMapping("/queryChildDevice/{hostDeviceId}")
